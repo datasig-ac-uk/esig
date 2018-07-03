@@ -1,7 +1,7 @@
 ## Building esig for OSX.
 
 It is not straightforward (and arguably not legal) to run OSX in a Docker
-container, so the procedure here is run directly on a Mac machine, using
+container, so the procedure here is run directly on Mac, using
 python virtualenv environments.
 
 ### Prerequisites
@@ -9,8 +9,7 @@ python virtualenv environments.
 It is necessary to have ```boost``` installed in order to build esig.
 For the script below, in order to build for many python versions, ```pyenv```
 and ```pyenv-virtualenv``` are used.  All of these can be installed easily
-via homebrew
-
+via homebrew:
 
 ```
 brew install boost
