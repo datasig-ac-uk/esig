@@ -27,15 +27,19 @@ docker build -t manylinux_i686_boost -f Dockerfile_i686.dockerfile .
 docker build -t manylinux_x86_64_boost -f Dockerfile_x86_64.dockerfile .
 ```
 
-### Command to run from Linux or OSX
+### Commands to run from Linux or OSX
 
 ```
 docker run --rm -v ${PWD}:/data manylinux_x86_64_boost "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh"
+docker run --rm -v ${PWD}:/data manylinux_i686_boost "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh"
 ```
 
-### Command to run from Windows
+### Commands to run from Windows
 ```
+docker run --rm -v "%CD%":/data manylinux1_x86_64_boost "source ~/.bashrc ; cd /data; for gz in $(ls esig*.gz); do ver=${gz%%.tar*}; for py in $(ls /opt/python); do pyexe=/opt/python/$py/bin/python && $pyexe -m pip install -U pip wheel virtualenv && $pyexe -m pip wheel $gz && auditwheel repair $ver-$py-linux_i686.whl && $pyexe -m virtualenv /tmp/$py && . /tmp/$py/bin/activate && pip install wheelhouse/$ver-$py-manylinux1_i686.whl && python -c 'import esig.tests as tests; tests.run_tests()' && deactivate && rm -rf /tmp/$py/ ; done ; done"
+
 docker run --rm -v "%CD%":/data manylinux1_i686_boost "source ~/.bashrc ; cd /data; for gz in $(ls esig*.gz); do ver=${gz%%.tar*}; for py in $(ls /opt/python); do pyexe=/opt/python/$py/bin/python && $pyexe -m pip install -U pip wheel virtualenv && $pyexe -m pip wheel $gz && auditwheel repair $ver-$py-linux_i686.whl && $pyexe -m virtualenv /tmp/$py && . /tmp/$py/bin/activate && pip install wheelhouse/$ver-$py-manylinux1_i686.whl && python -c 'import esig.tests as tests; tests.run_tests()' && deactivate && rm -rf /tmp/$py/ ; done ; done"
+
 
 ```
 The esig wheel files for the different python versions should now be in this directory.
