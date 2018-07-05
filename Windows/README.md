@@ -1,8 +1,7 @@
 ## Building esig for Windows
 
 ### Note - currently the recipe works for Python 2.7 / 64-bit.
-### It should be straightforward to substitute different python/boost/VisualStudio compiler versions in, but we need to
-### investigate whether we need separate dockerfiles for each, or whether multiple versions can be done in the same docker container.
+### It should be straightforward to substitute different python/boost/VisualStudio compiler versions in, but we need to investigate whether we need separate dockerfiles for each, or whether multiple versions can be done in the same docker container.
 
 
 ### Prerequisites - docker-for-windows
