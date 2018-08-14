@@ -1,42 +1,49 @@
 #!/bin/bash
 
-### script to build python wheels for the esig package, by Daniel Wilson-Nunn
+### script to build python wheels for the esig package, adapted from
+### Daniel Wilson-Nunn's original script.
 
-# note boost preinstalled!
+# note boost needs to be installed, and all versions of python
+# listed in python_versions.txt should have been installed via pyenv
 
-# do this in virtualenvs
 
-WORKDIR=${HOME}/esig_mac_builds/latest
+WORKDIR=latest
+OUTPUTDIR=output
+TMPDIR=tmp
 
-# Make folder to save new wheels
-mkdir -p $WORKDIR && cd "$_"
-mkdir -p "fixed"
+# make the output directory if it isn't already there
+mkdir -p $OUTPUTDIR
 
-# Python 2.7
-pip install --upgrade pip
-pip install --upgrade wheel
-pip install --upgrade numpy
-pip install --upgrade delocate
-pip wheel --no-binary -b $WORKDIR esig
-delocate -w fixed -v
+# setup for pyenv and virtualenv
+eval "$(pyenv init -)"
+eval "$(pyenv virtualenv-init -)"
 
-# Python 3.4
-python3.4 -m pip install --upgrade pip
-python3.4 -m pip install --upgrade wheel
-python3.4 -m pip install --upgrade numpy
-python3.4 -m pip install --upgrade delocate
-python3.4 -m pip wheel --no-binary -b $WORKDIR esig
+# loop over all python versions
+for p in $(cat python_versions.txt); do
 
-# Python 3.5
-python3.5 -m pip install --upgrade pip
-python3.5 -m pip install --upgrade wheel
-python3.5 -m pip install --upgrade numpy
-python3.5 -m pip install --upgrade delocate
-python3.5 -m pip wheel --no-binary -b $WORKDIR esig
+# Make a couple of clean working directories
+    rm -fr $WORKDIR
+    rm -fr $TMPDIR
+    mkdir $WORKDIR
+    mkdir $TMPDIR
 
-# Python 3.6
-pip3 install --upgrade pip
-pip3 install --upgrade wheel
-pip3 install --upgrade numpy
-pip3 install --upgrade delocate
-pip3 wheel --no-binary -b $WORKDIR esig
+# create and activate a virtualenv for this python version
+    pyenv virtualenv $p esig_build_env-$p
+    pyenv activate esig_build_env-$p
+
+# install python dependencies
+    pip install --upgrade pip
+    pip install --upgrade wheel
+    pip install --upgrade numpy
+    pip install --upgrade delocate
+# build the wheel
+    pip wheel --no-binary -b $WORKDIR -w $TMPDIR esig*.tar.gz
+# combine other dynamic libraries into the wheel to make it portable
+    delocate-wheel -w $OUTPUTDIR -v $TMPDIR/esig*.whl
+    # deactivate this virtualenv
+    source deactivate
+done
+
+# cleanup
+rm -fr $WORKDIR
+rm -fr $TMPDIR
