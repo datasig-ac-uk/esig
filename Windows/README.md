@@ -12,7 +12,7 @@ Instructions for installing docker-for-windows can be found [here](https://www.d
 
 Run the command
 ```
-docker build -t windows_p27_64 -f Dockerfile_p27_64.dockerfile .
+docker build -t esig_builder_windows -f Dockerfile.dockerfile .
 ```
 
 ### Get esig source
@@ -25,11 +25,21 @@ and put it in this directory.
 ### Build esig wheel in docker container
 
 Run the following command from Windows Command Prompt:
+
 ```
-docker run --rm -v "%CD%":C:\data windows_p27_64 "cd data; pip wheel --no-binary -b latest <esig_tar.gz_filename>"
+docker run --rm -v "%CD%":C:\data esig_builder_windows "$env:PATH = Get-Content -Path pathenv_<PYTHON_VERSION>;cd data; python.exe -m pip wheel --no-binary -b latest <esig_tar.gz_filename>"
 ```
-or from Powershell, do:
+where PYTHON_VERSION is one of:
 ```
-docker run --rm -v "$pwd":C:\data windows_p27_64 "cd data; pip wheel --no-binary -b latest <esig_tar.gz_filename>"
+python37_64
+python37_32
+python36_64
+python36_32
+python35_64
+python35_32
+python27_64
+python27_32
 ```
-and you should get the esig wheel in your current directory.
+
+It should take a few minutes to build, and then you should get the
+output wheel in your current working directory.
