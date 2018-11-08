@@ -1,7 +1,7 @@
 ### Building esig for Linux
 
-Two python wheels will be created, one for 64-bit (x86_64)
-and one for 32-bit (i686).
+Python wheels will be created for 64-bit (x86_64)
+and for 32-bit (i686), for python versions 2.7, 3.4, 3.5, 3.6 and 3.7. 
 
 ### Prerequisites: Docker
 
