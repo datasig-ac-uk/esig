@@ -17,8 +17,18 @@ for gz in $(ls esig*.gz);
 	 $pyexe -m virtualenv /tmp/$py
 	 . /tmp/$py/bin/activate
 	 pip install wheelhouse/$ver-$py-manylinux1_$arch.whl
-	 python -c 'import esig.tests as tests; tests.run_tests()'
+	 python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
+	 if [ $? -eq 0 ]
+	 then
+	     echo "Tests passed"
+	 else
+	     echo "Tests failed - removing wheel"
+             rm wheelhouse/$ver-$py-manylinux1_$arch.whl
+	 fi
 	 deactivate
 	 rm -rf /tmp/$py/ ;
  done ;
 done
+## now remove all the wheels from the current directory -
+## (the final ones we want will be in "wheelhouse")
+rm *.whl
