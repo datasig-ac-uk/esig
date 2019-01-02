@@ -8,13 +8,16 @@ python virtualenv environments.
 
 It is necessary to have ```boost``` installed in order to build esig.
 For the script below, in order to build for many python versions, ```pyenv```
-and ```pyenv-virtualenv``` are used.  All of these can be installed easily
+and ```pyenv-virtualenv``` are used.  
+Furthermore, python 3.7 requires openssl to be installed
+All of these can be installed easily
 via homebrew:
 
 ```
 brew install boost
 brew install pyenv
 brew install pyenv-virtualenv
+brew install openssl
 ```
 
 Then get the ```esig``` source code as a ```.tar.gz``` file.  You can download
