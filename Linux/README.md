@@ -30,8 +30,8 @@ docker build -t manylinux_x86_64_boost -f Dockerfile_x86_64.dockerfile .
 ### Commands to run from Linux or OSX
 
 ```
-docker run --rm -v ${PWD}:/data manylinux_x86_64_boost "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh"
-docker run --rm -v ${PWD}:/data manylinux_i686_boost "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh"
+for arch in i686 x86_64; do 
+ docker run --rm -v ${PWD}:/data manylinux_${arch}_boost "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh $arch"
 ```
 
 ### Commands to run from Windows
