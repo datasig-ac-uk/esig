@@ -9,7 +9,7 @@ python virtualenv environments.
 It is necessary to have ```boost``` installed in order to build esig.
 For the script below, in order to build for many python versions, ```pyenv```
 and ```pyenv-virtualenv``` are used.  
-Furthermore, python 3.7 requires openssl to be installed
+Furthermore, python 3.7 requires ```openssl``` to be installed
 All of these can be installed easily
 via homebrew:
 
@@ -46,4 +46,6 @@ virtual environment
  * install python dependencies
  * compile the python "wheel"
  * "delocate" the wheel, i.e. combine other dependencies, to give a portable binary.
-The output wheels will be in the ```output/``` subdirectory.
+ * create another virtual environment and install the newly created wheel
+ * run the esig unit tests.
+*If* the tests pass, output wheels will be in the ```output/``` subdirectory.
