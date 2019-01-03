@@ -1,8 +1,5 @@
 ## Building esig for Windows
 
-### Note - currently the recipe works for Python 2.7, 3.5, 3.6, 3.7, 64-bit and 32-bit.  Python 3.4 support is work-in-progress.
-
-
 ### Prerequisites - docker-for-windows
 
 Instructions for installing docker-for-windows can be found [here](https://www.docker.com/docker-windows)
@@ -17,7 +14,6 @@ This will take a long time, and will result in a big docker image.  You can alte
 ```
 docker pull nbarlow/esig_builder_windows:latest
 ```
-
 
 ### Get esig source
 
