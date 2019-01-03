@@ -87,7 +87,7 @@ RUN powershell $ErrorActionPreference = 'Stop'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.5.4.exe -ArgumentList '/quiet';
 
 
-ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32;${ORIG_PATH}"
+ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32\Scripts;${ORIG_PATH}"
 RUN echo %PATH%>pathenv_python35_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
@@ -101,7 +101,7 @@ RUN powershell $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.5.4-amd64.exe -ArgumentList '/quiet';
 
-ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35;${ORIG_PATH}"
+ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35\Scripts;${ORIG_PATH}"
 RUN echo %PATH%>pathenv_python35_64
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
@@ -113,7 +113,7 @@ RUN powershell $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.6.6.exe -ArgumentList '/quiet';
 
-ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36-32;${ORIG_PATH}"
+ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36-32\Scripts;${ORIG_PATH}"
 RUN echo %PATH%>pathenv_python36_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
@@ -125,7 +125,7 @@ RUN powershell $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.6.6-amd64.exe -ArgumentList '/quiet';
 
-ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36;${ORIG_PATH}"
+ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36\Scripts;${ORIG_PATH}"
 RUN echo %PATH%>pathenv_python36_64
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
@@ -136,7 +136,7 @@ RUN wget.exe --no-check-certificate https://www.python.org/ftp/python/3.7.0/pyth
 RUN powershell $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.7.0.exe -ArgumentList '/quiet';
-ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37-32;${ORIG_PATH}"
+ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37-32\Scripts;${ORIG_PATH}"
 RUN echo %PATH%>pathenv_python37_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
@@ -148,7 +148,7 @@ RUN powershell $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.7.0-amd64.exe -ArgumentList '/quiet';
 
-ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37;${ORIG_PATH}"
+ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37\Scripts;${ORIG_PATH}"
 RUN echo %PATH%>pathenv_python37_64
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
