@@ -6,10 +6,15 @@
 # note boost needs to be installed, and all versions of python
 # listed in python_versions.txt should have been installed via pyenv
 
-
-WORKDIR=latest
+# OUTPUTDIR is where the final wheel will be put
 OUTPUTDIR=output
+# TESTDIR is a staging area from which to install the wheel for testing
+TESTDIR=test
+# TMPDIR is where the wheel will go when first build, before 'delocate'
 TMPDIR=tmp
+# WORKDIR is a temporary directory used in the build process
+WORKDIR=latest
+
 
 # make the output directory if it isn't already there
 mkdir -p $OUTPUTDIR
@@ -24,8 +29,10 @@ for p in $(cat python_versions.txt); do
 # Make a couple of clean working directories
     rm -fr $WORKDIR
     rm -fr $TMPDIR
+    rm -fr $TESTDIR
     mkdir $WORKDIR
     mkdir $TMPDIR
+    mkdir $TESTDIR
 
 # create and activate a virtualenv for this python version
     pyenv virtualenv $p esig_build_env-$p
@@ -39,11 +46,26 @@ for p in $(cat python_versions.txt); do
 # build the wheel
     pip wheel --no-binary -b $WORKDIR -w $TMPDIR esig*.tar.gz
 # combine other dynamic libraries into the wheel to make it portable
-    delocate-wheel -w $OUTPUTDIR -v $TMPDIR/esig*.whl
+    delocate-wheel -w $TESTDIR -v $TMPDIR/esig*.whl
+# deactivate this virtualenv, then create a fresh one to run tests
+    pyenv deactivate
+    pyenv virtualenv $p esig_test_env-$p
+    pyenv activate esig_test_env-$p
+    pip install `ls ${TESTDIR}/*.whl`
+    # run tests
+    python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
+    if [ $? -eq 0 ]
+    then
+	echo "Tests passed - copying wheel to $OUTPUTDIR"
+	mv ${TESTDIR}/*.whl $OUTPUTDIR
+    else
+       echo "Tests failed - will not copy wheel to $OUTPUTDIR"
+    fi
     # deactivate this virtualenv
-    source deactivate
+    pyenv deactivate
 done
 
 # cleanup
 rm -fr $WORKDIR
 rm -fr $TMPDIR
+rm -fr $TESTDIR
