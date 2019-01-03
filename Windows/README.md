@@ -25,25 +25,22 @@ Get the ```esig``` source code as a ```.tar.gz``` file.  You can download
 the latest released version from the [PyPi downloads page](https://pypi.org/project/esig/#files)
 and put it in this directory.
 
+### Supported python versions
 
-### Build esig wheel in docker container
+The list of targets (python version, and 32- or 64-bit) is in the text file ```python_versions.txt```.
+Currently the list of versions is: 2.7, 3.5, 3.6, 3.7, all in both 32- and 64-bit.
+
+### Build esig wheels in the docker container
 
 Run the following command from Windows Command Prompt:
 
 ```
-docker run --rm -v "%CD%":C:\data esig_builder_windows "$env:PATH = Get-Content -Path pathenv_<PYTHON_VERSION>;cd data; python.exe -m pip wheel --no-binary -b latest <esig_tar.gz_filename>"
+.\build_all_versions.bat <esig_tar_gz_filename>
 ```
-where PYTHON_VERSION is one of:
-```
-python37_64
-python37_32
-python36_64
-python36_32
-python35_64
-python35_32
-python27_64
-python27_32
-```
+This will loop through all the python versions in ```python_versions.txt``` and for each one run issue a ```docker run``` command that will:
+* Set the PATH environment variable to point to the requested python version.
+* Build the ```esig``` wheel
+* Setup a clean ```virtualenv``` environment for testing.
+* Run the esig test suite.
 
-It should take a few minutes to build, and then you should get the
-output wheel in your current working directory.
+If, and only if, all tests pass, the esig wheels will be copied to the ```output``` directory.
