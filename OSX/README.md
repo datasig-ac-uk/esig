@@ -20,7 +20,9 @@ brew install pyenv-virtualenv
 brew install openssl
 ```
 
-Then get the ```esig``` source code as a ```.tar.gz``` file.  You can download
+### Get the esig source code
+
+The ```esig``` source code should be provided in a ```.tar.gz``` file.  You can download
 the latest released version from the [PyPi downloads page](https://pypi.org/project/esig/#files).
 
 ### Python versions
@@ -48,4 +50,5 @@ virtual environment
  * "delocate" the wheel, i.e. combine other dependencies, to give a portable binary.
  * create another virtual environment and install the newly created wheel
  * run the esig unit tests.
+ 
 *If* the tests pass, output wheels will be in the ```output/``` subdirectory.
