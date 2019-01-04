@@ -9,7 +9,8 @@ python virtualenv environments.
 It is necessary to have ```boost``` installed in order to build esig.
 For the script below, in order to build for many python versions, ```pyenv```
 and ```pyenv-virtualenv``` are used.  
-Furthermore, python 3.7 requires ```openssl``` to be installed
+Furthermore, python 3.7 requires ```openssl``` to be installed.
+
 All of these can be installed easily
 via homebrew:
 
@@ -35,7 +36,7 @@ To install all these python versions via pyenv, you can use the script
 source install_all_python_versions.sh
 ```
 
-### Building
+### Building the esig wheels
 
 Assuming you have run the script above to install all the python versions
 listed in ```python_versions.py```, you can just run the script
