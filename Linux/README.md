@@ -18,27 +18,37 @@ Get the ```esig``` source code as a ```.tar.gz``` file.  You can download
 the latest released version from the [PyPi downloads page](https://pypi.org/project/esig/#files)
 and put it in this directory.
 
-### Build the Docker images
+### Build or pull the Docker images
 
 You only need to do this once, unless you need to use a newer version of boost or another dependency at a
 later date.
 ```
-docker build -t manylinux_i686_boost -f Dockerfile_i686.dockerfile .
-docker build -t manylinux_x86_64_boost -f Dockerfile_x86_64.dockerfile .
+docker build -t esig_builder_linux_i686 -f Dockerfile_i686.dockerfile .
+docker build -t esig_builder_linux_x86_64 -f Dockerfile_x86_64.dockerfile .
+```
+Alternatively, you can pull these from dockerhub:
+```
+docker pull nbarlow/esig_builder_linux_i686:latest
+docker pull nbarlow/esig_builder_linux_x86_64:latest
 ```
 
 ## Build the esig wheels 
+
+The ```linux_wheel_maker.sh``` script is run inside the docker container, and performs the steps to build the esig binary wheel, run tests, and if the tests are successful, copy the wheel to the ```wheelhouse``` directory.
+
+
 ### From Linux or OSX
 
 ```
-for arch in i686 x86_64; do docker run --rm -v ${PWD}:/data manylinux_${arch}_boost "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh $arch"; done;
+for arch in i686 x86_64; do docker run --rm -v ${PWD}:/data esig_builder_linux_${arch} "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh $arch"; done;
 ```
 
 ### From Windows
-```
-docker run --rm -v "%CD%":/data manylinux1_x86_64_boost "source ~/.bashrc ; cd /data; for gz in $(ls esig*.gz); do ver=${gz%%.tar*}; for py in $(ls /opt/python); do pyexe=/opt/python/$py/bin/python && $pyexe -m pip install -U pip wheel virtualenv && $pyexe -m pip wheel $gz && auditwheel repair $ver-$py-linux_i686.whl && $pyexe -m virtualenv /tmp/$py && . /tmp/$py/bin/activate && pip install wheelhouse/$ver-$py-manylinux1_i686.whl && python -c 'import esig.tests as tests; tests.run_tests(True)' && deactivate && rm -rf /tmp/$py/ ; done ; done"
 
-docker run --rm -v "%CD%":/data manylinux1_i686_boost "source ~/.bashrc ; cd /data; for gz in $(ls esig*.gz); do ver=${gz%%.tar*}; for py in $(ls /opt/python); do pyexe=/opt/python/$py/bin/python && $pyexe -m pip install -U pip wheel virtualenv && $pyexe -m pip wheel $gz && auditwheel repair $ver-$py-linux_i686.whl && $pyexe -m virtualenv /tmp/$py && . /tmp/$py/bin/activate && pip install wheelhouse/$ver-$py-manylinux1_i686.whl && python -c 'import esig.tests as tests; tests.run_tests(True)' && deactivate && rm -rf /tmp/$py/ ; done ; done"
+Ensure that docker for windows has "experimental features" enabled, in order to run linux containers.
+```
+docker run --platform=linux --rm -v "%CD%":/data esig_builder_linux_i686 "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh i686; done;"
+docker run --platform=linux --rm -v "%CD%":/data esig_builder_linux_x86_64 "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh x86_64; done;"
 ```
 
 The esig wheel files for the different python versions should now be in the ```wheelhouse/``` directory.
