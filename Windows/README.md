@@ -6,15 +6,17 @@ Instructions for installing docker-for-windows can be found [here](https://www.d
 
 ### Build or pull the docker image
 
-Run the command
+To build the docker image, run the command
 ```
 docker build -t esig_builder_windows -f Dockerfile.dockerfile .
 ```
-This will take a long time, and will result in a big (>70GB) docker image.  You can alternatively pull a pre-built image from Dockerhub with:
+This will take a long time, and will result in a big (>70GB) docker image.  
+
+You can alternatively pull a pre-built image from Dockerhub with:
 ```
 docker pull nbarlow/esig_builder_windows:latest
 ```
-(Again, note that this image is large, so ensure you have sufficient disk space).  
+(Again, note that this image is large, so ensure you have sufficient disk space).  If you do this, replace ```esig_builder_windows``` with ```nbarlow/esig_builder_windows:latest``` in the ```build_all_versions.bat``` batch script.
 
 ### Get esig source
 
@@ -29,7 +31,7 @@ Currently the list of versions is: 2.7, 3.5, 3.6, 3.7, all in both 32- and 64-bi
 
 ### Build esig wheels in the docker container
 
-Run the following command from Windows Command Prompt:
+Run the following command from Windows Command Prompt, from this directory:
 
 ```
 .\build_all_versions.bat <esig_tar_gz_filename>
