@@ -1,0 +1,10 @@
+include README.md
+include LICENSE
+include AUTHORS
+include esig/VERSION
+include esig/ERROR_MESSAGE
+include src/*.h
+include src/*.c
+include src/*.cpp
+include src/addons/*.h
+include src/libalgebra/*.h

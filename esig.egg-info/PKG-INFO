@@ -1,0 +1,20 @@
+Metadata-Version: 1.1
+Name: esig
+Version: 0.6.31
+Summary: This package provides "rough path" tools for analysing vector time series.
+Home-page: http://esig.readthedocs.io/en/latest/
+Author: Terry Lyons
+Author-email: software@lyonstech.net
+License: GPLv3
+Description-Content-Type: UNKNOWN
+Description: The package esig provides a toolset (previously called sigtools) for transforming vector time series in stream space to signatures in effect space.
+        The software is strictly for evaluation only; all other rights reserved.
+Keywords: data streams rough paths signatures
+Platform: UNKNOWN
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Developers
+Classifier: Programming Language :: Python :: 2.7
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Topic :: Scientific/Engineering :: Mathematics

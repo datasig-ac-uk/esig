@@ -1,0 +1,17 @@
+If you see this message, compilation and installation unfortunately failed. If 
+building from source, the esig package requires the Boost C++ library to be 
+installed and correctly configured. Installation most likely failed because the 
+installer was not able to locate Boost.
+
+Please make sure you have done the following.
+	* Downloaded and installed a copy of Boost.
+	  How you do this varies from platform to platorm.
+	* Provided the necessary paths to Boost include files and libraries.
+	  This is only necessary when installing Boost to a non-standard 
+      location.
+	  If you do this, you can use the --include-paths and --library-paths 
+      arguments.
+
+Once you have done this, esig should install successfully. For more 
+information, you can refer to the online documentation. It's available at 
+http://esig.readthedocs.io/en/latest/troubleshooting.html.
