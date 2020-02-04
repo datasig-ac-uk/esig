@@ -10,13 +10,13 @@ arch=$1
 
 for gz in $(ls esig*.gz);
  do ver=${gz%%.tar*};
- for py in $(ls /opt/python);
+ for py in cp35-cp35m cp36-cp36m cp37-cp37m cp38-cp38 # $(ls /opt/python);
     do pyexe=/opt/python/$py/bin/python
 	 $pyexe -m pip install -U pip virtualenv
 	 $pyexe -m pip install wheel==0.31.1
 	 $pyexe -m pip install -U numpy
 	 $pyexe -m pip wheel $gz
-	 auditwheel repair $ver-$py-linux_$arch.whl
+	 auditwheel repair $ver-$py-linux_$arch.whl # puts wheel into wheelhouse
 	 $pyexe -m virtualenv /tmp/$py
 	 . /tmp/$py/bin/activate
 	 pip install wheelhouse/$ver-$py-manylinux1_$arch.whl
