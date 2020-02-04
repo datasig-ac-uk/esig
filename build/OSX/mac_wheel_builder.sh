@@ -39,12 +39,14 @@ for p in $(cat python_versions.txt); do
     pyenv activate esig_build_env-$p
 
 # install python dependencies
+# assume pip is provided by the host environment at a suitable version
     pip install --upgrade pip
     pip install --upgrade wheel
     pip install --upgrade numpy
     pip install --upgrade delocate
 # build the wheel
-    pip wheel --no-binary -b $WORKDIR -w $TMPDIR esig*.tar.gz
+    # --no-binary requires an argument in recent pip versions (19+?)
+    pip wheel --no-binary :none: -b $WORKDIR -w $TMPDIR esig*.tar.gz
 # combine other dynamic libraries into the wheel to make it portable
     delocate-wheel -w $TESTDIR -v $TMPDIR/esig*.whl
 # deactivate this virtualenv, then create a fresh one to run tests

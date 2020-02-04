@@ -1,0 +1,20 @@
+{
+    "configurations": [
+        {
+            "name": "Mac",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "${vcpkgRoot}/x64-osx/include",
+                "/usr/local/include",
+                "/usr/local/anaconda3/include/python3.7m"
+            ],
+            "defines": [],
+            "macFrameworkPath": [],
+            "compilerPath": "/usr/bin/clang",
+            "cStandard": "c11",
+            "cppStandard": "c++17",
+            "intelliSenseMode": "clang-x64"
+        }
+    ],
+    "version": 4
+}
