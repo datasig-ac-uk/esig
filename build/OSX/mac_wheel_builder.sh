@@ -7,7 +7,7 @@
 # listed in python_versions.txt should have been installed via pyenv
 
 # OUTPUTDIR is where the final wheel will be put
-OUTPUTDIR=output
+OUTPUTDIR=wheelhouse
 # TESTDIR is a staging area from which to install the wheel for testing
 TESTDIR=test
 # TMPDIR is where the wheel will go when first build, before 'delocate'
@@ -66,6 +66,6 @@ for p in $(cat python_versions.txt); do
 done
 
 # cleanup
-rm -fr $WORKDIR
-rm -fr $TMPDIR
-rm -fr $TESTDIR
+# rm -fr $WORKDIR
+# rm -fr $TMPDIR
+# rm -fr $TESTDIR
