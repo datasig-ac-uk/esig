@@ -33,7 +33,7 @@ The ```esig``` package is currently built for the python versions listed in
 one python version number per line.
 To install all these python versions via pyenv, you can use the script
 ```
-source install_all_python_versions.sh
+install_all_python_versions.sh
 ```
 
 ### Building the esig wheels
@@ -41,7 +41,7 @@ source install_all_python_versions.sh
 Assuming you have run the script above to install all the python versions
 listed in ```python_versions.py```, you can just run the script
 ```
-source mac_wheel_builder.sh
+mac_wheel_builder.sh
 ```
 and it will loop through all the python versions, and for each one:
  * create and activate a
