@@ -13,7 +13,9 @@
             "-o",
             "${fileDirname}/${fileBasenameNoExtension}",
             "-I",
-            "/usr/local/anaconda3/include/python3.7m"
+            "/usr/local/anaconda3/include/python3.7m",
+            "-I",
+            "/anaconda3/lib/python3.7/site-packages/numpy/core/include"
          ],
          "options": {
             "cwd": "/usr/bin"
