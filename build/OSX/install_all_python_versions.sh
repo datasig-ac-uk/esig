@@ -10,7 +10,7 @@
 eval "$(pyenv init -)"
 
 for p in $( cat python_versions.txt ); do
-          CFLAGS="-I$(brew --prefix openssl)/include" \
+     CFLAGS="-I$(brew --prefix openssl)/include" \
 	  LDFLAGS="-L$(brew --prefix openssl)/lib" \
 	  pyenv install $p
 done
