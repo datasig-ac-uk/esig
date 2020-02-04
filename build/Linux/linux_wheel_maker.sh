@@ -29,7 +29,7 @@ for gz in $(ls esig*.gz);
              rm wheelhouse/$ver-$py-manylinux1_$arch.whl
 	 fi
 	 deactivate
-	 rm -rf /tmp/$py/ ;
+	 rm -rf /tmp/$py/ ; # TODO: move this into the loop, for each file
  done ;
 done
 ## now remove all the wheels from the current directory -
