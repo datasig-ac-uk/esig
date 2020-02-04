@@ -39,9 +39,7 @@ The ```linux_wheel_maker.sh``` script is run inside the docker container, and pe
 
 ### From Linux or OSX
 
-```
-for arch in i686 x86_64; do docker run --rm -v ${PWD}:/data esig_builder_linux_${arch} "source ~/.bashrc ; cd /data; source linux_wheel_maker.sh $arch"; done;
-```
+Run the script `build-wheels.sh`.
 
 ### From Windows
 
