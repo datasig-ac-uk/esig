@@ -26,11 +26,6 @@ later date.
 docker build -t esig_builder_linux_i686 -f Dockerfile_i686.dockerfile .
 docker build -t esig_builder_linux_x86_64 -f Dockerfile_x86_64.dockerfile .
 ```
-Alternatively, you can pull these from dockerhub:
-```
-docker pull nbarlow/esig_builder_linux_i686:latest
-docker pull nbarlow/esig_builder_linux_x86_64:latest
-```
 
 ## Build the esig wheels 
 
