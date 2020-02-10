@@ -1,4 +1,5 @@
-FROM microsoft/dotnet-framework:4.7.1 as esig_build_base_boost168
+# FROM microsoft/dotnet-framework:4.7.1 as esig_build_base_boost168
+FROM mcr.microsoft.com/dotnet/framework/sdk:4.8 as esig_build_base_boost168
 
 ## from the folder with this file and the context execute
 ## docker build -t esig_builder_windows -f Dockerfile.dockerfile .
