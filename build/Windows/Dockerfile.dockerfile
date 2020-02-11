@@ -64,6 +64,7 @@ RUN copy .\local\boost_1_68_0\lib32-msvc-9.0\*.lib .\boost\boost_1_68_0\win32\li
 
 ## download and install visual studio C++ compiler for python 2.7
 RUN powershell "Invoke-WebRequest https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi -OutFile .\VCForPython27.msi"
+# TODO: Use Start-Processs -Wait here
 RUN msiexec.exe /i VCForPython27.msi /quiet
 
 
@@ -93,7 +94,10 @@ RUN $ErrorActionPreference = 'Stop'; \
 
 
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32\Scripts;${ORIG_PATH}"
-RUN echo %PATH%>pathenv_python35_32
+# RUN echo %PATH%>pathenv_python35_32
+RUN echo $PATH.Path > pathenv_python35_32
+# DELETE ME:
+RUN cat pathenv_python35_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 RUN python.exe -m pip install delocate
