@@ -76,8 +76,8 @@ RUN powershell $ErrorActionPreference = 'Stop'; \
 
 
 ## copy rc.exe and rcdll.dll needed for VC14 to compile for python 3.5
-RUN copy "C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
-RUN copy "C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rcdll.dll" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
+# RUN copy "C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
+# RUN copy "C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rcdll.dll" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
 
 ####### PYTHON #########################################
 
