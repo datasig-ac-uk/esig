@@ -159,7 +159,7 @@ RUN python.exe -m pip install wheel
 
 ## python 2.7 32-bit
 RUN wget.exe --no-check-certificate  https://www.python.org/ftp/python/2.7.15/python-2.7.15.msi
-RUN msiexec.exe /i .\python-2.7.15.msi /quiet
+RUN msiexec.exe /i python-2.7.15.msi /quiet
 RUN move C:\Python27 C:\Python27-32
 ENV PYTHONIOENCODING 'UTF-8'
 ENV PATH="C:\Python27-32;C:\Python27-32\Scripts;${ORIG_PATH}"
@@ -170,7 +170,7 @@ RUN python.exe -m pip install wheel
 
 ## python 2.7 64-bit
 RUN wget.exe --no-check-certificate  https://www.python.org/ftp/python/2.7.15/python-2.7.15.amd64.msi
-RUN msiexec.exe /i .\python-2.7.15.amd64.msi /quiet
+RUN msiexec.exe /i python-2.7.15.amd64.msi /quiet
 RUN move C:\Python27 C:\Python27-64
 ENV PYTHONIOENCODING 'UTF-8'
 ENV PATH="C:\Python27-64;C:\Python27-64\Scripts;${ORIG_PATH}"
