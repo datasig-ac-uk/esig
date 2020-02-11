@@ -70,12 +70,13 @@ RUN msiexec.exe /i VCForPython27.msi /quiet
 ## visual studio 14 for python 3.5+
 RUN powershell "wget.exe --no-check-certificate https://download.visualstudio.microsoft.com/download/pr/5426f054-a10a-441f-b8a9-f7135d58d59b/48510132eb9254121dd72072197308f6/vs_buildtools.exe"
 
-RUN powershell $ErrorActionPreference = 'Stop'; \
+RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\vs_buildtools.exe -ArgumentList '--add Microsoft.VisualStudio.Workload.VCTools --includeOptional --includeRecommended --quiet --nocache --wait';
 
 
 ## copy rc.exe and rcdll.dll needed for VC14 to compile for python 3.5
+# Disable for now as Windows Kit 8.0 doesn't seem to be available in our base image
 # RUN copy "C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rc.exe" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
 # RUN copy "C:\Program Files (x86)\Windows Kits\8.1\bin\x86\rcdll.dll" "C:\Program Files (x86)\Microsoft Visual Studio 14.0\VC\bin\"
 
@@ -86,7 +87,7 @@ ENV ORIG_PATH="C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Window
 
 ## python 3.5 32-bit
 RUN wget.exe --no-check-certificate https://www.python.org/ftp/python/3.5.4/python-3.5.4.exe
-RUN powershell $ErrorActionPreference = 'Stop'; \
+RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.5.4.exe -ArgumentList '/quiet';
 
@@ -101,7 +102,7 @@ RUN python.exe -m pip install --upgrade setuptools
 
 ## python 3.5 64-bit
 RUN wget.exe --no-check-certificate https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
-RUN powershell $ErrorActionPreference = 'Stop'; \
+RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.5.4-amd64.exe -ArgumentList '/quiet';
 
@@ -113,7 +114,7 @@ RUN python.exe -m pip install delocate
 
 ## python 3.6 32-bit
 RUN wget.exe --no-check-certificate https://www.python.org/ftp/python/3.6.6/python-3.6.6.exe
-RUN powershell $ErrorActionPreference = 'Stop'; \
+RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.6.6.exe -ArgumentList '/quiet';
 
@@ -125,7 +126,7 @@ RUN python.exe -m pip install delocate
 
 ## python 3.6 64-bit
 RUN wget.exe --no-check-certificate https://www.python.org/ftp/python/3.6.6/python-3.6.6-amd64.exe
-RUN powershell $ErrorActionPreference = 'Stop'; \
+RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.6.6-amd64.exe -ArgumentList '/quiet';
 
@@ -137,7 +138,7 @@ RUN python.exe -m pip install delocate
 
 ## python 3.7 32-bit
 RUN wget.exe --no-check-certificate https://www.python.org/ftp/python/3.7.0/python-3.7.0.exe
-RUN powershell $ErrorActionPreference = 'Stop'; \
+RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.7.0.exe -ArgumentList '/quiet';
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37-32\Scripts;${ORIG_PATH}"
@@ -148,7 +149,7 @@ RUN python.exe -m pip install delocate
 
 ## python 3.7 64-bit
 RUN wget.exe --no-check-certificate https://www.python.org/ftp/python/3.7.0/python-3.7.0-amd64.exe
-RUN powershell $ErrorActionPreference = 'Stop'; \
+RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.7.0-amd64.exe -ArgumentList '/quiet';
 
