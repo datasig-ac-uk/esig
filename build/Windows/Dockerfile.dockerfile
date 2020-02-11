@@ -30,13 +30,15 @@ RUN powershell "wget.exe --no-check-certificate https://sourceforge.net/projects
 RUN powershell "wget.exe --no-check-certificate https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.1-32.exe/download -O boost_1_68_0-msvc-14.1-32.exe"
 
 
-# these should be self-extracting - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
-RUN .\boost_1_68_0-msvc-9.0-64.exe /VERYSILENT /SP-
-RUN .\boost_1_68_0-msvc-9.0-32.exe /VERYSILENT /SP-
-RUN .\boost_1_68_0-msvc-14.0-64.exe /VERYSILENT /SP-
-RUN .\boost_1_68_0-msvc-14.0-32.exe /VERYSILENT /SP-
-RUN .\boost_1_68_0-msvc-14.1-64.exe /VERYSILENT /SP-
-RUN .\boost_1_68_0-msvc-14.1-32.exe /VERYSILENT /SP-
+# self-extracting installers - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
+# without /VERYSILENT installer will attempt to open a dialog box and then silently fail
+# Wait-Process required because installer runs in a subprocess
+RUN $app = Start-Process .\boost_1_68_0-msvc-9.0-64.exe -ArgumentList "/VERYSILENT /SP-" -passthru; Wait-Process $app.Id
+RUN $app = Start-Process .\boost_1_68_0-msvc-9.0-32.exe -ArgumentList "/VERYSILENT /SP-" -passthru; Wait-Process $app.Id
+RUN $app = Start-Process.\boost_1_68_0-msvc-14.0-64.exe -ArgumentList "/VERYSILENT /SP-" -passthru; Wait-Process $app.Id
+RUN $app = Start-Process.\boost_1_68_0-msvc-14.0-32.exe -ArgumentList "/VERYSILENT /SP-" -passthru; Wait-Process $app.Id
+RUN $app = Start-Process.\boost_1_68_0-msvc-14.1-64.exe -ArgumentList "/VERYSILENT /SP-" -passthru; Wait-Process $app.Id
+RUN $app = Start-Process.\boost_1_68_0-msvc-14.1-32.exe -ArgumentList "/VERYSILENT /SP-" -passthru; Wait-Process $app.Id
 
 # now copy those directories to where the compiler expects them (based on BOOST_ROOT env var)
 RUN powershell "mkdir boost\boost_1_68_0\x64"
@@ -45,10 +47,10 @@ RUN powershell "mkdir boost\boost_1_68_0\x64\lib"
 RUN powershell "mkdir boost\boost_1_68_0\x32"
 RUN powershell "mkdir boost\boost_1_68_0\x32\lib"
 
-
-## Copy boost libraries to correct location
 RUN powershell "mkdir boost\boost_1_68_0\win32"
 RUN powershell "mkdir boost\boost_1_68_0\win32\lib"
+
+## Copy boost libraries to correct location
 ## "move" (or powershell equivalent) doesn't work! Just deletes files!
 RUN copy .\local\boost_1_68_0\lib64-msvc-14.0\*.lib .\boost\boost_1_68_0\x64\lib
 RUN copy .\local\boost_1_68_0\lib32-msvc-14.0\*.lib .\boost\boost_1_68_0\win32\lib
