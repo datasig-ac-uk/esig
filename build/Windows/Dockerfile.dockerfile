@@ -33,6 +33,7 @@ RUN powershell "wget.exe --no-check-certificate https://sourceforge.net/projects
 # self-extracting installers - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
 # without /VERYSILENT installer will attempt to open a dialog box and then silently fail
 # Wait-Process required because installer runs in a subprocess
+# TODO: replace Wait-Process by -Wait option on Start-Process
 RUN $app = Start-Process .\boost_1_68_0-msvc-9.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
 RUN $app = Start-Process .\boost_1_68_0-msvc-9.0-32.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
 RUN $app = Start-Process .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
@@ -159,7 +160,8 @@ RUN python.exe -m pip install wheel
 
 ## python 2.7 32-bit
 RUN wget.exe --no-check-certificate  https://www.python.org/ftp/python/2.7.15/python-2.7.15.msi
-RUN msiexec.exe /i python-2.7.15.msi /quiet /L*V "debug.log"
+# RUN msiexec.exe /i python-2.7.15.msi
+RUN Start-Process msiexec.exe -ArgumentList '/i', 'python-2.7.15.msi', '/quiet', '/norestart' -NoNewWindow -Wait
 RUN move C:\Python27 C:\Python27-32
 ENV PYTHONIOENCODING 'UTF-8'
 ENV PATH="C:\Python27-32;C:\Python27-32\Scripts;${ORIG_PATH}"
