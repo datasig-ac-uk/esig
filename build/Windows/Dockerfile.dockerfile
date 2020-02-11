@@ -36,10 +36,10 @@ RUN powershell "wget.exe --no-check-certificate https://sourceforge.net/projects
 # single quotes around argument list because (I think) Docker by default runs CMD rather than Powershell
 RUN $app = Start-Process .\boost_1_68_0-msvc-9.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
 RUN $app = Start-Process .\boost_1_68_0-msvc-9.0-32.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
-RUN $app = Start-Process.\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
-RUN $app = Start-Process.\boost_1_68_0-msvc-14.0-32.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
-RUN $app = Start-Process.\boost_1_68_0-msvc-14.1-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
-RUN $app = Start-Process.\boost_1_68_0-msvc-14.1-32.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
+RUN $app = Start-Process .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
+RUN $app = Start-Process .\boost_1_68_0-msvc-14.0-32.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
+RUN $app = Start-Process .\boost_1_68_0-msvc-14.1-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
+RUN $app = Start-Process .\boost_1_68_0-msvc-14.1-32.exe -ArgumentList '/VERYSILENT /SP-' -passthru; Wait-Process $app.Id
 
 # now copy those directories to where the compiler expects them (based on BOOST_ROOT env var)
 RUN powershell "mkdir boost\boost_1_68_0\x64"

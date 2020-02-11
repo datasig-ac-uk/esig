@@ -12,12 +12,6 @@ the Dockerfiles themselves are identical.
 To install docker (or docker-for-windows) on your system, follow the instructions
 [here](https://docs.docker.com/).
 
-### Get esig source
-
-Get the ```esig``` source code as a ```.tar.gz``` file.  You can download
-the latest released version from the [PyPi downloads page](https://pypi.org/project/esig/#files)
-and put it in this directory.
-
 ### Build or pull the Docker images
 
 You only need to do this once, unless you need to use a newer version of boost or another dependency at a
@@ -26,6 +20,12 @@ later date.
 docker build -t esig_builder_linux_i686 -f Dockerfile_i686.dockerfile .
 docker build -t esig_builder_linux_x86_64 -f Dockerfile_x86_64.dockerfile .
 ```
+
+### Get esig source
+
+Get the ```esig``` source code as a ```.tar.gz``` file.  You can download
+the latest released version from the [PyPi downloads page](https://pypi.org/project/esig/#files)
+and put it in this directory.
 
 ## Build the esig wheels 
 
