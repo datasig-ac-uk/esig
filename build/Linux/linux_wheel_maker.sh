@@ -10,8 +10,9 @@ arch=$1
 
 for gz in $(ls esig*.gz);
  do ver=${gz%%.tar*};
- for py in cp35-cp35m cp36-cp36m cp37-cp37m cp38-cp38 # $(ls /opt/python);
-    do pyexe=/opt/python/$py/bin/python
+ # previously we considered all Python versions in /opt/python, including 2.7 and 3.4
+ for py in $( cat python_versions.txt ); do
+ 	 pyexe=/opt/python/$py/bin/python
 	 $pyexe -m pip install -U pip virtualenv
 	 $pyexe -m pip install wheel==0.31.1
 	 $pyexe -m pip install -U numpy
