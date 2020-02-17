@@ -160,25 +160,4 @@ RUN echo $ENV:PATH > pathenv_python37_64
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 
-## python 2.7 32-bit
-RUN wget.exe --no-check-certificate  https://www.python.org/ftp/python/2.7.15/python-2.7.15.msi
-RUN Start-Process msiexec.exe -ArgumentList '/i', 'python-2.7.15.msi', '/quiet', '/norestart' -NoNewWindow -Wait
-RUN move C:\Python27 C:\Python27-32
-ENV PYTHONIOENCODING 'UTF-8'
-ENV PATH="C:\Python27-32;C:\Python27-32\Scripts;${ORIG_PATH}"
-RUN echo $ENV:PATH > pathenv_python27_32
-RUN python.exe -m pip install numpy
-RUN python.exe -m pip install wheel
-
-
-## python 2.7 64-bit
-RUN wget.exe --no-check-certificate  https://www.python.org/ftp/python/2.7.15/python-2.7.15.amd64.msi
-RUN Start-Process msiexec.exe -ArgumentList '/i', 'python-2.7.15.amd64.msi', '/quiet', '/norestart' -NoNewWindow -Wait
-RUN move C:\Python27 C:\Python27-64
-ENV PYTHONIOENCODING 'UTF-8'
-ENV PATH="C:\Python27-64;C:\Python27-64\Scripts;${ORIG_PATH}"
-RUN echo $ENV:PATH > pathenv_python27_64
-RUN python.exe -m pip install numpy
-RUN python.exe -m pip install wheel
-
 ENTRYPOINT ["powershell"]
