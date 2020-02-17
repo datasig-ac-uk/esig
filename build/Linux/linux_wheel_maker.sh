@@ -5,8 +5,7 @@
 
 arch=$1
 
-# TODO: what exactly are the semicolons here for?
-# TODO: align do/done delimiters
+# TODO: what are the semicolons for?
 
 for gz in $(ls esig*.gz);
  do ver=${gz%%.tar*};

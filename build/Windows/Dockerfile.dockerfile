@@ -84,6 +84,7 @@ RUN $ErrorActionPreference = 'Stop'; \
 ####### PYTHON #########################################
 
 ## Will modify the PATH several times, so store the original one here so that we can go back to it inbetween doing different python versions
+# Why not just read Env:Path?
 ENV ORIG_PATH="C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\ProgramData\chocolatey\bin;C:\Users\ContainerAdministrator\AppData\Local\Microsoft\WindowsApps"
 
 ## python 3.5 32-bit
@@ -95,9 +96,7 @@ RUN $ErrorActionPreference = 'Stop'; \
 
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32\Scripts;${ORIG_PATH}"
 # RUN echo %PATH%>pathenv_python35_32
-RUN echo $PATH.Path > pathenv_python35_32
-# DELETE ME:
-RUN cat pathenv_python35_32
+RUN echo $ENV:PATH > pathenv_python35_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 RUN python.exe -m pip install delocate
