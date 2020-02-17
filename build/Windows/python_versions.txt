@@ -4,5 +4,3 @@ python36_64
 python36_32
 python35_64
 python35_32
-python27_64
-python27_32
