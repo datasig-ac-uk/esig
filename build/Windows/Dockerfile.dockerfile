@@ -84,7 +84,7 @@ RUN $ErrorActionPreference = 'Stop'; \
 ####### PYTHON #########################################
 
 ## Will modify the PATH several times, so store the original one here so that we can go back to it inbetween doing different python versions
-# Why not just read Env:Path?
+# Why not just read ENV:PATH?
 ENV ORIG_PATH="C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\ProgramData\chocolatey\bin;C:\Users\ContainerAdministrator\AppData\Local\Microsoft\WindowsApps"
 
 ## python 3.5 32-bit
@@ -95,7 +95,6 @@ RUN $ErrorActionPreference = 'Stop'; \
 
 
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35-32\Scripts;${ORIG_PATH}"
-# RUN echo %PATH%>pathenv_python35_32
 RUN echo $ENV:PATH > pathenv_python35_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
@@ -110,7 +109,7 @@ RUN $ErrorActionPreference = 'Stop'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.5.4-amd64.exe -ArgumentList '/quiet';
 
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35\Scripts;${ORIG_PATH}"
-RUN echo %PATH%>pathenv_python35_64
+RUN echo $ENV:PATH > pathenv_python35_64
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 RUN python.exe -m pip install delocate
@@ -122,7 +121,7 @@ RUN $ErrorActionPreference = 'Stop'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.6.6.exe -ArgumentList '/quiet';
 
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36-32\Scripts;${ORIG_PATH}"
-RUN echo %PATH%>pathenv_python36_32
+RUN echo $ENV:PATH > pathenv_python36_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 RUN python.exe -m pip install delocate
@@ -134,7 +133,7 @@ RUN $ErrorActionPreference = 'Stop'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.6.6-amd64.exe -ArgumentList '/quiet';
 
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python36\Scripts;${ORIG_PATH}"
-RUN echo %PATH%>pathenv_python36_64
+RUN echo $ENV:PATH > pathenv_python36_64
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 RUN python.exe -m pip install delocate
@@ -145,7 +144,7 @@ RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.7.0.exe -ArgumentList '/quiet';
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37-32;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37-32\Scripts;${ORIG_PATH}"
-RUN echo %PATH%>pathenv_python37_32
+RUN echo $ENV:PATH > pathenv_python37_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 RUN python.exe -m pip install delocate
@@ -157,7 +156,7 @@ RUN $ErrorActionPreference = 'Stop'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\python-3.7.0-amd64.exe -ArgumentList '/quiet';
 
 ENV PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python37\Scripts;${ORIG_PATH}"
-RUN echo %PATH%>pathenv_python37_64
+RUN echo $ENV:PATH > pathenv_python37_64
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 
@@ -167,7 +166,7 @@ RUN Start-Process msiexec.exe -ArgumentList '/i', 'python-2.7.15.msi', '/quiet',
 RUN move C:\Python27 C:\Python27-32
 ENV PYTHONIOENCODING 'UTF-8'
 ENV PATH="C:\Python27-32;C:\Python27-32\Scripts;${ORIG_PATH}"
-RUN echo %PATH%>pathenv_python27_32
+RUN echo $ENV:PATH > pathenv_python27_32
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 
@@ -178,7 +177,7 @@ RUN Start-Process msiexec.exe -ArgumentList '/i', 'python-2.7.15.amd64.msi', '/q
 RUN move C:\Python27 C:\Python27-64
 ENV PYTHONIOENCODING 'UTF-8'
 ENV PATH="C:\Python27-64;C:\Python27-64\Scripts;${ORIG_PATH}"
-RUN echo %PATH%>pathenv_python27_64
+RUN echo $ENV:PATH > pathenv_python27_64
 RUN python.exe -m pip install numpy
 RUN python.exe -m pip install wheel
 
