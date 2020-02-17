@@ -1,5 +1,5 @@
 # Tried this but didn't help: FROM quay.io/pypa/manylinux2010_x86_64 AS manylinux1_x86_64_boost
-FROM quay.io/pypa/manylinux1_x86_64 AS manylinux1_x86_64_boost
+FROM quay.io/pypa/manylinux2014_x86_64 AS manylinux1_x86_64_boost
 ## from the folder with this file and the context execute
 ## docker build -t manylinux1_x86_64_boost -f Dockerfile.dockerfile .
 ENTRYPOINT ["/bin/bash", "-c"]

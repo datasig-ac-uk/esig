@@ -773,6 +773,7 @@ class InstallationConfiguration(object):
 
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
+            # todo: doesn't the following else: clause get consumed by the 'if' statement above?
         # Default to Linux -- probably a good assumption to make.
         else:
             include_directory = {

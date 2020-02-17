@@ -21,7 +21,7 @@ docker pull nbarlow/esig_builder_windows:latest
 ### Get esig source
 
 Get the ```esig``` source code as a ```.tar.gz``` file.  You can download
-the latest released version from the [PyPi downloads page](https://pypi.org/project/esig/#files)
+the latest released version from the [PyPI downloads page](https://pypi.org/project/esig/#files)
 and put it in this directory.
 
 ### Supported python versions
