@@ -1,4 +1,4 @@
-# Top-level script for building esig for MacOS.
+# Top-level script for building esig for Windows.
 # Python wheels will be created for Python versions specified in python_versions.txt.
 
 # Build docker image.

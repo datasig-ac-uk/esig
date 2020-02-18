@@ -8,11 +8,6 @@
 
 Run the literate script `build-wheels.ps1`.
 
-### Supported python versions
-
-The list of targets (python version, and 32- or 64-bit) is in the text file ```python_versions.txt```.
-Currently the list of versions is: 2.7, 3.5, 3.6, 3.7, all in both 32- and 64-bit.
-
 ### Build esig wheels in the docker container
 
 Run the following command from Windows Command Prompt, from this directory:
