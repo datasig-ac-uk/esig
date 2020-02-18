@@ -12,3 +12,5 @@
 # batch script.
 docker build -t esig_builder_windows -f Dockerfile.dockerfile .
 
+# Get esig source.
+../sdist.ps1

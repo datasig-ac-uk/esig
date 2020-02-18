@@ -4,11 +4,9 @@
 
 [Docker for Windows](https://www.docker.com/docker-windows)
 
-### Get esig source
+### Building on Windows
 
-Get the ```esig``` source code as a ```.tar.gz``` file.  You can download
-the latest released version from the [PyPI downloads page](https://pypi.org/project/esig/#files)
-and put it in this directory.
+Run the literate script `build-wheels.ps1`.
 
 ### Supported python versions
 
