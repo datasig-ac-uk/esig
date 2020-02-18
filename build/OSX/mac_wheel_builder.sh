@@ -1,7 +1,15 @@
 #!/bin/bash
 
-### script to build python wheels for the esig package, adapted from
+### script to build Python wheels for the esig package, adapted from
 ### Daniel Wilson-Nunn's original script.
+#
+# - create and activate a virtual environment
+# - install python dependencies
+# - compile the Python wheel
+# - "delocate" the wheel, i.e. combine other dependencies, to give a portable binary
+# - create another virtual environment and install the newly created wheel
+# - run the esig unit tests
+# - if the tests pass, place wheel in wheelhouse subdirectory
 
 p=$1 # Python version
 

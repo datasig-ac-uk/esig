@@ -8,6 +8,8 @@ brew install boost
 brew install pyenv
 brew install pyenv-virtualenv
 brew install openssl
+
+# Python versions.
 source install_all_python_versions.sh
 
 # Get esig sources.
@@ -15,6 +17,7 @@ source ../sdist.sh build/OSX
 
 # Wheels that pass their tests will be placed here.
 rm -rf wheelhouse
+
 
 # Build the esig wheels.
 for p in $(cat python_versions.txt); do
