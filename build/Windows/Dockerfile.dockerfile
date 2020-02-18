@@ -62,7 +62,7 @@ RUN copy .\local\boost_1_68_0\lib32-msvc-9.0\*.lib .\boost\boost_1_68_0\win32\li
 
 ######### VISUAL STUDIO ##############################
 
-## download and install visual studio C++ compiler for python 2.7
+## download and install visual studio C++ compiler for Python 2.7
 RUN powershell "Invoke-WebRequest https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi -OutFile .\VCForPython27.msi"
 # TODO: Use Start-Processs -Wait here
 RUN msiexec.exe /i VCForPython27.msi /quiet
@@ -83,7 +83,7 @@ RUN $ErrorActionPreference = 'Stop'; \
 
 ####### PYTHON #########################################
 
-## Will modify the PATH several times, so store the original one here so that we can go back to it inbetween doing different python versions
+## Will modify the PATH several times, so store the original one here so that we can go back to it in between different python versions
 # Why not just read ENV:PATH?
 ENV ORIG_PATH="C:\Windows\system32;C:\Windows;C:\Windows\System32\Wbem;C:\Windows\System32\WindowsPowerShell\v1.0\;C:\ProgramData\chocolatey\bin;C:\Users\ContainerAdministrator\AppData\Local\Microsoft\WindowsApps"
 

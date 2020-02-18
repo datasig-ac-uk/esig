@@ -13,4 +13,5 @@
 docker build -t esig_builder_windows -f Dockerfile.dockerfile .
 
 # Get esig source.
-../sdist.ps1
+# TODO: can't do this on Windows as we don't have Python installed. Maybe we should look at building
+# wheels directly from sources.
