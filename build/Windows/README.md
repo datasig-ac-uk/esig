@@ -1,22 +1,8 @@
 ## Building esig for Windows
 
-### Prerequisites - docker-for-windows
+### Prerequisites
 
-Instructions for installing docker-for-windows can be found [here](https://www.docker.com/docker-windows)
-
-### Build or pull the docker image
-
-To build the docker image, run the command
-```
-docker build -t esig_builder_windows -f Dockerfile.dockerfile .
-```
-This will take a long time, and will result in a big (>70GB) docker image.  
-
-You can alternatively pull a pre-built image from Dockerhub with:
-```
-docker pull nbarlow/esig_builder_windows:latest
-```
-(Again, note that this image is large, so ensure you have sufficient disk space).  If you do this, replace ```esig_builder_windows``` with ```nbarlow/esig_builder_windows:latest``` in the ```build_all_versions.bat``` batch script.
+[Docker for Windows](https://www.docker.com/docker-windows)
 
 ### Get esig source
 

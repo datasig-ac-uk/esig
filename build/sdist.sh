@@ -7,7 +7,6 @@
 
 rm *.tar.gz
 build_dir=$PWD
-echo WIBBLE: $build_dir
 pushd ../.. # need to run in same directory as setup.py
 python setup.py sdist --dist-dir=$build_dir
 rm -rf esig.egg-info

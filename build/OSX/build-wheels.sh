@@ -4,6 +4,7 @@
 
 # esig needs `boost`. Packages `pyenv` and `pyenv-virtualenv` are needed for the script below
 # to build for multiple Python versions. Python 3.7 requires `openssl`.
+# TODO: avoid Homebrew checking for updates
 brew install boost
 brew install pyenv
 brew install pyenv-virtualenv
