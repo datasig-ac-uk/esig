@@ -678,11 +678,13 @@ class InstallationConfiguration(object):
         # Add Python's include directory.
         return_list.append(sysconfig.get_python_inc())
         
-        # Include the package's src directory so that the compiler can locate the libalgebra files.
+        # libalgebra sources + wrapper code for Python.
         if self.platform == PLATFORMS.WINDOWS:
             return_list.append('.\\src\\')
+            return_list.append('.\\libalgebra\\')
         else:
             return_list.append('./src/')
+            return_list.append('./libalgebra')
         
         # Append any command-line supplied arguments to the list
         if self.__include_dirs is not None:
@@ -773,7 +775,6 @@ class InstallationConfiguration(object):
 
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
-            # todo: doesn't the following else: clause get consumed by the 'if' statement above?
         # Default to Linux -- probably a good assumption to make.
         else:
             include_directory = {
