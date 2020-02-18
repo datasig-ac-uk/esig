@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: esig
-Version: 0.6.31
+Version: 0.7.0
 Summary: This package provides "rough path" tools for analysing vector time series.
 Home-page: http://esig.readthedocs.io/en/latest/
 Author: Terry Lyons
