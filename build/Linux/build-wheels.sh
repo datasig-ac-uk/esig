@@ -19,8 +19,8 @@ docker build -t esig_builder_linux_x86_64 -f Dockerfile_x86_64.dockerfile .
 rm *.tar.gz
 pushd ../.. # need to run in same directory as setup.py
 python setup.py sdist --dist-dir=build/Linux
-popd
 rm -rf esig.egg-info
+popd
 
 # Build the esig wheels.
 # The `linux_wheel_maker.sh` script is run inside the docker container, and performs the steps to 
