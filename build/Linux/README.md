@@ -1,3 +1,5 @@
+## Building esig for Linux
+
 ### Prerequisites: Docker
 
 This process relies on having [Docker](https://docs.docker.com/)
@@ -5,7 +7,7 @@ installed. There are minor differences in the Docker commands to
 run if you are using Windows (and Docker for Windows) or a POSIX system, but
 the Dockerfiles themselves are identical.
 
-### To build on Linux or OSX.
+### To build on Linux or OSX
 
 Run the literate script `build-wheels.sh`.
 
