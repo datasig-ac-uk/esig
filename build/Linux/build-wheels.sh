@@ -2,7 +2,10 @@
 
 # Top-level script for building esig for Linux on MacOS or Linux.
 # Python wheels will be created for 64-bit (x86_64) and for 32-bit (i686), for python versions
-# specified in python_versions.txt, and placed in the `wheelhouse/` directory.
+# specified in python_versions.txt.
+
+# Wheels that pass their tests will be placed here.
+rm -rf wheelhouse
 
 # Build Docker images. 
 # This will be quick if there is an image already cached.
