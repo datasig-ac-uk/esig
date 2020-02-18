@@ -18,7 +18,6 @@ source ../sdist.sh build/OSX
 # Wheels that pass their tests will be placed here.
 rm -rf wheelhouse
 
-
 # Build the esig wheels.
 for p in $(cat python_versions.txt); do
    . mac_wheel_builder.sh $p
