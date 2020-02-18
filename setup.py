@@ -38,7 +38,7 @@ setup(
     long_description=configuration.long_description,
     
     include_package_data=True,
-    packages=find_packages(),  # Used for bdist_wheel.
+    packages=find_packages(exclude=[".DS_Store"]),  # Used for bdist_wheel.
     test_suite='esig.tests.get_suite',
 
     package_data={
