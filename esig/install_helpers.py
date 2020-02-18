@@ -591,7 +591,7 @@ class InstallationConfiguration(object):
             None
         """
         if not ComponentChecker.check_python_version():
-            error_message = ["Your version of Python is incompatable with esig.",
+            error_message = ["Your version of Python is incompatible with esig.",
                              "At a minimum, you require version {version}. Please consider upgrading and try again.".format(
                                  version='.'.join(str(x) for x in MINIMUM_PYTHON_VERSION))]
                              
