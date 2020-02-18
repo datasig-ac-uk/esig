@@ -1,11 +1,8 @@
 #!/bin/bash
 
 # Top-level script for building esig for Linux on MacOS or Linux.
-# Python wheels will be created for 64-bit (x86_64) and for 32-bit (i686), for python versions
+# Python wheels will be created for 64-bit (x86_64) and for 32-bit (i686), for Python versions
 # specified in python_versions.txt.
-
-# Wheels that pass their tests will be placed here.
-rm -rf wheelhouse
 
 # Build Docker images. 
 # This will be quick if there is an image already cached.
@@ -21,6 +18,9 @@ pushd ../.. # need to run in same directory as setup.py
 python setup.py sdist --dist-dir=build/Linux
 rm -rf esig.egg-info
 popd
+
+# Wheels that pass their tests will be placed here.
+rm -rf wheelhouse
 
 # Build the esig wheels.
 # The `linux_wheel_maker.sh` script is run inside the docker container, and performs the steps to 
