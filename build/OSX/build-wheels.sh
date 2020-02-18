@@ -8,6 +8,7 @@ brew install boost
 brew install pyenv
 brew install pyenv-virtualenv
 brew install openssl
+. install_all_python_versions.sh
 
 # Get esig sources.
 rm *.tar.gz
@@ -18,10 +19,6 @@ popd
 
 # Wheels that pass their tests will be placed here.
 rm -rf wheelhouse
-
-# How persistent is this URL?
-wget --no-clobber https://files.pythonhosted.org/packages/7c/4f/d0dd6fd1054110efc73ae745036fb57e37017ed45ed449bf472f92197024/esig-0.6.31.tar.gz
-. install_all_python_versions.sh
 
 # Build the esig wheels.
 for p in $(cat python_versions.txt); do
