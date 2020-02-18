@@ -10,14 +10,7 @@ docker build -t esig_builder_linux_i686 -f Dockerfile_i686.dockerfile .
 docker build -t esig_builder_linux_x86_64 -f Dockerfile_x86_64.dockerfile .
 
 # Get esig sources.
-# Previously we got this as a .tar.gz from (https://pypi.org/project/esig/#files), but now we build
-# from the local sources. We are now dependent on the local Python version to build the source
-# distribution; maybe we should build the wheels directly from sources instead?
-rm *.tar.gz
-pushd ../.. # need to run in same directory as setup.py
-python setup.py sdist --dist-dir=build/Linux
-rm -rf esig.egg-info
-popd
+source ../sdist.sh build/Linux
 
 # Wheels that pass their tests will be placed here.
 rm -rf wheelhouse

@@ -8,14 +8,10 @@ brew install boost
 brew install pyenv
 brew install pyenv-virtualenv
 brew install openssl
-. install_all_python_versions.sh
+source install_all_python_versions.sh
 
 # Get esig sources.
-rm *.tar.gz
-pushd ../.. # need to run in same directory as setup.py
-python setup.py sdist --dist-dir=build/OSX
-rm -rf esig.egg-info
-popd
+source ../sdist.sh build/OSX
 
 # Wheels that pass their tests will be placed here.
 rm -rf wheelhouse

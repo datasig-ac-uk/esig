@@ -10,11 +10,6 @@ Python virtualenv environments.
 
 This process assumes that `brew` is installed.
 
-### Get the esig source code
-
-The ```esig``` source code should be provided in a ```.tar.gz``` file.  You can download
-the latest released version from the [PyPi downloads page](https://pypi.org/project/esig/#files).
-
 ### Python versions
 
 The ```esig``` package is currently built for the python versions listed in
