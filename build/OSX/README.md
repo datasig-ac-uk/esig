@@ -1,25 +1,14 @@
-## Building esig for OSX.
+## Building esig for OSX
 
 It is not straightforward (and arguably not legal) to run OSX in a Docker
-container, so the procedure here is run directly on Mac, using
-python virtualenv environments.
+container, so the procedure here is run directly on a Mac, using
+Python virtualenv environments.
+
+### To build on OSX
 
 ### Prerequisites
 
-It is necessary to have ```boost``` installed in order to build esig.
-For the script below, in order to build for many python versions, ```pyenv```
-and ```pyenv-virtualenv``` are used.  
-Furthermore, python 3.7 requires ```openssl``` to be installed.
-
-All of these can be installed easily
-via homebrew:
-
-```
-brew install boost
-brew install pyenv
-brew install pyenv-virtualenv
-brew install openssl
-```
+This process assumes that `brew` is installed.
 
 ### Get the esig source code
 
