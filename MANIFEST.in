@@ -6,6 +6,6 @@ include esig/ERROR_MESSAGE
 include src/*.h
 include src/*.c
 include src/*.cpp
-include src/addons/*.h
-include src/libalgebra/*.h
+include libalgebra/addons/*.h
+include libalgebra/libalgebra/*.h
 exclude .DS_Store
