@@ -4,6 +4,7 @@
 
 # esig needs `boost`. Packages `pyenv` and `pyenv-virtualenv` are needed for the script below
 # to build for multiple Python versions. Python 3.7 requires `openssl`.
+# TODO: avoid Homebrew checking for updates
 brew install boost
 brew install pyenv
 brew install pyenv-virtualenv
@@ -13,7 +14,7 @@ brew install openssl
 source install_all_python_versions.sh
 
 # Get esig sources.
-source ../sdist.sh build/OSX
+source ../sdist.sh
 
 # Wheels that pass their tests will be placed here.
 rm -rf wheelhouse

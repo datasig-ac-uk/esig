@@ -74,6 +74,6 @@ fi
 pyenv deactivate
 
 # cleanup
-# rm -fr $WORKDIR
-# rm -fr $TMPDIR
-# rm -fr $TESTDIR
+rm -fr $WORKDIR
+rm -fr $TMPDIR
+rm -fr $TESTDIR
