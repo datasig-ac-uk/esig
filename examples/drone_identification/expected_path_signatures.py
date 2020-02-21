@@ -109,7 +109,8 @@ class ExpectedSignatureCalculator():
         self.noise_signal_power = incident_signal_power / (10 ** (signal_to_noise_ratio / 10))
 
     @cache_result
-    def compute_for_drone(self, rpm, speed, d, z, proportion, random_state=None):
+    def compute_expected_signature_for_drone(self, rpm, speed, d, z, proportion,
+                                             random_state=None):
         """
         Estimate the expected signature of our drone model.
 
@@ -132,7 +133,7 @@ class ExpectedSignatureCalculator():
         return self._estimate_expected_path_signature(reflected_signals)
 
     @cache_result
-    def compute_for_nondrone(self, speed, z, random_state=None):
+    def compute_expected_signature_for_nondrone(self, speed, z, random_state=None):
         """
         Estimate the expected signature of a non-drone object.
 
@@ -147,6 +148,13 @@ class ExpectedSignatureCalculator():
 
         return self._estimate_expected_path_signature(reflected_signals)
 
+    def compute_reflected_signals_for_drone(self, rpm, speed, d, z, proportion,
+                                            random_state=None):
+        return list(self._generate_drone_reflections(rpm, speed, d, z, proportion,
+                                                     random_state=None))
+
+    def compute_reflected_signals_for_nondrone(self, speed, z, random_state=None):
+        return list(self._generate_nondrone_reflections(speed, z, random_state))
 
     def _generate_drone_reflections(self, rpm, speed, d, z, proportion, random_state=None):
         if random_state is not None:
