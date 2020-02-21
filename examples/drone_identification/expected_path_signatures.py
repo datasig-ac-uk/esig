@@ -6,6 +6,7 @@ Jupyter notebook drone_identification.ipynb.
 """
 
 import hashlib
+import itertools
 import json
 import os
 import pickle
