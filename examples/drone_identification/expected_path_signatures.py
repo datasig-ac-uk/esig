@@ -62,7 +62,6 @@ class ExpectedSignatureCalculator():
     Class for computing the expected path signatures of drone and non-drone objects.
     """
     # TODO Variable name -- review r0 vs r (see markdown formulae)
-    # TODO Introduce additive noise?
 
     # Define constants
     C = scipy.constants.speed_of_light
@@ -78,9 +77,8 @@ class ExpectedSignatureCalculator():
     N_SAMPLES = 10**5  # Number of samples per signal to generate
     T0 = 0  # Initial time
 
-    def __init__(self, n_incident_signals, truncation_level,
-                 use_lead_lag_transformation=False, signal_to_noise_ratio=40):
-        # TODO Omit default parameter for SNR?
+    def __init__(self, n_incident_signals=3000, truncation_level=3,
+                 use_lead_lag_transformation=True, signal_to_noise_ratio=40):
         """
         Parameters
         ----------
@@ -109,8 +107,8 @@ class ExpectedSignatureCalculator():
         incident_signal_power = self.A ** 2 / 2
         self.noise_signal_power = incident_signal_power / (10 ** (signal_to_noise_ratio / 10))
 
-    # @cache_result
-    def compute_for_drone(self, rpm, speed, d, z, proportion):
+    @cache_result
+    def compute_for_drone(self, rpm, speed, d, z, proportion, random_state=None):
         """
         Estimate the expected signature of our drone model.
 
@@ -127,12 +125,13 @@ class ExpectedSignatureCalculator():
         proportion : float
             Proportion of signals which hit the drone's body.
         """
-        reflected_signals = self._compute_drone_reflections(rpm, speed, d, z, proportion)
+        reflected_signals = self._generate_drone_reflections(rpm, speed, d, z, proportion,
+                                                             random_state)
 
         return self._estimate_expected_path_signature(reflected_signals)
 
-    # @cache_result
-    def compute_for_nondrone(self, speed, z):
+    @cache_result
+    def compute_for_nondrone(self, speed, z, random_state=None):
         """
         Estimate the expected signature of a non-drone object.
 
@@ -143,31 +142,37 @@ class ExpectedSignatureCalculator():
         z : float
             Static object's distance in relation to the observer.
         """
-        reflected_signals = self._compute_nondrone_reflections(speed, z)
+        reflected_signals = self._generate_nondrone_reflections(speed, z, random_state)
 
         return self._estimate_expected_path_signature(reflected_signals)
 
 
-    def _compute_drone_reflections(self, rpm, speed, d, z, proportion):
+    def _generate_drone_reflections(self, rpm, speed, d, z, proportion, random_state=None):
+        if random_state is not None:
+            np.random.seed(random_state)
+
         # Number of incident signals that reflect off drone body
         n_body_hits = int(self.n_incident_signals * proportion)
         # Number of incident signals that reflect off drone propeller
         n_propeller_hits = self.n_incident_signals - n_body_hits
 
-        # List of reflected signals produced by propeller
-        propeller_reflections = [self._compute_propeller_reflection(speed, rpm, z, d)
-                                 for i in range(n_propeller_hits)]
+        # Generate reflected signals produced by propeller
+        propeller_reflections = (self._compute_propeller_reflection(speed, rpm, z, d)
+                                 for _ in range(n_propeller_hits))
 
-        # List of signatures from obtained incident signals reflected off body
-        body_reflections = [self._compute_body_reflection(speed, z)
-                            for i in range(n_body_hits)]
+        # Generate reflected signals produced by body
+        body_reflections = (self._compute_body_reflection(speed, z)
+                            for _ in range(n_body_hits))
 
-        return propeller_reflections + body_reflections
+        return itertools.chain(propeller_reflections, body_reflections)
 
-    def _compute_nondrone_reflections(self, speed, z):
-        # List of reflected signals from obtained incident signals reflected off body
-        return [self._compute_body_reflection(speed, z)
-                for i in range(self.n_incident_signals)]
+    def _generate_nondrone_reflections(self, speed, z, random_state=None):
+        if random_state is not None:
+            np.random.seed(random_state)
+
+        # Generate reflected signals produced by body
+        return (self._compute_body_reflection(speed, z)
+                for _ in range(self.n_incident_signals))
 
     def _compute_propeller_reflection(self, speed, rpm, z, d):
         # Random angle sampled uniformly from [0, 360)
@@ -204,10 +209,9 @@ class ExpectedSignatureCalculator():
                                                   2 * self.K * (r_0 - v * self.T0) /
                                                   (1 + v / self.C))
 
-        # TODO
         # Introduce additive Gaussian white noise
-        # reflected_signal += np.random.randn(*reflected_signal.shape) *
-        # np.sqrt(self.noise_signal_power)
+        reflected_signal += np.random.randn(*reflected_signal.shape) * \
+            np.sqrt(self.noise_signal_power)
 
         return reflected_signal
 
