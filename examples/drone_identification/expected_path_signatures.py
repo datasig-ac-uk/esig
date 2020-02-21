@@ -7,12 +7,10 @@ Jupyter notebook drone_identification.ipynb.
 
 import hashlib
 import json
-import multiprocessing
 import os
 import pickle
 
 import esig.tosig
-import joblib
 import numpy as np
 import scipy.constants
 
@@ -81,7 +79,6 @@ class ExpectedSignatureCalculator():
     T0 = 0  # Initial time
 
     def __init__(self, n_incident_signals, truncation_level,
-                 n_processes=multiprocessing.cpu_count(),
                  use_lead_lag_transformation=False, signal_to_noise_ratio=40):
         # TODO Omit default parameter for SNR?
         """
@@ -91,9 +88,6 @@ class ExpectedSignatureCalculator():
             Number of incident signals to generate.
         truncation_level : int
             Path signature trucation level.
-        n_processes : int
-            Desired number number of parallel processes. The default is
-            multiprocessing.cpu_count().
         use_lead_lag_transformation : bool
             Whether to apply the partial lead-lag transformation.
         signal_to_noise_ratio : float
@@ -101,7 +95,6 @@ class ExpectedSignatureCalculator():
         """
         self.n_incident_signals = n_incident_signals
         self.truncation_level = truncation_level
-        self.n_processes = n_processes
         self.use_lead_lag_transformation = use_lead_lag_transformation
 
         # Time interval within which we consider incident signal
@@ -139,18 +132,18 @@ class ExpectedSignatureCalculator():
         # Number of incident signals that reflect off drone propeller
         n_propeller_hits = self.n_incident_signals - n_body_hits
 
-        # Array of signatures obtained from incident signals reflected off propeller
-        propeller_signatures = self._repeat_in_parallel(self._compute_propeller_signature,
-                                                        n_propeller_hits,
-                                                        speed, rpm, z, d)
+        # List of signatures obtained from incident signals reflected off propeller
+        propeller_signatures = [self._compute_propeller_signature(speed, rpm, z, d)
+                                for i in range(n_propeller_hits)]
 
-        # Array of signatures from obtained incident signals reflected off body
-        body_signatures = self._repeat_in_parallel(self._compute_body_signature,
-                                                   n_body_hits,
-                                                   speed, z)
+        # List of signatures from obtained incident signals reflected off body
+        body_signatures = [self._compute_body_signature(speed, z)
+                           for i in range(n_body_hits)]
+
+        signatures = propeller_signatures + body_signatures
 
         # Estimate expected signature using empirical mean
-        return np.mean(np.vstack((propeller_signatures, body_signatures)), axis=0)
+        return np.mean(signatures, axis=0)
 
     @cache_result
     def compute_for_nondrone(self, speed, z):
@@ -165,16 +158,11 @@ class ExpectedSignatureCalculator():
             Static object's distance in relation to the observer.
         """
         # Array of signatures from obtained incident signals reflected off body
-        body_signatures = self._repeat_in_parallel(self._compute_body_signature,
-                                                   self.n_incident_signals,
-                                                   speed, z)
+        body_signatures = [self._compute_body_signature(speed, z)
+                           for i in range(self.n_incident_signals)]
 
         # Estimate expected signature using empirical mean
         return np.mean(body_signatures, axis=0)
-
-    def _repeat_in_parallel(self, function_to_repeat, n_repetitions, *function_args):
-        return joblib.Parallel(n_jobs=self.n_processes)(
-            joblib.delayed(function_to_repeat)(*function_args) for i in range(n_repetitions))
 
     def _compute_propeller_signature(self, speed, rpm, z, d):
         # Random angle sampled uniformly from [0, 360)
