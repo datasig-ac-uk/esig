@@ -109,7 +109,7 @@ class ExpectedSignatureCalculator():
         incident_signal_power = self.A ** 2 / 2
         self.noise_signal_power = incident_signal_power / (10 ** (signal_to_noise_ratio / 10))
 
-    @cache_result
+    # @cache_result
     def compute_for_drone(self, rpm, speed, d, z, proportion):
         """
         Estimate the expected signature of our drone model.
@@ -127,28 +127,14 @@ class ExpectedSignatureCalculator():
         proportion : float
             Proportion of signals which hit the drone's body.
         """
-        # Number of incident signals that reflect off drone body
-        n_body_hits = int(self.n_incident_signals * proportion)
-        # Number of incident signals that reflect off drone propeller
-        n_propeller_hits = self.n_incident_signals - n_body_hits
+        reflected_signals = self._compute_drone_reflections(rpm, speed, d, z, proportion)
 
-        # List of signatures obtained from incident signals reflected off propeller
-        propeller_signatures = [self._compute_propeller_signature(speed, rpm, z, d)
-                                for i in range(n_propeller_hits)]
+        return self._estimate_expected_path_signature(reflected_signals)
 
-        # List of signatures from obtained incident signals reflected off body
-        body_signatures = [self._compute_body_signature(speed, z)
-                           for i in range(n_body_hits)]
-
-        signatures = propeller_signatures + body_signatures
-
-        # Estimate expected signature using empirical mean
-        return np.mean(signatures, axis=0)
-
-    @cache_result
+    # @cache_result
     def compute_for_nondrone(self, speed, z):
         """
-        Compute the expected signature of a non-drone object.
+        Estimate the expected signature of a non-drone object.
 
         Parameters
         ----------
@@ -157,28 +143,42 @@ class ExpectedSignatureCalculator():
         z : float
             Static object's distance in relation to the observer.
         """
-        # Array of signatures from obtained incident signals reflected off body
-        body_signatures = [self._compute_body_signature(speed, z)
-                           for i in range(self.n_incident_signals)]
+        reflected_signals = self._compute_nondrone_reflections(speed, z)
 
-        # Estimate expected signature using empirical mean
-        return np.mean(body_signatures, axis=0)
+        return self._estimate_expected_path_signature(reflected_signals)
 
-    def _compute_propeller_signature(self, speed, rpm, z, d):
+
+    def _compute_drone_reflections(self, rpm, speed, d, z, proportion):
+        # Number of incident signals that reflect off drone body
+        n_body_hits = int(self.n_incident_signals * proportion)
+        # Number of incident signals that reflect off drone propeller
+        n_propeller_hits = self.n_incident_signals - n_body_hits
+
+        # List of reflected signals produced by propeller
+        propeller_reflections = [self._compute_propeller_reflection(speed, rpm, z, d)
+                                 for i in range(n_propeller_hits)]
+
+        # List of signatures from obtained incident signals reflected off body
+        body_reflections = [self._compute_body_reflection(speed, z)
+                            for i in range(n_body_hits)]
+
+        return propeller_reflections + body_reflections
+
+    def _compute_nondrone_reflections(self, speed, z):
+        # List of reflected signals from obtained incident signals reflected off body
+        return [self._compute_body_reflection(speed, z)
+                for i in range(self.n_incident_signals)]
+
+    def _compute_propeller_reflection(self, speed, rpm, z, d):
         # Random angle sampled uniformly from [0, 360)
         theta = np.array(np.random.uniform(0, 360))
         # Random position sampled uniformly from [0, d/2), where d/2 is blade length
         p = np.array(np.random.uniform(0, d/2))
 
-        reflected_signal = self._compute_reflected_signal(speed, rpm, z, d, theta, p)
+        return self._compute_reflected_signal(speed, rpm, z, d, theta, p)
 
-        return self._compute_path_signature(self.incident_signal, reflected_signal)
-
-    def _compute_body_signature(self, speed, z):
-        reflected_signal = self._compute_reflected_signal(speed=speed, rpm=0, z=z, d=1,
-                                                          theta=0, p=0)
-
-        return self._compute_path_signature(self.incident_signal, reflected_signal)
+    def _compute_body_reflection(self, speed, z):
+        return self._compute_reflected_signal(speed=speed, rpm=0, z=z, d=1, theta=0, p=0)
 
     def _compute_reflected_signal(self, speed, rpm, z, d, theta, p):
         if np.isclose(theta, 90) or np.isclose(theta, 270):
@@ -210,6 +210,13 @@ class ExpectedSignatureCalculator():
         # np.sqrt(self.noise_signal_power)
 
         return reflected_signal
+
+    def _estimate_expected_path_signature(self, reflected_signals):
+        signatures = [self._compute_path_signature(self.incident_signal, ref)
+                      for ref in reflected_signals]
+
+        # Estimate expected signature using empirical mean
+        return np.mean(signatures, axis=0)
 
     def _compute_path_signature(self, incident_signal, reflected_signal):
         path = np.column_stack((incident_signal, reflected_signal))
