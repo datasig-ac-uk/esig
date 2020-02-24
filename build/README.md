@@ -6,7 +6,7 @@ Because of the complexity of the build process there is no CI set up yet for thi
 
 | | Linux x86_64        | Linux i686           | OSX  | Windows |
 | :-------------: | :-------------: |:-------------:| :-----:| :-----:|
-| Python 2.7 | ❌ |   |   | |
+| Python 2.7 | ❌ | ✔️  |   | |
 | Python 3.4 | ❌ |   |   |  |
 | Python 3.5 | ❌ | ✔️  | ✔️  | ❌ | 
 | Python 3.6 | ❌ | ✔️  | ✔️  | ❌ | 
@@ -26,7 +26,7 @@ Python 2.7 error on Linux x86_64:
   gcc: internal compiler error: Killed (program cc1plus)
 ````
 
-Python 3.4, 3.5 error on Linux x86_64:
+Python 3.4-3.7 error on Linux x86_64:
 ````
   src/libalgebra/_tensor_basis.h: In instantiation of ‘alg::_tensor_basis<No_Letters, DEPTH> alg::_tensor_basis<No_Letters, DEPTH>::operator*(const alg::_tensor_basis<No_Letters, DEPTH>&) const [with unsigned int No_Letters = 20u; unsigned int DEPTH = 3u]’:
   src/libalgebra/tensor_basis.h:150:23:   required from ‘alg::tensor_basis<SCA, n_letters, max_degree>::KEY alg::tensor_basis<SCA, n_letters, max_degree>::nextkey(const KEY&) const [with SCA = double; unsigned int n_letters = 20u; unsigned int max_degree = 3u; alg::tensor_basis<SCA, n_letters, max_degree>::KEY = alg::_tensor_basis<20u, 3u>]’
