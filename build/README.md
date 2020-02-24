@@ -12,7 +12,7 @@ CI is setup for Linux and OSX builds via GitHub actions; see the `.yml` files in
 
 Windows currently fails to build in the Azure VM. Current status:
 
-- prebuilt Docker images fail with ``filesystem layer verification failed for digest` error` (possibly to do with Azure storage)
+- prebuilt Docker images fail with ``filesystem layer verification failed for digest`` error (possibly to do with Azure storage)
 - building the Docker images from the new `mcr.microsoft.com/dotnet/framework/sdk:4.8` base image now works
 - running the build in the built image fails with two (hopefully minor errors)
   - no module named `pyparsing` building wheel
