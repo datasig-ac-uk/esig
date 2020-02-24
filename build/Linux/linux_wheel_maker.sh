@@ -26,7 +26,8 @@ for gz in $(ls esig*.gz);
 	     echo "Tests passed"
 	 else
 	     echo "Tests failed - removing wheel"
-             rm wheelhouse/$ver-$py-manylinux1_$arch.whl
+        rm wheelhouse/$ver-$py-manylinux1_$arch.whl
+		  exit 1
 	 fi
 	 deactivate
 	 rm -rf /tmp/$py/ ; # TODO: move this into the loop, for each file

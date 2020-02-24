@@ -14,6 +14,7 @@ pyenv virtualenv 3.5.5 sdist-env-3.5
 pyenv activate sdist-env-3.5
    echo "Python version for building source distribution:" 
    python --version
+   pip install cython # not present in GitHub macos-10.15 environment
    python setup.py sdist --dist-dir=$build_dir
 pyenv deactivate
 rm -rf esig.egg-info
