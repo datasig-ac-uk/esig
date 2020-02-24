@@ -7,7 +7,14 @@
 
 ### Building on Windows
 
-Run the literate script `build-wheels.ps1`.
+- start PowerShell (not PowerShell ISE)
+- run the literate script `build-wheels.ps1`
+
+To run in our Azure VM:
+  - go to `esig-builder` VM using Research Engineering subscription
+  - start VM
+  - wait for public IP address to become available
+  - connect over RDP using username `vm-admin` (⌘-1 on Mac to exit full screen)
 
 ### Build esig wheels in the docker container
 
