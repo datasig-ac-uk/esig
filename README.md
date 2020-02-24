@@ -2,9 +2,7 @@ The Python package [esig](https://pypi.org/project/esig/) provides a toolset (pr
 
 CI is work-in-progress; see [here](https://github.com/alan-turing-institute/esig/tree/master/build) for details.
 
-Linux build: ![](https://github.com/alan-turing-institute/esig/workflows/.github/workflows/build-Linux.yml/badge.svg)
-OSX build: ![](https://github.com/alan-turing-institute/esig/workflows/.github/workflows/build-OSX.yml/badge.svg)
-Windows build: no CI yet
+![](https://github.com/alan-turing-institute/esig/workflows/build-Linux/badge.svg)
+![](https://github.com/alan-turing-institute/esig/workflows/build-OSX/badge.svg)
 
-https://github.com/alan-turing-institute/esig/workflows/build-Linux/badge.svg
-https://github.com/alan-turing-institute/esig/workflows/build-OSX/badge.svg
+
