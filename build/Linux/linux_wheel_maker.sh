@@ -9,7 +9,6 @@ arch=$1
 
 for gz in $(ls esig*.gz);
  do ver=${gz%%.tar*};
- # previously we considered all Python versions in /opt/python, including 2.7 and 3.4
  for py in $( cat python_versions.txt ); do
  	 pyexe=/opt/python/$py/bin/python
 	 $pyexe -m pip install -U pip virtualenv
@@ -26,7 +25,8 @@ for gz in $(ls esig*.gz);
 	     echo "Tests passed"
 	 else
 	     echo "Tests failed - removing wheel"
-             rm wheelhouse/$ver-$py-manylinux1_$arch.whl
+        rm wheelhouse/$ver-$py-manylinux1_$arch.whl
+		  exit 1
 	 fi
 	 deactivate
 	 rm -rf /tmp/$py/ ; # TODO: move this into the loop, for each file

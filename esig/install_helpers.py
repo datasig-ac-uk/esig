@@ -684,7 +684,7 @@ class InstallationConfiguration(object):
             return_list.append('.\\libalgebra\\')
         else:
             return_list.append('./src/')
-            return_list.append('./libalgebra')
+            return_list.append('./libalgebra/')
         
         # Append any command-line supplied arguments to the list
         if self.__include_dirs is not None:

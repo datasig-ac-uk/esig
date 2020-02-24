@@ -65,10 +65,11 @@ pip install `ls ${TESTDIR}/*.whl`
 python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
 if [ $? -eq 0 ]
 then
-echo "Tests passed - copying wheel to $OUTPUTDIR"
-mv ${TESTDIR}/*.whl $OUTPUTDIR
+    echo "Tests passed - copying wheel to $OUTPUTDIR"
+    mv ${TESTDIR}/*.whl $OUTPUTDIR
 else
     echo "Tests failed - will not copy wheel to $OUTPUTDIR"
+    exit 1
 fi
 # deactivate this virtualenv
 pyenv deactivate

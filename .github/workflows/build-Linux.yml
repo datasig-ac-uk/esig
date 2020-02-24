@@ -1,4 +1,4 @@
-name: build-OSX
+name: build-Linux
 
 on: [push]
 
@@ -6,7 +6,7 @@ jobs:
 
   build:
 
-    runs-on: macos-10.15
+    runs-on: ubuntu-18.04
 
     steps:
     - uses: actions/checkout@v2
@@ -15,10 +15,9 @@ jobs:
         # use to build sdist
         python-version: "3.5.9"
     - name: Run build
-      shell: bash
       run: |
         git config --global url."https://github.com/".insteadOf "git@github.com:"
         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-        cd build/OSX && ./build-wheels.sh
+        cd build/Linux && ./build-wheels.sh
