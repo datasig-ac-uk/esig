@@ -26,6 +26,18 @@ Python 2.7 error on Linux x86_64:
   gcc: internal compiler error: Killed (program cc1plus)
 ````
 
+Python 3.4 error on Linux x86_64:
+````
+  src/libalgebra/_tensor_basis.h: In instantiation of ‘alg::_tensor_basis<No_Letters, DEPTH> alg::_tensor_basis<No_Letters, DEPTH>::operator*(const alg::_tensor_basis<No_Letters, DEPTH>&) const [with unsigned int No_Letters = 20u; unsigned int DEPTH = 3u]’:
+  src/libalgebra/tensor_basis.h:150:23:   required from ‘alg::tensor_basis<SCA, n_letters, max_degree>::KEY alg::tensor_basis<SCA, n_letters, max_degree>::nextkey(const KEY&) const [with SCA = double; unsigned int n_letters = 20u; unsigned int max_degree = 3u; alg::tensor_basis<SCA, n_letters, max_degree>::KEY = alg::_tensor_basis<20u, 3u>]’
+  src/ToSig.cpp:219:31:   required from ‘std::string {anonymous}::tensorbasis2stringT() [with long unsigned int WIDTH = 20ul; long unsigned int DEPTH = 3ul; std::string = std::basic_string<char>]’
+  src/switch.h:500:16:   required from here
+  src/libalgebra/_tensor_basis.h:202:70: warning: dereferencing type-punned pointer will break strict-aliasing rules [-Wstrict-aliasing]
+     reinterpret_cast<fp_info<word_t>::unsigned_int_type&>(dPowerOfTwo) &= fp_info<word_t>::mantissa_mask_zeroes;
+                                                                        ^
+  gcc: internal compiler error: Killed (program cc1plus)
+````
+
 ### Other notes relating to build problems
 - numpy doesn't seem supported on Python versions prior to 3.5
 - we install the "latest" numpy (although not sure how `pip install` determines latest version when running with a particular Python virtualenv)
