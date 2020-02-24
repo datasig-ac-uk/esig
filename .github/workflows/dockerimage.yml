@@ -12,4 +12,4 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build the Docker image
       run: |
-        cd build/Linux && pwd && ls -la && docker build -t $IMAGE_NAME -f Dockerfile_i686.dockerfile .
+        cd build/Linux && pwd && ls -la && docker build -t esig_builder_linux_i686 -f Dockerfile_i686.dockerfile .
