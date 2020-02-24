@@ -11,4 +11,6 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Build the Docker image
-      run: cd build/Linux; docker build -t $IMAGE_NAME -f Dockerfile_i686.dockerfile .
+      run: |
+        pwd
+        cd build/Linux; docker build -t $IMAGE_NAME -f Dockerfile_i686.dockerfile .
