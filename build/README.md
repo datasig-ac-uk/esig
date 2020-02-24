@@ -38,6 +38,3 @@ Python 3.4 error on Linux x86_64:
   gcc: internal compiler error: Killed (program cc1plus)
 ````
 
-### Other notes relating to build problems
-- numpy doesn't seem supported on Python versions prior to 3.5
-- we install the "latest" numpy (although not sure how `pip install` determines latest version when running with a particular Python virtualenv)
