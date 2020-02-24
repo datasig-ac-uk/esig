@@ -37,4 +37,6 @@ Python 3.4-3.7 error on Linux x86_64:
                                                                         ^
   gcc: internal compiler error: Killed (program cc1plus)
 ````
-
+This is the failing `gcc` command line:
+````gcc -pthread -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O3 -Wall -Wstrict-prototypes -fPIC -I/opt/python/cp35-cp35m/include/python3.5m -I./src/ -I/usr/include/boost148 -I/usr/include/ -I/opt/python/cp35-cp35m/include/python3.5m -I/opt/python/cp35-cp35m/lib/python3.5/site-packages/numpy/core/include -c src/ToSig.cpp -o build/temp.linux-x86_64-3.5/src/ToSig.o -Wno-unused-but-set-variable
+````
