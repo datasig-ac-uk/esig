@@ -1,13 +1,20 @@
 #!/bin/bash
 
 # Build source distribution. Run this script from appropriate build subdirectory (Linux or OSX).
-# Previously we got this as a .tar.gz from (https://pypi.org/project/esig/#files). This leaves us
-# dependent on the local Python version to build the source distribution, so at some point we might 
-# want to worry about that.
+# Previously we got this as a .tar.gz from (https://pypi.org/project/esig/#files). Use a virtualenv
+# at Python 3.5.5 to avoid depending on the local Python version (although requiring 3.5.5 to be
+# available is still not ideal).
 
 rm *.tar.gz
 build_dir=$PWD
 pushd ../.. # need to run in same directory as setup.py
-python setup.py sdist --dist-dir=$build_dir
+echo "Python version installed:" 
+python --version
+pyenv virtualenv 3.5.5 sdist-env-3.5
+pyenv activate sdist-env-3.5
+   echo "Python version for building source distribution:" 
+   python --version
+   python setup.py sdist --dist-dir=$build_dir
+pyenv deactivate
 rm -rf esig.egg-info
 popd
