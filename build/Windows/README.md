@@ -2,7 +2,8 @@
 
 ### Prerequisites
 
-[Docker for Windows](https://www.docker.com/docker-windows)
+- ensure [Docker for Windows](https://www.docker.com/docker-windows) is installed
+- ensure `libalgebra` submodule has been cloned
 
 ### Building on Windows
 
