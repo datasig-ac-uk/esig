@@ -10,6 +10,9 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        python-version: "3.5.5"
     - name: Run build
       run: |
         git config --global url."https://github.com/".insteadOf "git@github.com:"
