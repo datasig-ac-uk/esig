@@ -6,9 +6,19 @@ Because of the complexity of the build process there is no CI set up yet for thi
 
 | | Linux x86_64        | Linux i686           | OSX  | Windows |
 | :-------------: | :-------------: |:-------------:| :-----:| :-----:|
-| Python 2.7 | ✔️ | ✔️  |   | |
-| Python 3.4 | ✔️ | ✔️  |   |  |
+| Python 2.7 | ✔️ | ✔️  | ❌ | |
+| Python 3.4 | ✔️ | ✔️  | ❌ |  |
 | Python 3.5 | ✔️ | ✔️  | ✔️  | ❌ | 
 | Python 3.6 | ✔️ | ✔️  | ✔️  | ❌ | 
 | Python 3.7 | ✔️ | ✔️  | ✔️  | ❌ | 
 | Python 3.8 | ✔️ | ✔️  | ✔️  | ❌ | 
+
+### Python 2.7.10 and 3.4.8 error on OSX
+
+````
+  src/Cpp_ToSig.cpp:5:10: fatal error: 'string' file not found
+  #include <string>
+           ^~~~~~~~
+  2 warnings and 1 error generated.
+  error: command 'gcc' failed with exit status 1
+````
