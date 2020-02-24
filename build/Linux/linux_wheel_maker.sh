@@ -9,7 +9,6 @@ arch=$1
 
 for gz in $(ls esig*.gz);
  do ver=${gz%%.tar*};
- # previously we considered all Python versions in /opt/python, including 2.7 and 3.4
  for py in $( cat python_versions.txt ); do
  	 pyexe=/opt/python/$py/bin/python
 	 $pyexe -m pip install -U pip virtualenv
