@@ -7,6 +7,7 @@ Because of the complexity of the build process there is no CI set up yet for thi
 | | Linux x86_64        | Linux i686           | OSX  | Windows |
 | :-------------: | :-------------: |:-------------:| :-----:| :-----:|
 | Python 2.7 | ❌ |   |   | |
+| Python 2.7mu |  |   |   | |
 | Python 3.4 |  |   |   |  |
 | Python 3.5 | ❌ | ✔️  | ✔️  | ❌ | 
 | Python 3.6 | ❌ | ✔️  | ✔️  | ❌ | 
