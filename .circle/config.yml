@@ -1,0 +1,22 @@
+version: 2
+    jobs:
+      build:
+        environment:
+          IMAGE_NAME: esig_builder_linux_i686
+        docker:
+          - image: circleci/buildpack-deps:stretch
+        steps:
+          - checkout
+          - setup_remote_docker
+          - run:
+              name: Build Docker image for Linux i686
+              command: cd build/Linux; docker build -t $IMAGE_NAME -f Dockerfile_i686.dockerfile .
+    workflows:
+      version: 2
+      build-master:
+        jobs:
+          - build:
+              filters:
+                branches:
+                  only: master
+                  
