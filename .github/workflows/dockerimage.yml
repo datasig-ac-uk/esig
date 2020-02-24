@@ -13,4 +13,4 @@ jobs:
     - name: Build the Docker image
       run: |
         ls -la
-        cd build/Linux && docker build -t $IMAGE_NAME -f Dockerfile_i686.dockerfile .
+        cd build/Linux && pwd && ls -la && docker build -t $IMAGE_NAME -f Dockerfile_i686.dockerfile .
