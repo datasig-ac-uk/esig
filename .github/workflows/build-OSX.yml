@@ -13,4 +13,5 @@ jobs:
     - name: Run build
       run: |
         git submodule sync --recursive
+        git submodule update --init --recursive
         cd build/OSX && ./build-wheels.sh
