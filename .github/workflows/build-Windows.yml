@@ -22,3 +22,4 @@ jobs:
         echo $auth_header
 # Next step currently fails on Windows: 
         # git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        .\windows_wheel_maker.bat esig-0.6.31.tar.gz python35_32
