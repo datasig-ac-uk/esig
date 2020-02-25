@@ -67,8 +67,8 @@ RUN powershell "Invoke-WebRequest https://download.microsoft.com/download/7/9/6/
 # TODO: Use Start-Processs -Wait here
 RUN msiexec.exe /i VCForPython27.msi /quiet
 
-
-## visual studio 14 for python 3.5+
+## Previous comment suggested we were installing Visual Studio 14 for Python >= 3.5.
+## This seems to have been superceded by Visual Studio 2019 build tools.
 RUN powershell "wget.exe --no-check-certificate https://download.visualstudio.microsoft.com/download/pr/5426f054-a10a-441f-b8a9-f7135d58d59b/48510132eb9254121dd72072197308f6/vs_buildtools.exe"
 
 RUN $ErrorActionPreference = 'Stop'; \
