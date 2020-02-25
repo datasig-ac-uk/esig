@@ -24,4 +24,12 @@ rm -rf wheelhouse
 for arch in i686 x86_64
 do 
    docker run --rm -v ${PWD}:/data esig_builder_linux_${arch} "source ~/.bashrc; cd /data; source linux_wheel_maker.sh $arch"
+      if [ $? -eq 0 ]
+   then
+      echo "Successfully created wheel"
+   else
+      echo "Failed to create wheel"
+      exit 1
+   fi
+
 done
