@@ -1,7 +1,7 @@
 @echo
 REM run from C:\data\ directory inside the esig_builder_windows docker container.
 REM usage: .\build_esig_in_docker.bat <esig_tar_gz_filename> <python_version_string e.g. python37_64>
-FOR %%A IN (`dir *.whl`) DO del %%A
+del *.whl
 if not exist "C:\data\output" mkdir C:\data\output
 python.exe -m pip install virtualenv
 REM build the wheel
