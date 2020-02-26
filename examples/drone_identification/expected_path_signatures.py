@@ -105,7 +105,7 @@ class ExpectedSignatureCalculator():
         self.signal_to_noise_ratio = signal_to_noise_ratio
         if signal_to_noise_ratio:
             incident_signal_power = self.A ** 2 / 2
-            self.noise_signal_power = incident_signal_power /
+            self.noise_signal_power = incident_signal_power / \
                 (10 ** (signal_to_noise_ratio / 10))
 
     @cache_result
@@ -151,7 +151,7 @@ class ExpectedSignatureCalculator():
     def compute_reflected_signals_for_drone(self, rpm, speed, d, z, proportion,
                                             random_state=None):
         return list(self._generate_drone_reflections(rpm, speed, d, z, proportion,
-                                                     random_state=None))
+                                                     random_state))
 
     def compute_reflected_signals_for_nondrone(self, speed, z, random_state=None):
         return list(self._generate_nondrone_reflections(speed, z, random_state))
