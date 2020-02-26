@@ -62,8 +62,6 @@ class ExpectedSignatureCalculator():
     """
     Class for computing the expected path signatures of drone and non-drone objects.
     """
-    # TODO Variable name -- review r0 vs r (see markdown formulae)
-
     # Define constants
     C = scipy.constants.speed_of_light
     PI = scipy.constants.pi
@@ -79,7 +77,7 @@ class ExpectedSignatureCalculator():
     T0 = 0  # Initial time
 
     def __init__(self, n_incident_signals=3000, truncation_level=3,
-                 use_lead_lag_transformation=True, signal_to_noise_ratio=40):
+                 use_lead_lag_transformation=True, signal_to_noise_ratio=None):
         """
         Parameters
         ----------
@@ -104,9 +102,11 @@ class ExpectedSignatureCalculator():
 
         self.incident_signal = self.A * np.sin(self.OMEGA * t - self.K * self.X0)
 
-        # TODO need to mention how this works in documentation.
-        incident_signal_power = self.A ** 2 / 2
-        self.noise_signal_power = incident_signal_power / (10 ** (signal_to_noise_ratio / 10))
+        self.signal_to_noise_ratio = signal_to_noise_ratio
+        if signal_to_noise_ratio:
+            incident_signal_power = self.A ** 2 / 2
+            self.noise_signal_power = incident_signal_power /
+                (10 ** (signal_to_noise_ratio / 10))
 
     @cache_result
     def compute_expected_signature_for_drone(self, rpm, speed, d, z, proportion,
@@ -218,9 +218,10 @@ class ExpectedSignatureCalculator():
                                                   2 * self.K * (r_0 - v * self.T0) /
                                                   (1 + v / self.C))
 
-        # Introduce additive Gaussian white noise
-        reflected_signal += np.random.randn(*reflected_signal.shape) * \
-            np.sqrt(self.noise_signal_power)
+        if self.signal_to_noise_ratio:
+            # Introduce additive Gaussian white noise
+            reflected_signal += np.random.randn(*reflected_signal.shape) * \
+                np.sqrt(self.noise_signal_power)
 
         return reflected_signal
 
