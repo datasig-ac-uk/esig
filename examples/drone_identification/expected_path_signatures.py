@@ -233,14 +233,14 @@ class ExpectedSignatureCalculator():
         return np.mean(signatures, axis=0)
 
     def _compute_path_signature(self, incident_signal, reflected_signal):
-        path = np.column_stack((incident_signal, reflected_signal))
+        stream = np.column_stack((incident_signal, reflected_signal))
 
         if self.use_lead_lag_transformation:
             # Compute (partial) lead-lag transformation
-            path = np.repeat(path, 2, axis=0)
-            path = np.column_stack((path[1:, :], path[:-1, 1]))
+            stream = np.repeat(stream, 2, axis=0)
+            stream = np.column_stack((stream[1:, :], stream[:-1, 1]))
 
-        return esig.tosig.stream2sig(path, self.truncation_level)
+        return esig.tosig.stream2sig(stream, self.truncation_level)
 
     def __str__(self):
         """
