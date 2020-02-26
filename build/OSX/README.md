@@ -6,7 +6,8 @@ Python virtualenv environments.
 
 ### Prerequisites
 
-This process assumes that `brew` is installed.
+- ensure `brew` installed
+- ensure `libalgebra` submodule has been cloned
 
 ### To build on OSX
 

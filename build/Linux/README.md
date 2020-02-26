@@ -2,10 +2,12 @@
 
 ### Prerequisites: Docker
 
-This process relies on having [Docker](https://docs.docker.com/)
-installed. There are minor differences in the Docker commands to
-run if you are using Windows (and Docker for Windows) or a POSIX system, but
-the Dockerfiles themselves are identical.
+- ensure [Docker](https://docs.docker.com/) installed
+- ensure `libalgebra` submodule has been cloned
+
+There are minor differences in the Docker commands to run if you are using Windows (and Docker for Windows) or a POSIX system, but the Dockerfiles themselves are identical.
+
+**Important note:** The Docker container must have sufficient memory to run, otherwise `gcc` will fail with an internal compiler error. 8GB seems to be sufficient. This can be set using Docker Desktop on the Mac.
 
 ### To build on Linux or OSX
 

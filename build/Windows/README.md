@@ -2,16 +2,19 @@
 
 ### Prerequisites
 
-[Docker for Windows](https://www.docker.com/docker-windows)
+- ensure [Docker for Windows](https://www.docker.com/docker-windows) is installed
+- ensure `libalgebra` submodule has been cloned
 
 ### Building on Windows
 
-Run the literate script `build-wheels.ps1`.
+- start PowerShell (not PowerShell ISE)
+- run the literate script `build-wheels.ps1`
 
-### Supported python versions
-
-The list of targets (python version, and 32- or 64-bit) is in the text file ```python_versions.txt```.
-Currently the list of versions is: 2.7, 3.5, 3.6, 3.7, all in both 32- and 64-bit.
+To run in our Azure VM:
+  - go to `esig-builder` VM using Research Engineering subscription
+  - start VM
+  - wait for public IP address to become available
+  - connect over RDP using username `vm-admin` (⌘-1 on Mac to exit full screen)
 
 ### Build esig wheels in the docker container
 
