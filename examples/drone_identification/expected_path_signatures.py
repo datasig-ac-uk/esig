@@ -140,9 +140,9 @@ class ExpectedSignatureCalculator():
         Parameters
         ----------
         speed : float
-            Static object's speed.
+            Non-drone object's speed.
         z : float
-            Static object's distance in relation to the observer.
+            None-drone object's distance in relation to the observer.
         """
         reflected_signals = self._generate_nondrone_reflections(speed, z, random_state)
 
@@ -150,10 +150,36 @@ class ExpectedSignatureCalculator():
 
     def compute_reflected_signals_for_drone(self, rpm, speed, d, z, proportion,
                                             random_state=None):
+        """
+        Compute reflected signals for our drone model.
+
+        Parameters
+        ----------
+        rpm : float
+            Number of rotations per minute of the drone's propeller.
+        speed : float
+            Drone's speed.
+        d : float
+            Diameter of the drone's propeller blades.
+        z : float
+            Drone's distance in relation to the observer.
+        proportion : float
+            Proportion of signals which hit the drone's body.
+        """
         return list(self._generate_drone_reflections(rpm, speed, d, z, proportion,
                                                      random_state))
 
     def compute_reflected_signals_for_nondrone(self, speed, z, random_state=None):
+        """
+        Compute reflected signals for a non-drone object.
+
+        Parameters
+        ----------
+        speed : float
+            Non-drone object's speed.
+        z : float
+            None-drone object's distance in relation to the observer.
+        """
         return list(self._generate_nondrone_reflections(speed, z, random_state))
 
     def _generate_drone_reflections(self, rpm, speed, d, z, proportion, random_state=None):
