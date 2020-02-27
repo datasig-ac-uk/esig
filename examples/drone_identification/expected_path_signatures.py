@@ -252,8 +252,17 @@ class ExpectedSignatureCalculator():
         return reflected_signal
 
     def _estimate_expected_path_signature(self, reflected_signals):
-        signatures = [self._compute_path_signature(self.incident_signal, ref)
-                      for ref in reflected_signals]
+        signatures = []
+        previous_signal = None
+
+        for signal in reflected_signals:
+            # Determinism and order of signals implies that we may have successive
+            # signals which are identical
+            if previous_signal is not None and np.all(np.equal(signal, previous_signal)):
+                signatures.append(signatures[-1])
+            else:
+                signatures.append(self._compute_path_signature(self.incident_signal, signal))
+            previous_signal = signal
 
         # Estimate expected signature using empirical mean
         return np.mean(signatures, axis=0)
@@ -287,4 +296,4 @@ class ExpectedSignatureCalculator():
                     self.n_incident_signals,
                     self.truncation_level,
                     self.use_lead_lag_transformation,
-                    self.noise_signal_power))
+                    self.signal_to_noise_ratio))
