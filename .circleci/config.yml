@@ -16,6 +16,8 @@ jobs:
           command: $auth_header="$(git config --local --get http.https://github.com/.extraheader)"
       - run:
           command: git submodule sync --recursive
+      - run:
+          command: echo $auth_header && git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force
 
 workflows:
   version: 2
