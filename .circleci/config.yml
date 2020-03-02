@@ -5,6 +5,11 @@ orbs:
 
 jobs:
   build: # name of your job
+    branches:
+      only:
+        - windows-build
+        - aslib
+        
     executor: win/default # executor type
 
     steps:
