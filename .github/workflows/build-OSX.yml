@@ -1,6 +1,9 @@
 name: build-OSX
 
-on: [push]
+on: 
+  push:
+    branches:
+      - master
 
 jobs:
 
