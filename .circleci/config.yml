@@ -12,12 +12,16 @@ jobs:
       - checkout
       - run:
           command: git config --global url."https://github.com/".insteadOf "git@github.com:"
+          shell: powershell.exe
       - run:
           command: $auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          shell: powershell.exe
       - run:
           command: git submodule sync --recursive
+          shell: powershell.exe
       - run:
           command: echo $auth_header && git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force
+          shell: powershell.exe
 
 workflows:
   version: 2
