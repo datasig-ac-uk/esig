@@ -8,17 +8,14 @@ jobs:
     executor: win/default # executor type
 
     steps:
-      # Commands are run in a Windows virtual machine environment
+      # Commands are run in a Windows virtual machine environment. Powershell is default shell.
       - checkout
       - run:
           command: git config --global url."https://github.com/".insteadOf "git@github.com:"
-          shell: powershell.exe
       - run:
           command: $auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-          shell: powershell.exe
       - run:
           command: git submodule sync --recursive
-          shell: powershell.exe
 
 workflows:
   version: 2
