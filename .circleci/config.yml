@@ -20,7 +20,7 @@ jobs:
           command: git submodule sync --recursive
           shell: powershell.exe
       - run:
-          command: echo $auth_header && git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force
+          command: echo $auth_header -and git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force
           shell: powershell.exe
 
 workflows:
