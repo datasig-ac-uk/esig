@@ -12,16 +12,16 @@ jobs:
       - checkout
       - run:
           command: git config --global url."https://github.com/".insteadOf "git@github.com:"
-          shell: powershell.exe
       - run:
           command: $auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-          shell: powershell.exe
       - run:
           command: git submodule sync --recursive
-          shell: powershell.exe
       - run:
-          command: git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force
-          shell: powershell.exe
+          command: git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+      - run:
+          command: cd build\Windows
+      - run: 
+          command: .\windows_wheel_maker2.bat esig-0.6.31.tar.gz python35_32
 
 workflows:
   version: 2
