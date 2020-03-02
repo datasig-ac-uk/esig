@@ -5,7 +5,7 @@ if not exist "C:\data\output" mkdir C:\data\output
 python.exe -m pip install virtualenv
 REM build the wheel
 python.exe -m pip wheel --no-binary -b latest %1
-if not $? exit 1
+REM don't know how to make the above command fail
 REM create a virtualenv for testing.
 REM virtualenv.exe %2
 REM using the virtualenv python, install the newly created esig wheel
