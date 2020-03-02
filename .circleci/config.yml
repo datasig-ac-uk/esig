@@ -13,6 +13,9 @@ jobs:
       - run:
           command: git config --global url."https://github.com/".insteadOf "git@github.com:"
           shell: powershell.exe
+      - run:
+          command: $auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+          shell: powershell.exe
 
 workflows:
   version: 2
