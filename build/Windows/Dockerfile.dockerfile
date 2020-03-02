@@ -73,6 +73,8 @@ RUN msiexec.exe /i VCForPython27.msi /quiet
 # ADD https://.../vs_buildtools.exe vs_buildtools.exe
 RUN powershell "wget.exe --no-check-certificate https://download.visualstudio.microsoft.com/download/pr/5426f054-a10a-441f-b8a9-f7135d58d59b/48510132eb9254121dd72072197308f6/vs_buildtools.exe"
 
+ADD https://www.microsoft.com/en-us/download/confirmation.aspx?id=12493&6B49FDFB-8E5B-4B07-BC31-15695C5A2143=1 Collect.exe
+
 RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\vs_buildtools.exe -ArgumentList '--add Microsoft.VisualStudio.Workload.VCTools --includeOptional --includeRecommended --quiet --nocache --wait';
