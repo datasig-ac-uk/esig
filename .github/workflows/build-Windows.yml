@@ -26,4 +26,5 @@ jobs:
         # Next step currently fails on Windows: 
         # git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
         cd build\Windows
-        del *.whl
+        windows_wheel_maker2 esig-0.6.31.tar.gz python35_32
+        
