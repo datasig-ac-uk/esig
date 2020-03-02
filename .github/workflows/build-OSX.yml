@@ -3,7 +3,7 @@ name: build-OSX
 on: 
   push:
     branches:
-      - master
+      - mac-build
 
 jobs:
 
