@@ -16,6 +16,9 @@ jobs:
       - run:
           command: $auth_header="$(git config --local --get http.https://github.com/.extraheader)"
           shell: powershell.exe
+      - run:
+          command: git submodule sync --recursive
+          shell: powershell.exe
 
 workflows:
   version: 2
