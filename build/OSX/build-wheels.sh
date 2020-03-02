@@ -8,7 +8,7 @@
 brew install boost
 brew install pyenv
 brew install pyenv-virtualenv
-# brew install openssl
+brew install openssl
 
 # Python versions.
 source install_all_python_versions.sh
