@@ -4,7 +4,7 @@ REM usage: .\build_esig_in_docker.bat <esig_tar_gz_filename> <python_version_str
 if not exist "C:\data\output" mkdir C:\data\output
 python.exe -m pip install virtualenv
 REM build the wheel
-python.exe -m pip wheel --no-binary -b latest %1
+python.exe -m pip wheel --trusted-host --no-binary -b latest %1
 REM don't know how to make the above command fail
 REM create a virtualenv for testing.
 REM virtualenv.exe %2
