@@ -11,7 +11,7 @@ jobs:
       # Commands are run in a Windows virtual machine environment. Powershell is default shell.
       - checkout
       - run:
-          command: .\build-wheels2.ps1
+          command: build\Windows\build-wheels2.ps1
 
 workflows:
   version: 2
