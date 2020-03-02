@@ -13,8 +13,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Setup tmate session
-      uses: mxschmitt/action-tmate@v1    
+    # - name: Setup tmate session
+    #  uses: mxschmitt/action-tmate@v1    
     - uses: actions/setup-python@v1
       with:
         # use to build sdist
