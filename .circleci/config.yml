@@ -4,15 +4,20 @@ orbs:
   win: circleci/windows@2.2.0 # The Windows orb give you everything you need to start using the Windows executor.
 
 jobs:
-  build: # name of your job
-    branches:
-      only:
-        - windows-build
-        - aslib
-        
+  build:
     executor: win/default # executor type
 
     steps:
       # Commands are run in a Windows virtual machine environment
       - checkout
       - run: Write-Host 'Hello, Windows'
+
+workflows:
+  version: 2
+  build:
+    jobs:
+      - build:
+          filters:
+            branches:
+              only:
+                - windows-build
