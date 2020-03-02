@@ -10,7 +10,9 @@ jobs:
     steps:
       # Commands are run in a Windows virtual machine environment
       - checkout
-      - run: Write-Host 'Hello, Windows'
+      - run: |
+        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        $auth_header="$(git config --local --get http.https://github.com/.extraheader)"
 
 workflows:
   version: 2
