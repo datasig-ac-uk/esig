@@ -42,7 +42,11 @@ mkdir $TMPDIR
 mkdir $TESTDIR
 
 # create and activate a virtualenv for this python version
-pyenv virtualenv $p esig_build_env-$p
+if ! pyenv virtualenv $p esig_build_env-$p
+then
+    echo "Launching virtualenv for build failed."
+    exit 1
+fi
 pyenv activate esig_build_env-$p
 
 # install python dependencies
