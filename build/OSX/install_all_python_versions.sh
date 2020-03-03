@@ -8,7 +8,4 @@ for p in $( cat python_versions.txt ); do
    CFLAGS="-I$(brew --prefix openssl)/include" \
    LDFLAGS="-L$(brew --prefix openssl)/lib" \
    pyenv install --skip-existing $p
-   echo =====================================
-   echo ERROR CODE $?
-   echo =====================================
 done

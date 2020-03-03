@@ -17,4 +17,4 @@ docker build -t esig_builder_windows -f Dockerfile.dockerfile .
 
 # TODO: fix script that is run.
 # TODO: migrate all behaviour from build_all_versions.bat and then delete that file.
-docker run --rm -v ${PWD}:C:\data esig_builder_windows "$env:PATH = Get-Content -Path pathenv_python35_32; cd data; .\windows_wheel_maker.bat esig-0.6.31.tar.gz $p"
+docker run --rm -v ${PWD}:C:\data esig_builder_windows "$env:PATH = Get-Content -Path pathenv_python35_32; cd data; .\windows_wheel_maker.bat esig-0.6.31.tar.gz python35_32"
