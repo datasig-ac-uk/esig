@@ -1,6 +1,6 @@
 Helper scripts and dockerfiles to help build the Python wheels for different architectures and Python versions.
 
-There are subdirectories for Linux, OSX, and Windows. See the README.md in each of those for instructions on building for that platform. (Note that these subdirectories correspond to the target OS for the binaries as opposed to the machine you are running.  It is possible, thanks to Docker, to build the Linux binaries from Linux, OSX, or Windows. However, at present the OSX and Windows binaries can only be built from their respective platforms.)
+There are subdirectories for Linux, OSX, and Windows targets. See the README.md in each of those for instructions on building for that platform. (It is possible, thanks to Docker, to build the Linux binaries from Linux, OSX, or Windows. At present the OSX and Windows binaries can only be built from their respective platforms.)
 
 Getting a reproducible, fully automated build has proved difficult despite Nick's excellent starting point. Current status and outstanding problems are summarised below:
 
@@ -33,6 +33,12 @@ Windows currently fails to build in the Azure VM. Current status:
 - running the build in the built image fails with two (hopefully minor errors)
   - no module named `pyparsing` building wheel
   - can’t find Visual Studio C++ 14.0
+
+Issues addressed:
+| Task | Completed |
+| ---- | --------- |
+| [Sync Docker build to Feb 12 Windows Server Update](https://github.com/alan-turing-institute/esig/issues/25) | 3 March 2020 |
+| [Migrate Windows build to mcr.microsoft.com/dotnet/framework/sdk:4.8](https://github.com/alan-turing-institute/esig/issues/20) | 11 Feb 2020 |  
 
 ### OSX :white_check_mark: :x:
 
