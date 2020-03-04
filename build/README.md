@@ -4,7 +4,7 @@ There are subdirectories for Linux, OSX, and Windows. See the README.md in each 
 
 CI is setup for Linux and OSX builds via GitHub actions; see the `.yml` files in `/.github/workflows`. CI for Windows is still to do. Current build status is below.
 
-### Linux
+### Linux :white_check_mark:
 
 32-bit and 64-bit builds are fine and now fully automated. They run in the `esig` repo as follows:
 1. build Docker file for each architecture to obtain suitable container
@@ -12,14 +12,23 @@ CI is setup for Linux and OSX builds via GitHub actions; see the `.yml` files in
 1. for each architecture, instantiate container and then:
    - for each Python version, build wheel from the `sdist` archive
    
-This process runs as a GitHub Action specified in `/.github/workflows/build-Linux.yml`.
+This process runs as a [GitHub Action](https://github.com/alan-turing-institute/esig/actions?query=workflow%3Abuild-OSX) specified in `/.github/workflows/build-Linux.yml`.
 
-### Windows
+Issues addressed:
+| Task | Completed |
+| ---- | --------- |
+| [64-bit Linux build working with Python 2.7-3.8]() | 24 Feb 2020 |
+| [32-bit Linux build working with Python 2.7-3.8](https://github.com/alan-turing-institute/esig/issues/14) | 18 Feb 2020 |
+| [Replace libalgebra files by submodule](https://github.com/alan-turing-institute/esig/issues/6) | 18 Feb 2020 |
+| [Import esig source code from pypi.org](https://github.com/alan-turing-institute/esig/issues/5) | 3 Feb 2020 |
+
+### Windows :x:
 
 Windows currently fails to build in the Azure VM. Current status:
 
-- prebuilt Docker images fail with ``filesystem layer verification failed for digest`` error (possibly to do with Azure storage)
+- Nick's prebuilt Docker images fail with ``filesystem layer verification failed for digest`` error (possibly to do with Azure storage)
 - building the Docker images from the new `mcr.microsoft.com/dotnet/framework/sdk:4.8` base image now works
+- development process is quite slow - for example
 - running the build in the built image fails with two (hopefully minor errors)
   - no module named `pyparsing` building wheel
   - can’t find Visual Studio C++ 14.0
