@@ -45,15 +45,11 @@ Issues addressed:
 
 ### OSX :white_check_mark: :x:
 
-OSX builds are fine except for Python 2.7.10 and 3.4.8, which fail with:
+OSX builds are fine except for Python 2.7.10 and 3.4.8.
 
-````
-  src/Cpp_ToSig.cpp:5:10: fatal error: 'string' file not found
-  #include <string>
-           ^~~~~~~~
-  2 warnings and 1 error generated.
-  error: command 'gcc' failed with exit status 1
-````
+- These builds fail with compilation error `_ssl.c:684:35: error: incomplete definition of type ‘struct X509_name_entry_st’`. I believe this is because `pyenv` insists on `openssl` and will always get the location of the relevant include files from    `brew`. Removing the `brew` installation of `openssl` causes other problems later. Python 2.7 and 3.4 seem to require an earlier/different version of SSL. It's possible to use a symlink hack to have `openssl/include` point to `libressl-2.2.7/include`. Then compilation proceeds, but the build fails with a linker error (`Quicktime.framework` not found).
+- I'm happy to continue in this vein of investigation, but my impression is that getting Python 2.7 and 3.4 to build on a recent MacOS is a gnarly devops task. It might be better to pursue another option if we are determined to build these old platforms on a new machine. For example, we could drop the use of `pyenv` and instead run in a hosted MacOS VM where we only install Python 2.7.
+
 Issues addressed:
 | Task | Completed |
 | ---- | --------- |
