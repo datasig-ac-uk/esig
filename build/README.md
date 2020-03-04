@@ -2,7 +2,7 @@ Helper scripts and dockerfiles to help build the Python wheels for different arc
 
 There are subdirectories for Linux, OSX, and Windows. See the README.md in each of those for instructions on building for that platform. (Note that these subdirectories correspond to the target OS for the binaries as opposed to the machine you are running.  It is possible, thanks to Docker, to build the Linux binaries from Linux, OSX, or Windows. However, at present the OSX and Windows binaries can only be built from their respective platforms.)
 
-CI is setup for Linux and OSX builds via GitHub actions; see the `.yml` files in `/.github/workflows`. CI for Windows is still to do. Current build status is below.
+Getting a reproducible, fully automated build has proved difficult despite Nick's excellent starting point. Current status and outstanding problems are summarised below:
 
 ### Linux :white_check_mark:
 
@@ -17,6 +17,7 @@ This process runs as a [GitHub Action](https://github.com/alan-turing-institute/
 Issues addressed:
 | Task | Completed |
 | ---- | --------- |
+| [Automate OSX and Linux builds through GitHub actions](https://github.com/alan-turing-institute/esig/issues/18) | 25 Feb 2020 |
 | [64-bit Linux build working with Python 2.7-3.8]() | 24 Feb 2020 |
 | [32-bit Linux build working with Python 2.7-3.8](https://github.com/alan-turing-institute/esig/issues/14) | 18 Feb 2020 |
 | [Replace libalgebra files by submodule](https://github.com/alan-turing-institute/esig/issues/6) | 18 Feb 2020 |
@@ -33,7 +34,7 @@ Windows currently fails to build in the Azure VM. Current status:
   - no module named `pyparsing` building wheel
   - can’t find Visual Studio C++ 14.0
 
-### OSX
+### OSX :white_check_mark: :x:
 
 OSX builds are fine except for Python 2.7.10 and 3.4.8, which fail with:
 
@@ -44,3 +45,7 @@ OSX builds are fine except for Python 2.7.10 and 3.4.8, which fail with:
   2 warnings and 1 error generated.
   error: command 'gcc' failed with exit status 1
 ````
+Issues addressed:
+| Task | Completed |
+| ---- | --------- |
+| [OSX build working for Python 3.5-3.8](https://github.com/alan-turing-institute/esig/issues/16) | 18 Feb 2020 |
