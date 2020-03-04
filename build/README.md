@@ -25,9 +25,9 @@ Issues addressed:
 
 Windows currently fails to build in the Azure VM. Current status:
 
-- Nick's prebuilt Docker images don't download (``filesystem layer verification failed for digest`` error, possibly to do with Azure storage)
+- Nick's prebuilt Docker images don't download (``filesystem layer verification failed for digest`` error, possibly to do with Azure storage).
 - Building the Docker images from the new `mcr.microsoft.com/dotnet/framework/sdk:4.8` base image now works.
-- Rebuilding the Docker image takes a long time. For example, on Feb 12 Microsoft issued [another security update](https://support.microsoft.com/en-us/help/4542617/you-might-encounter-issues-when-using-windows-server-containers-with-t) which made our active containers (causing the [Chocolatey install step to fail](https://social.msdn.microsoft.com/Forums/en-US/a2a8dd7c-09ad-4227-b6c7-4e11e4227e58/7zip-from-choco-not-working-anymore-after-last-update-of-servercoreltsc2019?forum=windowscontainers)) inconsistent with the host VM on Azure. Although this can by fixed by `docker --pull` and rebuilding, the process takes several hours. Care must be taken to ensure there is enough disk space to run the build, or risk having to redo the build more than once.
+- Rebuilding the Docker images takes a long time. For example, on Feb 12 Microsoft issued [another security update](https://support.microsoft.com/en-us/help/4542617/you-might-encounter-issues-when-using-windows-server-containers-with-t) which made our active containers (causing the [Chocolatey install step to fail](https://social.msdn.microsoft.com/Forums/en-US/a2a8dd7c-09ad-4227-b6c7-4e11e4227e58/7zip-from-choco-not-working-anymore-after-last-update-of-servercoreltsc2019?forum=windowscontainers)) inconsistent with the host VM on Azure. Although this can by fixed by `docker --pull` and rebuilding, the process takes several hours. Care must be taken to ensure there is enough disk space to run the build, or risk having to redo the build more than once.
 - Running the build in the built image fails with two errors that still need fixing:
   - No module named `pyparsing` building wheel. Manual installation seems to work here.
   - Can’t find Visual Studio C++ 14.0. Because of the delay caused by the security update above, I haven't been able to investigate this properly. My plan is:
