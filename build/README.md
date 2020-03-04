@@ -2,6 +2,8 @@ Helper scripts and dockerfiles to help build the Python wheels for different arc
 
 A reliable automated build has proved difficult despite Nick's excellent starting point. Current status and outstanding problems are summarised below. Current person-effort on the build is ~10 days.
 
+As we move forward we might also consider the [PyPI download stats](https://pypistats.org/packages/esig) for `esig`.
+
 ### Linux :white_check_mark:
 
 32-bit and 64-bit builds are fine and now fully automated. They run in the `esig` repo as follows:
