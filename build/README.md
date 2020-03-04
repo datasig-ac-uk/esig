@@ -1,8 +1,6 @@
-Helper scripts and dockerfiles to help build the Python wheels for different architectures and Python versions.
+Helper scripts and dockerfiles to help build the Python wheels for different architectures and Python versions. See READMEs in Linux, OSX, and Windows subdirectories for instructions on building for that platform.
 
-There are subdirectories for Linux, OSX, and Windows targets. See the README.md in each of those for instructions on building for that platform. (It is possible, thanks to Docker, to build the Linux binaries from Linux, OSX, or Windows. At present the OSX and Windows binaries can only be built from their respective platforms.)
-
-Getting a reproducible, fully automated build has proved difficult despite Nick's excellent starting point. Current status and outstanding problems are summarised below:
+A reliable automated build has proved difficult despite Nick's excellent starting point. Current status and outstanding problems are summarised below:
 
 ### Linux :white_check_mark:
 
