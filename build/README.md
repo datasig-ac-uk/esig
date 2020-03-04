@@ -6,7 +6,13 @@ CI is setup for Linux and OSX builds via GitHub actions; see the `.yml` files in
 
 ### Linux
 
-32-bit and 64-bit builds are fine.
+32-bit and 64-bit builds are fine and now fully automated. They run in the `esig` repo as follows:
+1. build Docker file for each architecture to obtain suitable container
+1. create Python `sdist` archive from sources in the repo
+1. for each architecture, instantiate container and then:
+   - for each Python version, build wheel from the `sdist` archive
+   
+This process runs as a GitHub Action specified in `/.github/workflows/build-Linux.yml`.
 
 ### Windows
 
