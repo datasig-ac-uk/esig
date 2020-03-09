@@ -56,8 +56,7 @@ pip install --upgrade wheel
 pip install --upgrade numpy
 pip install --upgrade delocate
 # build the wheel
-# --no-binary requires an argument in recent pip versions (19+?)
-pip wheel --no-binary :none: -b $WORKDIR -w $TMPDIR esig*.tar.gz
+pip wheel -b $WORKDIR -w $TMPDIR ../..
 # combine other dynamic libraries into the wheel to make it portable
 delocate-wheel -w $TESTDIR -v $TMPDIR/esig*.whl
 # deactivate this virtualenv, then create a fresh one to run tests

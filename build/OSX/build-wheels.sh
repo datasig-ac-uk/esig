@@ -15,9 +15,6 @@ brew install openssl
 # Python versions.
 source install_all_python_versions.sh
 
-# Get esig sources.
-source ../sdist.sh
-
 # Wheels that pass their tests will be placed here.
 rm -rf wheelhouse
 
