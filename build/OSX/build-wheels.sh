@@ -2,6 +2,8 @@
 # Top-level script for building esig for MacOS.
 # Python wheels will be created for Python versions specified in python_versions.txt.
 
+rm -rf ~/.pyenv/versions # for reproducibility
+
 # esig needs `boost`. Packages `pyenv` and `pyenv-virtualenv` are needed for the script below
 # to build for multiple Python versions. Python 3.7 requires `openssl`.
 # TODO: avoid Homebrew checking for updates
