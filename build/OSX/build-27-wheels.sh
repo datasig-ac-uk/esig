@@ -29,9 +29,9 @@ else
 fi
 
 # For 3.4
-sudo port install python34
-sudo port install py34-pip
-sudo port install boost
+sudo port -N install python34
+sudo port -N install py34-pip
+sudo port -N install boost
 
 # For 2.7
 brew install boost
