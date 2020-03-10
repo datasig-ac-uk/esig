@@ -4,6 +4,10 @@
 brew install boost
 brew install openssl
 
+# MacPorts (for Python 3.4)
+curl -O https://distfiles.macports.org/MacPorts/MacPorts-2.6.2-10.14-Mojave.pkg
+sudo installer -verbose -pkg MacPorts-2.6.2-10.14-Mojave.pkg -target /
+
 # pyexe=/opt/local/bin/python3 # Python 3.4 (MacPorts)
 pyexe=/usr/local/bin/python  # Python 2.7
 py=$($pyexe --version 2>&1)
