@@ -31,8 +31,9 @@ pushd .. # circular file path if run from OSX folder
 popd
 delocate-wheel -w $TESTDIR -v $TMPDIR/esig*.whl
 
-python -m virtualenv esig_test_env-$p
-. esig_test_env-$p/bin/activate
+VENV=esig_test_env-$p
+python -m virtualenv $VENV
+   $VENV/bin/activate
    pip install `ls ${TESTDIR}/*.whl`
    python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
    if [ $? -eq 0 ]
@@ -44,6 +45,7 @@ python -m virtualenv esig_test_env-$p
       exit 1
    fi
 deactivate
+rm -rf $VENV
 
 rm -fr $WORKDIR
 rm -fr $TMPDIR
