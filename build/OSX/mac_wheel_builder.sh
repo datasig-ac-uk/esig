@@ -56,7 +56,9 @@ pip install --upgrade wheel
 pip install --upgrade numpy
 pip install --upgrade delocate
 # build the wheel
-pip wheel -b $WORKDIR -w $TMPDIR ../..
+pushd .. # circular file path if run from OSX folder
+    pip wheel -b OSX/$WORKDIR -w OSX/$TMPDIR ..
+popd
 # combine other dynamic libraries into the wheel to make it portable
 delocate-wheel -w $TESTDIR -v $TMPDIR/esig*.whl
 # deactivate this virtualenv, then create a fresh one to run tests
