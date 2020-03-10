@@ -28,8 +28,14 @@ else
    exit 1
 fi
 
+# For 3.4
+sudo port install python34
+sudo port install py34-pip
+sudo port install boost
+
+# For 2.7
 brew install boost
-brew install openssl
+brew install openssl # required now?
 
 # pyexe=/opt/local/bin/python3 # Python 3.4 (MacPorts)
 pyexe=/usr/local/bin/python  # Python 2.7
