@@ -33,8 +33,6 @@ sudo /opt/local/bin/port -N install python34
 sudo /opt/local/bin/port -N install py34-pip
 sudo /opt/local/bin/port -N install boost
 
-exit 1 # for now
-
 # For 2.7
 brew install boost
 brew install openssl # required now?
