@@ -9,16 +9,13 @@ p=${py##* }
 
 OUTPUTDIR=wheelhouse
 TESTDIR=test
-TMPDIR=tmp
 WORKDIR=latest
 
 rm -rf $OUTPUTDIR
 rm -fr $WORKDIR
-rm -fr $TMPDIR
 rm -fr $TESTDIR
 mkdir $OUTPUTDIR
 mkdir $WORKDIR
-mkdir $TMPDIR
 mkdir $TESTDIR
 
 python -m pip install --upgrade pip
@@ -28,9 +25,9 @@ python -m pip install --upgrade delocate
 python -m pip install --upgrade virtualenv
 
 pushd .. # circular file path if run from OSX folder
-   pip wheel -b OSX/$WORKDIR -w OSX/$TMPDIR ..
+   pip wheel -b OSX/$WORKDIR -w OSX ..
 popd
-delocate-wheel -w $TESTDIR -v $TMPDIR/esig*.whl
+delocate-wheel -w $TESTDIR -v esig*.whl
 
 VENV=esig_test_env-$p
 python -m virtualenv $VENV
@@ -49,5 +46,4 @@ deactivate
 rm -rf $VENV
 
 rm -fr $WORKDIR
-rm -fr $TMPDIR
 rm -fr $TESTDIR
