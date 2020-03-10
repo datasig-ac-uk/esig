@@ -25,15 +25,12 @@ TMPDIR=tmp
 # WORKDIR is a temporary directory used in the build process
 WORKDIR=latest
 
-
-# make the output directory if it isn't already there
-mkdir -p $OUTPUTDIR
-
 # setup for pyenv and virtualenv
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 # Make a couple of clean working directories
+rm -f $WORKDIR/*
 rm -fr $WORKDIR
 rm -fr $TMPDIR
 rm -fr $TESTDIR
