@@ -4,7 +4,8 @@
 brew install boost
 brew install openssl
 
-p=2.7.17
+py=$(python --version 2>&1)
+p=${py##* }
 
 OUTPUTDIR=wheelhouse
 TESTDIR=test
