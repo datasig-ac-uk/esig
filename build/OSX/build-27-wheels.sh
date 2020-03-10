@@ -1,10 +1,8 @@
 #!/bin/bash
+# See build-wheels.sh for documentation.
 
 brew install boost
 brew install openssl
-
-# Wheels that pass their tests will be placed here.
-rm -rf wheelhouse
 
 p=2.7.17
 
@@ -13,10 +11,11 @@ TESTDIR=test
 TMPDIR=tmp
 WORKDIR=latest
 
-mkdir -p $OUTPUTDIR
+rm -rf $OUTPUTDIR
 rm -fr $WORKDIR
 rm -fr $TMPDIR
 rm -fr $TESTDIR
+mkdir $OUTPUTDIR
 mkdir $WORKDIR
 mkdir $TMPDIR
 mkdir $TESTDIR
@@ -33,7 +32,7 @@ delocate-wheel -w $TESTDIR -v $TMPDIR/esig*.whl
 
 VENV=esig_test_env-$p
 python -m virtualenv $VENV
-   $VENV/bin/activate
+   . $VENV/bin/activate
    pip install `ls ${TESTDIR}/*.whl`
    python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
    if [ $? -eq 0 ]
