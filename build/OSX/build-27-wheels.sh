@@ -4,7 +4,8 @@
 brew install boost
 brew install openssl
 
-py=$(python --version 2>&1)
+pyexe=/opt/local/bin/python3 # try with Python 3.4
+py=$($pyexe --version 2>&1)
 p=${py##* }
 
 OUTPUTDIR=wheelhouse
@@ -14,19 +15,19 @@ rm -f $OUTPUTDIR/*
 rm -fr $TESTDIR
 mkdir $TESTDIR
 
-python -m pip install --upgrade pip
-python -m pip install --upgrade wheel
-python -m pip install --upgrade numpy
-python -m pip install --upgrade delocate
-python -m pip install --upgrade virtualenv
+$pyexe -m pip install --upgrade pip
+$pyexe -m pip install --upgrade wheel
+$pyexe -m pip install --upgrade numpy
+$pyexe -m pip install --upgrade delocate
+$pyexe -m pip install --upgrade virtualenv
 
 pushd .. # circular file path if run from OSX folder
-   pip wheel -w OSX/$TESTDIR ..
+   $pyexe -m pip wheel -w OSX/$TESTDIR ..
 popd
 delocate-wheel -v $TESTDIR/esig*.whl
 
 VENV=esig_test_env-$p
-python -m virtualenv $VENV
+$pyexe -m virtualenv $VENV
    . $VENV/bin/activate
    pip install `ls ${TESTDIR}/*.whl`
    python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'

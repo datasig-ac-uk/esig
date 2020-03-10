@@ -47,7 +47,6 @@ fi
 pyenv activate esig_build_env-$p
 
 # install python dependencies
-# assume pip is provided by the host environment at a suitable version
 pip install --upgrade pip
 pip install --upgrade wheel
 pip install --upgrade numpy
