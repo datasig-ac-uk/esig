@@ -1,5 +1,5 @@
 #!/bin/bash
-# See build-wheels.sh for documentation.
+# See build-wheels.sh and mac_wheel_builder.sh for documentation.
 
 brew install boost
 brew install openssl
@@ -24,6 +24,7 @@ python -m pip install --upgrade pip
 python -m pip install --upgrade wheel
 python -m pip install --upgrade numpy
 python -m pip install --upgrade delocate
+python -m pip install --upgrade virtualenv
 
 pushd .. # circular file path if run from OSX folder
    pip wheel -b OSX/$WORKDIR -w OSX/$TMPDIR ..
