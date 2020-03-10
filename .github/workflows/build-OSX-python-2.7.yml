@@ -14,9 +14,6 @@ jobs:
     # - name: Setup tmate session
     #  uses: mxschmitt/action-tmate@v1    
     - uses: actions/setup-python@v1
-      with:
-        python-version: "3.4"
-        architecture: x64
     - name: Run build
       shell: bash
       run: |
