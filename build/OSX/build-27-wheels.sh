@@ -9,12 +9,9 @@ p=${py##* }
 
 OUTPUTDIR=wheelhouse
 TESTDIR=test
-WORKDIR=latest
 
 rm -f $OUTPUTDIR/*
-rm -fr $WORKDIR
 rm -fr $TESTDIR
-mkdir $WORKDIR
 mkdir $TESTDIR
 
 python -m pip install --upgrade pip
@@ -24,7 +21,7 @@ python -m pip install --upgrade delocate
 python -m pip install --upgrade virtualenv
 
 pushd .. # circular file path if run from OSX folder
-   pip wheel -b OSX/$WORKDIR -w OSX/$TESTDIR ..
+   pip wheel -w OSX/$TESTDIR ..
 popd
 delocate-wheel -v $TESTDIR/esig*.whl
 
@@ -36,13 +33,11 @@ python -m virtualenv $VENV
    if [ $? -eq 0 ]
    then
       echo "Tests passed - copying wheel to $OUTPUTDIR"
-      mv ${TESTDIR}/*.whl $OUTPUTDIR
+      mv ${TESTDIR}/*.whl $OUTPUTDIR/
    else
       echo "Tests failed - will not copy wheel to $OUTPUTDIR"
       exit 1
    fi
 deactivate
 rm -rf $VENV
-
-rm -fr $WORKDIR
 rm -fr $TESTDIR
