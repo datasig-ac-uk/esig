@@ -1,13 +1,35 @@
 #!/bin/bash
 # See build-wheels.sh and mac_wheel_builder.sh for documentation.
 
+# MacPorts (for Python 3.4)
+macos=$(sw_vers -productVersion)
+macos_short=${macos%.*}
+
+if [ $macos_short == "10.14" ]
+then
+   macPorts="MacPorts-2.6.2-10.14-Mojave.pkg"
+elif [ $macos_short == "10.15" ]
+then
+   macPorts="MacPorts-2.6.2-10.15-Catalina.pkg"
+else
+   echo "Need to specify MacPorts download for ${macos_short}."
+   exit 1
+fi
+
+curl -O https://distfiles.macports.org/MacPorts/$macPorts
+sudo installer -verbose -pkg $macPorts -target /
+rm $macPorts
+
+if [ $? -eq 0 ]
+then
+   echo "MacPorts installed successfully."
+else
+   echo "MacPorts installation failed."
+   exit 1
+fi
+
 brew install boost
 brew install openssl
-
-# MacPorts (for Python 3.4)
-curl -O https://distfiles.macports.org/MacPorts/MacPorts-2.6.2-10.14-Mojave.pkg
-# sudo installer -verbose -pkg MacPorts-2.6.2-10.14-Mojave.pkg -target /
-installer -verbose -pkg https://distfiles.macports.org/MacPorts/MacPorts-2.6.2-10.15-Catalina.pkg -target /
 
 # pyexe=/opt/local/bin/python3 # Python 3.4 (MacPorts)
 pyexe=/usr/local/bin/python  # Python 2.7
