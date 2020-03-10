@@ -14,9 +14,6 @@ jobs:
     # - name: Setup tmate session
     #  uses: mxschmitt/action-tmate@v1    
     - uses: actions/setup-python@v1
-      with:
-        # use to build sdist
-        python-version: "3.5.9"
     - name: Run build
       shell: bash
       run: |
@@ -24,4 +21,4 @@ jobs:
         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-        cd build/OSX && ./build-wheels.sh
+        cd build/OSX && ./build-27-wheels.sh
