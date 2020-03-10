@@ -26,25 +26,24 @@ python -m pip install --upgrade wheel
 python -m pip install --upgrade numpy
 python -m pip install --upgrade delocate
 
-pip wheel -b $WORKDIR -w $TMPDIR ../..
+pushd .. # circular file path if run from OSX folder
+   pip wheel -b OSX/$WORKDIR -w OSX/$TMPDIR ..
+popd
 delocate-wheel -w $TESTDIR -v $TMPDIR/esig*.whl
-# deactivate this virtualenv, then create a fresh one to run tests
-# pyenv deactivate
-# pyenv virtualenv $p esig_test_env-$p
-# pyenv activate esig_test_env-$p
-# pip install `ls ${TESTDIR}/*.whl`
-# run tests
-# python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
-# if [ $? -eq 0 ]
-# then
-#    echo "Tests passed - copying wheel to $OUTPUTDIR"
-#    mv ${TESTDIR}/*.whl $OUTPUTDIR
-# else
-#    echo "Tests failed - will not copy wheel to $OUTPUTDIR"
-#     exit 1
-# fi
-# deactivate this virtualenv
-# pyenv deactivate
+
+python -m virtualenv esig_test_env-$p
+. esig_test_env-$p/bin/activate
+   pip install `ls ${TESTDIR}/*.whl`
+   python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
+   if [ $? -eq 0 ]
+   then
+      echo "Tests passed - copying wheel to $OUTPUTDIR"
+      mv ${TESTDIR}/*.whl $OUTPUTDIR
+   else
+      echo "Tests failed - will not copy wheel to $OUTPUTDIR"
+      exit 1
+   fi
+deactivate
 
 rm -fr $WORKDIR
 rm -fr $TMPDIR
