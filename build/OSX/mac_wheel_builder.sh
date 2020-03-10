@@ -16,8 +16,8 @@ p=$1 # Python version
 # note boost needs to be installed, and all versions of python
 # listed in python_versions.txt should have been installed via pyenv
 
-# OUTPUTDIR is where the final wheel will be put
-OUTPUTDIR=wheelhouse
+# OUTPUTDIR is where the final wheel will be put (don't clean this)
+OUTPUTDIR=wheelhouse 
 # TESTDIR is a staging area from which to install the wheel for testing
 TESTDIR=test
 # TMPDIR is where the wheel will go when first build, before 'delocate'
@@ -30,7 +30,6 @@ eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 # Make a couple of clean working directories
-rm -f $WORKDIR/*
 rm -fr $WORKDIR
 rm -fr $TMPDIR
 rm -fr $TESTDIR

@@ -4,14 +4,14 @@
 brew install boost
 brew install openssl
 
-pyexe=/opt/local/bin/python3 # try with Python 3.4
+# pyexe=/opt/local/bin/python3 # Python 3.4 (MacPorts)
+pyexe=/usr/local/bin/python  # Python 2.7
 py=$($pyexe --version 2>&1)
 p=${py##* }
 
 OUTPUTDIR=wheelhouse
 TESTDIR=test
 
-rm -f $OUTPUTDIR/*
 rm -fr $TESTDIR
 mkdir $TESTDIR
 
