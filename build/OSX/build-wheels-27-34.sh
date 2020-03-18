@@ -18,6 +18,7 @@ fi
 
 curl -O https://distfiles.macports.org/MacPorts/$macPorts
 sudo installer -verbose -pkg $macPorts -target /
+sudo port select --set python3 python37
 rm $macPorts
 
 if [ $? -eq 0 ]
