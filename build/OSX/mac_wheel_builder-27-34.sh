@@ -9,11 +9,12 @@ TESTDIR=test
 rm -fr $TESTDIR
 mkdir $TESTDIR
 
-$pyexe -m pip install --upgrade pip
-$pyexe -m pip install --upgrade wheel
-$pyexe -m pip install --upgrade numpy
-$pyexe -m pip install --upgrade delocate
-$pyexe -m pip install --upgrade virtualenv
+# sudo needed for MacPorts (TODO: parameterise)
+sudo $pyexe -m pip install --upgrade pip
+sudo $pyexe -m pip install --upgrade wheel
+sudo $pyexe -m pip install --upgrade numpy
+sudo $pyexe -m pip install --upgrade delocate
+sudo $pyexe -m pip install --upgrade virtualenv
 
 pushd .. # circular file path if run from OSX folder
    $pyexe -m pip wheel -w OSX/$TESTDIR ..

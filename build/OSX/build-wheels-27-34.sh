@@ -31,10 +31,6 @@ fi
 # For 3.4
 sudo /opt/local/bin/port -N install python34
 sudo /opt/local/bin/port select --set python3 python34
-echo ========== Python 3 here: ==============
-which python3
-sudo /opt/local/bin/port contents python34
-echo ========================================
 sudo /opt/local/bin/port -N install py34-pip
 sudo /opt/local/bin/port -N install boost
 
