@@ -23,7 +23,7 @@ rm $macPorts
 if [ $? -eq 0 ]
 then
    echo "MacPorts installed successfully."
-   echo which python3
+   which python3
 else
    echo "MacPorts installation failed."
    exit 1
@@ -39,8 +39,8 @@ brew install boost
 brew install openssl # required now?
 
 # TODO: iterate over these two options:
-pyexe=/opt/local/bin/python3 # Python 3.4 (MacPorts)
-# pyexe=/usr/local/bin/python  # Python 2.7
+pyexe=$($which python3 2>&1) # Python 3.4 (MacPorts)
+# pyexe=/usr/local/bin/python  # Python 2.7 (preinstalled)
 py=$($pyexe --version 2>&1)
 p=${py##*}
 . mac_wheel_builder-27-34.sh p
