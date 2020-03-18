@@ -40,7 +40,7 @@ brew install boost
 brew install openssl # required now?
 
 # TODO: iterate over these two options:
-pyexe=$($which python3 2>&1) # Python 3.4 (MacPorts)
+pyexe=$(which python3 2>&1) # Python 3.4 (MacPorts)
 # pyexe=/usr/local/bin/python  # Python 2.7 (preinstalled)
 py=$($pyexe --version 2>&1)
 p=${py##*}
