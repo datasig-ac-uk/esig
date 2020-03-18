@@ -1,0 +1,45 @@
+#!/bin/bash
+# See build-wheels.sh for documentation.
+
+# MacPorts (for Python 3.4)
+macos=$(sw_vers -productVersion)
+macos_short=${macos%.*}
+
+if [ $macos_short == "10.14" ]
+then
+   macPorts="MacPorts-2.6.2-10.14-Mojave.pkg"
+elif [ $macos_short == "10.15" ]
+then
+   macPorts="MacPorts-2.6.2-10.15-Catalina.pkg"
+else
+   echo "Need to specify MacPorts download for ${macos_short}."
+   exit 1
+fi
+
+curl -O https://distfiles.macports.org/MacPorts/$macPorts
+sudo installer -verbose -pkg $macPorts -target /
+rm $macPorts
+
+if [ $? -eq 0 ]
+then
+   echo "MacPorts installed successfully."
+else
+   echo "MacPorts installation failed."
+   exit 1
+fi
+
+# For 3.4
+sudo /opt/local/bin/port -N install python34
+sudo /opt/local/bin/port -N install py34-pip
+sudo /opt/local/bin/port -N install boost
+
+# For 2.7
+brew install boost
+brew install openssl # required now?
+
+# TODO: iterate over these two options:
+pyexe=/opt/local/bin/python3 # Python 3.4 (MacPorts)
+# pyexe=/usr/local/bin/python  # Python 2.7
+py=$($pyexe --version 2>&1)
+p=${py##*}
+. mac_wheel_builder-27-34.sh p
