@@ -24,7 +24,7 @@ if [ $? -eq 0 ]
 then
    echo "MacPorts installed successfully."
    sudo /opt/local/bin/port select --set python python34 # set python3 fails in GitHub VM
-   which python3
+   sudo /opt/local/bin/port contents python34
 else
    echo "MacPorts installation failed."
    exit 1
