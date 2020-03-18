@@ -18,12 +18,12 @@ fi
 
 curl -O https://distfiles.macports.org/MacPorts/$macPorts
 sudo installer -verbose -pkg $macPorts -target /
-sudo /opt/local/bin/port select --set python3 python37
 rm $macPorts
 
 if [ $? -eq 0 ]
 then
    echo "MacPorts installed successfully."
+   sudo /opt/local/bin/port select --set python3 python34
    which python3
 else
    echo "MacPorts installation failed."
