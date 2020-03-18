@@ -54,7 +54,7 @@ brew install openssl # required now?
 #    exit 1
 # fi
 
-pyexe=$(which python3 2>&1)  # Python 3.4 (MacPorts)
+pyexe=/opt/local/bin/python3.4 # hack for build VM for now $(which python3 2>&1)  # Python 3.4 (MacPorts)
 py=$($pyexe --version 2>&1)
 p=${py##* }
 if [ $p == "3.4.10" ]
