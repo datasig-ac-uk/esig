@@ -42,10 +42,20 @@ brew install openssl # required now?
 # TODO: factor out common bit.
 pyexe=/usr/local/bin/python  # Python 2.7 (preinstalled)
 py=$($pyexe --version 2>&1)
-p=${py##*}
-. mac_wheel_builder-27-34.sh p
+p=${py##* }
+if [ $p == "2.7.17" ]
+then
+   . mac_wheel_builder-27-34.sh p
+else
+   echo "Expecting Python $p"
+fi
 
 pyexe=$(which python3 2>&1)  # Python 3.4 (MacPorts)
 py=$($pyexe --version 2>&1)
-p=${py##*}
-. mac_wheel_builder-27-34.sh p
+p=${py##* }
+if [ $p == "3.4.10" ]
+then
+   . mac_wheel_builder-27-34.sh p
+else
+   echo "Expecting Python $p"
+fi
