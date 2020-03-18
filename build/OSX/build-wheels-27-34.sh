@@ -23,6 +23,7 @@ rm $macPorts
 if [ $? -eq 0 ]
 then
    echo "MacPorts installed successfully."
+   echo which python3
 else
    echo "MacPorts installation failed."
    exit 1
