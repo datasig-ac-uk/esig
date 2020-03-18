@@ -39,7 +39,7 @@ sudo /opt/local/bin/port -N install boost
 brew install boost
 brew install openssl # required now?
 
-# TODO: factor out common bit.
+# TODO: factor out commonality.
 pyexe=/usr/local/bin/python  # Python 2.7 (preinstalled)
 py=$($pyexe --version 2>&1)
 p=${py##* }
@@ -47,7 +47,8 @@ if [ $p == "2.7.17" ]
 then
    . mac_wheel_builder-27-34.sh p
 else
-   echo "Expecting Python $p"
+   echo "Expecting Python 2.7.17, got $p"
+   exit 1
 fi
 
 pyexe=$(which python3 2>&1)  # Python 3.4 (MacPorts)
@@ -57,5 +58,6 @@ if [ $p == "3.4.10" ]
 then
    . mac_wheel_builder-27-34.sh p
 else
-   echo "Expecting Python $p"
+   echo "Expecting Python 3.4.10, got $p"
+   exit 1
 fi
