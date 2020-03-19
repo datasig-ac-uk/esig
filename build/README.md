@@ -20,7 +20,6 @@ Issues addressed:
 ### OSX :white_check_mark:
 
 OSX builds are fine and fully automated on [GitHub](https://github.com/alan-turing-institute/esig/actions?query=workflow%3Abuild-OSX).
-.
 
 Issues addressed:
 | Task | Completed |
