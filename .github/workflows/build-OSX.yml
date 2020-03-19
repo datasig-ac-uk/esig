@@ -21,7 +21,7 @@ jobs:
         source build/git-preamble.sh
         cd build/OSX && ./build-wheels-27.sh
 
-  build-27-34:
+  build-34:
     runs-on: macos-10.15
     steps:
     - uses: actions/checkout@v2
