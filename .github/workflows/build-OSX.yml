@@ -1,30 +1,45 @@
 name: build-OSX
 
-on: 
+on:
   push:
     branches:
-#      - mac-build
       - master
+    paths-ignore:
+      - 'examples/**'
+      - 'doc/**'
 
 jobs:
-
-  build:
-
+  build-27:
     runs-on: macos-10.15
-
     steps:
     - uses: actions/checkout@v2
-    # - name: Setup tmate session
-    #  uses: mxschmitt/action-tmate@v1    
-    - uses: actions/setup-python@v1
-      with:
-        # use to build sdist
-        python-version: "3.5.9"
-    - name: Run build
-      shell: bash
+    - name: Build for Python 2.7
       run: |
-        git config --global url."https://github.com/".insteadOf "git@github.com:"
-        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-        git submodule sync --recursive
-        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-        cd build/OSX && ./build-wheels.sh
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-27.sh
+
+  build-34:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for Python 3.4
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-34.sh
+
+  build-rest:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for other Python versions
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-rest.sh
+
+  build:
+    runs-on: macos-10.15
+    needs: [build-27, build-34, build-rest]
+    steps:
+    - name: Build for other Python versions
+      run: |
+        echo Build successful.

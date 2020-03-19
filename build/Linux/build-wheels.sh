@@ -17,13 +17,10 @@ source ../sdist.sh
 # Wheels that pass their tests will be placed here.
 rm -rf wheelhouse
 
-# Build the esig wheels.
-# The `linux_wheel_maker.sh` script is run inside the docker container, and performs the steps to 
-# build the esig binary wheel, run tests, and if the tests are successful, copy the wheel to the 
-# `wheelhouse` directory.
+# Build the esig wheels inside the docker container.
 for arch in i686 x86_64
 do 
-   docker run --rm -v ${PWD}:/data esig_builder_linux_${arch} "source ~/.bashrc; cd /data; source linux_wheel_maker.sh $arch"
+   docker run --rm -v ${PWD}:/data esig_builder_linux_${arch} "source ~/.bashrc; cd /data; source linux_wheel_builder.sh $arch"
       if [ $? -eq 0 ]
    then
       echo "Successfully created wheel"
@@ -31,5 +28,4 @@ do
       echo "Failed to create wheel"
       exit 1
    fi
-
 done
