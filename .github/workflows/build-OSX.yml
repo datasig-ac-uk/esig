@@ -44,6 +44,9 @@ jobs:
         cd build/OSX && ./build-wheels.sh
 
   build:
-    name: Run build
     needs: [build-27-34, build-rest]
     steps:
+    - name: Build for other Python versions
+      shell: bash
+      run: |
+        echo Build successful.
