@@ -1,0 +1,48 @@
+name: build-OSX
+
+on:
+  push:
+    branches:
+      - mac-build
+      # - master
+    paths-ignore:
+      - 'examples/**'
+      - 'doc/**'
+
+jobs:
+  # TODO: factor out common git stuff.
+
+  build-27-34:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1 # needed?
+    - name: Build for Python 2.7 and 3.4
+      shell: bash
+      run: |
+        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        cd build/OSX && ./build-wheels-27-34.sh
+
+  build-rest:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        # was used to build sdist, but maybe not needed now?
+        python-version: "3.5.9"
+    - name: Build for other Python versions
+      shell: bash
+      run: |
+        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        cd build/OSX && ./build-wheels.sh
+
+  build:
+    name: Run build
+    needs: [build-27-34, build-rest]
