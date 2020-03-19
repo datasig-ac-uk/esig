@@ -1,7 +1,8 @@
 #!/bin/bash
 # See mac_wheel_builder.sh for documentation.
 
-p=$1 # Python version
+p=$1 # Python version, used to distinguish names of virtualenvs
+run_as=$2 # either "" or "sudo"
 
 OUTPUTDIR=wheelhouse
 TESTDIR=test
@@ -9,12 +10,12 @@ TESTDIR=test
 rm -fr $TESTDIR
 mkdir $TESTDIR
 
-# sudo needed for MacPorts (TODO: parameterise)
-sudo $pyexe -m pip install --upgrade pip
-sudo $pyexe -m pip install --upgrade wheel
-sudo $pyexe -m pip install --upgrade numpy
-sudo $pyexe -m pip install --upgrade delocate
-sudo $pyexe -m pip install --upgrade virtualenv
+# sudo needed for MacPorts
+$run_as $pyexe -m pip install --upgrade pip
+$run_as $pyexe -m pip install --upgrade wheel
+$run_as $pyexe -m pip install --upgrade numpy
+$run_as $pyexe -m pip install --upgrade delocate
+$run_as $pyexe -m pip install --upgrade virtualenv
 
 pushd .. # circular file path if run from OSX folder
    $pyexe -m pip wheel -w OSX/$TESTDIR ..
