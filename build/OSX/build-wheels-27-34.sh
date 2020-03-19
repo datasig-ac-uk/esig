@@ -29,8 +29,15 @@ else
 fi
 
 # For 3.4
+# Installing python34 won't always repair a broken installation; uninstall first for reproducibility.
+sudo /opt/local/bin/port -N uninstall --follow-dependents python34
 sudo /opt/local/bin/port -N install python34
-sudo /opt/local/bin/port select --set python3 python34 # needed?
+sudo /opt/local/bin/port select --set python3 python34 # perhaps not needed but sanity-checks python34 ok
+if [ $? -ne 0 ]
+then
+   echo "Couldn't find Python 3.4 after MacPorts installation."
+   exit 1
+fi
 sudo /opt/local/bin/port -N install py34-pip
 sudo /opt/local/bin/port -N install boost
 
@@ -40,19 +47,19 @@ brew install openssl # required now?
 
 # TODO: factor out commonality.
 # Python 2.7 (preinstalled)
-pyexe=/usr/local/bin/python
-py=$($pyexe --version 2>&1)
-p=${py##* }
-if [ $p == "2.7.17" ]
-then
-   . mac_wheel_builder-27-34.sh p
-else
-   echo "Expecting Python 2.7.17, got $p"
-   exit 1
-fi
+# pyexe=/usr/local/bin/python
+# py=$($pyexe --version 2>&1)
+# p=${py##* }
+# if [ $p == "2.7.17" ]
+# then
+#    . mac_wheel_builder-27-34.sh p
+# else
+#    echo "Expecting Python 2.7.17, got $p"
+#    exit 1
+# fi
 
 # Python 3.4 (MacPorts)
-pyexe=/opt/local/bin/python3.4 # hack for build VM for now
+pyexe=/opt/local/bin/python3.4 # MacPorts seems to consistently install here
 py=$($pyexe --version 2>&1)
 p=${py##* }
 if [ $p == "3.4.10" ]
