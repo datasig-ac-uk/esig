@@ -6,7 +6,6 @@ Jupyter notebook drone_identification.ipynb.
 """
 
 import hashlib
-import itertools
 import json
 import os
 import pickle
@@ -75,6 +74,8 @@ class ExpectedSignatureCalculator():
     X0 = 0  # Emit and receive signals at the observer
     N_WAVELENGTHS = 1000 # Number of wavelengths per signal to generate
     N_SAMPLES = 10**5  # Number of samples per signal to generate
+    SAMPLE_PERIOD = PERIOD / (N_SAMPLES / N_WAVELENGTHS)
+    PULSE_RATE = 3000 # Number of incident signals emitted per second
     T0 = 0  # Initial time
 
     def __init__(self, n_incident_signals=3000, truncation_level=3,
@@ -99,9 +100,9 @@ class ExpectedSignatureCalculator():
         time__t1 = self.X0 / self.C
         time__t2 = time__t1 + self.N_WAVELENGTHS * self.PERIOD
         # Timestamps at which we consider incident signal
-        time__t = np.linspace(time__t1, time__t2, self.N_SAMPLES)
+        self.time__t = np.linspace(time__t1, time__t2, self.N_SAMPLES)
 
-        self.incident_signal = self.A * np.sin(self.OMEGA * time__t - self.K * self.X0)
+        self.incident_signal = self.A * np.sin(self.OMEGA * self.time__t - self.K * self.X0)
 
         self.signal_to_noise_ratio = signal_to_noise_ratio
         if signal_to_noise_ratio:
@@ -111,7 +112,7 @@ class ExpectedSignatureCalculator():
 
     @cache_result
     def compute_expected_signature_for_drone(self, rpm, speed__v_b, diameter__d, distance__z,
-                                             proportion, random_state=None):
+                                             random_state=None):
         """
         Estimate the expected signature of our drone model.
 
@@ -125,12 +126,9 @@ class ExpectedSignatureCalculator():
             Diameter of the drone's propeller blades.
         distance__z : float
             Drone's distance in relation to the observer.
-        proportion : float
-            Proportion of signals which hit the drone's body.
         """
         reflected_signals = self._generate_drone_reflections(rpm, speed__v_b, diameter__d,
-                                                             distance__z, proportion,
-                                                             random_state)
+                                                             distance__z, random_state)
 
         return self._estimate_expected_path_signature(reflected_signals)
 
@@ -153,7 +151,7 @@ class ExpectedSignatureCalculator():
         return self._estimate_expected_path_signature(reflected_signals)
 
     def compute_reflected_signals_for_drone(self, rpm, speed__v_b, diameter__d, distance__z,
-                                            proportion, random_state=None):
+                                            random_state=None):
         """
         Compute reflected signals for our drone model.
 
@@ -167,11 +165,9 @@ class ExpectedSignatureCalculator():
             Diameter of the drone's propeller blades.
         distance__z : float
             Drone's distance in relation to the observer.
-        proportion : float
-            Proportion of signals which hit the drone's body.
         """
         return list(self._generate_drone_reflections(rpm, speed__v_b, diameter__d,
-                                                     distance__z, proportion, random_state))
+                                                     distance__z, random_state))
 
     def compute_reflected_signals_for_nondrone(self, speed__v_b, distance__z,
                                                random_state=None):
@@ -189,39 +185,51 @@ class ExpectedSignatureCalculator():
                                                         random_state))
 
     def _generate_drone_reflections(self, rpm, speed__v_b, diameter__d, distance__z,
-                                    proportion, random_state=None):
+                                    random_state=None):
         if random_state is not None:
             np.random.seed(random_state)
 
-        # Number of incident signals that reflect off drone body
-        n_body_hits = int(self.n_incident_signals * proportion)
-        # Number of incident signals that reflect off drone propeller
-        n_propeller_hits = self.n_incident_signals - n_body_hits
+        # Random angle sampled uniformly from [0, 360)
+        angle__theta = np.array(np.random.uniform(0, 360))
+        for _ in range(self.n_incident_signals):
+            body_reflection, time_body__t = self._compute_body_reflection(speed__v_b,
+                                                                          distance__z)
+            propeller_reflection, time_prop__t = \
+                self._compute_propeller_reflection(speed__v_b, rpm, distance__z, diameter__d,
+                                                   angle__theta)
 
-        # Generate reflected signals produced by propeller
-        propeller_reflections = (self._compute_propeller_reflection(speed__v_b, rpm,
-                                                                    distance__z, diameter__d)
-                                 for _ in range(n_propeller_hits))
+            combined_signal = self._combine_signals(body_reflection, time_body__t,
+                                                    propeller_reflection, time_prop__t)
 
-        # Generate reflected signals produced by body
-        body_reflections = (self._compute_body_reflection(speed__v_b, distance__z)
-                            for _ in range(n_body_hits))
+            # Increment propeller angle
+            angle__theta += rpm / 60 / self.PULSE_RATE * 360
 
-        return itertools.chain(propeller_reflections, body_reflections)
+            yield self._add_noise(combined_signal)
+
+    def _combine_signals(self, body_reflection, time_body__t, propeller_reflection,
+                         time_prop__t):
+        time__t1 = min(time_body__t[0], time_prop__t[0])
+        time__t2 = max(time_body__t[-1], time_prop__t[-1])
+        combined_signal = np.zeros(int((time__t2 - time__t1) / self.SAMPLE_PERIOD))
+        i = int((time_body__t[0] - time__t1) / self.SAMPLE_PERIOD)
+        combined_signal[i:i+len(body_reflection)] = 0.5 * body_reflection
+        i = int((time_prop__t[0] - time__t1) / self.SAMPLE_PERIOD)
+        combined_signal[i:i+len(propeller_reflection)] += 0.5 * propeller_reflection
+
+        return combined_signal
 
     def _generate_nondrone_reflections(self, speed__v_b, distance__z, random_state=None):
         if random_state is not None:
             np.random.seed(random_state)
 
         # Generate reflected signals produced by body
-        return (self._compute_body_reflection(speed__v_b, distance__z)
+        return (self._add_noise(self._compute_body_reflection(speed__v_b, distance__z)[0])
                 for _ in range(self.n_incident_signals))
 
-    def _compute_propeller_reflection(self, speed__v_b, rpm, distance__z, diameter__d):
-        # Random angle sampled uniformly from [0, 360)
-        angle__theta = np.array(np.random.uniform(0, 360))
+    def _compute_propeller_reflection(self, speed__v_b, rpm, distance__z, diameter__d,
+                                      angle__theta):
         # Random position sampled uniformly from [0, d/2), where d/2 is blade length
-        position__p = np.array(np.random.uniform(0, diameter__d/2))
+        position__p = np.random.uniform(0, diameter__d/2)
 
         return self._compute_reflected_signal(speed__v_b, rpm, distance__z, diameter__d,
                                               angle__theta, position__p)
@@ -233,7 +241,7 @@ class ExpectedSignatureCalculator():
 
     def _compute_reflected_signal(self, speed__v_b, rpm, distance__z, diameter__d,
                                   angle__theta, position__p):
-        if np.isclose(angle__theta, 90) or np.isclose(angle__theta, 270):
+        if np.isclose(angle__theta % 360, 90) or np.isclose(angle__theta % 360, 270):
             # Case when signal hits the end of propeller blade
             speed__v = speed__v_b
             r_0 = distance__z - diameter__d / 2
@@ -244,44 +252,65 @@ class ExpectedSignatureCalculator():
         # Scaling coefficient resulting from Doppler shift
         scaling__s = (1 - speed__v / self.C) / (1 + speed__v / self.C)
 
-        # Time interval within which we consider reflected signal
-        time__t3 = (-(self.X0 / self.C) +
+        time__t1 = (-(self.X0 / self.C) +
                     ((2 * (r_0 - speed__v * self.T0)) /
                      (scaling__s * self.C * (1 + (speed__v / self.C)))))
-        newperiod = self.PERIOD / scaling__s
-        time__t4 = time__t3 + self.N_WAVELENGTHS * newperiod
-        # Timestamps at which we consider reflected signal
-        time__t = np.linspace(time__t3, time__t4, self.N_SAMPLES)
+        time__t2 = time__t1 + self.N_WAVELENGTHS * (self.PERIOD / scaling__s)
+        time__t = np.linspace(time__t1, time__t2, int((time__t2 - time__t1) / self.SAMPLE_PERIOD))
 
         reflected_signal = (-scaling__s * self.A) * \
             np.sin(scaling__s * (self.OMEGA * time__t + self.K * self.X0) -
                    2 * self.K * (r_0 - speed__v * self.T0) / (1 + speed__v / self.C))
 
-        if self.signal_to_noise_ratio:
-            # Introduce additive Gaussian white noise
-            reflected_signal += np.random.randn(*reflected_signal.shape) * \
-                np.sqrt(self.noise_signal_power)
-
-        return reflected_signal
+        return reflected_signal, time__t
 
     def _estimate_expected_path_signature(self, reflected_signals):
         signatures = []
         previous_signal = None
+        previous_pair = None
 
         for signal in reflected_signals:
-            # Determinism and order of signals implies that we may have successive
+            if previous_signal is None:
+                previous_signal = signal
+                continue
+
+            # Determinism implies that we may have successive
             # signals which are identical
-            if previous_signal is not None and np.all(np.equal(signal, previous_signal)):
+            if (previous_pair is not None and (len(signal) == len(previous_pair[0])) and
+                    (len(previous_signal) == len(previous_pair[1])) and
+                    np.all(np.equal((signal, previous_signal), previous_pair))):
                 signatures.append(signatures[-1])
             else:
-                signatures.append(self._compute_path_signature(self.incident_signal, signal))
+                signatures.append(self._compute_path_signature(signal, previous_signal))
+
+            previous_pair = signal, previous_signal
             previous_signal = signal
 
         # Estimate expected signature using empirical mean
         return np.mean(signatures, axis=0)
 
-    def _compute_path_signature(self, incident_signal, reflected_signal):
-        stream = np.column_stack((incident_signal, reflected_signal))
+    def _add_noise(self, signal):
+        if self.signal_to_noise_ratio:
+            # Introduce additive Gaussian white noise
+            signal += np.random.randn(*signal.shape) * np.sqrt(self.noise_signal_power)
+
+        return signal
+
+    def _zero_pad(current_reflected_signal, previous_reflected_signal):
+        zero_padded = np.zeros(max(len(current_reflected_signal),
+                                   len(previous_reflected_signal)))
+        if len(current_reflected_signal) < len(previous_reflected_signal):
+            zero_padded[0:len(current_reflected_signal)] = current_reflected_signal
+            return zero_padded, previous_reflected_signal
+
+        zero_padded[0:len(previous_reflected_signal)] = previous_reflected_signal
+        return current_reflected_signal, zero_padded
+
+    def _compute_path_signature(self, current_reflected_signal, previous_reflected_signal):
+        current_reflected_signal, previous_reflected_signal = \
+            ExpectedSignatureCalculator._zero_pad(current_reflected_signal,
+                                                  previous_reflected_signal)
+        stream = np.column_stack((current_reflected_signal, previous_reflected_signal))
 
         if self.use_lead_lag_transformation:
             # Compute (partial) lead-lag transformation
@@ -305,6 +334,7 @@ class ExpectedSignatureCalculator():
                     self.X0,
                     self.N_WAVELENGTHS,
                     self.N_SAMPLES,
+                    self.PULSE_RATE,
                     self.T0,
                     self.n_incident_signals,
                     self.truncation_level,
