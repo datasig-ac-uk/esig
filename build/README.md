@@ -6,13 +6,7 @@ As we move forward we might also consider the [PyPI download stats](https://pypi
 
 ### Linux :white_check_mark:
 
-32-bit and 64-bit builds are fine and now fully automated. They run in the `esig` repo as follows:
-1. build Docker file for each architecture to obtain suitable container
-1. create Python `sdist` archive from sources in the repo
-1. for each architecture, instantiate container and then:
-   - for each Python version, build wheel from the `sdist` archive
-   
-This process runs as a [GitHub Action](https://github.com/alan-turing-institute/esig/actions?query=workflow%3Abuild-OSX) specified in `/.github/workflows/build-Linux.yml`.
+32-bit and 64-bit builds are fine and fully automated on [GitHub](https://github.com/alan-turing-institute/esig/actions?query=workflow%3Abuild-Linux).
 
 Issues addressed:
 | Task | Completed |
@@ -22,6 +16,17 @@ Issues addressed:
 | [32-bit Linux build working with Python 2.7-3.8](https://github.com/alan-turing-institute/esig/issues/14) | 18 Feb 2020 |
 | [Replace libalgebra files by submodule](https://github.com/alan-turing-institute/esig/issues/6) | 18 Feb 2020 |
 | [Import esig source code from pypi.org](https://github.com/alan-turing-institute/esig/issues/5) | 3 Feb 2020 |
+
+### OSX :white_check_mark:
+
+OSX builds are fine and fully automated on [GitHub](https://github.com/alan-turing-institute/esig/actions?query=workflow%3Abuild-OSX).
+
+Issues addressed:
+| Task | Completed |
+| ---- | --------- |
+| [OSX not building on Python 3.4](https://github.com/alan-turing-institute/esig/issues/26) | 19 Mar 2020 |
+| [OOSX not building on Python 2.7](https://github.com/alan-turing-institute/esig/issues/23) | 10 Mar 2020 |
+| [OSX build working for Python 3.5-3.8](https://github.com/alan-turing-institute/esig/issues/16) | 18 Feb 2020 |
 
 ### Windows :x:
 
@@ -44,15 +49,3 @@ Issues addressed:
 | ---- | --------- |
 | [Sync Docker build to Feb 12 Windows Server Update](https://github.com/alan-turing-institute/esig/issues/25) | 3 March 2020 |
 | [Migrate Windows build to mcr.microsoft.com/dotnet/framework/sdk:4.8](https://github.com/alan-turing-institute/esig/issues/20) | 11 Feb 2020 |  
-
-### OSX :white_check_mark: :x:
-
-OSX builds are fine except for Python 2.7.10 and 3.4.8.
-
-- These builds fail with compilation error `_ssl.c:684:35: error: incomplete definition of type ‘struct X509_name_entry_st’`. I believe this is because `pyenv` insists on `openssl` and will always get the location of the relevant include files from    `brew`. Removing the `brew` installation of `openssl` causes other problems later. Python 2.7 and 3.4 seem to require an earlier/different version of SSL. It's possible to use a symlink hack to have `openssl/include` point to `libressl-2.2.7/include`. Then compilation proceeds, but the build fails with a linker error (`Quicktime.framework` not found).
-- I'm happy to continue in this vein of investigation, but my impression is that getting Python 2.7 and 3.4 to build on a recent MacOS is a gnarly devops task (the same problems exist on Peter's laptop and also the GitHub Action MacOS VM, which is fixed at a particular version). It might be better to pursue another option if we are determined to build these old platforms on a new machine. For example, we could drop the use of `pyenv` and instead run in a hosted MacOS VM where we only install Python 2.7. Time spent on this so far: ~2 person days.
-
-Issues addressed:
-| Task | Completed |
-| ---- | --------- |
-| [OSX build working for Python 3.5-3.8](https://github.com/alan-turing-institute/esig/issues/16) | 18 Feb 2020 |
