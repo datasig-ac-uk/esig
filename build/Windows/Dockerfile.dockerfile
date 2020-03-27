@@ -77,7 +77,7 @@ ADD https://www.microsoft.com/en-us/download/confirmation.aspx?id=12493&6B49FDFB
 
 RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
-      $p = Start-Process -Wait -PassThru -FilePath C:\vs_buildtools.exe -ArgumentList '--add Microsoft.VisualStudio.Workload.VCTools --includeOptional --includeRecommended --quiet --nocache --wait';
+      $p = Start-Process -Wait -PassThru -FilePath C:\vs_buildtools.exe -ArgumentList '/silent /full /passive';
 
 # Trying Visual Studio 2015 instead (should bring in 14.0)
 ADD https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe

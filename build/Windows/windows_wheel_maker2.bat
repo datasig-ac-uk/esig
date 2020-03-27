@@ -4,6 +4,9 @@ REM arguments: <python_version_string e.g. python37_64>
 REM del *.whl
 if not exist "C:\data\output" mkdir C:\data\output
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
+echo Downloaded.
+./BuildTools_Full.exe /silent /full /passive
+echo Installed.
 python.exe -m pip install virtualenv
 REM build the wheel
 pushd ..
