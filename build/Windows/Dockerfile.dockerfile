@@ -79,6 +79,8 @@ RUN $ErrorActionPreference = 'Stop'; \
       $VerbosePreference = 'Continue'; \
       $p = Start-Process -Wait -PassThru -FilePath C:\vs_buildtools.exe -ArgumentList '--add Microsoft.VisualStudio.Workload.VCTools --includeOptional --includeRecommended --quiet --nocache --wait';
 
+# Trying Visual Studio 2015 instead (should bring in 14.0)
+ADD https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
 
 ## copy rc.exe and rcdll.dll needed for VC14 to compile for python 3.5
 # Disable for now as Windows Kit 8.0 doesn't seem to be available in our base image
