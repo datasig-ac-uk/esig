@@ -1,9 +1,5 @@
 Set-PSDebug -Trace 1
 
-ls C:\Users
-whoami
-exit 0
-
 # run from C:\data\ directory inside the esig_builder_windows docker container.
 # arguments: <python_version_string e.g. python37_64>
 # del *.whl
@@ -37,6 +33,9 @@ Measure-Command {
    Start-Process -Wait -PassThru -FilePath .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
 }
 
+ls C:\Users\runneradmin\
+ls C:\Users\runneradmin\AppData\Local\Programs\Python
+ls C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32
 python --version
 
 # Up to here so far
