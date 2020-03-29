@@ -20,11 +20,12 @@ Measure-Command {
    Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
 }
 
-# create directories where the compiler expects boost (based on BOOST_ROOT env var)
-mkdir boost\boost_1_68_0\x64
-mkdir boost\boost_1_68_0\x64\lib
+# compiler expects boost here
+$BOOST_ROOT='.\boost\boost_1_68_0'
+mkdir $BOOST_ROOT\x64
+mkdir $BOOST_ROOT\x64\lib
 
-Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination .\boost\boost_1_68_0\x64\lib
+Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination $BOOST_ROOT\x64\lib
 
 curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
 $ErrorActionPreference = 'Stop'
