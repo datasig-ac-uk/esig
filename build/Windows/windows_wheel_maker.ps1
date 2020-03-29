@@ -1,3 +1,5 @@
+Set-PSDebug -Trace 1
+
 # run from C:\data\ directory inside the esig_builder_windows docker container.
 # arguments: <python_version_string e.g. python37_64>
 # del *.whl
@@ -15,11 +17,13 @@ curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/
 Measure-Command {
    # self-extracting installers - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
    # without /VERYSILENT installer will attempt to open a dialog box and then silently fail
-   Start-Process -Wait -PathThru .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
+   $p=Start-Process -PathThru -FilePath .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
+   Wait-Process $app.Id
 }
 
 # now copy those directories to where the compiler expects them (based on BOOST_ROOT env var)
 mkdir boost\boost_1_68_0\x64
+echo 'Made directories.'
 mkdir boost\boost_1_68_0\x64\lib
 
 Move-Item -Path .\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination .\boost\boost_1_68_0\x64\lib
@@ -34,7 +38,7 @@ curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'Continue'
 Measure-Command {
-   Start-Process -Wait -PassThru .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
+   Start-Process -Wait -PassThru -FilePath .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
 }
 
 python.exe -m pip install virtualenv
