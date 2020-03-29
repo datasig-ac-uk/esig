@@ -1,8 +1,7 @@
 Set-PSDebug -Trace 1
 
 pwd
-ls ../
-ls ../../
+ls ..\..\libalgebra
 exit 0
 
 # run from C:\data\ directory inside the esig_builder_windows docker container.
