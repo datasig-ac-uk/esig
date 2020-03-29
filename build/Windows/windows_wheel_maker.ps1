@@ -25,12 +25,11 @@ mkdir boost\boost_1_68_0\x64
 mkdir boost\boost_1_68_0\x64\lib
 
 Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination .\boost\boost_1_68_0\x64\lib
+ls .\boost\boost_1_68_0\x64\lib\
 
 # Up to here so far
 echo 'All good so far.'
 exit 0
-
-ls boost\boost_1_68_0\x64\lib\boost_1_68_0-msvc-14.0-64.exe
 
 curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
 $ErrorActionPreference = 'Stop'
