@@ -6,10 +6,7 @@ echo Here.
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
 .\BuildTools_Full.exe /silent /full /passive
 echo Installed.
-# probably a better way to have dir emit results to console
-ls 'C:\Program Files (x86)' > blah.txt
-type blah.txt
-rm blah.txt
+ls 'C:\Program Files (x86)'
 python.exe -m pip install virtualenv
 # build the wheel
 pushd ..
