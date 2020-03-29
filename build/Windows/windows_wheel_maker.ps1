@@ -1,5 +1,7 @@
 Set-PSDebug -Trace 1
 
+ls C:\
+
 # run from C:\data\ directory inside the esig_builder_windows docker container.
 # arguments: <python_version_string e.g. python37_64>
 # del *.whl
