@@ -1,7 +1,8 @@
 # run from C:\data\ directory inside the esig_builder_windows docker container.
 # arguments: <python_version_string e.g. python37_64>
 # del *.whl
-if not exist "C:\data\output" mkdir C:\data\output
+# if not exist "C:\data\output" mkdir C:\data\output
+echo Here.
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
 .\BuildTools_Full.exe /silent /full /passive
 echo Installed.
