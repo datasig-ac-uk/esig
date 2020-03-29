@@ -46,8 +46,13 @@ python -m pip install delocate
 python -m pip install --upgrade setuptools
 python -m pip install virtualenv
 
+pwd
+ls
+
 # build the wheel
 pushd ..
+   pwd
+   ls
    # python.exe -m pip wheel --trusted-host --no-binary -b latest %1
    python.exe -m pip wheel -b Windows/ -w Windows/output/ ..
 popd
