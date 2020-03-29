@@ -1,6 +1,6 @@
 Set-PSDebug -Trace 1
 
-ls C:\Users
+ls C:\
 whoami
 exit 1
 
