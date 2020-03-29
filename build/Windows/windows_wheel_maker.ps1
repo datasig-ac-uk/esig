@@ -20,13 +20,11 @@ Measure-Command {
    Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
 }
 
-# now copy those directories to where the compiler expects them (based on BOOST_ROOT env var)
+# create directories where the compiler expects boost (based on BOOST_ROOT env var)
 mkdir boost\boost_1_68_0\x64
-echo 'Made directories.'
 mkdir boost\boost_1_68_0\x64\lib
 
-ls
-ls .\local\boost_1_68_0\lib64-msvc-14.0\*.lib
+ls C:\local\
 
 # Up to here so far
 echo 'All good so far.'
