@@ -33,6 +33,8 @@ Measure-Command {
    Start-Process -Wait -PassThru -FilePath .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
 }
 
+python --version
+
 # Up to here so far
 echo 'All good so far.'
 exit 0
