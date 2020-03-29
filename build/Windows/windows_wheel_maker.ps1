@@ -15,6 +15,7 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 # Boost sources. First URL currently returns 403 (Forbidden) :-o
 # curl -O https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.zip
 curl -L -O https://vorboss.dl.sourceforge.net/project/boost/boost/1.68.0/boost_1_68_0.zip
+if ($LASTEXITCODE -ne 0) { throw "Boost source download failed." }
 Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
 
 # Boost binaries.
