@@ -15,11 +15,13 @@ curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/
 ls .\boost_1_68_0-msvc-14.0-64.exe
 echo Here.
 
-$app = Start-Process .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru
-Wait-Process $app.Id
+Measure-Command {
+   $app = Start-Process .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru
+   Wait-Process $app.Id
+}
 
 # Up to here so far
-echo All good so far.
+echo 'All good so far.'
 exit 0
 
 python.exe -m pip install virtualenv
