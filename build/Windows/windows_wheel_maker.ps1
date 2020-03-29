@@ -13,8 +13,12 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 curl -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 curl -o boost_1_68_0-msvc-14.0-32.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-32.exe/download
 
+$app = Start-Process .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru
+Wait-Process $app.Id
+
 # Up to here so far
-exit 1
+echo All good so far.
+exit 0
 
 python.exe -m pip install virtualenv
 # build the wheel
