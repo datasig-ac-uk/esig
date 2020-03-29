@@ -33,9 +33,7 @@ Measure-Command {
    Start-Process -Wait -PassThru -FilePath .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
 }
 
-ls C:\Users\runneradmin\
-ls C:\Users\runneradmin\AppData\Local\Programs\Python
-ls C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32
+ls C:\Users\runneradmin\AppData\Local\Programs\Python\Python35
 python --version
 
 # Up to here so far
