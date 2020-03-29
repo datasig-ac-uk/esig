@@ -12,13 +12,21 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 
-ls .\boost_1_68_0-msvc-14.0-64.exe
-echo Here.
-
 Measure-Command {
+   # self-extracting installers - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
+   # without /VERYSILENT installer will attempt to open a dialog box and then silently fail
+   # TODO: replace Wait-Process by -Wait option on Start-Process
    $app = Start-Process .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru
    Wait-Process $app.Id
 }
+
+# now copy those directories to where the compiler expects them (based on BOOST_ROOT env var)
+mkdir boost\boost_1_68_0\x64
+mkdir boost\boost_1_68_0\x64\lib
+
+Move-Item -Path .\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination .\boost\boost_1_68_0\x64\lib\
+
+ls boost\boost_1_68_0\x64\lib\boost_1_68_0-msvc-14.0-64.exe
 
 # Up to here so far
 echo 'All good so far.'
