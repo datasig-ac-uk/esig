@@ -9,6 +9,10 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
    exit 1
 }
 .\BuildTools_Full.exe /silent /full /passive
+
+curl -O https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download -O boost_1_68_0-msvc-14.0-64.exe"
+curl -O https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-32.exe/download -O boost_1_68_0-msvc-14.0-32.exe"
+
 python.exe -m pip install virtualenv
 # build the wheel
 pushd ..
