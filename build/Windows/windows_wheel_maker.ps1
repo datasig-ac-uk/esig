@@ -1,5 +1,7 @@
 Set-PSDebug -Trace 1
 
+ls ../../libalgebra/libalgebra
+
 # run from C:\data\ directory inside the esig_builder_windows docker container.
 # arguments: <python_version_string e.g. python37_64>
 # del *.whl
@@ -46,13 +48,8 @@ python -m pip install delocate
 python -m pip install --upgrade setuptools
 python -m pip install virtualenv
 
-pwd
-ls
-
 # build the wheel
 pushd ..
-   pwd
-   ls
    # python.exe -m pip wheel --trusted-host --no-binary -b latest %1
    python.exe -m pip wheel -b Windows/ -w Windows/output/ ..
 popd
