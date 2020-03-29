@@ -37,8 +37,13 @@ ls C:\Users\runneradmin\AppData\Local\Programs\Python\Python35
 
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\Python35;C:\Users\runneradmin\AppData\Local\Programs\Python\Python35\Scripts;$ENV:PATH"
 
-Get-Command python
+# TODO: check 3.5[.4]
 python --version
+
+python -m pip install numpy
+python -m pip install wheel
+python -m pip install delocate
+python -m pip install --upgrade setuptools
 
 # Up to here so far
 echo 'All good so far.'
