@@ -44,18 +44,19 @@ python -m pip install numpy
 python -m pip install wheel
 python -m pip install delocate
 python -m pip install --upgrade setuptools
+python -m pip install virtualenv
 
-# Up to here so far
-echo 'All good so far.'
-exit 0
-
-python.exe -m pip install virtualenv
 # build the wheel
 pushd ..
    # python.exe -m pip wheel --trusted-host --no-binary -b latest %1
    python.exe -m pip wheel -b Windows/ -w Windows/output/ ..
 popd
 # don't know how to make the above command fail
+
+# Up to here so far
+echo 'All good so far.'
+exit 0
+
 # create a virtualenv for testing.
 # virtualenv.exe %1
 # using the virtualenv python, install the newly created esig wheel
