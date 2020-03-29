@@ -15,7 +15,7 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 
 Measure-Command {
-   # self-extracting installers - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
+   # self-extracting installers - just execute the command and the libs will be unpacked into local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
    # without /VERYSILENT installer will attempt to open a dialog box and then silently fail
    Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
 }
@@ -25,11 +25,13 @@ mkdir boost\boost_1_68_0\x64
 echo 'Made directories.'
 mkdir boost\boost_1_68_0\x64\lib
 
-Move-Item -Path .\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination .\boost\boost_1_68_0\x64\lib
+ls
 
 # Up to here so far
 echo 'All good so far.'
 exit 0
+
+Move-Item -Path .\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination .\boost\boost_1_68_0\x64\lib
 
 ls boost\boost_1_68_0\x64\lib\boost_1_68_0-msvc-14.0-64.exe
 
