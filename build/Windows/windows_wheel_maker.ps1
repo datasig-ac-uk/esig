@@ -16,7 +16,6 @@ Measure-Command {
    # self-extracting installers - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
    # without /VERYSILENT installer will attempt to open a dialog box and then silently fail
    Start-Process -Wait -PathThru .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
-   Wait-Process $app.Id
 }
 
 # now copy those directories to where the compiler expects them (based on BOOST_ROOT env var)
