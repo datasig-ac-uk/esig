@@ -1,6 +1,7 @@
 Set-PSDebug -Trace 1
 
 ls C:\Users
+whoami
 exit 0
 
 # run from C:\data\ directory inside the esig_builder_windows docker container.
