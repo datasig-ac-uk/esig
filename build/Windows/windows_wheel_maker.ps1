@@ -12,11 +12,16 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 }
 .\BuildTools_Full.exe /silent /full /passive
 
+# Boost sources.
+curl -L https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.zip
+Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
+
+# Boost binaries.
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 
 Measure-Command {
-   # self-extracting installers - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
-   # without /VERYSILENT installer will attempt to open a dialog box and then silently fail
+   # self-extracting installer - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
+   # without /VERYSILENT installer will attempt to open dialog box and silently fail
    Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
 }
 
