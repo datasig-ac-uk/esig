@@ -35,8 +35,9 @@ Measure-Command {
 
 ls C:\Users\runneradmin\AppData\Local\Programs\Python\Python35
 
-$ENV:PATH="C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35;C:\Users\ContainerAdministrator\AppData\Local\Programs\Python\Python35\Scripts;$ENV:PATH"
+$ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\Python35;C:\Users\runneradmin\AppData\Local\Programs\Python\Python35\Scripts;$ENV:PATH"
 
+Get-Command python
 python --version
 
 # Up to here so far
