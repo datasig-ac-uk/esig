@@ -8,7 +8,7 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 } else {
    exit 1
 }
-.\BuildTools_Full.exe /silent /full /passive
+Measure-Command { .\BuildTools_Full.exe /silent /full /passive }
 python.exe -m pip install virtualenv
 # build the wheel
 pushd ..
