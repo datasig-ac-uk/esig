@@ -19,7 +19,6 @@ if ($LASTEXITCODE -ne 0) { throw "Boost source download failed." }
 Set-PSDebug -Off
 Expand-Archive -PassThru .\boost_1_68_0.zip -DestinationPath boost
 Set-PSDebug -Trace 1
-exit 0 # just to test Boost download
 
 # Boost binaries.
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
