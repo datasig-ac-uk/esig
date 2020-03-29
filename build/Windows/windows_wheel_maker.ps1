@@ -12,10 +12,6 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 }
 .\BuildTools_Full.exe /silent /full /passive
 
-ls C:\
-whoami
-exit 0
-
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 
 Measure-Command {
