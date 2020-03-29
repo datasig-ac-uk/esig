@@ -15,8 +15,7 @@ curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/
 Measure-Command {
    # self-extracting installers - just execute the command and the libs will be unpacked into C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
    # without /VERYSILENT installer will attempt to open a dialog box and then silently fail
-   # TODO: replace Wait-Process by -Wait option on Start-Process
-   $app = Start-Process .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-' -passthru
+   Start-Process -Wait -PathThru .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
    Wait-Process $app.Id
 }
 
@@ -24,13 +23,20 @@ Measure-Command {
 mkdir boost\boost_1_68_0\x64
 mkdir boost\boost_1_68_0\x64\lib
 
-Move-Item -Path .\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination .\boost\boost_1_68_0\x64\lib\
-
-ls boost\boost_1_68_0\x64\lib\boost_1_68_0-msvc-14.0-64.exe
+Move-Item -Path .\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination .\boost\boost_1_68_0\x64\lib
 
 # Up to here so far
 echo 'All good so far.'
 exit 0
+
+ls boost\boost_1_68_0\x64\lib\boost_1_68_0-msvc-14.0-64.exe
+
+curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
+$ErrorActionPreference = 'Stop'
+$VerbosePreference = 'Continue'
+Measure-Command {
+   Start-Process -Wait -PassThru .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
+}
 
 python.exe -m pip install virtualenv
 # build the wheel
