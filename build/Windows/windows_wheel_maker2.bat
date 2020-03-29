@@ -6,7 +6,9 @@ if not exist "C:\data\output" mkdir C:\data\output
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
 .\BuildTools_Full.exe /silent /full /passive
 echo Installed.
-dir 'C:\Program Files (x86)'
+dir 'C:\Program Files (x86)' > blah.txt
+type blah.txt
+rm blah.txt
 python.exe -m pip install virtualenv
 REM build the wheel
 pushd ..
