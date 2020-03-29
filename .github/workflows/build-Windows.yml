@@ -24,6 +24,6 @@ jobs:
         git submodule sync --recursive
         echo $auth_header
         # Next step currently fails on Windows:
-        # git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
         cd build\Windows
         .\windows_wheel_maker.ps1 python35_32
