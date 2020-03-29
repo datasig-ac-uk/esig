@@ -12,9 +12,9 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 }
 .\BuildTools_Full.exe /silent /full /passive
 
-# Boost sources. First URL currently returns 403 (Forbidden) :-o
+# Boost sources. First URL currently returns 403 (Forbidden). Second URL needs a long timeout.
 # curl -O https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.zip
-curl -L -O https://vorboss.dl.sourceforge.net/project/boost/boost/1.68.0/boost_1_68_0.zip
+curl --max-time 45 -L -O https://vorboss.dl.sourceforge.net/project/boost/boost/1.68.0/boost_1_68_0.zip
 if ($LASTEXITCODE -ne 0) { throw "Boost source download failed." }
 Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
 
