@@ -1,9 +1,5 @@
 Set-PSDebug -Trace 1
 
-ls C:\
-whoami
-exit 0
-
 # run from C:\data\ directory inside the esig_builder_windows docker container.
 # arguments: <python_version_string e.g. python37_64>
 # del *.whl
@@ -15,6 +11,10 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
    exit 1
 }
 .\BuildTools_Full.exe /silent /full /passive
+
+ls C:\
+whoami
+exit 0
 
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 
