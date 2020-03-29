@@ -26,6 +26,7 @@ echo 'Made directories.'
 mkdir boost\boost_1_68_0\x64\lib
 
 ls
+ls .\local\boost_1_68_0\lib64-msvc-14.0\*.lib
 
 # Up to here so far
 echo 'All good so far.'
