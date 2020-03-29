@@ -13,7 +13,7 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 .\BuildTools_Full.exe /silent /full /passive
 
 # Boost sources.
-curl -L -O https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.zip
+curl -O https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.zip
 Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
 
 # Boost binaries.
