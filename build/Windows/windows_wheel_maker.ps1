@@ -12,8 +12,9 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 }
 .\BuildTools_Full.exe /silent /full /passive
 
-# Boost sources.
-curl -O https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.zip
+# Boost sources. First URL currently returns 403 (Forbidden) :-o
+# curl -O https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.zip
+curl -L -O https://vorboss.dl.sourceforge.net/project/boost/boost/1.68.0/boost_1_68_0.zip
 Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
 
 # Boost binaries.
