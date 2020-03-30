@@ -11,11 +11,11 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 }
 .\BuildTools_Full.exe /silent /full /passive
 
-# Boost sources. Unpacks to "boost\boost_1_68_0\" subfolder of DestinationPath.
+# Boost sources. Unpacks to "boost_1_68_0" subfolder of DestinationPath.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
 if ($LASTEXITCODE -ne 0) { throw "Boost source download failed." }
 Set-PSDebug -Off
-Expand-Archive .\boost_1_68_0.zip -DestinationPath C:\
+Expand-Archive .\boost_1_68_0.zip -DestinationPath C:\boost
 Set-PSDebug -Trace 1
 
 # Tell install_helpers.py where the Boost sources were installed.
