@@ -11,15 +11,15 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 }
 .\BuildTools_Full.exe /silent /full /passive
 
-# used by install_helpers.py to build the include path for C++ compilation.
-$ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
-
-# Boost sources. Unpack to "boost" subfolder of BOOST_ROOT.
+# Boost sources. Unpacks to "boost\boost_1_68_0\" subfolder of DestinationPath.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
 if ($LASTEXITCODE -ne 0) { throw "Boost source download failed." }
 Set-PSDebug -Off
-Expand-Archive .\boost_1_68_0.zip -DestinationPath $ENV:BOOST_ROOT\boost
+Expand-Archive .\boost_1_68_0.zip -DestinationPath C:\
 Set-PSDebug -Trace 1
+
+# used by install_helpers.py to build the include path for C++ compilation.
+$ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 
 ls $ENV:BOOST_ROOT\
 ls $ENV:BOOST_ROOT\boost
