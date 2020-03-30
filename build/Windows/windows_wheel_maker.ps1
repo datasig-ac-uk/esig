@@ -61,12 +61,12 @@ echo 'All good so far.'
 exit 0
 
 # create a virtualenv for testing.
-# virtualenv.exe %1
+$target='python35_64'
+virtualenv.exe $target
 # using the virtualenv python, install the newly created esig wheel
-# FOR /F "tokens=* USEBACKQ" %%F IN (`dir /b esig*.whl`) DO %1\Scripts\python.exe -m pip install %%F
+$wheel=(ls output/*.whl | Select-Object -First 1).Name
+echo $wheel
+$target\Scripts\python.exe -m pip install $wheel
 # run the tests
-# %1\Scripts\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
-# if tests pass, move the wheel to 'output'
-# if %ERRORLEVEL% EQU 0 move esig*.whl C:\data\output\
-# remove extraneous wheels
-# del *.whl
+$target\Scripts\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
+if ($LASTEXITCODE -ne 0) { throw "Tests failed." }
