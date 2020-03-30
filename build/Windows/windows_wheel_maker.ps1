@@ -1,8 +1,6 @@
 Set-PSDebug -Trace 1
 
 # arguments: <python_version_string e.g. python37_64>
-# del *.whl
-# if not exist "C:\data\output" mkdir C:\data\output
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
 if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -PathType Container ) {
    echo 'Visual Studio 14.0 folder exists.'
@@ -56,17 +54,13 @@ pushd ..
 popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
-# Up to here so far
-echo 'All good so far.'
-exit 0
-
 # create a virtualenv for testing.
-$target='python35_64'
-virtualenv.exe $target
+# $target='python35_64'
+# virtualenv.exe $target
 # using the virtualenv python, install the newly created esig wheel
-$wheel=(ls output/*.whl | Select-Object -First 1).Name
-echo $wheel
-$target\Scripts\python.exe -m pip install $wheel
+# $wheel=(ls output/*.whl | Select-Object -First 1).Name
+# echo $wheel
+# $target\Scripts\python.exe -m pip install $wheel
 # run the tests
-$target\Scripts\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
-if ($LASTEXITCODE -ne 0) { throw "Tests failed." }
+# $target\Scripts\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
+# if ($LASTEXITCODE -ne 0) { throw "Tests failed." }
