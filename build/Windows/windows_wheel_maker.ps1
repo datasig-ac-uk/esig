@@ -60,7 +60,7 @@ $pyexe -m virtualenv $venv
 # using the virtualenv python, install the newly created esig wheel
 $wheel=(ls output\*.whl | Select-Object -First 1).Name
 echo $wheel
-.\$venv\Scripts\python.exe -m pip install $wheel
+# .\$venv\Scripts\python.exe -m pip install $wheel
 # run the tests
 # $target\Scripts\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
 # if ($LASTEXITCODE -ne 0) { throw "Tests failed." }
