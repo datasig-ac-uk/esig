@@ -53,9 +53,8 @@ python -m pip install virtualenv
 # build the wheel
 pushd ..
    python.exe -m pip wheel -b Windows/ -w Windows/output/ ..
-   echo $LASTEXITCODE
 popd
-# don't know how to make the above command fail
+if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
 # Up to here so far
 echo 'All good so far.'
