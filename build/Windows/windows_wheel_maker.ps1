@@ -58,7 +58,7 @@ create a virtualenv for testing.
 $target='python35_64'
 virtualenv.exe $target
 # using the virtualenv python, install the newly created esig wheel
-# $wheel=(ls output/*.whl | Select-Object -First 1).Name
+$wheel=(ls output\*.whl | Select-Object -First 1).Name
 # echo $wheel
 # $target\Scripts\python.exe -m pip install $wheel
 # run the tests
