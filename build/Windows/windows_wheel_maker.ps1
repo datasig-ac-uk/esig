@@ -34,6 +34,10 @@ $BOOST_ROOT='.\boost\boost_1_68_0'
 mkdir $BOOST_ROOT\x64
 mkdir $BOOST_ROOT\x64\lib
 
+ls $BOOST_ROOT
+ls $BOOST_ROOT\boost
+ls $BOOST_ROOT\boost\thread
+
 Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination $BOOST_ROOT\x64\lib
 
 curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
