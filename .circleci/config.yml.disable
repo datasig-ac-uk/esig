@@ -5,6 +5,9 @@ orbs:
 
 jobs:
   build:
+    only:
+      - dummy
+
     executor: win/default # executor type
 
     steps:
