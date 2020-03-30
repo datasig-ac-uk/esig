@@ -24,4 +24,4 @@ workflows:
           filters:
             branches:
               only:
-                - windows-build
+                - dummy
