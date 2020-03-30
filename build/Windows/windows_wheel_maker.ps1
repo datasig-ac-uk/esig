@@ -18,10 +18,10 @@ Set-PSDebug -Off
 Expand-Archive .\boost_1_68_0.zip -DestinationPath C:\
 Set-PSDebug -Trace 1
 
-# used by install_helpers.py to build the include path for C++ compilation.
+# Tell install_helpers.py where the Boost sources were installed.
 $ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 
-ls $ENV:BOOST_ROOT\
+ls $ENV:BOOST_ROOT
 ls $ENV:BOOST_ROOT\boost
 ls $ENV:BOOST_ROOT\boost\thread
 
