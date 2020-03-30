@@ -1,6 +1,5 @@
 Set-PSDebug -Trace 1
 
-# run from C:\data\ directory inside the esig_builder_windows docker container.
 # arguments: <python_version_string e.g. python37_64>
 # del *.whl
 # if not exist "C:\data\output" mkdir C:\data\output
@@ -20,17 +19,21 @@ Set-PSDebug -Off
 Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
 Set-PSDebug -Trace 1
 
+# compiler expects boost here
+$ENV:BOOST_ROOT='.\boost\boost_1_68_0'
+
+# DELETE ME
+ls $ENV:BOOST_ROOT\boost\thread\mutex.hpp
+ls $ENV:BOOST_ROOT\boost\thread\shared_mutex.hpp
+exit 0
+
 # Boost binaries.
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 
-Measure-Command {
-   # self-extracting installer - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
-   # without /VERYSILENT installer will attempt to open dialog box and silently fail
-   Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
-}
+# self-extracting installer - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
+# without /VERYSILENT installer will attempt to open dialog box and silently fail
+Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
 
-# compiler expects boost here
-$ENV:BOOST_ROOT='.\boost\boost_1_68_0'
 mkdir $ENV:BOOST_ROOT\x64
 mkdir $ENV:BOOST_ROOT\x64\lib
 
@@ -39,9 +42,7 @@ Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination $ENV:BO
 curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'Continue'
-Measure-Command {
-   Start-Process -Wait -PassThru -FilePath .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
-}
+Start-Process -Wait -PassThru -FilePath .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
 
 ls C:\Users\runneradmin\AppData\Local\Programs\Python\Python35
 
@@ -58,8 +59,8 @@ python -m pip install virtualenv
 
 # build the wheel
 pushd ..
-   # python.exe -m pip wheel --trusted-host --no-binary -b latest %1
    python.exe -m pip wheel -b Windows/ -w Windows/output/ ..
+   echo $LASTEXITCODE
 popd
 # don't know how to make the above command fail
 
