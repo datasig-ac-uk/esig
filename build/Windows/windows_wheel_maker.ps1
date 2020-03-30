@@ -19,8 +19,8 @@ Set-PSDebug -Off
 Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
 Set-PSDebug -Trace 1
 
-# compiler expects boost here
-$ENV:BOOST_ROOT='.\boost\boost_1_68_0\'
+# used by install_helpers.py
+$ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 
 # Boost binaries.
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
@@ -38,8 +38,6 @@ curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'Continue'
 Start-Process -Wait -PassThru -FilePath .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
-
-ls C:\Users\runneradmin\AppData\Local\Programs\Python\Python35
 
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\Python35;C:\Users\runneradmin\AppData\Local\Programs\Python\Python35\Scripts;$ENV:PATH"
 
