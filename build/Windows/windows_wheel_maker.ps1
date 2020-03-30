@@ -50,7 +50,7 @@ pushd ..
 popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
-create a virtualenv for testing.
+# create a virtualenv for testing.
 $venv='python35_64'
 python -m virtualenv $venv
 # using the virtualenv python, install the newly created esig wheel
