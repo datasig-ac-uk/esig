@@ -21,12 +21,6 @@ Set-PSDebug -Trace 1
 # Tell install_helpers.py where the Boost sources were installed.
 $ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 
-ls $ENV:BOOST_ROOT
-ls $ENV:BOOST_ROOT\boost
-ls $ENV:BOOST_ROOT\boost\thread
-
-exit 0
-
 # Boost binaries.
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 
