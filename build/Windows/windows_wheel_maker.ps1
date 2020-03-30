@@ -11,16 +11,15 @@ if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -Path
 }
 .\BuildTools_Full.exe /silent /full /passive
 
-# Boost sources. Use SourceForge instead of boostorg; latter currently returns 403 (Forbidden).
-# curl -O https://dl.bintray.com/boostorg/release/1.68.0/source/boost_1_68_0.zip
+# used by install_helpers.py to build the include path for C++ compilation.
+$ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
+
+# Boost sources.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
 if ($LASTEXITCODE -ne 0) { throw "Boost source download failed." }
 Set-PSDebug -Off
-Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
+Expand-Archive .\boost_1_68_0.zip -DestinationPath $ENV:BOOST_ROOT
 Set-PSDebug -Trace 1
-
-# used by install_helpers.py
-$ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 
 # Boost binaries.
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
