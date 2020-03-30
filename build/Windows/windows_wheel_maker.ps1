@@ -21,6 +21,8 @@ Set-PSDebug -Off
 Expand-Archive .\boost_1_68_0.zip -DestinationPath $ENV:BOOST_ROOT
 Set-PSDebug -Trace 1
 
+ls $ENV:BOOST_ROOT\boost\thread\shared_mutex.hpp
+
 # Boost binaries.
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 
