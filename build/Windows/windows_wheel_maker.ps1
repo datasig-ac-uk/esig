@@ -20,7 +20,7 @@ Expand-Archive .\boost_1_68_0.zip -DestinationPath boost
 Set-PSDebug -Trace 1
 
 # compiler expects boost here
-$ENV:BOOST_ROOT='.\boost\boost_1_68_0'
+$ENV:BOOST_ROOT='.\boost\boost_1_68_0\'
 
 # Boost binaries.
 curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
