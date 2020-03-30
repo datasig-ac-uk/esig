@@ -22,16 +22,17 @@ Set-PSDebug -Trace 1
 $ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 
 # Boost binaries.
-curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
+# curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
+curl -L -o boost_1_68_0-msvc-14.1-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.1-64.exe/download
 
 # self-extracting installer - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
 # without /VERYSILENT installer will attempt to open dialog box and silently fail
-Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.0-64.exe -ArgumentList '/VERYSILENT /SP-'
+Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.1-64.exe -ArgumentList '/VERYSILENT /SP-'
 
 mkdir $ENV:BOOST_ROOT\x64
 mkdir $ENV:BOOST_ROOT\x64\lib
 
-Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.0\*.lib -Destination $ENV:BOOST_ROOT\x64\lib
+Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.1\*.lib -Destination $ENV:BOOST_ROOT\x64\lib
 
 curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
 $ErrorActionPreference = 'Stop'
