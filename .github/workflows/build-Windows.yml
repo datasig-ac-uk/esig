@@ -4,6 +4,10 @@ on:
   push:
     branches:
       - windows-build
+    paths-ignore:
+      - 'examples/**'
+      - 'doc/**'
+      - README.md
 
 jobs:
 

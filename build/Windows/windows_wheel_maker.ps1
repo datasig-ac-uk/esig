@@ -19,7 +19,6 @@ Set-PSDebug -Trace 1
 $ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 
 # Boost binaries.
-# curl -L -o boost_1_68_0-msvc-14.0-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.0-64.exe/download
 curl -L -o boost_1_68_0-msvc-14.1-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.1-64.exe/download
 
 # self-extracting installer - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
