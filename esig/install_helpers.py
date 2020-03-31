@@ -695,13 +695,6 @@ class InstallationConfiguration(object):
             return_list = os.environ['CPATH'].split(os.pathsep)
 
         # This is now based upon Terry's code, to include standard locations for Boost.
-        print("*********************")
-        print("Inside install_helpers.py")
-        if 'BOOST_ROOT' in os.environ:
-            print(os.environ['BOOST_ROOT'])
-            print(os.listdir(os.environ['BOOST_ROOT']))
-            print(os.listdir(os.environ['BOOST_ROOT'] + '\\boost\\thread\\'))
-        print("*********************")
         if 'BOOST_ROOT' in os.environ and os.environ['BOOST_ROOT'] != '':
             return_list.append(os.environ['BOOST_ROOT'])
 
