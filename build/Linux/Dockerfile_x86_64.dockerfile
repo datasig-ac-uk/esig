@@ -1,5 +1,5 @@
 # Tried the manylinux 2010 and 2014 images but didn't help.
-FROM quay.io/pypa/manylinux1_x86_64 AS manylinux1_x86_64_boost
+FROM quay.io/pypa/manylinux1_x86_64:2020-01-31-d8fa357 AS manylinux1_x86_64_boost
 ## from the folder with this file and the context execute
 ## docker build -t manylinux1_x86_64_boost -f Dockerfile.dockerfile .
 ENTRYPOINT ["/bin/bash", "-c"]
