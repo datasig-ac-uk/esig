@@ -1,4 +1,5 @@
 param([string] $py_install_dir,
+      [string] $py_installer,
       [string] $boost_platform_dir,
       [string] $boost_lib_dir,
       [string] $boost_installer)
@@ -37,7 +38,7 @@ mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
-curl -L -o install-python.exe https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
+curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'Continue'
 Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
