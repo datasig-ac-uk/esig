@@ -4,5 +4,4 @@ CI is work-in-progress; see [here](https://github.com/alan-turing-institute/esig
 
 ![](https://github.com/alan-turing-institute/esig/workflows/build-Linux/badge.svg)
 ![](https://github.com/alan-turing-institute/esig/workflows/build-OSX/badge.svg)
-
-
+![](https://github.com/alan-turing-institute/esig/workflows/build-Windows/badge.svg)
