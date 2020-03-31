@@ -3,7 +3,6 @@ name: build-Windows-35
 on:
   push:
     branches:
-      - master
       - windows-build
 
 jobs:
@@ -14,10 +13,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/setup-python@v1
-      with:
-        # needed?
-        python-version: "3.5.4"
     - name: Run build
       run: |
         git config --global url."https://github.com/".insteadOf "git@github.com:"
