@@ -1,8 +1,7 @@
-# Turing these into parameters:
-$pyInstallDir='Python35'
-$boost_platform_dir='x64'
-$boost_lib_dir='lib64-msvc-14.1'
-$boost_installer='boost_1_68_0-msvc-14.1-64.exe'
+param([string] $py_install_dir='Python35',
+      [string] $boost_platform_dir='x64',
+      [string] $boost_lib_dir='lib64-msvc-14.1',
+      [string] $boost_installer='boost_1_68_0-msvc-14.1-64.exe')
 
 Set-PSDebug -Trace 1
 
@@ -41,7 +40,7 @@ $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'Continue'
 Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
 
-$ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$pyInstallDir;C:\Users\runneradmin\AppData\Local\Programs\Python\$pyInstallDir\Scripts;$ENV:PATH"
+$ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
 
 # TODO: check appropriate version
 python --version
