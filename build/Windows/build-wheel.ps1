@@ -47,8 +47,8 @@ $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:
 
 # TODO: check appropriate version
 echo "**************************"
-python --version
-Get-Command python
+echo (python --version)
+echo (Get-Command python)
 echo "**************************"
 
 # foreach ($package in @("numpy","wheel","delocate","setuptools","virtualenv")) {
