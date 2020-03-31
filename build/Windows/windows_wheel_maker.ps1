@@ -1,6 +1,5 @@
 Set-PSDebug -Trace 1
 
-# arguments: <python_version_string e.g. python37_64>
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
 if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -PathType Container ) {
    echo 'Visual Studio 14.0 folder exists.'
@@ -65,7 +64,7 @@ ls .
 $wheel=(ls output\*.whl | Select-Object -First 1).Name
 echo $wheel
 ls .\venv
-.\$venv\Scripts\python.exe -m pip install output\$wheel
+.\venv\Scripts\python.exe -m pip install output\$wheel
 # run the tests
 # $target\Scripts\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
 # if ($LASTEXITCODE -ne 0) { throw "Tests failed." }
