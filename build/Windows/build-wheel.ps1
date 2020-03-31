@@ -5,6 +5,8 @@ param([string] $py_install_dir,
 
 Set-PSDebug -Trace 1
 
+..\git-preamble.sh
+
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
 if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -PathType Container ) {
    echo 'Visual Studio 14.0 folder exists.'
