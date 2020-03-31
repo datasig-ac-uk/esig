@@ -10,20 +10,12 @@ on:
       - README.md
 
 jobs:
-
   build:
-
     runs-on: windows-2016
-
     steps:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        git config --global url."https://github.com/".insteadOf "git@github.com:"
-        $auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-        git submodule sync --recursive
-        echo $auth_header
-        # Next step currently fails on Windows:
-        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        .\build/git-preamble.sh
         cd build\Windows
         .\windows_wheel_maker.ps1
