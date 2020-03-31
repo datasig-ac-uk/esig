@@ -1,9 +1,13 @@
 name: build-Linux
 
-on: 
+on:
   push:
     branches:
       - master
+    paths-ignore:
+      - 'examples/**'
+      - 'doc/**'
+      - README.md
 
 jobs:
 
