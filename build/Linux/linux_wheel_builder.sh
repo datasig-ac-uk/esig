@@ -5,7 +5,10 @@
 
 arch=$1
 
-# TODO: what are the semicolons for?
+echo "**************"
+echo "Installed Python versions:"
+ls /opt/python/
+echo "**************"
 
 for gz in $(ls esig*.gz);
  do ver=${gz%%.tar*};
