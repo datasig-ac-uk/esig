@@ -59,12 +59,12 @@ popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
 # create a virtualenv for testing.
-$venv='python35_64'
-python -m virtualenv $venv
+python -m virtualenv venv
+ls .
 # using the virtualenv python, install the newly created esig wheel
 $wheel=(ls output\*.whl | Select-Object -First 1).Name
 echo $wheel
-ls .\$venv$
+ls .\venv
 .\$venv\Scripts\python.exe -m pip install output\$wheel
 # run the tests
 # $target\Scripts\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
