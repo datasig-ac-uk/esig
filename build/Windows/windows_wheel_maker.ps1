@@ -1,3 +1,9 @@
+# Turing these into parameters:
+$pyInstallDir='Python35'
+$boost_platform_dir='x64'
+$boost_lib_dir='lib64-msvc-14.1'
+$boost_installer='boost_1_68_0-msvc-14.1-64.exe'
+
 Set-PSDebug -Trace 1
 
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
@@ -19,23 +25,21 @@ Set-PSDebug -Trace 1
 $ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 
 # Boost binaries.
-curl -L -o boost_1_68_0-msvc-14.1-64.exe https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/boost_1_68_0-msvc-14.1-64.exe/download
+curl -L -o $boost_installer https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/$boost_installer/download
 
-# self-extracting installer - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
+# self-extracting installers - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
 # without /VERYSILENT installer will attempt to open dialog box and silently fail
-Start-Process -Wait -PassThru -FilePath .\boost_1_68_0-msvc-14.1-64.exe -ArgumentList '/VERYSILENT /SP-'
+Start-Process -Wait -PassThru -FilePath .\$boost_installer -ArgumentList '/VERYSILENT /SP-'
 
-mkdir $ENV:BOOST_ROOT\x64
-mkdir $ENV:BOOST_ROOT\x64\lib
+mkdir $ENV:BOOST_ROOT\$boost_platform_dir
+mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
-Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.1\*.lib -Destination $ENV:BOOST_ROOT\x64\lib
+Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 curl -L -o install-python.exe https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'Continue'
 Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
-
-$pyInstallDir='Python35'
 
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$pyInstallDir;C:\Users\runneradmin\AppData\Local\Programs\Python\$pyInstallDir\Scripts;$ENV:PATH"
 
