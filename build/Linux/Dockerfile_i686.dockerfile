@@ -1,4 +1,4 @@
-FROM quay.io/pypa/manylinux1_i686 AS manylinux1_i686_boost
+FROM quay.io/pypa/manylinux1_i686:2020-01-31-d8fa357 AS manylinux1_i686_boost
 ## from the folder with this file and the context execute
 ## docker build -t manylinux1_i686_boost -f Dockerfile.dockerfile .
 ENTRYPOINT ["linux32", "/bin/bash", "-c"]

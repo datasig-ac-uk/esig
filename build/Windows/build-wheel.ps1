@@ -1,9 +1,12 @@
-param([string] $py_install_dir='Python35',
-      [string] $boost_platform_dir='x64',
-      [string] $boost_lib_dir='lib64-msvc-14.1',
-      [string] $boost_installer='boost_1_68_0-msvc-14.1-64.exe')
+param([string] $py_install_dir,
+      [string] $py_installer,
+      [string] $boost_platform_dir,
+      [string] $boost_lib_dir,
+      [string] $boost_installer)
 
 Set-PSDebug -Trace 1
+
+..\git-preamble.sh
 
 curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
 if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -PathType Container ) {
@@ -35,7 +38,7 @@ mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
-curl -L -o install-python.exe https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
+curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'Continue'
 Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
@@ -43,7 +46,10 @@ Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/qui
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
 
 # TODO: check appropriate version
+echo "**************************"
 python --version
+Get-Command python
+echo "**************************"
 
 # foreach ($package in @("numpy","wheel","delocate","setuptools","virtualenv")) {
 #   python -m pip install $package
