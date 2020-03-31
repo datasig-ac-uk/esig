@@ -46,7 +46,10 @@ Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/qui
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
 
 # TODO: check appropriate version
+echo "**************************"
 python --version
+Get-Command python
+echo "**************************"
 
 # foreach ($package in @("numpy","wheel","delocate","setuptools","virtualenv")) {
 #   python -m pip install $package
