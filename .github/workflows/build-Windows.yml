@@ -10,7 +10,7 @@ on:
       - README.md
 
 jobs:
-  build:
+  build-35-64:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -18,4 +18,8 @@ jobs:
       run: |
         .\build/git-preamble.sh
         cd build\Windows
-        .\windows_wheel_maker.ps1 -py_install_dir Python35 -boost_platform_dir x64 -boost_lib_dir lib64-msvc-14.1 -boost_installer boost_1_68_0-msvc-14.1-64.exe
+        .\windows_wheel_maker.ps1 `
+          -py_install_dir Python35 `
+          -boost_platform_dir x64 `
+          -boost_lib_dir lib64-msvc-14.1 `
+          -boost_installer boost_1_68_0-msvc-14.1-64.exe
