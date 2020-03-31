@@ -1,8 +1,9 @@
-name: build-Windows-experiment
+name: build-Windows-35
 
 on:
   push:
     branches:
+      - master
       - windows-build
 
 jobs:
@@ -26,4 +27,4 @@ jobs:
         # Next step currently fails on Windows:
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
         cd build\Windows
-        .\windows_wheel_maker.ps1 python35_32
+        .\windows_wheel_maker.ps1
