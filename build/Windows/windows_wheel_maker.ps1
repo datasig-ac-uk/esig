@@ -1,7 +1,7 @@
-param([string] $py_install_dir='Python35',
-      [string] $boost_platform_dir='x64',
-      [string] $boost_lib_dir='lib64-msvc-14.1',
-      [string] $boost_installer='boost_1_68_0-msvc-14.1-64.exe')
+param([string] $py_install_dir,
+      [string] $boost_platform_dir,
+      [string] $boost_lib_dir,
+      [string] $boost_installer)
 
 Set-PSDebug -Trace 1
 

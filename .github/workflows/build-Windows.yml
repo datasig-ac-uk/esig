@@ -18,4 +18,4 @@ jobs:
       run: |
         .\build/git-preamble.sh
         cd build\Windows
-        .\windows_wheel_maker.ps1
+        .\windows_wheel_maker.ps1 -py_install_dir Python35 -boost_platform_dir x64 -boost_lib_dir lib64-msvc-14.1 -boost_installer boost_1_68_0-msvc-14.1-64.exe
