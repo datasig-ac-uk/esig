@@ -30,14 +30,16 @@ mkdir $ENV:BOOST_ROOT\x64\lib
 
 Move-Item -Path C:\local\boost_1_68_0\lib64-msvc-14.1\*.lib -Destination $ENV:BOOST_ROOT\x64\lib
 
-curl -L -O https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
+curl -L -o install-python.exe https://www.python.org/ftp/python/3.5.4/python-3.5.4-amd64.exe
 $ErrorActionPreference = 'Stop'
 $VerbosePreference = 'Continue'
-Start-Process -Wait -PassThru -FilePath .\python-3.5.4-amd64.exe -ArgumentList '/quiet'
+Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
 
-$ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\Python35;C:\Users\runneradmin\AppData\Local\Programs\Python\Python35\Scripts;$ENV:PATH"
+$pyInstallDir='Python35'
 
-# TODO: check 3.5[.4]
+$ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$pyInstallDir;C:\Users\runneradmin\AppData\Local\Programs\Python\$pyInstallDir\Scripts;$ENV:PATH"
+
+# TODO: check appropriate version
 python --version
 
 # foreach ($package in @("numpy","wheel","delocate","setuptools","virtualenv")) {
