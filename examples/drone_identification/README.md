@@ -1,5 +1,5 @@
 # Path Signatures for Drone Identification using Esig
-[drone_identification.ipynb](drone_identification.ipynb) is a [Jupyter](https://jupyter.org/) notebook which demonstrates the use of path signatures obtained using esig. The hypothetical use case involves distinguishing between simulated drone and non-drone objects. The notebook is viewable directly from gitlab, however Jupyter is recommended for best results.
+[drone_identification.ipynb](drone_identification.ipynb) is a [Jupyter](https://jupyter.org/) notebook which demonstrates the use of path signatures obtained using esig. The hypothetical use case involves distinguishing between simulated drone and non-drone objects. The notebook is viewable directly from gitlab, however Jupyter is recommended for best results when rendering mathematical notation.
 
 ## How to Run
 The notebook attempts to install the packages listed in [requirements.txt](requirements.txt) automatically when executed.
