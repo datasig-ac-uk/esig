@@ -38,10 +38,16 @@ mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
-curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
-$ErrorActionPreference = 'Stop'
-$VerbosePreference = 'Continue'
-Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
+if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
+   curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
+   $ErrorActionPreference = 'Stop'
+   $VerbosePreference = 'Continue'
+   Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
+}
+elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
+   curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
+   msiexec.exe /i install-python.msi /quiet
+}
 
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
 
