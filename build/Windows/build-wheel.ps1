@@ -51,7 +51,8 @@ elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
    }
 }
 
-ls C:\Users\runneradmin\AppData\Local\Programs\Python\
+ls C:\
+ls C:\Users\runneradmin\AppData\Local\Programs\ # Python folder not created with 3.4
 
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
 
