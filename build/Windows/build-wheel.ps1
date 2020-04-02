@@ -46,7 +46,9 @@ if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
 }
 elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
    curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
-   msiexec.exe /i install-python.msi /quiet
+   Measure-Command {
+      Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
+   }
 }
 
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
