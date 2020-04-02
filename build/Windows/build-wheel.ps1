@@ -48,6 +48,7 @@ elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
    curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
    Measure-Command {
       Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
+      echo $LASTEXITCODE
    }
 }
 
