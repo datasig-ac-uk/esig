@@ -51,12 +51,15 @@ elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
    }
 }
 
+ls C:\Users\runneradmin\AppData\Local\Programs\Python
+
 $ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
 
 # TODO: check appropriate version
 echo "**************************"
 echo (python --version)
 echo (Get-Command python)
+echo ([version](Get-Command python))
 echo "**************************"
 
 # foreach ($package in @("numpy","wheel","delocate","setuptools","virtualenv")) {
