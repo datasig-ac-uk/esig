@@ -38,6 +38,7 @@ mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
+# TODO: combine these into one.
 if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
    curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
    $ErrorActionPreference = 'Stop'
@@ -46,16 +47,11 @@ if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
 }
 elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
    curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
-   Measure-Command {
-      Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
-      echo $LASTEXITCODE
-   }
+   Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
+   echo $LASTEXITCODE
 }
 
-ls C:\
-ls C:\Users\runneradmin\AppData\Local\Programs\ # Python folder not created with 3.4
-
-$ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
+$ENV:PATH="$py_install_dir;$py_install_dir\Scripts;$ENV:PATH"
 
 # TODO: check appropriate version
 echo "**************************"

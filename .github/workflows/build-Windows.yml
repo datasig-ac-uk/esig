@@ -18,7 +18,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
-          -py_install_dir Python34 `
+          -py_install_dir C:\Python34 `
           -py_installer 3.4.4/python-3.4.4.amd64.msi `
           -boost_platform_dir x64 `
           -boost_lib_dir lib64-msvc-14.1 `
@@ -32,7 +32,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
-          -py_install_dir Python35 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35 `
           -py_installer 3.5.4/python-3.5.4-amd64.exe `
           -boost_platform_dir x64 `
           -boost_lib_dir lib64-msvc-14.1 `
@@ -46,7 +46,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
-          -py_install_dir Python35_32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35_32 `
           -py_installer 3.5.4/python-3.5.4.exe `
           -boost_platform_dir win32 `
           -boost_lib_dir lib32-msvc-14.1 `
@@ -60,7 +60,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
-          -py_install_dir Python36 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36 `
           -py_installer 3.6.5/python-3.6.5-amd64.exe `
           -boost_platform_dir x64 `
           -boost_lib_dir lib64-msvc-14.1 `
@@ -74,7 +74,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
-          -py_install_dir Python37 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37 `
           -py_installer 3.7.0/python-3.7.0-amd64.exe `
           -boost_platform_dir x64 `
           -boost_lib_dir lib64-msvc-14.1 `
@@ -88,7 +88,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
-          -py_install_dir Python38 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38 `
           -py_installer 3.8.1/python-3.8.1-amd64.exe `
           -boost_platform_dir x64 `
           -boost_lib_dir lib64-msvc-14.1 `
