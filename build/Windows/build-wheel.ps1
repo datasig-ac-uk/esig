@@ -59,11 +59,9 @@ echo (python --version)
 echo (Get-Command python)
 echo "**************************"
 
-# foreach ($package in @("numpy","wheel","delocate","setuptools","virtualenv")) {
-#   python -m pip install $package
-# }
+$numpy_version=1.16 # use this uniformly for now as it support Python 3.4
 
-python -m pip install numpy
+python -m pip install numpy==$numpy_version
 python -m pip install wheel
 python -m pip install delocate
 python -m pip install --upgrade setuptools
