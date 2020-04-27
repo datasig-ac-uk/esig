@@ -1,4 +1,4 @@
-name: build-Windows-35
+name: build-Windows
 
 on:
   push:
@@ -10,20 +10,6 @@ on:
       - README.md
 
 jobs:
-  build-34-64bit:
-    runs-on: windows-2016
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run build
-      run: |
-        cd build\Windows
-        .\build-wheel.ps1 `
-          -py_install_dir C:\Python34 `
-          -py_installer 3.4.4/python-3.4.4.amd64.msi `
-          -boost_platform_dir x64 `
-          -boost_lib_dir lib64-msvc-14.1 `
-          -boost_installer boost_1_68_0-msvc-14.1-64.exe
-
   build-35-64bit:
     runs-on: windows-2016
     steps:
