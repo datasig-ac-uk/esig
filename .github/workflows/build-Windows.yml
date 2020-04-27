@@ -18,6 +18,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Python27 `
           -py_installer 2.7.15/python-2.7.15.amd64.msi `
           -boost_platform_dir x64 `
@@ -32,6 +33,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35 `
           -py_installer 3.5.4/python-3.5.4-amd64.exe `
           -boost_platform_dir x64 `
@@ -46,6 +48,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32 `
           -py_installer 3.5.4/python-3.5.4.exe `
           -boost_platform_dir win32 `
@@ -60,6 +63,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36 `
           -py_installer 3.6.5/python-3.6.5-amd64.exe `
           -boost_platform_dir x64 `
@@ -74,6 +78,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36-32 `
           -py_installer 3.6.5/python-3.6.5.exe `
           -boost_platform_dir win32 `
@@ -88,6 +93,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37 `
           -py_installer 3.7.0/python-3.7.0-amd64.exe `
           -boost_platform_dir x64 `
@@ -102,6 +108,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
           -py_installer 3.7.0/python-3.7.0.exe `
           -boost_platform_dir win32 `
@@ -116,6 +123,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38 `
           -py_installer 3.8.1/python-3.8.1-amd64.exe `
           -boost_platform_dir x64 `
@@ -130,6 +138,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
+          -vs_version 14.0 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38-32 `
           -py_installer 3.8.1/python-3.8.1.exe `
           -boost_platform_dir win32 `

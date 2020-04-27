@@ -1,4 +1,5 @@
-param([string] $py_install_dir,
+param([string] $vs_version,
+      [string] $py_install_dir,
       [string] $py_installer,
       [string] $boost_platform_dir,
       [string] $boost_lib_dir,
@@ -8,13 +9,19 @@ Set-PSDebug -Trace 1
 
 ..\git-preamble.sh
 
-curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
-if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -PathType Container ) {
-   echo 'Visual Studio 14.0 folder exists.'
+if ($vs_version -eq "14.0") {
+   curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
+   if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -PathType Container ) {
+      echo 'Visual Studio 14.0 folder exists.'
+   } else {
+      exit 1
+   }
+   .\BuildTools_Full.exe /silent /full /passive
+} elseif ($vs_version -eq "9.0") {
+   # TODO
 } else {
    exit 1
 }
-.\BuildTools_Full.exe /silent /full /passive
 
 # Boost sources. Unpacks to "boost_1_68_0" subfolder of DestinationPath.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
@@ -36,7 +43,6 @@ Start-Process -Wait -PassThru -FilePath .\$boost_installer -ArgumentList '/VERYS
 mkdir $ENV:BOOST_ROOT\$boost_platform_dir
 mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
-ls C:\local\boost_1_68_0
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 # TODO: combine these into one.
@@ -50,6 +56,8 @@ elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
    curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
    Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
    echo $LASTEXITCODE
+} else {
+   exit 1
 }
 
 $py_exe=$py_install_dir + "\python.exe"
