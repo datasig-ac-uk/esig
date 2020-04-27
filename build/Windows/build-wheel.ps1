@@ -1,4 +1,5 @@
-param([string] $py_install_dir,
+param([string] $vs_version,
+      [string] $py_install_dir,
       [string] $py_installer,
       [string] $boost_platform_dir,
       [string] $boost_lib_dir,
@@ -8,13 +9,14 @@ Set-PSDebug -Trace 1
 
 ..\git-preamble.sh
 
-curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
-if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -PathType Container ) {
-   echo 'Visual Studio 14.0 folder exists.'
+if ($vs_version -eq "14.0") {
+   # Use pre-installed Visual Studio
+} elseif ($vs_version -eq "9.0") {
+   curl -O https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
+   msiexec.exe /i VCForPython27.msi /quiet
 } else {
    exit 1
 }
-.\BuildTools_Full.exe /silent /full /passive
 
 # Boost sources. Unpacks to "boost_1_68_0" subfolder of DestinationPath.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
@@ -49,15 +51,13 @@ elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
    curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
    Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
    echo $LASTEXITCODE
+} else {
+   exit 1
 }
 
 $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
-$ENV:PATH="$py_install_dir;$py_install_dir\Scripts;$ENV:PATH"
-
-echo "**************************"
 echo (Invoke-Expression "$py_exe --version")
-echo "**************************"
 
 Invoke-Expression "$py_exe -m pip install numpy"
 Invoke-Expression "$py_exe -m pip install wheel"
