@@ -10,14 +10,7 @@ Set-PSDebug -Trace 1
 ..\git-preamble.sh
 
 if ($vs_version -eq "14.0") {
-   curl -O https://download.microsoft.com/download/E/E/D/EEDF18A8-4AED-4CE0-BEBE-70A83094FC5A/BuildTools_Full.exe
-   # TODO: try out the pre-installed VS 14.0
-   if ( Test-Path -Path 'C:\Program Files (x86)\Microsoft Visual Studio 14.0' -PathType Container ) {
-      echo 'Visual Studio 14.0 folder exists.'
-   } else {
-      exit 1
-   }
-   .\BuildTools_Full.exe /silent /full /passive
+   # Use pre-installed Visual Studio
 } elseif ($vs_version -eq "9.0") {
    curl -O https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
    msiexec.exe /i VCForPython27.msi /quiet
