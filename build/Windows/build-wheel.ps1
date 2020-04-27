@@ -57,8 +57,8 @@ $ENV:PATH="$py_install_dir;$py_install_dir\Scripts;$ENV:PATH"
 
 # TODO: check appropriate version
 echo "**************************"
-echo (python --version)
-echo (Get-Command python)
+echo ($py_exe --version)
+echo (Get-Command $py_exe)
 echo "**************************"
 
 python -m pip install numpy
