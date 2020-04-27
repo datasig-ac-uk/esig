@@ -1,4 +1,5 @@
-param([string] $vs_version,
+param([string] $vs_version,            # {9.0, 14.1}
+      [string] $arch,                  # {32, 64}
       [string] $py_install_dir,
       [string] $py_installer,
       [string] $boost_platform_dir,
@@ -9,7 +10,7 @@ Set-PSDebug -Trace 1
 
 ..\git-preamble.sh
 
-if ($vs_version -eq "14.0") {
+if ($vs_version -eq "14.1") {
    # Use pre-installed Visual Studio
 } elseif ($vs_version -eq "9.0") {
    curl -O https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
