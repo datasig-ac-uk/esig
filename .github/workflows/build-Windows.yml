@@ -18,7 +18,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
-          -vs_version 14.0 `
+          -vs_version 9.0 `
           -py_install_dir C:\Python27 `
           -py_installer 2.7.15/python-2.7.15.amd64.msi `
           -boost_platform_dir x64 `
