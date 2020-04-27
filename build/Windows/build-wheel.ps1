@@ -53,9 +53,6 @@ elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
 
 $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
-ls "C:\Program Files (x86)\"
-ls C:\Users\runneradmin\AppData\Local\Programs\Python
-Test-Path $py_exe
 $ENV:PATH="$py_install_dir;$py_install_dir\Scripts;$ENV:PATH"
 
 echo "**************************"

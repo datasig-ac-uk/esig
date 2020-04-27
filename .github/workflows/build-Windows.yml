@@ -32,7 +32,7 @@ jobs:
       run: |
         cd build\Windows
         .\build-wheel.ps1 `
-          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35_32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32 `
           -py_installer 3.5.4/python-3.5.4.exe `
           -boost_platform_dir win32 `
           -boost_lib_dir lib32-msvc-14.1 `
