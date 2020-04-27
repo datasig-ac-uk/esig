@@ -26,6 +26,7 @@ if ($arch -eq "32") {
 }
 
 $boost_lib_dir="lib$arch-msvc-$vs_version"
+$boost_installer="boost_1_68_0-msvc-$vs_version-$arch.exe"
 
 # Boost sources. Unpacks to "boost_1_68_0" subfolder of DestinationPath.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
