@@ -4,7 +4,6 @@ param([string] $vs_version,            # {9.0, 14.1}
       [string] $py_installer)
 
 Set-PSDebug -Trace 1
-
 ..\git-preamble.sh
 
 if ($vs_version -eq "14.1") {
@@ -50,20 +49,10 @@ mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 $py_installer_name="install-python" + [System.IO.Path]::GetExtension($py_installer)
-# TODO: combine these into one.
-# if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
-   curl -L -o $py_installer_name https://www.python.org/ftp/python/$py_installer
-   $ErrorActionPreference = 'Stop'
-   $VerbosePreference = 'Continue'
-   Start-Process -Wait -PassThru -FilePath .\$py_installer_name -ArgumentList '/quiet'
-# }
-# elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
-#    curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
-#    Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
-#    echo $LASTEXITCODE
-# } else {
-#    exit 1
-# }
+curl -L -o $py_installer_name https://www.python.org/ftp/python/$py_installer
+$ErrorActionPreference = 'Stop'
+$VerbosePreference = 'Continue'
+Start-Process -Wait -PassThru -FilePath .\$py_installer_name -ArgumentList '/quiet'
 
 $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
