@@ -10,6 +10,20 @@ on:
       - README.md
 
 jobs:
+  build-27-64bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -py_install_dir C:\Python27 `
+          -py_installer 2.7.15/python-2.7.15.amd64.msi `
+          -boost_platform_dir win32 `
+          -boost_lib_dir lib32-msvc-9.0 `
+          -boost_installer boost_1_68_0-msvc-9.0-64.exe
+
   build-35-64bit:
     runs-on: windows-2016
     steps:
