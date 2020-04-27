@@ -20,8 +20,8 @@ jobs:
         .\build-wheel.ps1 `
           -py_install_dir C:\Python27 `
           -py_installer 2.7.15/python-2.7.15.amd64.msi `
-          -boost_platform_dir win32 `
-          -boost_lib_dir lib32-msvc-9.0 `
+          -boost_platform_dir x64 `
+          -boost_lib_dir lib64-msvc-9.0 `
           -boost_installer boost_1_68_0-msvc-9.0-64.exe
 
   build-35-64bit:
