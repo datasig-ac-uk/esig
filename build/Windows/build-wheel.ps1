@@ -64,11 +64,7 @@ elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
 
 $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
-# $ENV:PATH="$py_install_dir;$py_install_dir\Scripts;$ENV:PATH"
-
-echo "**************************"
 echo (Invoke-Expression "$py_exe --version")
-echo "**************************"
 
 Invoke-Expression "$py_exe -m pip install numpy"
 Invoke-Expression "$py_exe -m pip install wheel"
