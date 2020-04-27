@@ -36,6 +36,7 @@ Start-Process -Wait -PassThru -FilePath .\$boost_installer -ArgumentList '/VERYS
 mkdir $ENV:BOOST_ROOT\$boost_platform_dir
 mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
+ls C:\local\boost_1_68_0
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 # TODO: combine these into one.
