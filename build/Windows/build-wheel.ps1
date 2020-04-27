@@ -50,19 +50,19 @@ mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 # TODO: combine these into one.
-if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
+# if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
    curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
    $ErrorActionPreference = 'Stop'
    $VerbosePreference = 'Continue'
    Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
-}
-elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
-   curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
-   Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
-   echo $LASTEXITCODE
-} else {
-   exit 1
-}
+# }
+# elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
+#    curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
+#    Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
+#    echo $LASTEXITCODE
+# } else {
+#    exit 1
+# }
 
 $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
