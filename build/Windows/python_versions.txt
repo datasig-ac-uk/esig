@@ -1,6 +1,0 @@
-python37_64
-python37_32
-python36_64
-python36_32
-python35_64
-python35_32

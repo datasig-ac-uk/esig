@@ -1,15 +1,12 @@
-param([string] $vs_version,
+param([string] $vs_version,            # {9.0, 14.1}
+      [string] $arch,                  # {32, 64}
       [string] $py_install_dir,
-      [string] $py_installer,
-      [string] $boost_platform_dir,
-      [string] $boost_lib_dir,
-      [string] $boost_installer)
+      [string] $py_installer)
 
 Set-PSDebug -Trace 1
-
 ..\git-preamble.sh
 
-if ($vs_version -eq "14.0") {
+if ($vs_version -eq "14.1") {
    # Use pre-installed Visual Studio
 } elseif ($vs_version -eq "9.0") {
    curl -O https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
@@ -17,6 +14,17 @@ if ($vs_version -eq "14.0") {
 } else {
    exit 1
 }
+
+if ($arch -eq "32") {
+   $boost_platform_dir="win32"
+} elseif ($arch -eq "64") {
+   $boost_platform_dir="x64"
+} else {
+   exit 1
+}
+
+$boost_lib_dir="lib$arch-msvc-$vs_version"
+$boost_installer="boost_1_68_0-msvc-$vs_version-$arch.exe"
 
 # Boost sources. Unpacks to "boost_1_68_0" subfolder of DestinationPath.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
@@ -31,7 +39,7 @@ $ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 # Boost binaries.
 curl -L -o $boost_installer https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/$boost_installer/download
 
-# self-extracting installers - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
+# self-extracting installers - will unpack to C:\local\boost\boost_1_68_0\$boost_lib_dir
 # without /VERYSILENT installer will attempt to open dialog box and silently fail
 Start-Process -Wait -PassThru -FilePath .\$boost_installer -ArgumentList '/VERYSILENT /SP-'
 
@@ -40,20 +48,11 @@ mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
-# TODO: combine these into one.
-if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
-   curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
-   $ErrorActionPreference = 'Stop'
-   $VerbosePreference = 'Continue'
-   Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
-}
-elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
-   curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
-   Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
-   echo $LASTEXITCODE
-} else {
-   exit 1
-}
+$py_installer_name="install-python" + [System.IO.Path]::GetExtension($py_installer)
+curl -L -o $py_installer_name https://www.python.org/ftp/python/$py_installer
+$ErrorActionPreference = 'Stop'
+$VerbosePreference = 'Continue'
+Start-Process -Wait -PassThru -FilePath .\$py_installer_name -ArgumentList '/quiet'
 
 $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
