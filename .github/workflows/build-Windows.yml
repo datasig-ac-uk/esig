@@ -52,6 +52,20 @@ jobs:
           -boost_lib_dir lib64-msvc-14.1 `
           -boost_installer boost_1_68_0-msvc-14.1-64.exe
 
+  build-36-32bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36-32 `
+          -py_installer 3.6.5/python-3.6.5.exe `
+          -boost_platform_dir win32 `
+          -boost_lib_dir lib32-msvc-14.1 `
+          -boost_installer boost_1_68_0-msvc-14.1-32.exe
+
   build-37-64bit:
     runs-on: windows-2016
     steps:
@@ -66,6 +80,20 @@ jobs:
           -boost_lib_dir lib64-msvc-14.1 `
           -boost_installer boost_1_68_0-msvc-14.1-64.exe
 
+  build-37-32bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
+          -py_installer 3.7.0/python-3.7.0.exe `
+          -boost_platform_dir win32 `
+          -boost_lib_dir lib32-msvc-14.1 `
+          -boost_installer boost_1_68_0-msvc-14.1-32.exe
+
   build-38-64bit:
     runs-on: windows-2016
     steps:
@@ -79,3 +107,17 @@ jobs:
           -boost_platform_dir x64 `
           -boost_lib_dir lib64-msvc-14.1 `
           -boost_installer boost_1_68_0-msvc-14.1-64.exe
+
+  build-38-32bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38-32 `
+          -py_installer 3.8.1/python-3.8.1.exe `
+          -boost_platform_dir win32 `
+          -boost_lib_dir lib32-msvc-14.1 `
+          -boost_installer boost_1_68_0-msvc-14.1-32.exe
