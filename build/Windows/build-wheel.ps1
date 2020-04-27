@@ -26,6 +26,8 @@ if ($arch -eq "32") {
    exit 1
 }
 
+$boost_lib_dir="lib$arch-msvc-$vs_version"
+
 # Boost sources. Unpacks to "boost_1_68_0" subfolder of DestinationPath.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
 if ($LASTEXITCODE -ne 0) { throw "Boost source download failed." }
@@ -39,7 +41,7 @@ $ENV:BOOST_ROOT='C:\boost\boost_1_68_0\'
 # Boost binaries.
 curl -L -o $boost_installer https://sourceforge.net/projects/boost/files/boost-binaries/1.68.0/$boost_installer/download
 
-# self-extracting installers - will unpack to C:\local\boost\boost_1_68_0\lib[64,32]-msvc-[version]
+# self-extracting installers - will unpack to C:\local\boost\boost_1_68_0\$boost_lib_dir
 # without /VERYSILENT installer will attempt to open dialog box and silently fail
 Start-Process -Wait -PassThru -FilePath .\$boost_installer -ArgumentList '/VERYSILENT /SP-'
 
