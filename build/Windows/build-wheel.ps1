@@ -55,26 +55,24 @@ $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
 $ENV:PATH="$py_install_dir;$py_install_dir\Scripts;$ENV:PATH"
 
-# TODO: check appropriate version
 echo "**************************"
 echo (Invoke-Expression $py_exe --version)
-echo (Get-Command python)
 echo "**************************"
 
-python -m pip install numpy
-python -m pip install wheel
-python -m pip install delocate
-python -m pip install --upgrade setuptools
-python -m pip install virtualenv
+Invoke-Expression $py_exe -m pip install numpy
+Invoke-Expression $py_exe -m pip install wheel
+Invoke-Expression $py_exe -m pip install delocate
+Invoke-Expression $py_exe -m pip install --upgrade setuptools
+Invoke-Expression $py_exe -m pip install virtualenv
 
 # build the wheel
 pushd ..
-   python.exe -m pip wheel -b Windows/ -w Windows/output/ ..
+   Invoke-Expression $py_exe -m pip wheel -b Windows/ -w Windows/output/ ..
 popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
 # create virtualenv for testing and install esig wheel into it.
-python -m virtualenv venv
+Invoke-Expression $py_exe -m virtualenv venv
 $wheel=(ls output\*.whl | Select-Object -First 1).Name
 echo $wheel
 ls .\venv
