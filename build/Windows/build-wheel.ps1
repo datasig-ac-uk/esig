@@ -19,6 +19,14 @@ if ($vs_version -eq "14.1") {
    exit 1
 }
 
+if ($arch -eq "32") {
+   $boost_platform_dir="win32"
+} elseif ($arch -eq "64") {
+   $boost_platform_dir="x64"
+} else {
+   exit 1
+}
+
 # Boost sources. Unpacks to "boost_1_68_0" subfolder of DestinationPath.
 curl -L -o boost_1_68_0.zip https://sourceforge.net/projects/boost/files/boost/1.68.0/boost_1_68_0.zip/download
 if ($LASTEXITCODE -ne 0) { throw "Boost source download failed." }
