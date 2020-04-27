@@ -1,8 +1,7 @@
 param([string] $vs_version,            # {9.0, 14.1}
       [string] $arch,                  # {32, 64}
       [string] $py_install_dir,
-      [string] $py_installer,
-      [string] $boost_installer)
+      [string] $py_installer)
 
 Set-PSDebug -Trace 1
 
