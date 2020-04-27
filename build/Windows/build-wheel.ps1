@@ -38,37 +38,41 @@ mkdir $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
 Move-Item -Path C:\local\boost_1_68_0\$boost_lib_dir\*.lib -Destination $ENV:BOOST_ROOT\$boost_platform_dir\lib
 
-curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
-$ErrorActionPreference = 'Stop'
-$VerbosePreference = 'Continue'
-Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
+# TODO: combine these into one.
+if ([System.IO.Path]::GetExtension($py_installer) -eq ".exe") {
+   curl -L -o install-python.exe https://www.python.org/ftp/python/$py_installer
+   $ErrorActionPreference = 'Stop'
+   $VerbosePreference = 'Continue'
+   Start-Process -Wait -PassThru -FilePath .\install-python.exe -ArgumentList '/quiet'
+}
+elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
+   curl -L -o install-python.msi https://www.python.org/ftp/python/$py_installer
+   Start-Process -Wait -PassThru -FilePath .\install-python.msi -ArgumentList '/quiet'
+   echo $LASTEXITCODE
+}
 
-$ENV:PATH="C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir;C:\Users\runneradmin\AppData\Local\Programs\Python\$py_install_dir\Scripts;$ENV:PATH"
+$py_exe=$py_install_dir + "\python.exe"
+echo $py_exe
+$ENV:PATH="$py_install_dir;$py_install_dir\Scripts;$ENV:PATH"
 
-# TODO: check appropriate version
 echo "**************************"
-echo (python --version)
-echo (Get-Command python)
+echo (Invoke-Expression "$py_exe --version")
 echo "**************************"
 
-# foreach ($package in @("numpy","wheel","delocate","setuptools","virtualenv")) {
-#   python -m pip install $package
-# }
-
-python -m pip install numpy
-python -m pip install wheel
-python -m pip install delocate
-python -m pip install --upgrade setuptools
-python -m pip install virtualenv
+Invoke-Expression "$py_exe -m pip install numpy"
+Invoke-Expression "$py_exe -m pip install wheel"
+Invoke-Expression "$py_exe -m pip install delocate"
+Invoke-Expression "$py_exe -m pip install --upgrade setuptools"
+Invoke-Expression "$py_exe -m pip install virtualenv"
 
 # build the wheel
 pushd ..
-   python.exe -m pip wheel -b Windows/ -w Windows/output/ ..
+   Invoke-Expression "$py_exe -m pip wheel -b Windows/ -w Windows/output/ .."
 popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
 # create virtualenv for testing and install esig wheel into it.
-python -m virtualenv venv
+Invoke-Expression "$py_exe -m virtualenv venv"
 $wheel=(ls output\*.whl | Select-Object -First 1).Name
 echo $wheel
 ls .\venv
