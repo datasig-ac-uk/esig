@@ -51,28 +51,30 @@ elseif ([System.IO.Path]::GetExtension($py_installer) -eq ".msi") {
    echo $LASTEXITCODE
 }
 
+$py_exe=$py_install_dir + "\python.exe"
+
 $ENV:PATH="$py_install_dir;$py_install_dir\Scripts;$ENV:PATH"
 
 # TODO: check appropriate version
 echo "**************************"
-echo (python --version)
-echo (Get-Command python)
+echo ($py_exe --version)
+echo (Get-Command $py_exe)
 echo "**************************"
 
-python -m pip install numpy
-python -m pip install wheel
-python -m pip install delocate
-python -m pip install --upgrade setuptools
-python -m pip install virtualenv
+$py_exe -m pip install numpy
+$py_exe -m pip install wheel
+$py_exe -m pip install delocate
+$py_exe -m pip install --upgrade setuptools
+$py_exe -m pip install virtualenv
 
 # build the wheel
 pushd ..
-   python.exe -m pip wheel -b Windows/ -w Windows/output/ ..
+   $py_exe -m pip wheel -b Windows/ -w Windows/output/ ..
 popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
 # create virtualenv for testing and install esig wheel into it.
-python -m virtualenv venv
+$py_exe -m virtualenv venv
 $wheel=(ls output\*.whl | Select-Object -First 1).Name
 echo $wheel
 ls .\venv
