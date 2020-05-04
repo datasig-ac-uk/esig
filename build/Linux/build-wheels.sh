@@ -1,4 +1,5 @@
 #!/bin/bash -e
+set -u -o xtrace
 # Top-level script for building esig for Linux on MacOS or Linux.
 # $1: one of {i686, x86_64}
 # Python wheels will be created for specified architecture, for each Python version in python_versions.txt.

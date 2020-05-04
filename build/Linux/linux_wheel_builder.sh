@@ -17,7 +17,7 @@ OUTPUTDIR=output   # location of tested wheels
 rm -rf $OUTPUTDIR
 mkdir $OUTPUTDIR
 
-for gz in $(ls esig*.gz);
+for gz in $(ls esig*.gz); do
  for py in $( cat python_versions.txt ); do
  	 pyexe=/opt/python/$py/bin/python
 	 $pyexe -m pip install -U pip virtualenv
