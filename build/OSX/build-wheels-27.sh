@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # See build-wheels.sh for documentation.
 
 # For 2.7
