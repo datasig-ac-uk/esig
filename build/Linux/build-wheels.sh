@@ -19,5 +19,5 @@ source ../sdist.sh
 rm -rf wheelhouse
 
 # Build the esig wheels inside the docker container.
-docker run --rm -v ${PWD}:/data esig_builder_linux_${arch} \
-   "source ~/.bashrc; cd /data; source linux_wheel_builder.sh $arch" || exit 1
+docker run --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} \
+   "source ~/.bashrc; cd /data/build/Linux; source linux_wheel_builder.sh $arch" || exit 1
