@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 
 ### this is the command to be run in the docker container to build the wheels
 ### from the gzip-ed source.
