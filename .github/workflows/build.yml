@@ -52,7 +52,7 @@ jobs:
         cd build/Linux && ./build-wheels.sh
 
   # Mac
-  mac-py-27:
+  mac-py27:
     runs-on: macos-10.15
     steps:
     - uses: actions/checkout@v2
