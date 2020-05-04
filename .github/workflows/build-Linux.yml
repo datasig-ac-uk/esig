@@ -2,8 +2,6 @@ name: build-Linux
 
 on:
   push:
-    branches:
-      - master
     branches-ignore:
       - windows-build
     paths-ignore:
