@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - master
-#    branches-ignore:
+    branches-ignore:
 #      - windows-build
     paths-ignore:
       - 'examples/**'
