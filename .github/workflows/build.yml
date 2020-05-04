@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - master
-    branches-ignore:
-      - windows-build
+#    branches-ignore:
+#      - windows-build
     paths-ignore:
       - 'examples/**'
       - 'doc/**'
