@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # See build-wheels.sh for documentation.
 
 # MacPorts (for Python 3.4)
@@ -21,23 +21,10 @@ curl -O https://distfiles.macports.org/MacPorts/$macPorts
 sudo installer -verbose -pkg $macPorts -target /
 rm $macPorts
 
-if [ $? -eq 0 ]
-then
-   echo "MacPorts installed successfully."
-else
-   echo "MacPorts installation failed."
-   exit 1
-fi
-
 # Installing python34 won't always repair a broken installation; uninstall first for reproducibility.
 sudo /opt/local/bin/port -N uninstall --follow-dependents python34
 sudo /opt/local/bin/port -N install python34
 sudo /opt/local/bin/port select --set python3 python34 # perhaps not needed but sanity-checks python34 ok
-if [ $? -ne 0 ]
-then
-   echo "Couldn't find Python 3.4 after MacPorts installation."
-   exit 1
-fi
 sudo /opt/local/bin/port -N install py34-pip
 sudo /opt/local/bin/port -N install boost
 
