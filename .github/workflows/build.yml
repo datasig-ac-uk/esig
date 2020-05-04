@@ -15,7 +15,8 @@ jobs:
   all:
     runs-on: ubuntu-18.04
     needs:
-      - linux-all
+      - linux-64bit
+      - linux-32bit
       - mac-py27
       - mac-py34
       - mac-rest
@@ -36,7 +37,7 @@ jobs:
         echo Build successful.
 
   # Linux
-  linux-all:
+  linux-64bit:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
@@ -50,7 +51,23 @@ jobs:
         auth_header="$(git config --local --get http.https://github.com/.extraheader)"
         git submodule sync --recursive
         git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
-        cd build/Linux && ./build-wheels.sh
+        cd build/Linux && ./build-wheels.sh x86_64
+
+  linux-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v1
+      with:
+        # use to build sdist
+        python-version: "3.5.9"
+    - name: Run build
+      run: |
+        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        cd build/Linux && ./build-wheels.sh i686
 
   # Mac
   mac-py27:
