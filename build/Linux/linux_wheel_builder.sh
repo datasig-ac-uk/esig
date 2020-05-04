@@ -17,7 +17,12 @@ for gz in $(ls esig*.gz);
 	 $pyexe -m pip install -U pip virtualenv
 	 $pyexe -m pip install wheel==0.31.1
 	 $pyexe -m pip install -U numpy
-	 $pyexe -m pip wheel $gz
+
+	 pushd .. # circular file path if run from Linux folder
+		 $pyexe -m pip wheel -b Linux -w Linux ..
+	 popd
+
+	 # $pyexe -m pip wheel $gz
 	 auditwheel repair $ver-$py-linux_$arch.whl # puts wheel into wheelhouse
 	 $pyexe -m virtualenv /tmp/$py
 	 . /tmp/$py/bin/activate
