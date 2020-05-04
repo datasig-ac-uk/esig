@@ -18,9 +18,9 @@ eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 # Make a couple of clean working directories
-rm -fr $WORKDIR
-rm -fr $TMPDIR
-rm -fr $TESTDIR
+rm -rf $WORKDIR
+rm -rf $TMPDIR
+rm -rf $TESTDIR
 mkdir $WORKDIR
 mkdir $TMPDIR
 mkdir $TESTDIR
