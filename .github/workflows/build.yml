@@ -18,7 +18,6 @@ jobs:
       - linux-64bit
       - linux-32bit
       - mac-py27
-      - mac-py34
       - mac-rest
       - win-py27-64bit
       - win-py27-32bit
@@ -78,15 +77,6 @@ jobs:
       run: |
         source build/git-preamble.sh
         cd build/OSX && ./build-wheels-27.sh
-
-  mac-py34:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.4
-      run: |
-        source build/git-preamble.sh
-        cd build/OSX && ./build-wheels-34.sh
 
   mac-rest:
     runs-on: macos-10.15
