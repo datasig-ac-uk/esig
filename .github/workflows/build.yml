@@ -11,29 +11,6 @@ on:
       - README.md
 
 jobs:
-  all:
-    runs-on: ubuntu-18.04
-    needs:
-      linux-all
-      mac-py27
-      mac-py34
-      mac-rest
-      win-py27-64bit
-      win-py27-32bit
-      win-py35-64bit
-      win-py35-32bit
-      win-py36-64bit
-      win-py36-32bit
-      win-py37-64bit
-      win-py37-32bit
-      win-py38-64bit
-      win-py38-32bit
-
-    steps:
-    - name: Build all targets
-      run: |
-        echo Build successful.
-
   # Linux
   linux-all:
     runs-on: ubuntu-18.04
@@ -209,3 +186,26 @@ jobs:
           -arch 32 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38-32 `
           -py_installer 3.8.1/python-3.8.1.exe `
+
+  all:
+    runs-on: ubuntu-18.04
+    needs:
+      linux-all
+      mac-py27
+      mac-py34
+      mac-rest
+      win-py27-64bit
+      win-py27-32bit
+      win-py35-64bit
+      win-py35-32bit
+      win-py36-64bit
+      win-py36-32bit
+      win-py37-64bit
+      win-py37-32bit
+      win-py38-64bit
+      win-py38-32bit
+
+    steps:
+    - name: Build all targets
+      run: |
+        echo Build successful.
