@@ -4,7 +4,7 @@
 # Python wheels will be created for specified architecture, for each Python version in python_versions.txt.
 if [[ $1 == "i686" ]] || [[ $1 == "x86_64" ]]
 then
-   arch = $1
+   arch=$1
 else
    echo "Invalid architecture"
    exit 1
