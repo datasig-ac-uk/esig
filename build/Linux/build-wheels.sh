@@ -13,12 +13,6 @@ fi
 
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
-# Get esig sources.
-source ../sdist.sh
-
-# Wheels that pass their tests will be placed here.
-rm -rf wheelhouse
-
 # Build the esig wheels inside the docker container.
 docker run --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} \
    "source ~/.bashrc; cd /data/build/Linux; source linux_wheel_builder.sh $arch" || exit 1
