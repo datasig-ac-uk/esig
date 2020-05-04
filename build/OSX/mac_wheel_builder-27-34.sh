@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # See mac_wheel_builder.sh for documentation.
 
 p=$1 # Python version, used to distinguish names of virtualenvs

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # simple script to install several python versions using pyenv.
 
 eval "$(pyenv init -)"

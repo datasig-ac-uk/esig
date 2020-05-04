@@ -1,48 +1,32 @@
-#!/bin/bash
+#!/bin/bash -e
 
 ### script to build Python wheels for the esig package, adapted from
 ### Daniel Wilson-Nunn's original script.
-#
-# - create and activate a virtual environment
-# - install python dependencies
-# - compile the Python wheel
-# - "delocate" the wheel, i.e. combine other dependencies, to give a portable binary
-# - create another virtual environment and install the newly created wheel
-# - run the esig unit tests
-# - if the tests pass, place wheel in wheelhouse subdirectory
 
 p=$1 # Python version
 
-# note boost needs to be installed, and all versions of python
+# note: boost needs to be installed, and all versions of python
 # listed in python_versions.txt should have been installed via pyenv
 
-# OUTPUTDIR is where the final wheel will be put (don't clean this)
-OUTPUTDIR=wheelhouse 
-# TESTDIR is a staging area from which to install the wheel for testing
-TESTDIR=test
-# TMPDIR is where the wheel will go when first build, before 'delocate'
-TMPDIR=tmp
-# WORKDIR is a temporary directory used in the build process
-WORKDIR=latest
+OUTPUTDIR=wheelhouse    # where final wheel will be put (don't clean this)
+TESTDIR=test            # staging area from which to install the wheel for testing
+TMPDIR=tmp              # where wheel will first go, before 'delocate'
+WORKDIR=latest          # temp dir used during build
 
 # setup for pyenv and virtualenv
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 # Make a couple of clean working directories
-rm -fr $WORKDIR
-rm -fr $TMPDIR
-rm -fr $TESTDIR
+rm -rf $WORKDIR
+rm -rf $TMPDIR
+rm -rf $TESTDIR
 mkdir $WORKDIR
 mkdir $TMPDIR
 mkdir $TESTDIR
 
 # create and activate a virtualenv for this python version
-if ! pyenv virtualenv $p esig_build_env-$p
-then
-    echo "Launching virtualenv for build failed."
-    exit 1
-fi
+pyenv virtualenv $p esig_build_env-$p
 pyenv activate esig_build_env-$p
 
 # install python dependencies

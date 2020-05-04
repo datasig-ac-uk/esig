@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/bash -e
 # Top-level script for building esig for MacOS.
 # Python wheels will be created for Python versions specified in python_versions.txt.
 
@@ -18,11 +18,4 @@ source install_all_python_versions.sh
 # Build the esig wheels.
 for p in $(cat python_versions.txt); do
    . mac_wheel_builder.sh $p
-   if [ $? -eq 0 ]
-   then
-      echo "Successfully created wheel"
-   else
-      echo "Failed to create wheel"
-      exit 1
-   fi
 done

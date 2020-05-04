@@ -1,17 +1,88 @@
-name: build-Windows
+name: build
 
 on:
   push:
     branches:
-      - windows-build
       - master
+#    branches-ignore:
+      - windows-build
     paths-ignore:
       - 'examples/**'
       - 'doc/**'
       - README.md
 
 jobs:
-  build-27-64bit:
+  all:
+    runs-on: ubuntu-18.04
+    needs:
+      - linux-64bit
+      - linux-32bit
+      - mac-py27
+      - mac-rest
+      - win-py27-64bit
+      - win-py27-32bit
+      - win-py35-64bit
+      - win-py35-32bit
+      - win-py36-64bit
+      - win-py36-32bit
+      - win-py37-64bit
+      - win-py37-32bit
+      - win-py38-64bit
+      - win-py38-32bit
+
+    steps:
+    - name: Build all targets
+      run: |
+        echo Build successful.
+
+  # Linux
+  linux-64bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+#    - uses: actions/setup-python@v1
+    - name: Run build
+      run: |
+        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        cd build/Linux && ./build-wheels.sh x86_64
+
+  linux-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+#    - uses: actions/setup-python@v1
+    - name: Run build
+      run: |
+        git config --global url."https://github.com/".insteadOf "git@github.com:"
+        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
+        git submodule sync --recursive
+        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        cd build/Linux && ./build-wheels.sh i686
+
+  # Mac
+  mac-py27:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for Python 2.7
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-27.sh
+
+  mac-rest:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for other Python versions
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-rest.sh
+
+  # Windows
+  win-py27-64bit:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
@@ -24,7 +95,7 @@ jobs:
           -py_install_dir C:\Python27 `
           -py_installer 2.7.15/python-2.7.15.amd64.msi `
 
-  build-27-32bit:
+  win-py27-32bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -37,7 +108,7 @@ jobs:
           -py_install_dir C:\Python27 `
           -py_installer 2.7.15/python-2.7.15.msi `
 
-  build-35-64bit:
+  win-py35-64bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -50,7 +121,7 @@ jobs:
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35 `
           -py_installer 3.5.4/python-3.5.4-amd64.exe `
 
-  build-35-32bit:
+  win-py35-32bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -63,7 +134,7 @@ jobs:
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32 `
           -py_installer 3.5.4/python-3.5.4.exe `
 
-  build-36-64bit:
+  win-py36-64bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -76,7 +147,7 @@ jobs:
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36 `
           -py_installer 3.6.5/python-3.6.5-amd64.exe `
 
-  build-36-32bit:
+  win-py36-32bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -89,7 +160,7 @@ jobs:
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36-32 `
           -py_installer 3.6.5/python-3.6.5.exe `
 
-  build-37-64bit:
+  win-py37-64bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -102,7 +173,7 @@ jobs:
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37 `
           -py_installer 3.7.0/python-3.7.0-amd64.exe `
 
-  build-37-32bit:
+  win-py37-32bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -115,7 +186,7 @@ jobs:
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
           -py_installer 3.7.0/python-3.7.0.exe `
 
-  build-38-64bit:
+  win-py38-64bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
@@ -128,7 +199,7 @@ jobs:
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38 `
           -py_installer 3.8.1/python-3.8.1-amd64.exe `
 
-  build-38-32bit:
+  win-py38-32bit:
     runs-on: windows-2016
     steps:
     - uses: actions/checkout@v2
