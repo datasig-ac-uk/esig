@@ -1,4 +1,5 @@
 #!/bin/bash -e
+set -u -o xtrace
 # See mac_wheel_builder.sh for documentation.
 
 p=$1 # Python version, used to distinguish names of virtualenvs
@@ -29,7 +30,7 @@ $pyexe -m virtualenv $VENV
    if [ $? -eq 0 ]
    then
       echo "Tests passed."
-      mv ${TMPDIR}/*.whl output
+      mv $TMPDIR/*.whl output
    else
       echo "Tests failed."
       exit 1
