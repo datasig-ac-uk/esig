@@ -13,6 +13,7 @@ jobs:
   all:
     runs-on: ubuntu-18.04
     needs:
+      - sdist
       - mac-py27
 #     - mac-py34
       - mac-py35
@@ -48,6 +49,19 @@ jobs:
     - name: Build all targets
       run: |
         echo Build successful.
+
+  sdist:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Source distribution
+      run: |
+        source build/git-preamble.sh
+        cd build && ./sdist.sh
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/sdist
 
   # Mac
   mac-py27:
