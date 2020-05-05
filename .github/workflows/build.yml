@@ -42,6 +42,9 @@ jobs:
       run: |
         source build/git-preamble.sh
         cd build/Linux && ./build-wheels.sh x86_64
+    - uses: actions/upload-artifact@v2
+      with:
+        path: build/Linux/output
 
   linux-32bit:
     runs-on: ubuntu-18.04
@@ -61,6 +64,9 @@ jobs:
       run: |
         source build/git-preamble.sh
         cd build/OSX && ./build-wheels-27.sh
+    - uses: actions/upload-artifact@v2
+      with:
+        path: build/OSX/wheelhouse
 
   mac-rest:
     runs-on: macos-10.15
@@ -84,6 +90,9 @@ jobs:
           -arch 64 `
           -py_install_dir C:\Python27 `
           -py_installer 2.7.15/python-2.7.15.amd64.msi `
+    - uses: actions/upload-artifact@v2
+      with:
+        path: build/Windows/output
 
   win-py27-32bit:
     runs-on: windows-2016
