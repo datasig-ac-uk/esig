@@ -38,27 +38,27 @@ jobs:
         echo Build successful.
 
   # Linux
-  linux-64bit:
+  linux-py27-64bit:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
         source build/git-preamble.sh
-        cd build/Linux && ./build-wheels.sh x86_64
+        cd build/Linux && ./build-wheels.sh cp27-cp27m x86_64
     - uses: actions/upload-artifact@v2
       with:
         name: output
         path: build/Linux/output
 
-  linux-32bit:
+  linux-py27-32bit:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
         source build/git-preamble.sh
-        cd build/Linux && ./build-wheels.sh i686
+        cd build/Linux && ./build-wheels.sh cp27-cp27m i686
     - uses: actions/upload-artifact@v2
       with:
         name: output
