@@ -1,5 +1,4 @@
 #!/bin/bash -e
-set -u -o xtrace
 # See build-wheels.sh for documentation.
 
 # For 2.7

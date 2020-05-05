@@ -1,5 +1,4 @@
 #!/bin/bash -e
-set -u -o xtrace
 
 # Each of these runs as a parallel job in the GitHub runner.
 . build-wheels-27.sh

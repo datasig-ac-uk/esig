@@ -1,5 +1,4 @@
 #!/bin/bash -e
-set -u -o xtrace
 # See mac_wheel_builder.sh for documentation.
 
 p=$1 # Python version, used to distinguish names of virtualenvs

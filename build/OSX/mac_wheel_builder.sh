@@ -1,5 +1,4 @@
 #!/bin/bash -e
-set -u -o xtrace
 
 ### script to build Python wheels for the esig package, adapted from
 ### Daniel Wilson-Nunn's original script.
