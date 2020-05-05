@@ -73,9 +73,20 @@ if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 # create virtualenv for testing and install esig wheel into it.
 Invoke-Expression "$py_exe -m virtualenv venv"
 $wheel=(ls output\*.whl | Select-Object -First 1).Name
+
+echo "************************"
+echo "Here's what's in output:"
+ls output
+echo "************************"
+
 echo $wheel
 ls .\venv
 .\venv\Scripts\python.exe -m pip install output\$wheel
+echo "************************"
+echo "Here's what's in output (after installing wheel):"
+ls output
+echo "************************"
+
 # run tests
 .\venv\Scripts\\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
 if ($LASTEXITCODE -ne 0) { throw "Tests failed." }
