@@ -16,7 +16,11 @@ jobs:
       - linux-64bit
       - linux-32bit
       - mac-py27
-      - mac-rest
+#     - mac-py34
+      - mac-py35
+      - mac-py36
+      - mac-py37
+      - mac-py38
       - win-py27-64bit
       - win-py27-32bit
       - win-py35-64bit
