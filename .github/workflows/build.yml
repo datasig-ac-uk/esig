@@ -44,7 +44,7 @@ jobs:
         cd build/Linux && ./build-wheels.sh x86_64
     - uses: actions/upload-artifact@v2
       with:
-        name: linux-64bit
+        name: output
         path: build/Linux/output
 
   linux-32bit:
@@ -57,7 +57,7 @@ jobs:
         cd build/Linux && ./build-wheels.sh i686
     - uses: actions/upload-artifact@v2
       with:
-        name: linux-32bit
+        name: output
         path: build/Linux/output
 
   # Mac
@@ -71,7 +71,7 @@ jobs:
         cd build/OSX && ./build-wheels-27.sh
     - uses: actions/upload-artifact@v2
       with:
-        name: mac-py27
+        name: output
         path: build/OSX/wheelhouse
 
   mac-rest:
@@ -84,7 +84,7 @@ jobs:
         cd build/OSX && ./build-wheels-rest.sh
     - uses: actions/upload-artifact@v2
       with:
-        name: mac-rest
+        name: output
         path: build/OSX/wheelhouse
 
   # Windows
@@ -102,7 +102,7 @@ jobs:
           -py_installer 2.7.15/python-2.7.15.amd64.msi `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py27-64bit
+        name: output
         path: build/Windows/output
 
   win-py27-32bit:
@@ -119,7 +119,7 @@ jobs:
           -py_installer 2.7.15/python-2.7.15.msi `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py27-32bit
+        name: output
         path: build/Windows/output
 
   win-py35-64bit:
@@ -136,7 +136,7 @@ jobs:
           -py_installer 3.5.4/python-3.5.4-amd64.exe `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py35-64bit
+        name: output
         path: build/Windows/output
 
   win-py35-32bit:
@@ -153,7 +153,7 @@ jobs:
           -py_installer 3.5.4/python-3.5.4.exe `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py35-32bit
+        name: output
         path: build/Windows/output
 
   win-py36-64bit:
@@ -170,7 +170,7 @@ jobs:
           -py_installer 3.6.5/python-3.6.5-amd64.exe `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py36-64bit
+        name: output
         path: build/Windows/output
 
   win-py36-32bit:
@@ -187,7 +187,7 @@ jobs:
           -py_installer 3.6.5/python-3.6.5.exe `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py36-32bit
+        name: output
         path: build/Windows/output
 
   win-py37-64bit:
@@ -204,7 +204,7 @@ jobs:
           -py_installer 3.7.0/python-3.7.0-amd64.exe `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py37-64bit
+        name: output
         path: build/Windows/output
 
   win-py37-32bit:
@@ -221,7 +221,7 @@ jobs:
           -py_installer 3.7.0/python-3.7.0.exe `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py37-32bit
+        name: output
         path: build/Windows/output
 
   win-py38-64bit:
@@ -238,7 +238,7 @@ jobs:
           -py_installer 3.8.1/python-3.8.1-amd64.exe `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py38-64bit
+        name: output
         path: build/Windows/output
 
   win-py38-32bit:
@@ -255,5 +255,5 @@ jobs:
           -py_installer 3.8.1/python-3.8.1.exe `
     - uses: actions/upload-artifact@v2
       with:
-        name: win-py38-32bit
+        name: output
         path: build/Windows/output
