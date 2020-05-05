@@ -1,9 +1,8 @@
 #!/bin/bash -e
 set -u -o xtrace
 
-# Build source distribution and put into output folder. Run from build directory.
+# Build source distribution. Run from build directory.
 
-rm -rf output
 pushd .. # need to run in same directory as setup.py
 echo "Python version installed (>= 3.5 required):"
 python --version
