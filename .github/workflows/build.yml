@@ -13,8 +13,8 @@ jobs:
   all:
     runs-on: ubuntu-18.04
     needs:
-      - linux-64bit
-      - linux-32bit
+      - linux-py27-64bit
+      - linux-py27-32bit
       - mac-py27
 #     - mac-py34
       - mac-py35
