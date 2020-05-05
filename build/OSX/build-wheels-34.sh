@@ -1,4 +1,5 @@
 #!/bin/bash -e
+set -u -o xtrace
 # See build-wheels.sh for documentation.
 
 # MacPorts (for Python 3.4)

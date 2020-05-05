@@ -1,4 +1,5 @@
 #!/bin/bash -e
+set -u -o xtrace
 # Top-level script for building esig for MacOS.
 # $1: Python version
 
