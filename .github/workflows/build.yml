@@ -3,9 +3,7 @@ name: build
 on:
   push:
     branches:
-      - master
-#    branches-ignore:
-      - windows-build
+      - develop
     paths-ignore:
       - 'examples/**'
       - 'doc/**'
