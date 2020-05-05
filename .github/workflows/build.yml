@@ -44,6 +44,7 @@ jobs:
         cd build/Linux && ./build-wheels.sh x86_64
     - uses: actions/upload-artifact@v2
       with:
+        name: linux-64bit
         path: build/Linux/output
 
   linux-32bit:
@@ -54,6 +55,10 @@ jobs:
       run: |
         source build/git-preamble.sh
         cd build/Linux && ./build-wheels.sh i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: linux-32bit
+        path: build/Linux/output
 
   # Mac
   mac-py27:
@@ -66,6 +71,7 @@ jobs:
         cd build/OSX && ./build-wheels-27.sh
     - uses: actions/upload-artifact@v2
       with:
+        name: mac-py27
         path: build/OSX/wheelhouse
 
   mac-rest:
@@ -76,6 +82,10 @@ jobs:
       run: |
         source build/git-preamble.sh
         cd build/OSX && ./build-wheels-rest.sh
+    - uses: actions/upload-artifact@v2
+      with:
+        name: mac-rest
+        path: build/OSX/wheelhouse
 
   # Windows
   win-py27-64bit:
@@ -92,6 +102,7 @@ jobs:
           -py_installer 2.7.15/python-2.7.15.amd64.msi `
     - uses: actions/upload-artifact@v2
       with:
+        name: win-py27-64bit
         path: build/Windows/output
 
   win-py27-32bit:
@@ -106,6 +117,10 @@ jobs:
           -arch 32 `
           -py_install_dir C:\Python27 `
           -py_installer 2.7.15/python-2.7.15.msi `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py27-32bit
+        path: build/Windows/output
 
   win-py35-64bit:
     runs-on: windows-2016
@@ -119,6 +134,10 @@ jobs:
           -arch 64 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35 `
           -py_installer 3.5.4/python-3.5.4-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py35-64bit
+        path: build/Windows/output
 
   win-py35-32bit:
     runs-on: windows-2016
@@ -132,6 +151,10 @@ jobs:
           -arch 32 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32 `
           -py_installer 3.5.4/python-3.5.4.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py35-32bit
+        path: build/Windows/output
 
   win-py36-64bit:
     runs-on: windows-2016
@@ -145,6 +168,10 @@ jobs:
           -arch 64 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36 `
           -py_installer 3.6.5/python-3.6.5-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py36-64bit
+        path: build/Windows/output
 
   win-py36-32bit:
     runs-on: windows-2016
@@ -158,6 +185,10 @@ jobs:
           -arch 32 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36-32 `
           -py_installer 3.6.5/python-3.6.5.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py36-32bit
+        path: build/Windows/output
 
   win-py37-64bit:
     runs-on: windows-2016
@@ -171,6 +202,10 @@ jobs:
           -arch 64 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37 `
           -py_installer 3.7.0/python-3.7.0-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py37-64bit
+        path: build/Windows/output
 
   win-py37-32bit:
     runs-on: windows-2016
@@ -184,6 +219,10 @@ jobs:
           -arch 32 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
           -py_installer 3.7.0/python-3.7.0.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py37-32bit
+        path: build/Windows/output
 
   win-py38-64bit:
     runs-on: windows-2016
@@ -197,6 +236,10 @@ jobs:
           -arch 64 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38 `
           -py_installer 3.8.1/python-3.8.1-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py38-64bit
+        path: build/Windows/output
 
   win-py38-32bit:
     runs-on: windows-2016
@@ -210,3 +253,7 @@ jobs:
           -arch 32 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38-32 `
           -py_installer 3.8.1/python-3.8.1.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: win-py38-32bit
+        path: build/Windows/output
