@@ -13,6 +13,12 @@ jobs:
   all:
     runs-on: ubuntu-18.04
     needs:
+      - mac-py27
+#     - mac-py34
+      - mac-py35
+      - mac-py36
+      - mac-py37
+      - mac-py38
       - linux-py27-64bit
       - linux-py27-32bit
       - linux-py27u-64bit
@@ -27,12 +33,6 @@ jobs:
       - linux-py37-32bit
       - linux-py38-64bit
       - linux-py38-32bit
-      - mac-py27
-#     - mac-py34
-      - mac-py35
-      - mac-py36
-      - mac-py37
-      - mac-py38
       - win-py27-64bit
       - win-py27-32bit
       - win-py35-64bit
@@ -48,6 +48,72 @@ jobs:
     - name: Build all targets
       run: |
         echo Build successful.
+
+  # Mac
+  mac-py27:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for Python 2.7
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-27.sh
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/OSX/output
+
+  mac-py35:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for Python 3.5
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-rest.sh 3.5.5
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/OSX/output
+
+  mac-py36:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for Python 3.6
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-rest.sh 3.6.5
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/OSX/output
+
+  mac-py37:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for Python 3.7
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-rest.sh 3.7.0
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/OSX/output
+
+  mac-py38:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build for Python 3.8
+      run: |
+        source build/git-preamble.sh
+        cd build/OSX && ./build-wheels-rest.sh 3.8.1
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/OSX/output
 
   # Linux
   linux-py27-64bit:
@@ -231,72 +297,6 @@ jobs:
       with:
         name: output
         path: build/Linux/output
-
-  # Mac
-  mac-py27:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 2.7
-      run: |
-        source build/git-preamble.sh
-        cd build/OSX && ./build-wheels-27.sh
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
-
-  mac-py35:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.5
-      run: |
-        source build/git-preamble.sh
-        cd build/OSX && ./build-wheels-rest.sh 3.5.5
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
-
-  mac-py36:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.6
-      run: |
-        source build/git-preamble.sh
-        cd build/OSX && ./build-wheels-rest.sh 3.6.5
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
-
-  mac-py37:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.7
-      run: |
-        source build/git-preamble.sh
-        cd build/OSX && ./build-wheels-rest.sh 3.7.0
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
-
-  mac-py38:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.8
-      run: |
-        source build/git-preamble.sh
-        cd build/OSX && ./build-wheels-rest.sh 3.8.1
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
 
   # Windows
   win-py27-64bit:
