@@ -15,6 +15,18 @@ jobs:
     needs:
       - linux-py27-64bit
       - linux-py27-32bit
+      - linux-py27u-64bit
+      - linux-py27u-64bit
+      - linux-py34-64bit
+      - linux-py34-32bit
+      - linux-py35-64bit
+      - linux-py35-32bit
+      - linux-py36-64bit
+      - linux-py36-32bit
+      - linux-py37-64bit
+      - linux-py37-32bit
+      - linux-py38-64bit
+      - linux-py38-32bit
       - mac-py27
 #     - mac-py34
       - mac-py35
@@ -59,6 +71,162 @@ jobs:
       run: |
         source build/git-preamble.sh
         cd build/Linux && ./build-wheels.sh cp27-cp27m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py27u-64bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp27-cp27mu x86_64
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py27u-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp27-cp27mu i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py34-64bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp34-cp34m x86_64
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py34-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp34-cp34m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py35-64bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp35-cp35m x86_64
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py35-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp35-cp35m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py36-64bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp36-cp36m x86_64
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py36-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp36-cp36m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py37-64bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp37-cp37m x86_64
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py37-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp37-cp37m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py38-64bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp38-cp38 x86_64
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  linux-py38-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh
+        cd build/Linux && ./build-wheels.sh cp38-cp38 i686
     - uses: actions/upload-artifact@v2
       with:
         name: output
