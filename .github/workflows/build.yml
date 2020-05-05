@@ -40,26 +40,18 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
-#    - uses: actions/setup-python@v1
     - name: Run build
       run: |
-        git config --global url."https://github.com/".insteadOf "git@github.com:"
-        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-        git submodule sync --recursive
-        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        source build/git-preamble.sh
         cd build/Linux && ./build-wheels.sh x86_64
 
   linux-32bit:
     runs-on: ubuntu-18.04
     steps:
     - uses: actions/checkout@v2
-#    - uses: actions/setup-python@v1
     - name: Run build
       run: |
-        git config --global url."https://github.com/".insteadOf "git@github.com:"
-        auth_header="$(git config --local --get http.https://github.com/.extraheader)"
-        git submodule sync --recursive
-        git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
+        source build/git-preamble.sh
         cd build/Linux && ./build-wheels.sh i686
 
   # Mac
