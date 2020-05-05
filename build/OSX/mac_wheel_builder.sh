@@ -8,8 +8,7 @@ p=$1 # Python version
 # note: boost needs to be installed, and all versions of python
 # listed in python_versions.txt should have been installed via pyenv
 
-TESTDIR=test            # staging area from which to install the wheel for testing
-TMPDIR=tmp              # where wheel will first go, before 'delocate'
+TMPDIR=tmp
 
 # setup for pyenv and virtualenv
 eval "$(pyenv init -)"

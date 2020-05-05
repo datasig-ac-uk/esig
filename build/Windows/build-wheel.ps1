@@ -85,5 +85,5 @@ if ($LASTEXITCODE -ne 0) {
 } else {
    echo "Tests passed - copying wheel to output"
    mkdir output
-   mv wheeldir/*.whl output/
+   mv wheeldir/esig*.whl output/
 }
