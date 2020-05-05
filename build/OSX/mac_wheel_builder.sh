@@ -43,7 +43,7 @@ python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
 if [ $? -eq 0 ]
 then
     echo "Tests passed."
-    mv $TMPDIR/*.whl output
+    mv ${TMPDIR}/esig*.whl output
 else
     echo "Tests failed."
     exit 1
