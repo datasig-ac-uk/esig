@@ -48,9 +48,14 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: output
-    - name: Build all targets
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8'
+    - name: Build full distribution and upload to PyPI.
       run: |
-        echo Build successful.
+        python -m pip install --upgrade twine==3.1.1
+        python -m twine upload -u __token__ -p {{ secrets.testpypi_password }} -r testpypi output/*
+        echo Uploaded to PyPI.
 
   sdist:
     runs-on: macos-10.15
