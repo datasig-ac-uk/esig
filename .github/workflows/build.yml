@@ -45,10 +45,10 @@ jobs:
       - win-py38-64bit
       - win-py38-32bit
     steps:
-    - name: Build all targets
     - uses: actions/download-artifact@v2
       with:
         name: output
+    - name: Build all targets
       run: |
         echo Build successful.
 
