@@ -34,10 +34,9 @@ pyexe=/opt/local/bin/python3.4 # MacPorts seems to consistently install here
 py=$($pyexe --version 2>&1)
 p=${py##* }
 expect="3.4.10"
-if [ $p == $expect ]
+if [ $p != $expect ]
 then
-   . mac_wheel_builder-27-34.sh p "sudo"
-else
    echo "Expecting Python $expect, got $p"
    exit 1
 fi
+. mac_wheel_builder-27-34.sh "/opt/local/Library/Frameworks/Python.framework/Versions/3.4/bin" "sudo"
