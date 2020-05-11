@@ -25,7 +25,7 @@ jobs:
       with:
         python-version: '3.8' # for twine
     - name: Build full distribution and upload to PyPI.
-      run: ./publish.sh
+      run: cd build && ./publish.sh
 
   sdist:
     runs-on: macos-10.15
