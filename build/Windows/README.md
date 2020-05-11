@@ -1,3 +1,3 @@
-## Building esig for Windows
+## Building esig
 
-The Windows build runs in the cloud as a GitHub Action.
+Windows, Mac and Linux builds run in the cloud as a GitHub Action workflow.
