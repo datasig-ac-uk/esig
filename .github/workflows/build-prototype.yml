@@ -10,12 +10,13 @@ on:
       - README.md
 
 jobs:
-  all:
+  publish:
     runs-on: ubuntu-18.04
     needs:
       - sdist
       - mac-py27
     steps:
+    - uses: actions/checkout@v2
     - uses: actions/download-artifact@v2
       with:
         name: output
