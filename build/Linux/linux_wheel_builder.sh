@@ -9,17 +9,17 @@ arch=$2
 
 TMPDIR=tmp         # working folder for pip wheel
 OUTPUTDIR=output   # location of tested wheels
+
+rm -rf $TMPDIR
+rm -rf wheelhouse
 rm -rf $OUTPUTDIR
 mkdir $OUTPUTDIR
+mkdir $TMPDIR
 
 pyexe=/opt/python/$py/bin/python
 $pyexe -m pip install -U pip virtualenv
 $pyexe -m pip install wheel==0.31.1
 $pyexe -m pip install -U numpy
-
-rm -rf $TMPDIR
-rm -rf wheelhouse
-mkdir $TMPDIR
 
 pushd .. # circular file path if run from Linux folder
 	$pyexe -m pip wheel -b Linux/$TMPDIR -w Linux/$TMPDIR ..

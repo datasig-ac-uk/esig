@@ -9,13 +9,16 @@ p=$1 # Python version
 # listed in python_versions.txt should have been installed via pyenv
 
 TMPDIR=tmp
+OUTPUTDIR=output   # location of tested wheels
 
 # setup for pyenv and virtualenv
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
 
 rm -rf $TMPDIR
+rm -rf $OUTPUTDIR
 mkdir $TMPDIR
+mkdir $OUTPUTDIR
 
 # create and activate a virtualenv for this python version
 pyenv virtualenv $p esig_build_env-$p
@@ -42,7 +45,7 @@ python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
 if [ $? -eq 0 ]
 then
     echo "Tests passed."
-    mv ${TMPDIR}/esig*.whl output/
+    mv ${TMPDIR}/esig*.whl $OUTPUTDIR/
 else
     echo "Tests failed."
     exit 1

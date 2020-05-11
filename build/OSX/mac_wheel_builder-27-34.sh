@@ -6,9 +6,12 @@ path_ext=$1 # Python 3.4 needs explicit path for delocate
 run_as=$2 # either "" or "sudo"
 
 TMPDIR=tmp
+OUTPUTDIR=output   # location of tested wheels
 
 rm -rf $TMPDIR
+rm -rf $OUTPUTDIR
 mkdir $TMPDIR
+mkdir $OUTPUTDIR
 
 # sudo needed for MacPorts
 $run_as $pyexe -m pip install --upgrade pip
@@ -32,7 +35,7 @@ $pyexe -m virtualenv $VENV
    if [ $? -eq 0 ]
    then
       echo "Tests passed."
-      mv ${TMPDIR}/esig*.whl output/
+      mv ${TMPDIR}/esig*.whl $OUTPUTDIR/
    else
       echo "Tests failed."
       exit 1
