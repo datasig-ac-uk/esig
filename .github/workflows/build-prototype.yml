@@ -23,7 +23,7 @@ jobs:
     - uses: actions/setup-python@v2
       with:
         python-version: '3.8' # for twine
-    - name: Build full distribution and upload to PyPI.
+    - name: Upload distribution to PyPI.
       run: cd build && ./publish.sh ${{ secrets.testpypi_password }} testpypi
 
   sdist:
