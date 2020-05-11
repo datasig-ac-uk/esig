@@ -11,10 +11,9 @@ pyexe=/usr/local/bin/python
 py=$($pyexe --version 2>&1)
 p=${py##* }
 expect="2.7.17"
-if [ $p == $expect ]
+if [ $p != $expect ]
 then
-   . mac_wheel_builder-27-34.sh p ""
-else
    echo "Expecting Python $expect, got $p"
    exit 1
 fi
+. mac_wheel_builder-27-34.sh "" ""

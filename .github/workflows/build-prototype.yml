@@ -1,0 +1,45 @@
+name: build
+
+on:
+  push:
+    branches:
+      - develop
+      - release
+    paths-ignore:
+      - 'examples/**'
+      - 'doc/**'
+      - README.md
+
+jobs:
+  publish:
+    runs-on: macos-10.15
+    needs:
+      - sdist
+    if: github.ref == 'refs/heads/release'
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/download-artifact@v2
+      with:
+        name: output
+        path: build/dist
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.8' # for twine
+    - name: Upload distribution to PyPI.
+      run: cd build && ./publish.sh ${{ secrets.testpypi_password }} testpypi
+
+  sdist:
+    runs-on: macos-10.15
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v2
+      with:
+        python-version: '3.5'
+    - name: Source distribution
+      run: |
+        source build/git-preamble.sh
+        cd build && ./sdist.sh
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/sdist

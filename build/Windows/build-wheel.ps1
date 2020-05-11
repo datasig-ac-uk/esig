@@ -66,16 +66,24 @@ Invoke-Expression "$py_exe -m pip install virtualenv"
 
 # build the wheel
 pushd ..
-   Invoke-Expression "$py_exe -m pip wheel -b Windows/ -w Windows/output/ .."
+   Invoke-Expression "$py_exe -m pip wheel -b Windows/ -w Windows/wheeldir/ .."
 popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
 # create virtualenv for testing and install esig wheel into it.
 Invoke-Expression "$py_exe -m virtualenv venv"
-$wheel=(ls output\*.whl | Select-Object -First 1).Name
+$wheel=(ls wheeldir\*.whl | Select-Object -First 1).Name
+
 echo $wheel
 ls .\venv
-.\venv\Scripts\python.exe -m pip install output\$wheel
+.\venv\Scripts\python.exe -m pip install wheeldir\$wheel
+
 # run tests
 .\venv\Scripts\\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
-if ($LASTEXITCODE -ne 0) { throw "Tests failed." }
+if ($LASTEXITCODE -ne 0) {
+   throw "Tests failed - will not copy wheel to output"
+} else {
+   echo "Tests passed - copying wheel to output"
+   mkdir output
+   mv wheeldir/esig*.whl output/
+}
