@@ -3,6 +3,7 @@ name: build
 on:
   push:
     branches:
+      - develop
       - release
     paths-ignore:
       - 'examples/**'

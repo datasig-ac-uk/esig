@@ -2,7 +2,7 @@
 # See build-wheels.sh for documentation.
 
 # For 2.7
-brew install boost
+brew install boost && true # in case already installed
 brew install openssl # required now?
 
 # TODO: relax version checks below to major.minor.
