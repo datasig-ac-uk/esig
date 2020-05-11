@@ -3,7 +3,7 @@ name: build-OSX
 on:
   push:
     branches:
-      - mac-build
+      - mac-py34
     paths-ignore:
       - 'examples/**'
       - 'doc/**'
