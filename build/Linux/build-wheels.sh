@@ -1,19 +1,17 @@
 #!/bin/bash -e
-set -u -o xtrace
-# Top-level script for building esig for Linux on MacOS or Linux.
-# $1: Python version
-# $2: one of {i686, x86_64}
-# Python wheels will be created for specified architecture, for each Python version in python_versions.txt.
-if [[ $2 == "i686" ]] || [[ $2 == "x86_64" ]]
-then
-   arch=$2
-else
-   echo "Invalid architecture"
-   exit 1
-fi
 
-docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
-
-# Build the esig wheels inside the docker container.
-docker run --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} \
-   "source ~/.bashrc; cd /data/build/Linux; source linux_wheel_builder.sh $1 $arch" || exit 1
+# Each of these runs as a parallel job in the GitHub runner.
+./build-wheel.sh cp27-cp27m x86_64
+./build-wheel.sh cp27-cp27m i686
+./build-wheel.sh cp27-cp27mu x86_64
+./build-wheel.sh cp27-cp27mu i686
+./build-wheel.sh cp34-cp34m x86_64
+./build-wheel.sh cp34-cp34m i686
+./build-wheel.sh cp35-cp35m x86_64
+./build-wheel.sh cp35-cp35m i686
+./build-wheel.sh cp36-cp36m x86_64
+./build-wheel.sh cp36-cp36m i686
+./build-wheel.sh cp37-cp37m x86_64
+./build-wheel.sh cp37-cp37m i686
+./build-wheel.sh cp38-cp38 x86_64
+./build-wheel.sh cp38-cp38 i686
