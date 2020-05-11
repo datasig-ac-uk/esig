@@ -20,7 +20,7 @@ jobs:
     - uses: actions/download-artifact@v2
       with:
         name: output
-        path: dist
+        path: build/dist
     - uses: actions/setup-python@v2
       with:
         python-version: '3.8' # for twine
