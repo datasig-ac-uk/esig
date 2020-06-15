@@ -16,6 +16,7 @@ static PyObject* tosig(PyObject* self, PyObject* args);
 static PyObject* retrieveCapsule(PyObject* self, PyObject* args);
 static PyObject* getlogsigsize(PyObject* self, PyObject* args);
 static PyObject* getsigsize(PyObject* self, PyObject* args);
+static PyObject* pyrecombine(PyObject* self, PyObject* args);
 PyObject * showsigkeys(PyObject *self, PyObject *args);
 PyObject * showlogsigkeys(PyObject *self, PyObject *args);
 
