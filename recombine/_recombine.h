@@ -14,4 +14,3 @@ extern "C" {
 		, double* NewWeights
 	);
 }
-
