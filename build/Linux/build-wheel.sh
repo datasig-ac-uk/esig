@@ -16,4 +16,4 @@ docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
 # Build the esig wheels inside the docker container.
 docker run --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} \
-   "source ~/.bashrc; cd /data/build/Linux; source linux_wheel_builder.sh $1 $arch" || exit 1
+   "source ~/.bashrc; cd /data/build/Linux; ./linux_wheel_builder.sh $1 $arch" || exit 1
