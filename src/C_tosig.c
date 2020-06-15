@@ -3,7 +3,10 @@
 #define NPY_NO_DEPRECATED_API NPY_1_7_API_VERSION
 #define PY_SSIZE_T_CLEAN
 #include "Python.h"
-//#include "arrayobject.h" //NUMPY
+//https://github.com/numpy/numpy/issues/9309
+// there are big problems in defining these 
+// python/numpy functions in different translation units
+// so we wont! 
 #include <numpy/arrayobject.h>
 
 #include "C_tosig.h"
@@ -20,7 +23,7 @@ static PyMethodDef _C_tosigMethods[] = {
 		{"sigdim", getsigsize, METH_VARARGS,"sigdim(signal_dimension, signature_degree) returns a Py_ssize_t integer giving the length of the signature vector returned by array2logsig"},
 		{"logsigkeys",showlogsigkeys, METH_VARARGS, "logsigkeys(signal_dimension, signature_degree) returns, in the order used by ...2logsig, a space separated ascii string containing the keys associated the entries in the log signature returned by ...2logsig"},
 		{"sigkeys",showsigkeys, METH_VARARGS, "sigkeys(signal_dimension, signature_degree) returns, in the order used by ...2sig, a space separated ascii string containing the keys associated the entries in the signature returned by ...2sig"},
-		{"retrieve_capsule", retrieveCapsule, METH_VARARGS, "Some description of retrieve_capsule()"},
+		{"recombine", pyrecombine, METH_VARARGS, "recombine(double_array_of_vector_points(index, vector) with optional:, index_array, weights_array) returns (retained_indexes, new weights) The arrays index_array, weights_array are single index numpy arrays and must have the same dimension and represent the indexes of the vectors and a mass distribution of positive weights (and at least one must be strictly positive) on them. The returned weights are strictly positive, have the same total mass - but are supported on a subset of the initial chosen set of locations. The vector data has the same integral under both weight distributions; the indexes returned are a subset of indexes in input index_array and mass cannot be further recombined onto a proper subset while preserving the integral. The default weights are 1 on each point indexed, the default is to index of all the points."},
 		{NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -210,6 +213,162 @@ static PyObject* getsigsize(PyObject* self, PyObject* args)
 
 	ans = GetSigSize((size_t)width, (size_t)depth);
 	return Py_BuildValue("n", ans);
+}
+
+/* ==== Reduces the support of a probabiity measure on vectors to the minimal support size with the same expectation =========================
+	Returns two the new probability measure via two NEW scalar NumPy arrays of same length indices (Py_ssize_t) and weights (double)
+	interface:  py_recombine(N_vectors_of_dimension_D(N,D) and optionally: , k_indices, k_weights)
+				indices are Py_ssize_t; vectors and weights are doubles
+				returns n_retained_indices, n_new_weights 
+				*/
+static PyObject*
+pyrecombine(PyObject* self, PyObject* args)
+{
+// INTERNAL
+	// 
+	int src_locations_built_internally = 0;
+	int src_weights_built_internally = 0;
+	// only match the mean - not higher moments
+	size_t stCubatureDegree = 1;
+	// max no points at end - computed below
+	ptrdiff_t NoDimensionsToCubature;
+	// parameter summaries
+	ptrdiff_t no_locations;
+	ptrdiff_t point_dimension;
+	double total_mass = 0.;
+	// the final output
+	PyObject* out = NULL;
+
+// THE INPUTS
+	// the data - a (large) enumeration of vectors obtained by making a list of vectors and converting it to an array. 
+	PyArrayObject* data; 
+	// a list of the rows of interest
+	PyArrayObject* src_locations = NULL;
+	// their associated weights
+	PyArrayObject* src_weights = NULL;
+	if (!PyArg_ParseTuple(args, "O!|O!O!", &PyArray_Type, &data, &PyArray_Type, &src_locations, &PyArray_Type, &src_weights))
+		return out;
+// DATA VALIDATION
+	// 
+	if (data == NULL
+		|| (PyArray_NDIM(data) != 2 || PyArray_DIM(data, 0) == 0 || PyArray_DIM(data, 1) == 0) // present but badly formed
+		|| (src_locations != NULL && (PyArray_NDIM(src_locations) != 1 || PyArray_DIM(src_locations, 0) == 0)) // present but badly formed
+		|| (src_weights != NULL && (PyArray_NDIM(src_weights) != 1 || PyArray_DIM(src_weights, 0) == 0)) // present but badly formed
+		||((src_weights != NULL && src_locations != NULL) && !PyArray_SAMESHAPE(src_weights, src_locations) )// present well formed but of different length
+		) return NULL;
+// create default locations (ALL) if not specified
+	if (src_locations == NULL) {
+		npy_intp* d = PyArray_DIMS(data);
+		//d[0] = PyArray_DIM(data, 0);
+		src_locations = (PyArrayObject*)PyArray_SimpleNew(1, d, NPY_INT64);
+		size_t* LOCS = PyArray_DATA(src_locations);
+		for (ptrdiff_t id = 0; id < d[0]; ++id)
+			LOCS[id] = id;
+		src_locations_built_internally = 1;
+	}
+// create default weights (1. on each point) if not specified
+	if (src_weights == NULL) {
+		npy_intp d[1];
+		d[0] = PyArray_DIM(src_locations, 0);
+		src_weights = (PyArrayObject*)PyArray_SimpleNew(1, d, NPY_DOUBLE);
+		double* WTS = PyArray_DATA(src_weights);
+		for (ptrdiff_t id = 0; id < d[0]; ++id)
+			WTS[id] = 1.;
+		src_weights_built_internally = 1;
+	}
+// make all data contiguous and type compliant (This only applies to external data - we know that our created arrays are fine
+// note this requires a deref at the end - so does the fill in of defaults - but we only do one or the other 
+	{
+		data = (PyArrayObject*)PyArray_ContiguousFromObject((PyObject*)data, NPY_DOUBLE, 2, 2);
+		if (!src_locations_built_internally)
+			src_locations = (PyArrayObject*)PyArray_ContiguousFromObject((PyObject*)src_locations, NPY_INT64, 1, 1);
+		if (!src_weights_built_internally)
+			src_weights = (PyArrayObject*)PyArray_ContiguousFromObject((PyObject*)src_weights, NPY_DOUBLE, 1, 1);
+	}		
+
+// PREPARE INPUTS AS C ARRAYS
+	ptrdiff_t no_datapoints = PyArray_DIM(data, 0);
+	point_dimension = PyArray_DIM(data, 1);
+	double* DATA = PyArray_DATA(data);
+
+	size_t* LOCATIONS = PyArray_DATA(src_locations);
+	double* WEIGHTS = PyArray_DATA(src_weights);
+
+// map locations from integer indexes to pointers to double
+	no_locations = PyArray_DIM(src_locations, 0);
+	double** LOCATIONS2 = (double**)malloc(no_locations * sizeof(double*));
+	for (ptrdiff_t id = 0; id < no_locations; ++id)
+	{
+		// check for data out of range
+		if (LOCATIONS[id] >= no_datapoints)
+			goto exit;
+		LOCATIONS2[id] = &DATA[LOCATIONS[id] * point_dimension];
+	}
+	// normalise the weights
+	for (ptrdiff_t id = 0; id < no_locations; ++id)
+		total_mass += WEIGHTS[id];
+	for (ptrdiff_t id = 0; id < no_locations; ++id)
+		WEIGHTS[id]/= total_mass;
+
+
+// NoDimensionsToCubature = the max number of points needed for cubature
+	_recombineC(
+		stCubatureDegree
+		, point_dimension
+		, 0 // tells _recombineC to return NoDimensionsToCubature the required buffer size
+		, &NoDimensionsToCubature
+		, NULL
+		, NULL
+		, NULL
+		, NULL
+	);
+// Prepare to call the reduction algorithm
+	// a variable that will eventually be amended to to indicate the actual number of points returned
+	ptrdiff_t noKeptLocations = NoDimensionsToCubature;
+	// a buffer of size iNoDimensionsToCubature big enough to store array of indexes to the kept points
+	size_t* KeptLocations = (size_t*)malloc(noKeptLocations * sizeof(size_t));
+	// a buffer of size NoDimensionsToCubature to store the weights of the kept points
+	double* NewWeights = (double*)malloc(noKeptLocations * sizeof(double));
+
+	_recombineC(
+		stCubatureDegree
+		, point_dimension
+		, no_locations
+		, &noKeptLocations
+		, LOCATIONS2
+		, WEIGHTS
+		, KeptLocations
+		, NewWeights
+	);
+	// un-normalise the weights
+	for (ptrdiff_t id = 0; id < noKeptLocations; ++id)
+		NewWeights[id] *= total_mass;
+// MOVE ANSWERS TO OUT
+	// MAKE NEW OUTPUT OBJECTS
+	npy_intp d[1];
+	d[0] = noKeptLocations;
+	PyArrayObject* snk_locations = (PyArrayObject*)PyArray_SimpleNew(1, d, NPY_INT64);
+	PyArrayObject* snk_weights = (PyArrayObject*)PyArray_SimpleNew(1, d, NPY_DOUBLE);
+	// MOVE OUTPUT FROM BUFFERS TO THESE OBJECTS
+	memcpy(PyArray_DATA(snk_locations), KeptLocations, noKeptLocations * sizeof(size_t));
+	memcpy(PyArray_DATA(snk_weights), NewWeights, noKeptLocations * sizeof(double));
+	// RELEASE BUFFERS
+	free(KeptLocations);
+	free(NewWeights);
+	// CREATE OUTPUT
+	out = PyTuple_Pack(2, snk_locations, snk_weights);
+exit:;
+// CLEANUP
+	free(LOCATIONS2);
+	Py_DECREF(data);
+	Py_DECREF(src_locations);
+	Py_DECREF(src_weights);
+// EXIT
+	return out;
+// USEFUL NUMPY EXAMPLES
+		//https://stackoverflow.com/questions/56182259/how-does-one-acces-numpy-multidimensionnal-array-in-c-extensions/56233469#56233469
+		//https://stackoverflow.com/questions/6994725/reversing-axis-in-numpy-array-using-c-api/6997311#6997311
+		//https://stackoverflow.com/questions/6994725/reversing-axis-in-numpy-array-using-c-api/6997311#699731
 }
 
 /* ==== Check that PyArrayObject is a double (Float) type and a matrix ==============
