@@ -414,9 +414,18 @@ void RdToPowers(void* pIn, SCA* pOut, void* vpCBufferHelper)
 	for (ptrdiff_t j = 0; j < ptrdiff_t(no_of_locations); ++j)
 	{
 		SCA* now = pOutBegin + j * depth_of_vector;
-		for (size_t i = 0; i < L; ++i)
-			buffer[i + L * j] = ((MAX[i] - MIN[i]) == 0.) ? 0. : (2 * buffer[i + L * j] - (MIN[i] + MAX[i])) / (MAX[i] - MIN[i]);
-		prods(now, SCA(1), 0, D, &buffer[L * j], &buffer[L * j] + L);
+		if(D==1)
+		{
+			now[0] = 1.;
+			for (size_t i = 0; i < L; ++i)
+				now[1 + i] = ((MAX[i] - MIN[i]) == 0.) ? 0. : (2 * buffer[i + L * j] - (MIN[i] + MAX[i])) / (MAX[i] - MIN[i]);
+		}
+		else
+		{
+			for (size_t i = 0; i < L; ++i)
+				buffer[i + L * j] = ((MAX[i] - MIN[i]) == 0.) ? 0. : (2 * buffer[i + L * j] - (MIN[i] + MAX[i])) / (MAX[i] - MIN[i]);
+			prods(now, SCA(1), 0, D, &buffer[L * j], &buffer[L * j] + L);
+		}
 	}
 	pOutBegin += no_of_locations * depth_of_vector;
 }
