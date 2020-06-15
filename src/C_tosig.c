@@ -7,6 +7,7 @@
 // there are big problems in defining these
 // python/numpy functions in different translation units
 // so we wont!
+#include <stddef.h>             // size_t ptrdiff_t
 #include <numpy/arrayobject.h>
 
 #include "C_tosig.h"
