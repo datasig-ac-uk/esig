@@ -13,7 +13,7 @@ configuration.package_abs_root = os.path.dirname(os.path.realpath(__file__))
 
 esig_extension = Extension(
     'esig.tosig',
-    sources=['src/C_tosig.c', 'src/Cpp_ToSig.cpp', 'src/ToSig.cpp'],
+    sources=['src/C_tosig.c', 'src/Cpp_ToSig.cpp', 'src/ToSig.cpp', 'recombine/_recombine.cpp'],
     depends=['src/ToSig.h', 'src/C_tosig.h', 'src/ToSig.cpp', 'src/switch.h'],
     include_dirs=configuration.include_dirs,
     library_dirs=configuration.library_dirs,
@@ -26,17 +26,17 @@ esig_extension = Extension(
 setup(
     name='esig',
     version=configuration.esig_version,
-    
+
     author='Terry Lyons',
     author_email='software@lyonstech.net',
     url='http://esig.readthedocs.io/en/latest/',
     license='GPLv3',
 
-    keywords='data streams rough paths signatures', 
-    
+    keywords='data streams rough paths signatures',
+
     description="This package provides \"rough path\" tools for analysing vector time series.",
     long_description=configuration.long_description,
-    
+
     include_package_data=True,
     packages=find_packages(),
     test_suite='esig.tests.get_suite',
@@ -44,10 +44,10 @@ setup(
     package_data={
         'esig': ['VERSION', 'ERROR_MESSAGE'],
     },
-    
+
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
-    
+
     install_requires=['numpy>=1.7'],
     setup_requires=['numpy>=1.7'],
     tests_require=['numpy>=1.7'],
@@ -61,7 +61,7 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Topic :: Scientific/Engineering :: Mathematics',
         ],
-    
+
     cmdclass={
         'install': helpers.InstallExtensionCommand,
         'build_ext': helpers.BuildExtensionCommand,

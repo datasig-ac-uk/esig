@@ -812,7 +812,7 @@ class InstallationConfiguration(object):
     def extra_compile_args(self):
         """
         Returns a list of additional arguments that must be supplied to the compiler.
-        Platform dependent.
+        Platform and compiler dependent.
 
         Args:
             self (InstallationConfiguration): an object instance of InstanceConfiguration
@@ -839,7 +839,7 @@ class InstallationConfiguration(object):
     def linker_args(self):
         """
         Returns a list of additional arguments that must be used by the linker.
-        Returned lists are platform dependent.
+        Returned lists are platform and compiler dependent.
         """
         args = []
 
