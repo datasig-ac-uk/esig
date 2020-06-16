@@ -600,10 +600,10 @@ class InstallationConfiguration(object):
         if sys.argv[1].lower() == 'install':
             for argument in sys.argv:
                 if argument.startswith('--include-dirs='):
-                    self.include_dirs = argument[15:]
+                    self.include_dirs = argument[15:] # use length '--include-dirs=' instead
 
                 if argument.startswith('--library-dirs='):
-                    self.library_dirs = argument[15:]
+                    self.library_dirs = argument[15:] # use length '--library-dirs=' instead
 
             ComponentChecker.check_libraries(self.library_dirs)
             ComponentChecker.check_includes(self.include_dirs)
@@ -678,13 +678,15 @@ class InstallationConfiguration(object):
         # Add Python's include directory.
         return_list.append(sysconfig.get_python_inc())
 
-        # libalgebra sources + wrapper code for Python.
+        # libalgebra and recombine sources + wrapper code for Python.
         if self.platform == PLATFORMS.WINDOWS:
             return_list.append('.\\src\\')
             return_list.append('.\\libalgebra\\')
+            return_list.append('.\\build\\recombine\\recombine\\')
         else:
             return_list.append('./src/')
             return_list.append('./libalgebra/')
+            return_list.append('./build/recombine/recombine/')
 
         # Append any command-line supplied arguments to the list
         if self.__include_dirs is not None:
