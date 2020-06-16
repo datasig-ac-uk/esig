@@ -22,4 +22,4 @@ CFLAGS="-I$(brew --prefix openssl)/include" \
 LDFLAGS="-L$(brew --prefix openssl)/lib" \
 pyenv install --skip-existing $1
 
-source mac_wheel_builder.sh $1
+./mac_wheel_builder.sh $1
