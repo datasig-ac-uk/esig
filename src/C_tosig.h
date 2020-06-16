@@ -1,7 +1,7 @@
 #ifndef C_tosig_h__
 #define C_tosig_h__
 
-#ifdef __cplusplus 
+#ifdef __cplusplus
 extern "C" {
 #endif
 /* Header to test of C modules for arrays for Python: C_tosig.c */
@@ -16,11 +16,11 @@ static PyObject* tosig(PyObject* self, PyObject* args);
 static PyObject* retrieveCapsule(PyObject* self, PyObject* args);
 static PyObject* getlogsigsize(PyObject* self, PyObject* args);
 static PyObject* getsigsize(PyObject* self, PyObject* args);
-static PyObject* pyrecombine(PyObject* self, PyObject* args);
+static PyObject* pyrecombine(PyObject* self, PyObject* args, PyObject* keywds);
 PyObject * showsigkeys(PyObject *self, PyObject *args);
 PyObject * showlogsigkeys(PyObject *self, PyObject *args);
 
-/* .... Python callable Vector functions ............* / 
+/* .... Python callable Vector functions ............* /
 static PyObject *vecfcn1(PyObject *self, PyObject *args);
 static PyObject *vecsq(PyObject *self, PyObject *args);*/
 
@@ -52,7 +52,7 @@ int **pyint2Darray_to_Carrayptrs(PyArrayObject *arrayin);
 int **ptrintvector(long n);
 void free_Cint2Darrayptrs(int **v);
 int  not_int2Darray(PyArrayObject *mat);
-#ifdef __cplusplus 
+#ifdef __cplusplus
 }
 #endif
 #endif // C_tosig_h__
