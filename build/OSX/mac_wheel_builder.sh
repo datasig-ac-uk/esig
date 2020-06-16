@@ -11,7 +11,9 @@ p=$1 # Python version
 TMPDIR=tmp
 OUTPUTDIR=output   # location of tested wheels
 
-PROMPT_COMMAND=''  # to prevent -u from rejecting some virtualenv stuff
+# we run with set -u, so some virtualenv code will fail unless these variables exist
+PROMPT_COMMAND=''
+_OLD_VIRTUAL_PATH=''
 
 # setup for pyenv and virtualenv
 eval "$(pyenv init -)"
