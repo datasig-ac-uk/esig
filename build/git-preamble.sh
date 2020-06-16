@@ -1,5 +1,5 @@
 #!/bin/bash    # not using -e here as the auth_header assignment can fail silently
-# $1: my GitHub password
+# $1: Personal Access Token for rolyp
 set -u -o xtrace
 
 git config --global url."https://github.com/".insteadOf "git@github.com:"

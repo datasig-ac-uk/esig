@@ -64,7 +64,7 @@ jobs:
         python-version: '3.6'
     - name: Source distribution
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build && ./sdist.sh
     - uses: actions/upload-artifact@v2
       with:
@@ -78,7 +78,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build for Python 2.7
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/OSX && ./build-wheel-27.sh
     - uses: actions/upload-artifact@v2
       with:
@@ -91,7 +91,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build for Python 3.4
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/OSX && ./build-wheel-34.sh
     - uses: actions/upload-artifact@v2
       with:
@@ -104,7 +104,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build for Python 3.5
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/OSX && ./build-wheel-other.sh 3.5.5
     - uses: actions/upload-artifact@v2
       with:
@@ -117,7 +117,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build for Python 3.6
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/OSX && ./build-wheel-other.sh 3.6.5
     - uses: actions/upload-artifact@v2
       with:
@@ -130,7 +130,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build for Python 3.7
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/OSX && ./build-wheel-other.sh 3.7.0
     - uses: actions/upload-artifact@v2
       with:
@@ -143,7 +143,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Build for Python 3.8
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/OSX && ./build-wheel-other.sh 3.8.1
     - uses: actions/upload-artifact@v2
       with:
@@ -157,7 +157,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp27-cp27m x86_64
     - uses: actions/upload-artifact@v2
       with:
@@ -170,7 +170,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp27-cp27m i686
     - uses: actions/upload-artifact@v2
       with:
@@ -183,7 +183,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp27-cp27mu x86_64
     - uses: actions/upload-artifact@v2
       with:
@@ -196,7 +196,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp27-cp27mu i686
     - uses: actions/upload-artifact@v2
       with:
@@ -209,7 +209,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp34-cp34m x86_64
     - uses: actions/upload-artifact@v2
       with:
@@ -222,7 +222,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp34-cp34m i686
     - uses: actions/upload-artifact@v2
       with:
@@ -235,7 +235,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp35-cp35m x86_64
     - uses: actions/upload-artifact@v2
       with:
@@ -248,7 +248,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp35-cp35m i686
     - uses: actions/upload-artifact@v2
       with:
@@ -261,7 +261,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp36-cp36m x86_64
     - uses: actions/upload-artifact@v2
       with:
@@ -274,7 +274,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp36-cp36m i686
     - uses: actions/upload-artifact@v2
       with:
@@ -287,7 +287,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp37-cp37m x86_64
     - uses: actions/upload-artifact@v2
       with:
@@ -300,7 +300,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp37-cp37m i686
     - uses: actions/upload-artifact@v2
       with:
@@ -313,7 +313,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp38-cp38 x86_64
     - uses: actions/upload-artifact@v2
       with:
@@ -326,7 +326,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
-        source build/git-preamble.sh
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
         cd build/Linux && ./build-wheel.sh cp38-cp38 i686
     - uses: actions/upload-artifact@v2
       with:
