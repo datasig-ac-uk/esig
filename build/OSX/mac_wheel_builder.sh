@@ -11,13 +11,6 @@ p=$1 # Python version
 TMPDIR=tmp
 OUTPUTDIR=output   # location of tested wheels
 
-# set some variables used internally by virtualenv to appease set -u
-PROMPT_COMMAND=''
-_OLD_VIRTUAL_PATH=''
-_OLD_VIRTUAL_PYTHONHOME=''
-_OLD_VIRTUAL_PS1=''
-PS1=''
-
 # setup for pyenv and virtualenv
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
