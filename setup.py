@@ -13,7 +13,7 @@ configuration.package_abs_root = os.path.dirname(os.path.realpath(__file__))
 
 esig_extension = Extension(
     'esig.tosig',
-    sources=['src/C_tosig.c', 'src/Cpp_ToSig.cpp', 'src/ToSig.cpp', 'recombine/_recombine.cpp'],
+    sources=['src/C_tosig.c', 'src/Cpp_ToSig.cpp', 'src/ToSig.cpp', 'recombine/_recombine.cpp', 'recombine/TestVec/RdToPowers2.cpp'],
     depends=['src/ToSig.h', 'src/C_tosig.h', 'src/ToSig.cpp', 'src/switch.h'],
     include_dirs=configuration.include_dirs,
     library_dirs=configuration.library_dirs,
