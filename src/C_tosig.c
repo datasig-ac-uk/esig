@@ -4,9 +4,10 @@
 #define PY_SSIZE_T_CLEAN
 #include "Python.h"
 //https://github.com/numpy/numpy/issues/9309
-// there are big problems in defining these 
+// there are big problems in defining these
 // python/numpy functions in different translation units
-// so we wont! 
+// so we wont!
+#include <stddef.h>
 #include <numpy/arrayobject.h>
 
 #include "C_tosig.h"
@@ -29,7 +30,7 @@ static PyMethodDef _C_tosigMethods[] = {
 
 
 /* ==== Initialize the C_test functions ====================== */
-// Module name must be _C_tosig in compile and linked 
+// Module name must be _C_tosig in compile and linked
 
 //static PyObject *tosigerror;
 #if PY_MAJOR_VERSION < 3
@@ -40,7 +41,7 @@ inittosig(void)
 	PyObject *m;
 	m = Py_InitModule("tosig", _C_tosigMethods);
 	if (m == NULL) return;
-	
+
 	import_array();  // Must be present for NumPy.  Called first after above line.
 
 	//tosigerror = PyErr_NewException("tosig.error", NULL, NULL);
@@ -225,7 +226,7 @@ static PyObject*
 pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
 {
 // INTERNAL
-	// 
+	//
 	int src_locations_built_internally = 0;
 	int src_weights_built_internally = 0;
 	// match the mean - or higher moments
@@ -240,21 +241,21 @@ pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
 	PyObject* out = NULL;
 
 // THE INPUTS
-	// the data - a (large) enumeration of vectors obtained by making a list of vectors and converting it to an array. 
-	PyArrayObject* data; 
+	// the data - a (large) enumeration of vectors obtained by making a list of vectors and converting it to an array.
+	PyArrayObject* data;
 	// a list of the rows of interest
 	PyArrayObject* src_locations = NULL;
 	// their associated weights
 	PyArrayObject* src_weights = NULL;
 	// match the mean - or higher moments
-	ptrdiff_t CubatureDegree = 1;	
+	ptrdiff_t CubatureDegree = 1;
 
 	// usage def recombine(array1, *args, degree=1)
 	static char* kwlist[] = { "ensemble", "selector", "weights", "degree" , NULL };
 	if (!PyArg_ParseTupleAndKeywords(args, keywds, "O!|O!O!n:recombine", kwlist, &PyArray_Type, &data, &PyArray_Type, &src_locations, &PyArray_Type, &src_weights, &CubatureDegree))
 		return out;
 // DATA VALIDATION
-	// 
+	//
 	if (data == NULL
 		|| (PyArray_NDIM(data) != 2 || PyArray_DIM(data, 0) == 0 || PyArray_DIM(data, 1) == 0) // present but badly formed
 		|| (src_locations != NULL && (PyArray_NDIM(src_locations) != 1 || PyArray_DIM(src_locations, 0) == 0)) // present but badly formed
@@ -284,14 +285,14 @@ pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
 		src_weights_built_internally = 1;
 	}
 // make all data contiguous and type compliant (This only applies to external data - we know that our created arrays are fine
-// note this requires a deref at the end - so does the fill in of defaults - but we only do one or the other 
+// note this requires a deref at the end - so does the fill in of defaults - but we only do one or the other
 	{
 		data = (PyArrayObject*)PyArray_ContiguousFromObject((PyObject*)data, NPY_DOUBLE, 2, 2);
 		if (!src_locations_built_internally)
 			src_locations = (PyArrayObject*)PyArray_ContiguousFromObject((PyObject*)src_locations, NPY_INTP, 1, 1);
 		if (!src_weights_built_internally)
 			src_weights = (PyArrayObject*)PyArray_ContiguousFromObject((PyObject*)src_weights, NPY_DOUBLE, 1, 1);
-	}		
+	}
 
 // PREPARE INPUTS AS C ARRAYS
 	ptrdiff_t no_datapoints = PyArray_DIM(data, 0);
@@ -406,13 +407,13 @@ int not_doublematrix(PyArrayObject* mat)
 ///* ==== vector function - manipulate vector in place ======================
 //    Multiply the input by 2 x dfac and put in output
 //    Interface:  vecfcn1(vec1, vec2, str1, d1)
-//                vec1, vec2 are NumPy vectors, 
+//                vec1, vec2 are NumPy vectors,
 //                str1 is Python string, d1 is Python float (double)
 //                Returns integer 1 if successful                */
 //static PyObject* vecfcn1(PyObject* self, PyObject* args)
 //{
 //	PyArrayObject* vecin, *vecout;  // The python objects to be extracted from the args
-//	double* cin, *cout;             // The C vectors to be created to point to the 
+//	double* cin, *cout;             // The C vectors to be created to point to the
 //	//   python vectors, cin and cout point to the row
 //	//   of vecin and vecout, respectively
 //	int i, j, n;
@@ -456,7 +457,7 @@ int not_doublematrix(PyArrayObject* mat)
 //static PyObject* vecsq(PyObject* self, PyObject* args)
 //{
 //	PyArrayObject* vecin, *vecout;
-//	double* cin, *cout, dfactor;   // The C vectors to be created to point to the 
+//	double* cin, *cout, dfactor;   // The C vectors to be created to point to the
 //	//   python vectors, cin and cout point to the row
 //	//   of vecin and vecout, respectively
 //	int i, j, n, m, dims[2];
@@ -492,7 +493,7 @@ int not_doublematrix(PyArrayObject* mat)
 //
 ///* ==== Make a Python Array Obj. from a PyObject, ================
 //     generates a double vector w/ contiguous memory which may be a new allocation if
-//     the original was not a double type or contiguous 
+//     the original was not a double type or contiguous
 //  !! Must DECREF the object returned from this routine unless it is returned to the
 //     caller of this routines caller using return PyArray_Return(obj) or
 //     PyArray_BuildValue with the "N" construct   !!!
@@ -524,7 +525,7 @@ int not_doublematrix(PyArrayObject* mat)
 //static PyObject* rowx2(PyObject* self, PyObject* args)
 //{
 //	PyArrayObject* matin, *matout;  // The python objects to be extracted from the args
-//	double** cin, **cout;           // The C matrices to be created to point to the 
+//	double** cin, **cout;           // The C matrices to be created to point to the
 //	//   python matrices, cin and cout point to the rows
 //	//   of matin and matout, respectively
 //	int i, j, n, m;
@@ -571,7 +572,7 @@ int not_doublematrix(PyArrayObject* mat)
 //{
 //	PyObject* Pymatin, *Pymatout;   // The python objects to be extracted from the args
 //	PyArrayObject* matin, *matout;  // The python array objects to be extracted from python objects
-//	double** cin, **cout;           // The C matrices to be created to point to the 
+//	double** cin, **cout;           // The C matrices to be created to point to the
 //	//   python matrices, cin and cout point to the rows
 //	//   of matin and matout, respectively
 //	int i, j, n, m;
@@ -656,9 +657,9 @@ int not_doublematrix(PyArrayObject* mat)
 //
 ///* ==== Operate on Matrix components as contiguous memory =========================
 //  Shows how to access the array data as a contiguous block of memory. Used, for example,
-//  in matrix classes implemented as contiquous memory rather than as n arrays of 
+//  in matrix classes implemented as contiquous memory rather than as n arrays of
 //  pointers to the data "rows"
-//  
+//
 //    Returns a NEW NumPy array
 //    interface:  contigmat(mat1, x1)
 //                mat1 is NumPy matrix, x1 is Python float (double)
@@ -708,7 +709,7 @@ int not_doublematrix(PyArrayObject* mat)
 //
 ///* ==== Make a Python Array Obj. from a PyObject, ================
 //     generates a double matrix w/ contiguous memory which may be a new allocation if
-//     the original was not a double type or contiguous 
+//     the original was not a double type or contiguous
 //  !! Must DECREF the object returned from this routine unless it is returned to the
 //     caller of this routines caller using return PyArray_Return(obj) or
 //     PyArray_BuildValue with the "N" construct   !!!
@@ -763,7 +764,7 @@ int not_doublematrix(PyArrayObject* mat)
 //static PyObject* intfcn1(PyObject* self, PyObject* args)
 //{
 //	PyArrayObject* intin, *intout;  // The python objects to be extracted from the args
-//	int** cin, **cout;              // The C integer 2D arrays to be created to point to the 
+//	int** cin, **cout;              // The C integer 2D arrays to be created to point to the
 //	//   python integer 2D arrays, cin and cout point to the rows
 //	//   of intin and intout, respectively
 //	int i, j, n, m, dims[2];
@@ -821,7 +822,7 @@ int not_doublematrix(PyArrayObject* mat)
 //
 ///* ==== Make a Python int Array Obj. from a PyObject, ================
 //     generates a 2D integer array w/ contiguous memory which may be a new allocation if
-//     the original was not an integer type or contiguous 
+//     the original was not an integer type or contiguous
 //  !! Must DECREF the object returned from this routine unless it is returned to the
 //     caller of this routines caller using return PyArray_Return(obj) or
 //     PyArray_BuildValue with the "N" construct   !!!
