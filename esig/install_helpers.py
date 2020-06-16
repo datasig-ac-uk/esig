@@ -828,7 +828,8 @@ class InstallationConfiguration(object):
             args.append('/D_SCL_SECURE_NO_WARNINGS')
             args.append('/bigobj')
         else:
-            args.append('-std=c99')
+            if self.platform == PLATFORMS.LINUX:
+                args.append('-std=c99')
             args.append('-Wno-unused-but-set-variable')
 
         return args
