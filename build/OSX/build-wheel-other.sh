@@ -1,6 +1,7 @@
 #!/bin/bash -e
 # Top-level script for building esig for MacOS.
 # $1: Python version
+set -u -o xtrace
 
 rm -rf ~/.pyenv/versions # for reproducibility
 

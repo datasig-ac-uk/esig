@@ -1,6 +1,6 @@
 #!/bin/bash -e
-set -u -o xtrace
 # See mac_wheel_builder.sh for documentation.
+set -u -o xtrace
 
 path_ext=$1 # Python 3.4 needs explicit path for delocate
 run_as=$2 # either "" or "sudo"

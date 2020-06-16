@@ -1,7 +1,7 @@
 #!/bin/bash -e
-
 ### script to build Python wheels for the esig package, adapted from
 ### Daniel Wilson-Nunn's original script.
+set -u -o xtrace
 
 p=$1 # Python version
 

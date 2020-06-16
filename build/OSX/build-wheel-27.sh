@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# See build-wheels.sh for documentation.
+set -u -o xtrace
 
 # For 2.7
 brew install boost && true # in case already installed

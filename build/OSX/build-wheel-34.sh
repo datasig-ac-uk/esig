@@ -1,5 +1,5 @@
 #!/bin/bash -e
-# See build-wheels.sh for documentation.
+set -u -o xtrace
 
 # MacPorts (for Python 3.4)
 macos=$(sw_vers -productVersion)
