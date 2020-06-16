@@ -1,4 +1,4 @@
-#!/bin/bash -e
+#!/bin/bash    # not using -e here as the auth_header assignment can fail silently
 # $1: my GitHub password
 set -u -o xtrace
 
