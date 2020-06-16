@@ -18,10 +18,15 @@ esig_extension = Extension(
         'src/Cpp_ToSig.cpp',
         'src/ToSig.cpp',
         'recombine/_recombine.cpp',
-        'recombine/TestVec/RdToPowers2.cpp',
+        'recombine/TestVec/RdToPowers2.cpp'
+    ],
+    depends=[
+        'src/ToSig.h',
+        'src/C_tosig.h',
+        'src/ToSig.cpp',
+        'src/switch.h',
         'recombine/TestVec/OstreamContainerOverloads.h'
     ],
-    depends=['src/ToSig.h', 'src/C_tosig.h', 'src/ToSig.cpp', 'src/switch.h'],
     include_dirs=configuration.include_dirs,
     library_dirs=configuration.library_dirs,
     libraries=configuration.used_libraries,
