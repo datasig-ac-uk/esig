@@ -5,7 +5,10 @@ set -u -o xtrace
 
 rm -rf ~/.pyenv/versions # for reproducibility
 
-source install-recombine.sh
+pushd ../recombine
+./doall-macOS.sh
+popd
+
 brew install boost
 brew install pyenv
 brew install pyenv-virtualenv

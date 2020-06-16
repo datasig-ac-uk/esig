@@ -11,9 +11,10 @@ p=$1 # Python version
 TMPDIR=tmp
 OUTPUTDIR=output   # location of tested wheels
 
-# we run with set -u, so some virtualenv code will fail unless these variables exist
+# set some variables used internally by virtualenv to appease set -u
 PROMPT_COMMAND=''
 _OLD_VIRTUAL_PATH=''
+_OLD_VIRTUAL_PYTHONHOME=''
 
 # setup for pyenv and virtualenv
 eval "$(pyenv init -)"
