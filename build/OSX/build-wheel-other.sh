@@ -5,12 +5,11 @@ set -u -o xtrace
 
 rm -rf ~/.pyenv/versions # for reproducibility
 
+source install-recombine.sh
 brew install boost
 brew install pyenv
 brew install pyenv-virtualenv
 brew install openssl # required for Python 3.7
-
-source install-recombine.sh
 
 # Python versions.
 eval "$(pyenv init -)"
