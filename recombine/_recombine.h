@@ -1,8 +1,10 @@
 #pragma once
 // interface headers:
 #include <stddef.h>             // size_t ptrdiff_t
-
-extern "C" {
+#ifdef __cplusplus
+extern "C"
+{
+#endif
 	void _recombineC(
 		size_t stCubatureDegree
 		, ptrdiff_t dimension
@@ -13,4 +15,7 @@ extern "C" {
 		, size_t* KeptLocations
 		, double* NewWeights
 	);
-}
+
+#ifdef __cplusplus
+} // extern "C"
+#endif
