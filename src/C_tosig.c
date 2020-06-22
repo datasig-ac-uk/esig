@@ -13,7 +13,7 @@
 #include "C_tosig.h"
 #include <math.h>
 #include "ToSig.h"
-#include "recombine/_recombine.h"
+#include "_recombine.h"
 
 /* #### Globals #################################### */
 
