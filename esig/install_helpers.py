@@ -903,7 +903,7 @@ class InstallationConfiguration(object):
         """
         libs = {
             PLATFORMS.WINDOWS: [],
-            PLATFORMS.MACOS: ['boost_system-mt','boost_thread-mt', 'Can-I-put-anything-here'],
+            PLATFORMS.MACOS: ['boost_system-mt','boost_thread-mt'],
             PLATFORMS.LINUX: ['boost_system','boost_thread'],
             PLATFORMS.OTHER: ['boost_system','boost_thread'],
         }
