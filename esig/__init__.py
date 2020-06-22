@@ -20,10 +20,10 @@ def get_version():
     """
     Returns the version number of the ESig package.
     The version is obtained from the VERSION file in the root of the package.
-    
+
     Args:
         None
-    
+
     Returns:
         string: The package version number. In format 'major.minor.release'.
     """
@@ -31,14 +31,14 @@ def get_version():
     f = open(version_filename, 'r')
     version_string = f.read().split(' ')
     f.close()
-    
+
     return '.'.join(version_string)
 
 def is_library_loaded():
     """
     Determines whether the tosig Python extension can be successfully loaded.
     If the library cannot be loaded successfully, debugging information can be obtained from get_library_load_error().
-    
+
     Args:
         None
     Returns:
@@ -48,7 +48,7 @@ def is_library_loaded():
         from esig import tosig
     except ImportError:
         return False
-    
+
     return True
 
 
@@ -56,7 +56,7 @@ def get_library_load_error():
     """
     Returns a string containing the message of the exception raised when attempting to import tosig.
     If no exception is raised when attempting to import, None is returned.
-    
+
     Args:
         None
     Returns:
@@ -68,4 +68,3 @@ def get_library_load_error():
         return None
     except ImportError as e:
         return e.msg
-        
