@@ -680,13 +680,15 @@ class InstallationConfiguration(object):
 
         # libalgebra and recombine sources + wrapper code for Python.
         # TODO: use standard os.path.join method here
+        # TODO: remove dependency on "recombine" having been installed to /build/recombine
         if self.platform == PLATFORMS.WINDOWS:
             return_list.append('.\\src\\')
             return_list.append('.\\libalgebra\\')
+            return_list.append('.\\recombine\\')
             return_list.append('.\\build\\recombine\\recombine\\')
         else:
             return_list.append('./src/')
-            return_list.append('./libalgebra/')
+            return_list.append('./recombine/')
             return_list.append('./build/recombine/recombine/')
 
         # Append any command-line supplied arguments to the list
@@ -914,5 +916,5 @@ MINIMUM_PYTHON_VERSION = (2,7)  # The minimum acceptable version of Python -- se
 MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
 PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS', 'OTHER'])
 
-# Instantiates the singleton instance of the InstallationConfiguration.
+# singleton
 CONFIGURATION = InstallationConfiguration()
