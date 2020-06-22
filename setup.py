@@ -20,6 +20,7 @@ esig_extension = Extension(
         'recombine/_recombine.cpp',
         'recombine/TestVec/RdToPowers2.cpp'
     ],
+    # relationship between depends and include_dirs is unclear
     depends=[
         'src/ToSig.h',
         'src/C_tosig.h',
