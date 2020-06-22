@@ -679,6 +679,7 @@ class InstallationConfiguration(object):
         return_list.append(sysconfig.get_python_inc())
 
         # libalgebra and recombine sources + wrapper code for Python.
+        # TODO: use standard os.path.join method here
         if self.platform == PLATFORMS.WINDOWS:
             return_list.append('.\\src\\')
             return_list.append('.\\libalgebra\\')
@@ -707,8 +708,6 @@ class InstallationConfiguration(object):
         elif self.platform != PLATFORMS.WINDOWS:
             return_list.append('/usr/include/')
 
-        # Now add any additional paths that have been specified below.
-        return_list = return_list + ADDITIONAL_INCLUDES[self.platform]
         return return_list
 
 
@@ -789,9 +788,6 @@ class InstallationConfiguration(object):
 
             if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
-
-        # Now add any additional paths that have been specified below.
-        return_list = return_list + ADDITIONAL_LIBRARIES[self.platform]
         return return_list
 
 
@@ -917,24 +913,6 @@ class InstallationConfiguration(object):
 MINIMUM_PYTHON_VERSION = (2,7)  # The minimum acceptable version of Python -- set to 2.7.x.
 MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
 PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS', 'OTHER'])
-
-# Add additional paths to the include-dirs path here if required.
-# Choose your platform and add a path string to the relevant list.
-ADDITIONAL_INCLUDES = {
-    PLATFORMS.WINDOWS: [],
-    PLATFORMS.LINUX: [],
-    PLATFORMS.MACOS: [],
-    PLATFORMS.OTHER: [],
-}
-
-# Add additional paths to the library-dirs path here if required.
-# Choose your platform and add a path string to the relevant list.
-ADDITIONAL_LIBRARIES = {
-    PLATFORMS.WINDOWS: [],
-    PLATFORMS.LINUX: [],
-    PLATFORMS.MACOS: [],
-    PLATFORMS.OTHER: [],
-}
 
 # Instantiates the singleton instance of the InstallationConfiguration.
 CONFIGURATION = InstallationConfiguration()
