@@ -688,6 +688,7 @@ class InstallationConfiguration(object):
             return_list.append('.\\build\\recombine\\recombine\\')
         else:
             return_list.append('./src/')
+            return_list.append('./libalgebra/')
             return_list.append('./recombine/')
             return_list.append('./build/recombine/recombine/')
 
