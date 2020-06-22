@@ -9,10 +9,14 @@ pushd ../recombine
 ./doall-macOS.sh
 popd
 
-brew install boost
-brew install pyenv
-brew install pyenv-virtualenv
-brew install openssl # required for Python 3.7
+function brew_maybe_install {
+   brew list $1 &>/dev/null || brew install $1
+}
+
+brew_maybe_install boost
+brew_maybe_install pyenv
+brew_maybe_install pyenv-virtualenv
+brew_maybe_install openssl # required for Python 3.7
 
 # Python versions.
 eval "$(pyenv init -)"
