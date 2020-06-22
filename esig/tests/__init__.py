@@ -7,7 +7,7 @@ def get_suite():
     """
     Constructs and returns a Python unittest suite object.
     This can be used to run the unit tests for ESig.
-    
+
     Args:
         None
     Returns:
@@ -15,14 +15,14 @@ def get_suite():
     """
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(test_package.TestESIG))
-    
+
     return suite
 
 
 def run_tests(terminate=False):
     """
     Acquires the ESig test suite, and runs the tests.
-    
+
     Args:
         terminate (bool): if set to True, will terminate on failure; otherwise, returns False.
     Returns:
