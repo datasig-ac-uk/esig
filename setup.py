@@ -11,7 +11,7 @@ configuration = helpers.CONFIGURATION
 configuration.package_abs_root = os.path.dirname(os.path.realpath(__file__))
 
 # https://stackoverflow.com/questions/2584595/building-a-python-module-and-linking-it-against-a-macosx-framework
-os.environ['LDFLAGS'] = '-F /home/rolyp/lyonstech/ -framework recombine'
+os.environ['LDFLAGS'] = '-F /Users/rperera/lyonstech/ -framework recombine'
 
 esig_extension = Extension(
     'esig.tosig',
