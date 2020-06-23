@@ -831,7 +831,9 @@ class InstallationConfiguration(object):
             args.append('/D_SCL_SECURE_NO_WARNINGS')
             args.append('/bigobj')
         else:
-            args.append('-std=c++11') # want c99 as well
+            # Clang will reject this when compiling C
+            if self.platform == PLATFORMS.LINUX:
+                args.append('-std=c++11') # want c99 as well, but not possible (see above)
             args.append('-Wno-unused-but-set-variable') # moans on some platforms
 
         return args
