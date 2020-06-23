@@ -42,4 +42,4 @@ $pyexe -m virtualenv $VENV
    fi
 deactivate
 rm -rf $VENV
-rm -rf $TMPDIR
+sudo rm -rf $TMPDIR # sudo to avoid sporadic "directory not empty" error?
