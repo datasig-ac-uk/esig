@@ -150,39 +150,6 @@ static PyObject* tosig(PyObject* self, PyObject* args)
 	return PyArray_Return(vecout);
 }
 
-static PyObject* retrieveCapsule(PyObject* self, PyObject* args)
-{
-	PyArrayObject *seriesin, *vecout;
-	//double *cout;
-	//Py_ssize_t width, depth, recs;
-	Py_ssize_t depth;
-	npy_intp width;
-	npy_intp dims[2];
-
-	/* Parse tuple */
-	if (!PyArg_ParseTuple(args, "O!n",
-		&PyArray_Type, &seriesin, &depth))  return NULL;
-	if (NULL == seriesin)  return NULL;
-
-	/* Check that object input is 'double' type and a matrix*/
-	//if (not_valid_matrix(seriesin)) return NULL;
-
-	/* Get the dimensions of the input */
-	//width = seriesin->dimensions[1];
-	//recs = seriesin->dimensions[0];
-	width = PyArray_DIM(seriesin, 1);
-	GetLogSigSize((size_t)width, (size_t)depth); //initialise basis
-	dims[0] = (npy_intp)GetSigSize((size_t)width, (size_t)depth);
-
-	/* Make a new double vector of correct dimension */
-	vecout = (PyArrayObject*)PyArray_SimpleNew(1, dims, NPY_DOUBLE);
-
-	/* Do the calculation. */
-	//GetSig(seriesin, vecout, width, depth);
-
-	return PyArray_Return(vecout);
-}
-
 /* ==== Determines the size of log signature =========================
     Returns a NEW  NumPy vector array
     interface:  getlogsigsize(width,depth)
