@@ -25,6 +25,7 @@ pushd .. # circular file path if run from Linux folder
 	$pyexe -m pip wheel -b Linux/$TMPDIR -w Linux/$TMPDIR ..
 popd
 
+auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies
 auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
 $pyexe -m virtualenv /tmp/$py
 . /tmp/$py/bin/activate
