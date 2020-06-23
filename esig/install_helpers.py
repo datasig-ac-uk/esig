@@ -906,8 +906,9 @@ class InstallationConfiguration(object):
         """
         libs = {
             PLATFORMS.WINDOWS: [],
+            # on the Mac, recombine is a framework, not a library; needs special treatment in setup.py
             PLATFORMS.MACOS: ['boost_system-mt','boost_thread-mt'],
-            PLATFORMS.LINUX: ['boost_system','boost_thread'],
+            PLATFORMS.LINUX: ['boost_system','boost_thread', 'recombine'],
             PLATFORMS.OTHER: ['boost_system','boost_thread'],
         }
 
