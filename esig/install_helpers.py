@@ -913,7 +913,7 @@ class InstallationConfiguration(object):
 
 
 # A series of constants that are provided by the module.
-MINIMUM_PYTHON_VERSION = (2,7)  # The minimum acceptable version of Python -- set to 2.7.x.
+MINIMUM_PYTHON_VERSION = (2,7)
 MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
 PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS', 'OTHER'])
 
