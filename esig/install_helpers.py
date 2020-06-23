@@ -830,8 +830,7 @@ class InstallationConfiguration(object):
             args.append('/bigobj')
         else:
             if self.platform == PLATFORMS.LINUX:
-                # args.append('-std=c99') # not sure about this after all
-                args.append('-std=c++11')
+                args.append('-std=c++11 -std=c99') # not sure if this will work
             args.append('-Wno-unused-but-set-variable') # moans on some platforms
 
         return args
