@@ -296,10 +296,10 @@ pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
 		, point_dimension
 		, 0 // tells _recombineC to return NoDimensionsToCubature the required buffer size
 		, &NoDimensionsToCubature
-		, NULL
-		, NULL
-		, NULL
-		, NULL
+		, nullptr
+		, nullptr
+		, nullptr
+		, nullptr
 	);
 // Prepare to call the reduction algorithm
 	// a variable that will eventually be amended to to indicate the actual number of points returned
