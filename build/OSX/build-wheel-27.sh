@@ -1,6 +1,10 @@
 #!/bin/bash -e
 set -u -o xtrace
 
+pushd ../recombine
+./doall-macOS.sh
+popd
+
 # For 2.7
 brew install boost && true # in case already installed
 brew install openssl # required now?

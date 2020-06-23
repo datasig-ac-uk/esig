@@ -1,6 +1,10 @@
 #!/bin/bash -e
 set -u -o xtrace
 
+pushd ../recombine
+./doall-macOS.sh
+popd
+
 # MacPorts (for Python 3.4)
 macos=$(sw_vers -productVersion)
 macos_short=${macos%.*}
