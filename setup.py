@@ -13,7 +13,7 @@ home = os.environ["HOME"]
 
 if configuration.platform == helpers.PLATFORMS.MACOS:
    # https://stackoverflow.com/questions/2584595/building-a-python-module-and-linking-it-against-a-macosx-framework
-   os.environ['LDFLAGS'] = '-F {home}/lyonstech/ -framework recombine -Wl,-rpath,{home}/lyonstech/'
+   os.environ['LDFLAGS'] = f'-F {home}/lyonstech/ -framework recombine -Wl,-rpath,{home}/lyonstech/'
 
 esig_extension = Extension(
     'esig.tosig',
