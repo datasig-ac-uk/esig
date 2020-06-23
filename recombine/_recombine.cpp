@@ -57,7 +57,7 @@ void _recombineC(size_t stCubatureDegree, ptrdiff_t dimension, ptrdiff_t no_loca
 	data.pInCloud = &in;
 	data.pOutCloudInfo = &out;
 
-	// add the degree of the vectors used and the callback function that expands 
+	// add the degree of the vectors used and the callback function that expands
 	// the array of pointers to points into a long buffer of vectors
 	data.degree = iNoDimensionsToCubature;
 
@@ -80,10 +80,12 @@ void _recombine(size_t stCubatureDegree, ptrdiff_t dimension, ptrdiff_t no_point
 		, dimension
 		, 0
 		, &noKeptLocations
-		, nullptr
-		, nullptr
-		, nullptr
-		, nullptr
+		// Python extension code built with distutils is compiled with the same set of compiler options,
+		// regardless of whether it's C or C++. So we can't have -std=c99 and -std-c++11 simultaneously.
+		, NULL // nullptr
+		, NULL // nullptr
+		, NULL // nullptr
+		, NULL // nullptr
 	);
 
 	// setup a buffer of size iNoDimensionsToCubature to store indexes to the kept points
@@ -105,7 +107,7 @@ void _recombine(size_t stCubatureDegree, ptrdiff_t dimension, ptrdiff_t no_point
 		, &KeptLocations[0]
 		, &NewWeights[0]
 	);
-	// adjust buffer to actual number returned 
+	// adjust buffer to actual number returned
 	NewWeights.resize(noKeptLocations);
 	KeptLocations.resize(noKeptLocations);
 }
