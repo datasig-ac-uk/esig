@@ -281,9 +281,10 @@ pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
 		LOCATIONS2[id] = &DATA[LOCATIONS[id] * point_dimension];
 	}
 	// normalize the weights
-	for (ptrdiff_t id = 0; id < no_locations; ++id)
+	ptrdiff_t id; // avoid relying on C99 features
+	for (id = 0; id < no_locations; ++id)
 		total_mass += WEIGHTS[id];
-	for (ptrdiff_t id = 0; id < no_locations; ++id)
+	for (id = 0; id < no_locations; ++id)
 		WEIGHTS[id]/= total_mass;
 
 
