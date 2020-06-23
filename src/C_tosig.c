@@ -238,7 +238,7 @@ pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
 		//d[0] = PyArray_DIM(data, 0);
 		src_locations = (PyArrayObject*)PyArray_SimpleNew(1, d, NPY_INTP);
 		size_t* LOCS = PyArray_DATA(src_locations);
-		ptrdiff_t id; // declare once and reuse later, to avoid relying on C99 features
+		ptrdiff_t id;
 		for (id = 0; id < d[0]; ++id)
 			LOCS[id] = id;
 		src_locations_built_internally = 1;
@@ -249,6 +249,7 @@ pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
 		d[0] = PyArray_DIM(src_locations, 0);
 		src_weights = (PyArrayObject*)PyArray_SimpleNew(1, d, NPY_DOUBLE);
 		double* WTS = PyArray_DATA(src_weights);
+		ptrdiff_t id;
 		for (id = 0; id < d[0]; ++id)
 			WTS[id] = 1.;
 		src_weights_built_internally = 1;
@@ -274,6 +275,7 @@ pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
 // map locations from integer indexes to pointers to double
 	no_locations = PyArray_DIM(src_locations, 0);
 	double** LOCATIONS2 = (double**)malloc(no_locations * sizeof(double*));
+	ptrdiff_t id;
 	for (id = 0; id < no_locations; ++id)
 	{
 		// check for data out of range
