@@ -25,8 +25,11 @@ pushd .. # circular file path if run from Linux folder
 	$pyexe -m pip wheel -b Linux/$TMPDIR -w Linux/$TMPDIR ..
 popd
 
+# recombine build step must have left library here for linking
+export LD_LIBRARY_PATH="/data/build/lib:${LD_LIBRARY_PATH}"
 auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies
 auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
+
 $pyexe -m virtualenv /tmp/$py
 . /tmp/$py/bin/activate
 pip install wheelhouse/esig*.whl

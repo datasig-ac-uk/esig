@@ -742,6 +742,7 @@ class InstallationConfiguration(object):
         """
         return_list = []
 
+        # TODO: why mixture of + and append? Do they both mean 'append'?
         # Append any command-line supplied paths to the list
         if self.__library_dirs is not None:
             return_list = return_list + self.__library_dirs
