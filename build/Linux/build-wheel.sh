@@ -21,7 +21,7 @@ popd
 # Put the lib somewhere the container can find it.
 ls -la ${HOME}/lyonstech/lib
 mkdir ../lib
-cp ${HOME}/lyonstech/lib/* ../lib/
+cp ${HOME}/lyonstech/lib/librecombine.* ../lib/
 
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
