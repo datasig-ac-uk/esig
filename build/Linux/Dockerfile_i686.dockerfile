@@ -10,6 +10,4 @@ echo export BOOST_LIB=/usr/lib/boost148 >> ~/.bashrc'
 RUN bash -c 'cd /usr/lib;\
 ln -s libboost_thread-mt.so.1.48.0 libboost_thread.so;\
 ln -s libboost_system-mt.so.1.48.0 libboost_system.so'
-# Preamble required to install recombine
-RUN yum install -y wget
 CMD ["/bin/bash"]
