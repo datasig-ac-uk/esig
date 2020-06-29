@@ -680,7 +680,7 @@ class InstallationConfiguration(object):
 
         # libalgebra and recombine sources + wrapper code for Python.
         # TODO: use standard os.path.join method here
-        # TODO: remove dependency on "recombine" having been installed to /build/recombine
+        # TODO: remove dependency on "recombine" having been cloned into /build/recombine
         if self.platform == PLATFORMS.WINDOWS:
             return_list.append('.\\src\\')
             return_list.append('.\\libalgebra\\')
@@ -791,7 +791,11 @@ class InstallationConfiguration(object):
             if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
 
-            return_list.append(os.environ["HOME"] + '/lyonstech/lib/')
+            # TODO: remove hardcoded dependency on recombine installation directory
+            recombine_lib_dir = os.environ['HOME'] + '/lyonstech/lib/'
+            for entry in os.listdir(recombine_lib_dir):
+                print dir
+            return_list.append()
         return return_list
 
 
