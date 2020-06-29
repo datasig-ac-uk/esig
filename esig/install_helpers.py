@@ -795,8 +795,8 @@ class InstallationConfiguration(object):
             # mount directory..ugh
             recombine_lib_dir = '/data/build/lib/'
             for entry in os.listdir(recombine_lib_dir):
-                print(dir)
-            return_list.append()
+                print(entry)
+            return_list.append(recombine_lib_dir)
         return return_list
 
 
