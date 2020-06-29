@@ -13,10 +13,6 @@ else
    exit 1
 fi
 
-pushd ../recombine
-./doall-linux.sh
-popd
-
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
 # Build the esig wheels inside the docker container.
