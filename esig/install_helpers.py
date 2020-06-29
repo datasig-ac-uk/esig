@@ -791,6 +791,8 @@ class InstallationConfiguration(object):
 
             if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+
+            return_list.append(os.environ["HOME"] + '/lyonstech/lib/')
         return return_list
 
 
