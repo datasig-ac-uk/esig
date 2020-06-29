@@ -17,6 +17,9 @@ if configuration.platform == helpers.PLATFORMS.MACOS:
         '-F ' + home + '/lyonstech/ ' + \
         '-framework recombine ' + \
         '-Wl,-rpath,' + home + '/lyonstech/'
+elif configuration.platform == helpers.PLATFORMS.LINUX:
+    # for Linux, recombine build step must make library visible to Docker container
+    os.environ['LD_LIBRARY_PATH'] = '/data/build/lib/'
 
 esig_extension = Extension(
     'esig.tosig',
