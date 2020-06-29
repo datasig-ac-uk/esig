@@ -11,4 +11,5 @@ echo export BOOST_LIB64=/usr/lib64/boost148 >> ~/.bashrc'
 RUN bash -c 'cd /usr/lib64;\
 ln -s libboost_thread-mt.so.1.48.0 libboost_thread.so;\
 ln -s libboost_system-mt.so.1.48.0 libboost_system.so'
+RUN apt-get install -y wget
 CMD ["/bin/bash"]
