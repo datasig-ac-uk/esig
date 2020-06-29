@@ -794,6 +794,9 @@ class InstallationConfiguration(object):
             # Linux build assumes recombine build step puts library here, where /data is Docker container's
             # mount directory..ugh
             recombine_lib_dir = '/data/build/lib/'
+            print('*************')
+            print('Contents of ' + recombine_lib_dir + ':')
+            print('*************')
             for entry in os.listdir(recombine_lib_dir):
                 print(entry)
             return_list.append(recombine_lib_dir)
