@@ -4,10 +4,6 @@ set -u -o xtrace
 ### this is the command to be run in the docker container to build the wheels
 ### from the gzip-ed source.
 
-pushd ../recombine
-./doall-linux.sh
-popd
-
 py=$1
 arch=$2
 

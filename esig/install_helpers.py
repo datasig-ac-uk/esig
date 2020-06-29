@@ -791,8 +791,8 @@ class InstallationConfiguration(object):
             if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
 
-            # TODO: remove hardcoded dependency on recombine installation directory
-            recombine_lib_dir = os.environ['HOME'] + '/lyonstech/lib/'
+            # TODO: remove hardcoded dependency on directory where recombine lib is placed
+            recombine_lib_dir = './lib/'
             for entry in os.listdir(recombine_lib_dir):
                 print(dir)
             return_list.append()

@@ -13,8 +13,18 @@ else
    exit 1
 fi
 
+# Building recombine inside Docker container will require some work, so build outside.
+pushd ../recombine
+./doall-linux.sh
+popd
+
+# Put the lib somewhere the container can find it.
+ls -la ${HOME}/lyonstech/lib
+mkdir ../lib
+cp ${HOME}/lyonstech/lib/* ../lib/
+
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
-# Build the esig wheels inside the docker container.
+# Build the esig wheels inside the Docker container.
 docker run --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} \
    "source ~/.bashrc; cd /data/build/Linux; ./linux_wheel_builder.sh $1 $arch" || exit 1
