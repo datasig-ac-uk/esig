@@ -779,8 +779,7 @@ class InstallationConfiguration(object):
 
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
-        # Default to Linux -- probably a good assumption to make.
-        else:
+        elif self.platform == PLATFORMS.LINUX:
             include_directory = {
                 True: 'x86_64',
                 False: 'i386',
