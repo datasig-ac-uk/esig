@@ -42,7 +42,7 @@ jobs:
       - win-py37-32bit
       - win-py38-64bit
       - win-py38-32bit
-#    if: github.ref == 'refs/heads/release'
+    if: github.ref == 'refs/heads/release'
     steps:
     - uses: actions/checkout@v2
     - uses: actions/download-artifact@v2
