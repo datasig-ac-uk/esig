@@ -794,7 +794,7 @@ class InstallationConfiguration(object):
             # TODO: remove hardcoded dependency on recombine installation directory
             recombine_lib_dir = os.environ['HOME'] + '/lyonstech/lib/'
             for entry in os.listdir(recombine_lib_dir):
-                print dir
+                print(dir)
             return_list.append()
         return return_list
 
