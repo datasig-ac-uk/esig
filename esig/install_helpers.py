@@ -790,15 +790,7 @@ class InstallationConfiguration(object):
             return_list.append('/usr/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is_x64]))
 
             if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
-                # ugh
-                recombine_lib_dir = os.environ['LD_LIBRARY_PATH'] # assume singleton for now
-                print('*************')
-                print('Contents of ' + recombine_lib_dir + ':')
-                print('*************')
-                for entry in os.listdir(recombine_lib_dir):
-                    print(entry)
-                return_list.append(recombine_lib_dir)
-                # return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+                return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
         return return_list
 
 
