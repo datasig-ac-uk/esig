@@ -15,14 +15,14 @@ fi
 
 # Building recombine inside Docker container will require some work, so build outside.
 pushd ../recombine
-./doall-manylinux.sh
+docker build -t recombine_builder_manylinux -f manylinux_x86_64.dockerfile .
 popd
 
 # Put the lib somewhere the container can find it.
-libdir=${HOME}/lyonstech/lib64
-ls -la ${libdir}
-mkdir ../lib
-cp ${libdir}/librecombine.* ../lib/
+# libdir=${HOME}/lyonstech/lib64
+# ls -la ${libdir}
+# mkdir ../lib
+# cp ${libdir}/librecombine.* ../lib/
 
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 

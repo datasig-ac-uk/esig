@@ -1,4 +1,4 @@
-FROM quay.io/pypa/manylinux2014_x86_64:2020-06-18-f5da004 AS manylinux2014_x86_64_esig
+FROM recombine_builder_manylinux AS manylinux2014_x86_64_esig
 ENTRYPOINT ["/bin/bash", "-c"]
 SHELL ["/bin/bash", "-c"]
 RUN yum -y repolist
