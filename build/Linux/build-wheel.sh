@@ -19,9 +19,10 @@ pushd ../recombine
 popd
 
 # Put the lib somewhere the container can find it.
-ls -la ${HOME}/lyonstech/lib
+libdir=${HOME}/lyonstech/lib64
+ls -la ${libdir}
 mkdir ../lib
-cp ${HOME}/lyonstech/lib/librecombine.* ../lib/
+cp ${libdir}/librecombine.* ../lib/
 
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
