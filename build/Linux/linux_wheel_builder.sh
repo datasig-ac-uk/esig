@@ -29,11 +29,11 @@ $pyexe -m pip install -U pip virtualenv
 $pyexe -m pip install wheel==0.31.1
 $pyexe -m pip install -U numpy
 
+export LD_LIBRARY_PATH="${libdir}:${LD_LIBRARY_PATH}"
 pushd .. # circular file path if run from Linux folder
 	$pyexe -m pip wheel -b Linux/$TMPDIR -w Linux/$TMPDIR ..
 popd
 
-export LD_LIBRARY_PATH="${libdir}:${LD_LIBRARY_PATH}"
 auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies
 auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
 
