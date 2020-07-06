@@ -190,18 +190,18 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  linux-py27u-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp27-cp27mu i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py27u-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp27-cp27mu i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
   linux-py34-64bit:
     runs-on: ubuntu-18.04
@@ -216,18 +216,18 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  linux-py34-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp34-cp34m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py34-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp34-cp34m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
   linux-py35-64bit:
     runs-on: ubuntu-18.04
@@ -242,18 +242,18 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  linux-py35-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp35-cp35m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py35-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp35-cp35m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
   linux-py36-64bit:
     runs-on: ubuntu-18.04
@@ -268,18 +268,18 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  linux-py36-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp36-cp36m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py36-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp36-cp36m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
   linux-py37-64bit:
     runs-on: ubuntu-18.04
@@ -294,18 +294,18 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  linux-py37-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp37-cp37m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py37-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp37-cp37m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
   linux-py38-64bit:
     runs-on: ubuntu-18.04
@@ -320,186 +320,186 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  linux-py38-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp38-cp38 i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py38-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp38-cp38 i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
   # Windows
-#  win-py27-64bit:
-#    runs-on: windows-2019
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 9.0 `
-#          -arch 64 `
-#          -py_install_dir C:\Python27 `
-#          -py_installer 2.7.15/python-2.7.15.amd64.msi `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py27-64bit:
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 9.0 `
+          -arch 64 `
+          -py_install_dir C:\Python27 `
+          -py_installer 2.7.15/python-2.7.15.amd64.msi `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py27-32bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 9.0 `
-#          -arch 32 `
-#          -py_install_dir C:\Python27 `
-#          -py_installer 2.7.15/python-2.7.15.msi `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py27-32bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 9.0 `
+          -arch 32 `
+          -py_install_dir C:\Python27 `
+          -py_installer 2.7.15/python-2.7.15.msi `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py35-64bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 64 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35 `
-#          -py_installer 3.5.4/python-3.5.4-amd64.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py35-64bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 64 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35 `
+          -py_installer 3.5.4/python-3.5.4-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py35-32bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 32 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32 `
-#          -py_installer 3.5.4/python-3.5.4.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py35-32bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32 `
+          -py_installer 3.5.4/python-3.5.4.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py36-64bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 64 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36 `
-#          -py_installer 3.6.5/python-3.6.5-amd64.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py36-64bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 64 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36 `
+          -py_installer 3.6.5/python-3.6.5-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py36-32bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 32 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36-32 `
-#          -py_installer 3.6.5/python-3.6.5.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py36-32bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36-32 `
+          -py_installer 3.6.5/python-3.6.5.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py37-64bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 64 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37 `
-#          -py_installer 3.7.0/python-3.7.0-amd64.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py37-64bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 64 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37 `
+          -py_installer 3.7.0/python-3.7.0-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py37-32bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 32 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
-#          -py_installer 3.7.0/python-3.7.0.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py37-32bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
+          -py_installer 3.7.0/python-3.7.0.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py38-64bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 64 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38 `
-#          -py_installer 3.8.1/python-3.8.1-amd64.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py38-64bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 64 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38 `
+          -py_installer 3.8.1/python-3.8.1-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py38-32bit:
-#    runs-on: windows-2016
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 32 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38-32 `
-#          -py_installer 3.8.1/python-3.8.1.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py38-32bit:
+    runs-on: windows-2016
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38-32 `
+          -py_installer 3.8.1/python-3.8.1.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
