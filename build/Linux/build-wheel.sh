@@ -15,7 +15,7 @@ fi
 
 # Building recombine inside Docker container will require some work, so build outside.
 pushd ../recombine
-./doall-linux.sh
+./doall-manylinux.sh
 popd
 
 # Put the lib somewhere the container can find it.
