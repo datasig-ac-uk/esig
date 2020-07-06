@@ -19,29 +19,29 @@ jobs:
       - mac-py37
       - mac-py38
       - linux-py27-64bit
-      - linux-py27-32bit
+#      - linux-py27-32bit
       - linux-py27u-64bit
       - linux-py27u-64bit
       - linux-py34-64bit
-      - linux-py34-32bit
+#      - linux-py34-32bit
       - linux-py35-64bit
-      - linux-py35-32bit
+#      - linux-py35-32bit
       - linux-py36-64bit
-      - linux-py36-32bit
+#      - linux-py36-32bit
       - linux-py37-64bit
-      - linux-py37-32bit
+#      - linux-py37-32bit
       - linux-py38-64bit
-      - linux-py38-32bit
-      - win-py27-64bit
-      - win-py27-32bit
-      - win-py35-64bit
-      - win-py35-32bit
-      - win-py36-64bit
-      - win-py36-32bit
-      - win-py37-64bit
-      - win-py37-32bit
-      - win-py38-64bit
-      - win-py38-32bit
+#      - linux-py38-32bit
+#      - win-py27-64bit
+#      - win-py27-32bit
+#      - win-py35-64bit
+#      - win-py35-32bit
+#      - win-py36-64bit
+#      - win-py36-32bit
+#      - win-py37-64bit
+#      - win-py37-32bit
+#      - win-py38-64bit
+#      - win-py38-32bit
     if: github.ref == 'refs/heads/release'
     steps:
     - uses: actions/checkout@v2
@@ -164,18 +164,18 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  linux-py27-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp27-cp27m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py27-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp27-cp27m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
   linux-py27u-64bit:
     runs-on: ubuntu-18.04
