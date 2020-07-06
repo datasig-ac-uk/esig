@@ -7,6 +7,14 @@ set -u -o xtrace
 py=$1
 arch=$2
 
+pushd ../recombine
+./doall-linux.sh lib64
+popd
+
+# recombine build step must leave library here for linking
+libdir=${HOME}/lyonstech/lib64
+ls -la ${libdir} # check exists
+
 TMPDIR=tmp         # working folder for pip wheel
 OUTPUTDIR=output   # location of tested wheels
 
@@ -25,8 +33,7 @@ pushd .. # circular file path if run from Linux folder
 	$pyexe -m pip wheel -b Linux/$TMPDIR -w Linux/$TMPDIR ..
 popd
 
-# recombine build step must have left library here for linking
-export LD_LIBRARY_PATH="/data/build/lib:${LD_LIBRARY_PATH}"
+export LD_LIBRARY_PATH="${libdir}:${LD_LIBRARY_PATH}"
 auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies
 auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
 
