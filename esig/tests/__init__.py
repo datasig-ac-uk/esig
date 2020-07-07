@@ -15,6 +15,7 @@ def get_suite():
     """
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(test_package.TestESIG))
+    suite.addTest(unittest.makeSuite(test_package.TestRecombine))
 
     return suite
 

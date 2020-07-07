@@ -4,6 +4,8 @@ from esig import tosig as ts
 from unittest import TestCase
 from . import auxiliaryfunct as ax
 from . import esigtests as rado
+from . import recombinetests as recombine
+
 
 # Tree-like equivalence of paths and equivalence class signature invariance. Non-generic paths used since pruning is generically unnecessary.
 
@@ -67,13 +69,13 @@ logsig=ax.exponentiateTensor( ax.tensoraslevels( ax.Logsigastensor( np.array(pat
  #   print("ok")
 
 
-            
+
 # Test Chen's theorem using tensor multiplication
 # Compute esig of linear functions by hand and see it matches
 
-# Exponentiate logsig as a tensor and see it matches esig 
+# Exponentiate logsig as a tensor and see it matches esig
 
- 
+
 #a=[1,2]
 #sig1=ax.linsig(a,3)
 #b=[[0.0,0], [1,2]]
@@ -146,6 +148,11 @@ class TestESIG(TestCase):
 
     def test_shuffle_test(self):
         self.assertEqual(rado.shuffle_test(100,[-1,0,1],3,3),1)
-    
+
     def test_reparametrizing(self):
         self.assertEqual(rado.reparametrizing_test(10,[-1,0,1],2,3,3),1)
+
+class TestRecombine(TestCase):
+
+    def test_recombine(self):
+        self.assertEqual(recombine.test(), 0)
