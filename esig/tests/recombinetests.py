@@ -23,7 +23,7 @@ def test ():
    tic = time.perf_counter()
    selected_points, new_weights = ts.recombine(data) ## degree = 1
    toc = time.perf_counter()
-   print(f"Recombined {no_points} points in dimension {dimension} to {dimension+1} points in {toc - tic:0.4f} seconds")
+   print("Recombined {no_points} points in dimension {dimension} to {dimension2} points in {n:0.4f} seconds".format(no_points=no_points,dimension=dimension,dimension2=dimension+1,n=toc - tic))
 
    ## check mean preserved
    old_average=np.sum(data, 0)
@@ -44,7 +44,7 @@ def test ():
    tic = time.perf_counter()
    selected_points, new_weights = ts.recombine(new_data) ## degree = 1
    toc = time.perf_counter()
-   print(f"\nRecombined {no_points} points in dimension {dimension + 20} to {dimension+1} points in {toc - tic:0.4f} seconds")
+   print("\nRecombined {no_points} points in dimension {dimension} to {dimension2} points in {n:0.4f} seconds".format(no_points=no_points,dimension=dimension + 20,dimension2=dimension+1,n=toc - tic))
 
    ## check mean preserved
    old_average=np.sum(data, 0)
@@ -68,7 +68,7 @@ def test ():
    tic = time.perf_counter()
    selected_points, new_weights = ts.recombine(data, degree = 2)
    toc = time.perf_counter()
-   print(f"\nRecombined {no_points} points in dimension {dimension} to {len(selected_points)} points in {toc - tic:0.4f} seconds while preserving first and second moments")
+   print("\nRecombined {no_points} points in dimension {dimension} to {m} points in {n:0.4f} seconds while preserving first and second moments".format(no_points=no_points,dimension=dimension,m=len(selected_points),n=toc - tic))
 
    old_average=np.sum(data, 0)
    new_average=new_weights.dot(np.take(data, selected_points, 0))
@@ -78,7 +78,7 @@ def test ():
    old_cov = np.cov(data,rowvar=False, bias=True,aweights=np.full(1000,1.))
    normalised_error_in_cov = norm(old_cov - new_cov)/(norm(old_cov) + norm(new_cov))
 
-   print (f"normalised_error_in_mean {normalised_error_in_mean}\nnormalised_error_in_cov  {normalised_error_in_cov}")
+   print ("normalised_error_in_mean %(normalised_error_in_mean)\nnormalised_error_in_cov  %(normalised_error_in_cov)"%(normalised_error_in_mean,normalised_error_in_cov))
 
    if ((normalised_error_in_mean > 1e-13) or (normalised_error_in_cov > 1e-13)):
       test_outcome = test_outcome - 1
@@ -91,11 +91,11 @@ def test ():
 
    print("="*40, "System Information", "="*40)
    uname = platform.uname()
-   print(f"System: {uname.system}")
-   print(f"Node Name: {uname.node}")
-   print(f"Release: {uname.release}")
-   print(f"Version: {uname.version}")
-   print(f"Machine: {uname.machine}")
-   print(f"Processor: {uname.processor}")
+   print("System: %(uname.system)"%(uname.system))
+   print("Node Name: %(uname.node)"%(uname.node))
+   print("Release: %(uname.release)"%(uname.release))
+   print("Version: %(uname.version)"%(uname.version))
+   print("Machine: %(uname.machine)"%(uname.machine))
+   print("Processor: %(uname.processor)"%(uname.processor))
 
    return test_outcome
