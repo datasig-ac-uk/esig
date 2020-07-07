@@ -27,7 +27,7 @@ mkdir $TMPDIR
 pyexe=/opt/python/$py/bin/python
 ls -la /opt/python # see what Python versions there are
 $pyexe -m pip install -U pip virtualenv
-$pyexe -m pip install wheel==0.31.1
+$pyexe -m pip install wheel==0.34.2 # need at least this version for auditwheel 3.1.1 (Python 3.7)
 $pyexe -m pip install -U numpy
 
 export LD_LIBRARY_PATH="${libdir}:${LD_LIBRARY_PATH}"
