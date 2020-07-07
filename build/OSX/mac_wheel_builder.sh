@@ -53,5 +53,6 @@ fi
 # deactivate this virtualenv
 pyenv deactivate
 
-# cleanup
+# disable error propagation to avoid sporadic "directory not empty" error
+set +e
 rm -rf $TMPDIR
