@@ -35,7 +35,7 @@ def test ():
    if ((len(selected_points) > dimension + 1) or (normalised_error > 1e-13)):
       test_outcome = test_outcome - 1
    else:
-      print("test passed")
+      print("test 1 passed")
 
    ## test2
    ### the points are not spanning the full space and so the minimal set should have cardinality less than or equal rank + 1
@@ -57,7 +57,7 @@ def test ():
    if ((len(selected_points) > dimension + 1) or (normalised_error > 1e-12)):
       test_outcome = test_outcome - 1
    else:
-      print("test passed")
+      print("test 2 passed")
 
    #test3
    ## test the degree > 1 case - match second moments
@@ -83,7 +83,7 @@ def test ():
    if ((normalised_error_in_mean > 1e-13) or (normalised_error_in_cov > 1e-13)):
       test_outcome = test_outcome - 1
    else:
-      print("test passed")
+      print("test 3 passed")
 
    print ("\n")
 
