@@ -13,7 +13,7 @@ def test ():
    dimension = 2400 ## big test set this to 2400 small test 240
    no_points = 100000
 
-   print("preparing data ({no_points},{dimension})".format(no_points,dimension))
+   print("preparing data ({},{})".format(no_points,dimension))
    tic = time.perf_counter()
    data = np.random.rand(no_points,dimension)
    toc = time.perf_counter()
@@ -78,7 +78,7 @@ def test ():
    old_cov = np.cov(data,rowvar=False, bias=True,aweights=np.full(1000,1.))
    normalised_error_in_cov = norm(old_cov - new_cov)/(norm(old_cov) + norm(new_cov))
 
-   print ("normalised_error_in_mean {normalised_error_in_mean}\nnormalised_error_in_cov  {normalised_error_in_cov}".format(normalised_error_in_mean,normalised_error_in_cov))
+   print ("normalised_error_in_mean {}\nnormalised_error_in_cov  {}".format(normalised_error_in_mean,normalised_error_in_cov))
 
    if ((normalised_error_in_mean > 1e-13) or (normalised_error_in_cov > 1e-13)):
       test_outcome = test_outcome - 1
@@ -91,11 +91,11 @@ def test ():
 
    print("="*40, "System Information", "="*40)
    uname = platform.uname()
-   print("System: {uname.system}".format(uname.system))
-   print("Node Name: {uname.node}".format(uname.node))
-   print("Release: {uname.release}".format(uname.release))
-   print("Version: {uname.version}".format(uname.version))
-   print("Machine: {uname.machine}".format(uname.machine))
-   print("Processor: {uname.processor}".format(uname.processor))
+   print("System: {}".format(uname.system))
+   print("Node Name: {}".format(uname.node))
+   print("Release: {}".format(uname.release))
+   print("Version: {}".format(uname.version))
+   print("Machine: {}".format(uname.machine))
+   print("Processor: {}".format(uname.processor))
 
    return test_outcome
