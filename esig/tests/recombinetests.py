@@ -13,11 +13,11 @@ def test ():
    dimension = 2400 ## big test set this to 2400 small test 240
    no_points = 100000
 
-   print(f"preparing data ({no_points},{dimension})")
+   print("preparing data (%(no_points),%(dimension))"%(no_points,dimension))
    tic = time.perf_counter()
    data = np.random.rand(no_points,dimension)
    toc = time.perf_counter()
-   print(f"prepared data in {toc - tic:0.4f} seconds\n")
+   print("prepared data in {n:0.4f} seconds\n".format(n=toc - tic))
 
    ## test 1
    tic = time.perf_counter()
