@@ -18,11 +18,11 @@ jobs:
       - mac-py36
       - mac-py37
       - mac-py38
-      - linux-py27-64bit
+#      - linux-py27-64bit
 #      - linux-py27-32bit
-      - linux-py27u-64bit
+#      - linux-py27u-64bit
 #     - linux-py27u-32bit
-      - linux-py34-64bit
+#      - linux-py34-64bit
 #      - linux-py34-32bit
       - linux-py35-64bit
 #      - linux-py35-32bit
