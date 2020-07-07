@@ -25,6 +25,7 @@ mkdir $OUTPUTDIR
 mkdir $TMPDIR
 
 pyexe=/opt/python/$py/bin/python
+ls -la /opt/python # see what Python versions there are
 $pyexe -m pip install -U pip virtualenv
 $pyexe -m pip install wheel==0.31.1
 $pyexe -m pip install -U numpy
