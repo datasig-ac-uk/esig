@@ -1,7 +1,6 @@
 import sys
 import numpy as np
 from esig import tosig as ts ## from esig import tosig as ts
-from esig import tests as tests
 from numpy.linalg import norm
 import time
 import esig
