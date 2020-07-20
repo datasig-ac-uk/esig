@@ -10,7 +10,7 @@ def test ():
    print("*******************************************************")
    print("*************** starting recombine test ***************")
    print("*******************************************************")
-   test_outcome = 0
+   failures = 0
 
    dimension = 2400 ## big test set this to 2400 small test 240
    no_points = 100000
@@ -36,7 +36,8 @@ def test ():
 
    ## report
    if ((len(selected_points) > dimension + 1) or (normalised_error > 1e-13)):
-      test_outcome = test_outcome - 1
+      failures = failures + 1
+      print("test 1 failed")
    else:
       print("test 1 passed")
 
@@ -58,7 +59,8 @@ def test ():
 
    ## report
    if ((len(selected_points) > dimension + 1) or (normalised_error > 1e-12)):
-      test_outcome = test_outcome - 1
+      failures = failures + 1
+      print("test 2 failed")
    else:
       print("test 2 passed")
 
