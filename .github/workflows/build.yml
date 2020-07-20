@@ -14,10 +14,10 @@ jobs:
       - sdist
 
       # disable to speed up testing
-      - mac-py35
-      - mac-py36
-      - mac-py37
-      - mac-py38
+#      - mac-py35
+#      - mac-py36
+#      - mac-py37
+#      - mac-py38
 
       # 32-bit recombine not working yet
       - linux-py35-64bit
