@@ -68,57 +68,57 @@ jobs:
         path: build/sdist
 
   # Mac
-  mac-py35:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.5
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel.sh 3.5.5
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
+#  mac-py35:
+#    runs-on: macos-10.15
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Build for Python 3.5
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/OSX && ./build-wheel.sh 3.5.5
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/OSX/output
 
-  mac-py36:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.6
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel.sh 3.6.5
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
+#  mac-py36:
+#    runs-on: macos-10.15
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Build for Python 3.6
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/OSX && ./build-wheel.sh 3.6.5
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/OSX/output
 
-  mac-py37:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.7
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel.sh 3.7.0
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
+#  mac-py37:
+#    runs-on: macos-10.15
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Build for Python 3.7
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/OSX && ./build-wheel.sh 3.7.0
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/OSX/output
 
-  mac-py38:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.8
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel.sh 3.8.1
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
+#  mac-py38:
+#    runs-on: macos-10.15
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Build for Python 3.8
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/OSX && ./build-wheel.sh 3.8.1
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/OSX/output
 
   # Linux
   linux-py35-64bit:
