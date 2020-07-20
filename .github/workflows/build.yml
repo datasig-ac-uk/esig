@@ -69,7 +69,7 @@ jobs:
     - name: Build for Python 3.5
       run: |
         source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel-other.sh 3.5.5
+        cd build/OSX && ./build-wheel.sh 3.5.5
     - uses: actions/upload-artifact@v2
       with:
         name: output
@@ -82,7 +82,7 @@ jobs:
     - name: Build for Python 3.6
       run: |
         source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel-other.sh 3.6.5
+        cd build/OSX && ./build-wheel.sh 3.6.5
     - uses: actions/upload-artifact@v2
       with:
         name: output
@@ -95,7 +95,7 @@ jobs:
     - name: Build for Python 3.7
       run: |
         source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel-other.sh 3.7.0
+        cd build/OSX && ./build-wheel.sh 3.7.0
     - uses: actions/upload-artifact@v2
       with:
         name: output
@@ -108,7 +108,7 @@ jobs:
     - name: Build for Python 3.8
       run: |
         source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel-other.sh 3.8.1
+        cd build/OSX && ./build-wheel.sh 3.8.1
     - uses: actions/upload-artifact@v2
       with:
         name: output
