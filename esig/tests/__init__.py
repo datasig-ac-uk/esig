@@ -36,5 +36,5 @@ def run_tests(terminate=False): # argument ignored
 
     if not status:
         sys.exit(1)
-    else
+    else:
         sys.exit(0)
