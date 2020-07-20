@@ -27,9 +27,6 @@ def run_tests(terminate=False): # argument ignored
     Returns:
         terminates with exit code 1 if all tests pass successfully; 0 otherwise.
     """
-    print("*******************************************************")
-    print("******************** run_tests ************************")
-    print("*******************************************************")
     suite = get_suite()
     runner = unittest.TextTestRunner()
     status = runner.run(suite).wasSuccessful()

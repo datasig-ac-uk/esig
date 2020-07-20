@@ -10,10 +10,6 @@ def test ():
    print("*******************************************************")
    print("*************** starting recombine test ***************")
    print("*******************************************************")
-
-   return 0
-
-   """
    test_outcome = 0
 
    dimension = 2400 ## big test set this to 2400 small test 240
@@ -25,6 +21,9 @@ def test ():
    data = np.random.rand(no_points,dimension)
    toc = time.perf_counter()
    print("prepared data in {n:0.4f} seconds\n".format(n=toc - tic))
+
+   return 0
+   """
 
    ## test 1
    tic = time.perf_counter()

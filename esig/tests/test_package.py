@@ -155,7 +155,4 @@ class TestESIG(TestCase):
 class TestRecombine(TestCase):
 
     def test_recombine(self):
-        print("*******************************************************")
-        print("***************** test_recombine **********************")
-        print("*******************************************************")
         self.assertEqual(recombine.test(), 0)
