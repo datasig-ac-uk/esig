@@ -40,9 +40,6 @@ def test ():
    else:
       print("test 1 passed")
 
-   return 0
-   """
-
    ## test2
    ### the points are not spanning the full space and so the minimal set should have cardinality less than or equal rank + 1
    matrix = np.random.rand(dimension,dimension + 20)
@@ -64,6 +61,9 @@ def test ():
       test_outcome = test_outcome - 1
    else:
       print("test 2 passed")
+
+   return 0
+   """
 
    #test3
    ## test the degree > 1 case - match second moments
