@@ -14,6 +14,7 @@ def test ():
 
    print("preparing data ({},{})".format(no_points,dimension))
    tic = time.perf_counter()
+   np.random.seed(0)
    data = np.random.rand(no_points,dimension)
    toc = time.perf_counter()
    print("prepared data in {n:0.4f} seconds\n".format(n=toc - tic))
