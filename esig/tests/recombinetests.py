@@ -22,9 +22,6 @@ def test ():
    toc = time.perf_counter()
    print("prepared data in {n:0.4f} seconds\n".format(n=toc - tic))
 
-   return 0
-   """
-
    ## test 1
    tic = time.perf_counter()
    selected_points, new_weights = ts.recombine(data) ## degree = 1
@@ -42,6 +39,9 @@ def test ():
       test_outcome = test_outcome - 1
    else:
       print("test 1 passed")
+
+   return 0
+   """
 
    ## test2
    ### the points are not spanning the full space and so the minimal set should have cardinality less than or equal rank + 1
