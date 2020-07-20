@@ -20,19 +20,21 @@ def get_suite():
     return suite
 
 
-def run_tests(terminate=False):
+def run_tests(terminate=False): # argument ignored
     """
     Acquires the ESig test suite, and runs the tests.
 
-    Args:
-        terminate (bool): if set to True, will terminate on failure; otherwise, returns False.
     Returns:
-        bool: True iif all tests pass successfully; False otherwise.
+        terminates with exit code 1 if all tests pass successfully; 0 otherwise.
     """
-    print("RUNNING SOME TESTS")
+    print("*******************************************************")
+    print("******************** run_tests ************************")
+    print("*******************************************************")
     suite = get_suite()
     runner = unittest.TextTestRunner()
     status = runner.run(suite).wasSuccessful()
 
-    if not status and terminate:
+    if not status:
         sys.exit(1)
+    else
+        sys.exit(0)
