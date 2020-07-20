@@ -4,7 +4,7 @@ from esig import tosig as ts
 from unittest import TestCase
 from . import auxiliaryfunct as ax
 from . import esigtests as rado
-# from . import recombinetests as recombine
+from . import recombinetests as recombine
 
 
 print("*******************************************************")

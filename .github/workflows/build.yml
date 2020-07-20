@@ -12,10 +12,14 @@ jobs:
     runs-on: macos-10.15
     needs:
       - sdist
+
+      # disable to speed up testing
       - mac-py35
       - mac-py36
       - mac-py37
       - mac-py38
+
+      # 32-bit recombine not working yet
       - linux-py35-64bit
 #      - linux-py35-32bit
       - linux-py36-64bit
@@ -24,6 +28,8 @@ jobs:
 #      - linux-py37-32bit
       - linux-py38-64bit
 #      - linux-py38-32bit
+
+      # todo
 #      - win-py35-64bit
 #      - win-py35-32bit
 #      - win-py36-64bit
