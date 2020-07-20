@@ -29,6 +29,7 @@ def run_tests(terminate=False):
     Returns:
         bool: True iif all tests pass successfully; False otherwise.
     """
+    print("RUNNING SOME TESTS")
     suite = get_suite()
     runner = unittest.TextTestRunner()
     status = runner.run(suite).wasSuccessful()
