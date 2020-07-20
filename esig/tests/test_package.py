@@ -7,10 +7,6 @@ from . import esigtests as rado
 from . import recombinetests as recombine
 
 
-print("*******************************************************")
-print("***** static gunk at beginning of test_package.py *****")
-print("*******************************************************")
-
 # Tree-like equivalence of paths and equivalence class signature invariance. Non-generic paths used since pruning is generically unnecessary.
 
 a=[[0.0,0],[1,0],[1,1],[1,0],[2,0],[3,1],[2,2],[1,1],[2,2],[1,3],[2,2],[3,3],[2,2],[3,1],[4,1],[3,1],[2,0],[2,-1],[2,0],[1,0],[1,-1],[1,0],[0,0]]
@@ -162,4 +158,4 @@ class TestRecombine(TestCase):
         print("*******************************************************")
         print("***************** test_recombine **********************")
         print("*******************************************************")
-        # self.assertEqual(recombine.test(), 0)
+        self.assertEqual(recombine.test(), 0)
