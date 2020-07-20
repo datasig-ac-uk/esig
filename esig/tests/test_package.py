@@ -177,10 +177,10 @@ class TestESIG(TestCase):
         print("*******************************************************")
         self.assertEqual(rado.reparametrizing_test(10,[-1,0,1],2,3,3),1)
 
-# class TestRecombine(TestCase):
-#
-#    def test_recombine(self):
-#        print("*******************************************************")
-#        print("***************** test_recombine **********************")
-#        print("*******************************************************")
-#        self.assertEqual(recombine.test(), 0)
+class TestRecombine(TestCase):
+
+    def test_recombine(self):
+        print("*******************************************************")
+        print("***************** test_recombine **********************")
+        print("*******************************************************")
+        self.assertEqual(recombine.test(), 0)
