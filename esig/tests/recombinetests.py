@@ -47,7 +47,6 @@ def test ():
       print("test 1 failed")
    else:
       print("test 1 passed")
-   return 0
 
    ## test2
    ### the points are not spanning the full space and so the minimal set should have cardinality less than or equal rank + 1
