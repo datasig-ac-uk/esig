@@ -1,5 +1,4 @@
 import sys
-import os
 import numpy as np
 from esig import tosig as ts
 from numpy.linalg import norm
@@ -84,7 +83,8 @@ def test ():
    print ("normalised_error_in_mean {}\nnormalised_error_in_cov  {}".format(normalised_error_in_mean,normalised_error_in_cov))
 
    if ((normalised_error_in_mean > 1e-13) or (normalised_error_in_cov > 1e-13)):
-      test_outcome = test_outcome - 1
+      failures = failures + 1
+      print("test 3 failed")
    else:
       print("test 3 passed")
 
@@ -101,4 +101,4 @@ def test ():
    print("Machine: {}".format(uname.machine))
    print("Processor: {}".format(uname.processor))
 
-   return test_outcome
+   return failures
