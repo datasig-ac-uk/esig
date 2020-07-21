@@ -8,15 +8,6 @@ import esig
 
 
 def test ():
-   print("*******************************************************")
-   print("*************** starting recombine test ***************")
-   print("*******************************************************")
-
-   print(os.environ['OMP_DISPLAY_ENV'])
-   print(os.environ['OMP_DYNAMIC'])
-   print(os.environ['OMP_MAX_ACTIVE_LEVELS'])
-   print(os.environ['OMP_NUM_THREADS'])
-
    failures = 0
 
    dimension = 2400 ## big test set this to 2400 small test 240
@@ -71,8 +62,6 @@ def test ():
    else:
       print("test 2 passed")
 
-   return failures
-   """
    #test3
    ## test the degree > 1 case - match second moments
    dimension = 10
@@ -113,4 +102,3 @@ def test ():
    print("Processor: {}".format(uname.processor))
 
    return test_outcome
-   """
