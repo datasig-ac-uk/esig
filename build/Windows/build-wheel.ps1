@@ -5,8 +5,6 @@ param([string] $vs_version,            # {14.1}
 
 Set-PSDebug -Trace 1
 
-echo "Here's some stuff."
-echo ${vs_version}
 ls
 ls ..
 pushd ..\recombine
