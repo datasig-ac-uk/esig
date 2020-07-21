@@ -19,18 +19,19 @@ jobs:
 #      - mac-py37
 #      - mac-py38
 
+#      - linux-py35-64bit
+#      - linux-py36-64bit
+#      - linux-py37-64bit
+#      - linux-py38-64bit
+
       # 32-bit recombine not working yet
-      - linux-py35-64bit
 #      - linux-py35-32bit
-      - linux-py36-64bit
 #      - linux-py36-32bit
-      - linux-py37-64bit
 #      - linux-py37-32bit
-      - linux-py38-64bit
 #      - linux-py38-32bit
 
+      - win-py35-64bit
       # todo
-#      - win-py35-64bit
 #      - win-py35-32bit
 #      - win-py36-64bit
 #      - win-py36-32bit
