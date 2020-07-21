@@ -1,4 +1,5 @@
 import sys
+import os
 import numpy as np
 from esig import tosig as ts
 from numpy.linalg import norm
@@ -10,6 +11,12 @@ def test ():
    print("*******************************************************")
    print("*************** starting recombine test ***************")
    print("*******************************************************")
+
+   print(os.environ['OMP_DISPLAY_ENV'])
+   print(os.environ['OMP_DYNAMIC'])
+   print(os.environ['OMP_MAX_ACTIVE_LEVELS'])
+   print(os.environ['OMP_NUM_THREADS'])
+
    failures = 0
 
    dimension = 2400 ## big test set this to 2400 small test 240
@@ -40,10 +47,10 @@ def test ():
       print("test 1 failed")
    else:
       print("test 1 passed")
-
+   return 0
+   """
    ## test2
    ### the points are not spanning the full space and so the minimal set should have cardinality less than or equal rank + 1
-   """
    matrix = np.random.rand(dimension,dimension + 20)
    new_data = data.dot(matrix)
    tic = time.perf_counter()
