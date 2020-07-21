@@ -122,18 +122,18 @@ jobs:
 #        path: build/OSX/output
 
   # Linux
-  linux-py35-64bit:
-    runs-on: ubuntu-18.04
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run build
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/Linux && ./build-wheel.sh cp35-cp35m x86_64
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/Linux/output
+#  linux-py35-64bit:
+#    runs-on: ubuntu-18.04
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Run build
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/Linux && ./build-wheel.sh cp35-cp35m x86_64
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/Linux/output
 
  # linux-py35-32bit:
  #   runs-on: ubuntu-18.04
@@ -148,18 +148,18 @@ jobs:
  #       name: output
  #       path: build/Linux/output
 
-  linux-py36-64bit:
-    runs-on: ubuntu-18.04
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run build
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/Linux && ./build-wheel.sh cp36-cp36m x86_64
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/Linux/output
+ # linux-py36-64bit:
+ #   runs-on: ubuntu-18.04
+ #   steps:
+ #   - uses: actions/checkout@v2
+ #   - name: Run build
+ #     run: |
+ #       source build/git-preamble.sh ${{ secrets.recombine_login }}
+ #       cd build/Linux && ./build-wheel.sh cp36-cp36m x86_64
+ #   - uses: actions/upload-artifact@v2
+ #     with:
+ #       name: output
+ #       path: build/Linux/output
 
 #  linux-py36-32bit:
 #    runs-on: ubuntu-18.04
@@ -174,18 +174,18 @@ jobs:
 #        name: output
 #        path: build/Linux/output
 
-  linux-py37-64bit:
-    runs-on: ubuntu-18.04
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run build
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/Linux && ./build-wheel.sh cp37-cp37m x86_64
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/Linux/output
+#  linux-py37-64bit:
+#    runs-on: ubuntu-18.04
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Run build
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/Linux && ./build-wheel.sh cp37-cp37m x86_64
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/Linux/output
 
 #  linux-py37-32bit:
 #    runs-on: ubuntu-18.04
@@ -200,18 +200,18 @@ jobs:
 #        name: output
 #        path: build/Linux/output
 
-  linux-py38-64bit:
-    runs-on: ubuntu-18.04
-    steps:
-    - uses: actions/checkout@v2
-    - name: Run build
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/Linux && ./build-wheel.sh cp38-cp38 x86_64
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/Linux/output
+#  linux-py38-64bit:
+#    runs-on: ubuntu-18.04
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Run build
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/Linux && ./build-wheel.sh cp38-cp38 x86_64
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/Linux/output
 
 #  linux-py38-32bit:
 #    runs-on: ubuntu-18.04
