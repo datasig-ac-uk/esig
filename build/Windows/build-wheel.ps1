@@ -5,6 +5,10 @@ param([string] $vs_version,            # {14.1}
 
 Set-PSDebug -Trace 1
 
+pushd ..\recombine
+.\doall-windows.ps1
+popd
+
 if ($vs_version -eq "14.1") {
    # Use pre-installed Visual Studio
 } else {
