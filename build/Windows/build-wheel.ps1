@@ -5,6 +5,8 @@ param([string] $vs_version,            # {14.1}
 
 Set-PSDebug -Trace 1
 
+echo ${PWD}
+ls
 pushd ..\recombine
 .\doall-windows.ps1
 popd
