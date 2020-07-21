@@ -4,7 +4,6 @@ param([string] $vs_version,            # {14.1}
       [string] $py_installer)
 
 Set-PSDebug -Trace 1
-..\git-preamble.sh
 
 if ($vs_version -eq "14.1") {
    # Use pre-installed Visual Studio
