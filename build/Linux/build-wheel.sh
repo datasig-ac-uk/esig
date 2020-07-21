@@ -20,5 +20,5 @@ popd
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
 # Build esig and recombine inside the container
-docker run --memory=16g --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} \
+docker run --memory=16g --oom-kill-disable --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} \
    "source ~/.bashrc; cd /data/build/Linux; ./linux_wheel_builder.sh $1 $arch" || exit 1
