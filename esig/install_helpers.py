@@ -773,7 +773,7 @@ class InstallationConfiguration(object):
             if not('MKLROOT' in os.environ):
                 raise "MKLROOT not defined."
             # not sure why this is only needed on Windows
-            return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64")
+            return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
