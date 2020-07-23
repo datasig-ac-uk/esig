@@ -763,16 +763,18 @@ class InstallationConfiguration(object):
                 False: ('lib32', 'win32'),
             }
 
-            if python_version[0] < 3 or (python_version[0] == 3 and python_version[1] < 3):
-                compiler_version = 'msvc-9.0'
+            if python_version[0] == 3 and python_version[1] < 5:
+                compiler_version = 'msvc-10.0'
             else:
-                if python_version[0] == 3 and python_version[1] < 5:
-                    compiler_version = 'msvc-10.0'
-                else:
-                    compiler_version = 'msvc-14.0'
+                compiler_version = 'msvc-14.0'
 
             return_list.append(os.path.join(boost_root_env, '{lib_directory}-{compiler_version}'.format(lib_directory=lib_directory[self.is_x64][0], compiler_version=compiler_version)))
             return_list.append(os.path.join(boost_root_env, lib_directory[self.is_x64][1], 'lib'))
+            if not('MKLROOT' in os.environ):
+                raise "MKLROOT not defined."
+            # not sure why this is only needed on Windows
+            return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64")
+
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
         elif self.platform == PLATFORMS.MACOS:
