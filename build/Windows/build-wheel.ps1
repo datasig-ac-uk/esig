@@ -7,7 +7,10 @@ Set-PSDebug -Trace 1
 
 pushd ..\recombine
 .\doall-windows.ps1
+echo $env:MKLROOT
+ls $env:MKLROOT/lib/intel64
 popd
+exit 1
 
 if ($vs_version -eq "14.1") {
    # Use pre-installed Visual Studio
