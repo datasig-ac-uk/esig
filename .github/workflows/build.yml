@@ -228,7 +228,7 @@ jobs:
 
   # Windows
   win-py35-64bit:
-    runs-on: windows-2016
+    runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
     - name: Run build
