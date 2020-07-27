@@ -907,7 +907,7 @@ class InstallationConfiguration(object):
             list: list of strings, with each string representing a library used
         """
         libs = {
-            PLATFORMS.WINDOWS: [recombine],
+            PLATFORMS.WINDOWS: [],
             # on the Mac, recombine is a framework, not a library; needs special treatment in setup.py
             PLATFORMS.MACOS: ['boost_system-mt','boost_thread-mt'],
             PLATFORMS.LINUX: ['boost_system','boost_thread', 'recombine'],
