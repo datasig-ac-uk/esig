@@ -10,11 +10,31 @@ __date__ = '2017-09-01'
 configuration = helpers.CONFIGURATION
 configuration.package_abs_root = os.path.dirname(os.path.realpath(__file__))
 
+# https://stackoverflow.com/questions/2584595/building-a-python-module-and-linking-it-against-a-macosx-framework
+if configuration.platform == helpers.PLATFORMS.MACOS:
+    home = os.environ["HOME"]
+    os.environ['LDFLAGS'] = \
+        '-F ' + home + '/lyonstech/ ' + \
+        '-framework recombine ' + \
+        '-Wl,-rpath,' + home + '/lyonstech/'
 
 esig_extension = Extension(
     'esig.tosig',
-    sources=['src/C_tosig.c', 'src/Cpp_ToSig.cpp', 'src/ToSig.cpp'],
-    depends=['src/ToSig.h', 'src/C_tosig.h', 'src/ToSig.cpp', 'src/switch.h'],
+    sources=[
+        'src/C_tosig.c',
+        'src/Cpp_ToSig.cpp',
+        'src/ToSig.cpp',
+        'recombine/_recombine.cpp',
+        'recombine/TestVec/RdToPowers2.cpp'
+    ],
+    # relationship between depends and include_dirs is unclear
+    depends=[
+        'src/ToSig.h',
+        'src/C_tosig.h',
+        'src/ToSig.cpp',
+        'src/switch.h',
+        'recombine/TestVec/OstreamContainerOverloads.h'
+    ],
     include_dirs=configuration.include_dirs,
     library_dirs=configuration.library_dirs,
     libraries=configuration.used_libraries,
@@ -56,11 +76,9 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 2.7',
-        'Programming Language :: Python :: 3.4',
+        'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
-        'Programming Language :: Python :: 3.7',
-        'Programming Language :: Python :: 3.8',
         'Topic :: Scientific/Engineering :: Mathematics',
         ],
 

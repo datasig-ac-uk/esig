@@ -10,14 +10,12 @@ This file contains unit tests of the esig library as well as auxiliary functions
 
 The tests are run each time esig is installed, to make sure the installation works correctly.
 
-Separate descriptions are available for each function
-
 """
 
 
 def compare_reverse_test(l,a,dims,degs):
     """ Compare signature of a random path with its inverse
-    
+
     If a path has steps [a,b,c], its inverse has steps [c,b,a]
 
     Args:
@@ -31,7 +29,7 @@ def compare_reverse_test(l,a,dims,degs):
 
     Raises:
         ValueError: If the signature of the inverse path is not actually computed for the inverse of the original path
-    
+
     Example:
         >>> compare_reverse_test(100,[-1,0,1],2,4)
         "ok"
@@ -90,14 +88,14 @@ def compare_reverse_test(l,a,dims,degs):
 def shuffle_test (l,a,dims,degs):
 
     """ Evaluates whether a product sum of shuffles is equal to the multiplication evaluated pairs of signature elements
-    
+
     stream2sig and stream2logsig functions included in the esig library return a list of values according to (a) the dimensions present in the data and (b) signature degrees.
     sigkeys and logsigkeys functions included in the esig library return keys which correspond to each of the signature element produced with either stream2sig and stream2logsig functions.
-    
-    Properties of path signature are such that for any 2 keys, if one multiplies the values which they correspond to, the result of the multiplication is equal to a sum of 
+
+    Properties of path signature are such that for any 2 keys, if one multiplies the values which they correspond to, the result of the multiplication is equal to a sum of
     values for all keys which are shuffles of the two keys. This function evaluates whether this property of path signature holds true for all possible pairs of
     signature elements whose keys, together, are shorter or as long as the longest keys of values included in the signature.
-    
+
     Args:
         l (int): length of a random path to be produced
         a (list): list of modifiers applied at each step of the random path
@@ -116,7 +114,7 @@ def shuffle_test (l,a,dims,degs):
 
     """
 
-    test_path = np.array(ax.random_path(l,a,dims)) # generates a random path given number of path steps 'l', possible moves at each step 'a', 
+    test_path = np.array(ax.random_path(l,a,dims)) # generates a random path given number of path steps 'l', possible moves at each step 'a',
                                                 # and the number dimensions at each path step 'dims'
     signature = list(ts.stream2sig(test_path,degs)) # generates signature for the provided random path and chosen number of signature degrees 'degs'
 
@@ -180,7 +178,7 @@ def shuffle_test (l,a,dims,degs):
                     pass
                 else:
                     shuffle_product = shuffle_product + x[2]
-         
+
         # multiply components, knowing their indics in keys3 table
         parent1 = row[1][0]
         parent1 = keys3[parent1][2]
@@ -200,9 +198,9 @@ def shuffle_test (l,a,dims,degs):
 
 # reparametrizing test
 def reparametrizing_test(l,a,dims,degs,reparam_factor):
-    """ Checks if the path signature for a reparametrized path is identical to the original signature. 
-    
-    The test works for any path which is linear everywhere except of a list of inflexion points. 
+    """ Checks if the path signature for a reparametrized path is identical to the original signature.
+
+    The test works for any path which is linear everywhere except of a list of inflexion points.
     New steps are added which fall on the lines connecting the steps of the inputted path. The overall shape of the path is the same as a result
 
 
@@ -215,7 +213,7 @@ def reparametrizing_test(l,a,dims,degs,reparam_factor):
 
     Returns:
         str: "ok" if the test has been successful
-        
+
     Raises:
         ValueError: If reparametrized path put into stream2sig function resulted in a different path
 
@@ -224,7 +222,7 @@ def reparametrizing_test(l,a,dims,degs,reparam_factor):
         "ok"
 
     """
-    path_orig = ax.random_path(l,a,dims) # generates a random path given number of path steps 'l', possible moves at each step 'a', 
+    path_orig = ax.random_path(l,a,dims) # generates a random path given number of path steps 'l', possible moves at each step 'a',
                                                     # and the number dimensions at each path step 'dims'
     mid_step = 1.0/reparam_factor
     # obtaining additional mid-steps
@@ -250,8 +248,3 @@ def reparametrizing_test(l,a,dims,degs,reparam_factor):
         else:
             raise ValueError
     return 1
-
-
-
-
-
