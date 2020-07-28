@@ -11,17 +11,22 @@ jobs:
   publish:
     runs-on: macos-10.15
     needs:
-      - sdist
+#      - sdist
 
       - mac-py35
       - mac-py36
-      - mac-py37
-      - mac-py38
+#      - mac-py37
+#      - mac-py38
 
-      - linux-py35-64bit
-      - linux-py36-64bit
-      - linux-py37-64bit
-      - linux-py38-64bit
+#      - linux-py35-64bit
+#      - linux-py36-64bit
+#      - linux-py37-64bit
+#      - linux-py38-64bit
+
+#      - win-py35-64bit
+#      - win-py36-64bit
+#      - win-py37-64bit
+      - win-py38-64bit
 
       # 32-bit recombine not available yet
 #      - linux-py35-32bit
@@ -29,12 +34,6 @@ jobs:
 #      - linux-py37-32bit
 #      - linux-py38-32bit
 
-      - win-py35-64bit
-      - win-py36-64bit
-      - win-py37-64bit
-      - win-py38-64bit
-
-      # 32-bit recombine not available yet
 #      - win-py35-32bit
 #      - win-py36-32bit
 #      - win-py37-32bit
@@ -174,58 +173,6 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  linux-py35-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp35-cp35m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
-
-#  linux-py36-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp36-cp36m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
-
-#  linux-py37-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp37-cp37m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
-
-#  linux-py38-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp38-cp38 i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
-
   # Windows
   win-py35-64bit:
     runs-on: windows-2019
@@ -298,6 +245,58 @@ jobs:
       with:
         name: output
         path: build/Windows/output
+
+#  linux-py35-32bit:
+#    runs-on: ubuntu-18.04
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Run build
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/Linux && ./build-wheel.sh cp35-cp35m i686
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/Linux/output
+
+#  linux-py36-32bit:
+#    runs-on: ubuntu-18.04
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Run build
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/Linux && ./build-wheel.sh cp36-cp36m i686
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/Linux/output
+
+#  linux-py37-32bit:
+#    runs-on: ubuntu-18.04
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Run build
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/Linux && ./build-wheel.sh cp37-cp37m i686
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/Linux/output
+
+#  linux-py38-32bit:
+#    runs-on: ubuntu-18.04
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Run build
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/Linux && ./build-wheel.sh cp38-cp38 i686
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/Linux/output
 
 #  win-py35-32bit:
 #    runs-on: windows-2019
