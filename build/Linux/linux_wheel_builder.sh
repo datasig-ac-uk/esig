@@ -7,9 +7,10 @@ set -u -o xtrace
 py=$1
 arch=$2
 libdir=lib64
+mkl_arch=intel64
 
 pushd ../recombine
-./doall-linux.sh $libdir
+./doall-linux.sh $libdir $mkl_arch
 popd
 
 TMPDIR=tmp         # working folder for pip wheel

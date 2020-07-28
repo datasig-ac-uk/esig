@@ -23,17 +23,18 @@ jobs:
       - linux-py37-64bit
       - linux-py38-64bit
 
-      - win-py35-64bit
-      - win-py36-64bit
-      - win-py37-64bit
-      - win-py38-64bit
-
       # 32-bit recombine not available yet
 #      - linux-py35-32bit
 #      - linux-py36-32bit
 #      - linux-py37-32bit
 #      - linux-py38-32bit
 
+      - win-py35-64bit
+      - win-py36-64bit
+      - win-py37-64bit
+      - win-py38-64bit
+
+      # 32-bit recombine not available yet
 #      - win-py35-32bit
 #      - win-py36-32bit
 #      - win-py37-32bit
