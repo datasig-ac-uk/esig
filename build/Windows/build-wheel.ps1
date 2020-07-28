@@ -81,6 +81,7 @@ ls .\venv
 .\venv\Scripts\python.exe -m pip install wheeldir\$wheel
 
 # run tests
+# TODO: Python 3.8+ doesn't use PATH to find dependent DLLs
 $recombine_dll_dir="${HOME}/lyonstech/bin/"
 ls $recombine_dll_dir
 $env:PATH="$env:PATH;$recombine_dll_dir"
