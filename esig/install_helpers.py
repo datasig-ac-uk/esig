@@ -775,7 +775,8 @@ class InstallationConfiguration(object):
             # not sure why this is only needed on Windows
             return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
             # todo: lose hardcoded knowledge of recombine installation dir
-            recombine_lib_dir = os.path.join(os.environ['HOME'], "lyonstech", "lib")
+            from os.path import expanduser
+            recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
             os.listdir(recombine_lib_dir)
             return_list.append(recombine_lib_dir)
 
