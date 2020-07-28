@@ -30,9 +30,9 @@ jobs:
 #      - linux-py37-32bit
 #      - linux-py38-32bit
 
-      - win-py35-64bit
       # todo
-#      - win-py35-32bit
+#      - win-py35-64bit
+      - win-py35-32bit
 #      - win-py36-64bit
 #      - win-py36-32bit
 #      - win-py37-64bit
