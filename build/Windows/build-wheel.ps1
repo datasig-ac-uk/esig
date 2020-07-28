@@ -81,6 +81,9 @@ ls .\venv
 .\venv\Scripts\python.exe -m pip install wheeldir\$wheel
 
 # run tests
+$recombine_dll_dir="${HOME}/lyonstech/bin/"
+ls $recombine_dll_dir
+$env:PATH="$env:PATH;$recombine_dll_dir"
 .\venv\Scripts\\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
 if ($LASTEXITCODE -ne 0) {
    throw "Tests failed - will not copy wheel to output"
