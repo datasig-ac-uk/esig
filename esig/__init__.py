@@ -18,12 +18,14 @@ ESIG_PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
 # Python 3.8+ doesn't use PATH to locate DLLs; need to use add_dll_directory instead.
 # Not sure if this is the right place to do this, though; 3.8 Porting Guide says to do
 # this "while loading your library" (https://docs.python.org/3/whatsnew/3.8.html#bpo-36085-whatsnew).
-# add_dll_directory isn't available before 3.8.
+# Note that add_dll_directory doesn't exist on non-Windows platforms or before Python 3.8.
 import sys
-if sys.version_info[0] > 3 or (sys.version_info[0] == 3 and sys.version_info[1] >= 8):
+try:
     from os.path import expanduser
     recombine_dll_dir = os.path.join(expanduser("~"), "lyonstech", "bin")
     os.add_dll_directory(recombine_dll_dir)
+except AttributeError:
+    print("Ignoring attempt to add_dll_directory.")
 
 def get_version():
     """
