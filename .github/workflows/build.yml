@@ -251,6 +251,7 @@ jobs:
     - uses: actions/checkout@v2
     - name: Run build
       run: |
+        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
         cd build\Windows
         .\build-wheel.ps1 `
           -vs_version 14.1 `
