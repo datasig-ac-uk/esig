@@ -1,7 +1,7 @@
 #!/bin/bash -e
-
 ### script to build Python wheels for the esig package, adapted from
 ### Daniel Wilson-Nunn's original script.
+set -o xtrace
 
 p=$1 # Python version
 
@@ -53,5 +53,6 @@ fi
 # deactivate this virtualenv
 pyenv deactivate
 
-# cleanup
+# disable error propagation to avoid sporadic "directory not empty" error
+set +e
 rm -rf $TMPDIR

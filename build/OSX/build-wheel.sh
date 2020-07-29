@@ -1,13 +1,22 @@
 #!/bin/bash -e
 # Top-level script for building esig for MacOS.
 # $1: Python version
+set -u -o xtrace
 
 rm -rf ~/.pyenv/versions # for reproducibility
 
-brew install boost
-brew install pyenv
-brew install pyenv-virtualenv
-brew install openssl # required for Python 3.7
+pushd ../recombine
+./doall-macOS.sh
+popd
+
+function brew_maybe_install {
+   brew list $1 &>/dev/null || brew install $1
+}
+
+brew_maybe_install boost
+brew_maybe_install pyenv
+brew_maybe_install pyenv-virtualenv
+brew_maybe_install openssl # required for Python 3.7
 
 # Python versions.
 eval "$(pyenv init -)"
@@ -17,4 +26,4 @@ CFLAGS="-I$(brew --prefix openssl)/include" \
 LDFLAGS="-L$(brew --prefix openssl)/lib" \
 pyenv install --skip-existing $1
 
-source mac_wheel_builder.sh $1
+./mac_wheel_builder.sh $1

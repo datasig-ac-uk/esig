@@ -600,10 +600,10 @@ class InstallationConfiguration(object):
         if sys.argv[1].lower() == 'install':
             for argument in sys.argv:
                 if argument.startswith('--include-dirs='):
-                    self.include_dirs = argument[15:]
+                    self.include_dirs = argument[15:] # use length '--include-dirs=' instead
 
                 if argument.startswith('--library-dirs='):
-                    self.library_dirs = argument[15:]
+                    self.library_dirs = argument[15:] # use length '--library-dirs=' instead
 
             ComponentChecker.check_libraries(self.library_dirs)
             ComponentChecker.check_includes(self.include_dirs)
@@ -678,13 +678,19 @@ class InstallationConfiguration(object):
         # Add Python's include directory.
         return_list.append(sysconfig.get_python_inc())
 
-        # libalgebra sources + wrapper code for Python.
+        # libalgebra and recombine sources + wrapper code for Python.
+        # TODO: use standard os.path.join method here
+        # TODO: remove dependency on "recombine" having been cloned into /build/recombine
         if self.platform == PLATFORMS.WINDOWS:
             return_list.append('.\\src\\')
             return_list.append('.\\libalgebra\\')
+            return_list.append('.\\recombine\\')
+            return_list.append('.\\build\\recombine\\recombine\\')
         else:
             return_list.append('./src/')
             return_list.append('./libalgebra/')
+            return_list.append('./recombine/')
+            return_list.append('./build/recombine/recombine/')
 
         # Append any command-line supplied arguments to the list
         if self.__include_dirs is not None:
@@ -705,8 +711,6 @@ class InstallationConfiguration(object):
         elif self.platform != PLATFORMS.WINDOWS:
             return_list.append('/usr/include/')
 
-        # Now add any additional paths that have been specified below.
-        return_list = return_list + ADDITIONAL_INCLUDES[self.platform]
         return return_list
 
 
@@ -738,6 +742,7 @@ class InstallationConfiguration(object):
         """
         return_list = []
 
+        # TODO: why mixture of + and append? Do they both mean 'append'?
         # Append any command-line supplied paths to the list
         if self.__library_dirs is not None:
             return_list = return_list + self.__library_dirs
@@ -758,16 +763,23 @@ class InstallationConfiguration(object):
                 False: ('lib32', 'win32'),
             }
 
-            if python_version[0] < 3 or (python_version[0] == 3 and python_version[1] < 3):
-                compiler_version = 'msvc-9.0'
+            if python_version[0] == 3 and python_version[1] < 5:
+                compiler_version = 'msvc-10.0'
             else:
-                if python_version[0] == 3 and python_version[1] < 5:
-                    compiler_version = 'msvc-10.0'
-                else:
-                    compiler_version = 'msvc-14.0'
+                compiler_version = 'msvc-14.0'
 
             return_list.append(os.path.join(boost_root_env, '{lib_directory}-{compiler_version}'.format(lib_directory=lib_directory[self.is_x64][0], compiler_version=compiler_version)))
             return_list.append(os.path.join(boost_root_env, lib_directory[self.is_x64][1], 'lib'))
+            if not('MKLROOT' in os.environ):
+                raise "MKLROOT not defined."
+            # not sure why this is only needed on Windows
+            return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
+            # todo: lose hardcoded knowledge of recombine installation dir
+            from os.path import expanduser
+            recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
+            os.listdir(recombine_lib_dir)
+            return_list.append(recombine_lib_dir)
+
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
         elif self.platform == PLATFORMS.MACOS:
@@ -775,8 +787,7 @@ class InstallationConfiguration(object):
 
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
-        # Default to Linux -- probably a good assumption to make.
-        else:
+        elif self.platform == PLATFORMS.LINUX:
             include_directory = {
                 True: 'x86_64',
                 False: 'i386',
@@ -787,9 +798,6 @@ class InstallationConfiguration(object):
 
             if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
-
-        # Now add any additional paths that have been specified below.
-        return_list = return_list + ADDITIONAL_LIBRARIES[self.platform]
         return return_list
 
 
@@ -808,11 +816,13 @@ class InstallationConfiguration(object):
             self.__library_dirs = paths.split(os.pathsep)
 
 
+	# Python extension code built with distutils is compiled with the same set of compiler options,
+	# regardless of whether it's C or C++. We use C _and_ C++, which rules out certain compiler options.
     @property
     def extra_compile_args(self):
         """
         Returns a list of additional arguments that must be supplied to the compiler.
-        Platform dependent.
+        Platform and compiler dependent.
 
         Args:
             self (InstallationConfiguration): an object instance of InstanceConfiguration
@@ -828,7 +838,10 @@ class InstallationConfiguration(object):
             args.append('/D_SCL_SECURE_NO_WARNINGS')
             args.append('/bigobj')
         else:
-            args.append('-Wno-unused-but-set-variable')
+            # Clang will reject this when compiling C
+            if self.platform == PLATFORMS.LINUX:
+                args.append('-std=c++11') # want c99 as well, but not possible (see above)
+            args.append('-Wno-unused-but-set-variable') # moans on some platforms
 
         return args
 
@@ -837,7 +850,7 @@ class InstallationConfiguration(object):
     def linker_args(self):
         """
         Returns a list of additional arguments that must be used by the linker.
-        Returned lists are platform dependent.
+        Returned lists are platform and compiler dependent.
         """
         args = []
 
@@ -899,9 +912,10 @@ class InstallationConfiguration(object):
             list: list of strings, with each string representing a library used
         """
         libs = {
-            PLATFORMS.WINDOWS: [],
+            PLATFORMS.WINDOWS: ['recombine'],
+            # on the Mac, recombine is a framework, not a library; needs special treatment in setup.py
             PLATFORMS.MACOS: ['boost_system-mt','boost_thread-mt'],
-            PLATFORMS.LINUX: ['boost_system','boost_thread'],
+            PLATFORMS.LINUX: ['boost_system','boost_thread', 'recombine'],
             PLATFORMS.OTHER: ['boost_system','boost_thread'],
         }
 
@@ -910,27 +924,9 @@ class InstallationConfiguration(object):
 
 
 # A series of constants that are provided by the module.
-MINIMUM_PYTHON_VERSION = (2,7)  # The minimum acceptable version of Python -- set to 2.7.x.
+MINIMUM_PYTHON_VERSION = (2,7)
 MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
 PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS', 'OTHER'])
 
-# Add additional paths to the include-dirs path here if required.
-# Choose your platform and add a path string to the relevant list.
-ADDITIONAL_INCLUDES = {
-    PLATFORMS.WINDOWS: [],
-    PLATFORMS.LINUX: [],
-    PLATFORMS.MACOS: [],
-    PLATFORMS.OTHER: [],
-}
-
-# Add additional paths to the library-dirs path here if required.
-# Choose your platform and add a path string to the relevant list.
-ADDITIONAL_LIBRARIES = {
-    PLATFORMS.WINDOWS: [],
-    PLATFORMS.LINUX: [],
-    PLATFORMS.MACOS: [],
-    PLATFORMS.OTHER: [],
-}
-
-# Instantiates the singleton instance of the InstallationConfiguration.
+# singleton
 CONFIGURATION = InstallationConfiguration()

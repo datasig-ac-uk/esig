@@ -1,12 +1,6 @@
 #!/bin/bash -e
 
 # Each of these runs as a parallel job in the GitHub runner.
-./build-wheel.sh cp27-cp27m x86_64
-./build-wheel.sh cp27-cp27m i686
-./build-wheel.sh cp27-cp27mu x86_64
-./build-wheel.sh cp27-cp27mu i686
-./build-wheel.sh cp34-cp34m x86_64
-./build-wheel.sh cp34-cp34m i686
 ./build-wheel.sh cp35-cp35m x86_64
 ./build-wheel.sh cp35-cp35m i686
 ./build-wheel.sh cp36-cp36m x86_64

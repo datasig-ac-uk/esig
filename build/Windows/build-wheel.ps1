@@ -1,16 +1,18 @@
-param([string] $vs_version,            # {9.0, 14.1}
+param([string] $vs_version,            # {14.1}
       [string] $arch,                  # {32, 64}
       [string] $py_install_dir,
       [string] $py_installer)
 
 Set-PSDebug -Trace 1
-..\git-preamble.sh
+
+pushd ..\recombine
+.\doall-windows.ps1
+echo $env:MKLROOT
+ls $env:MKLROOT/lib/intel64
+popd
 
 if ($vs_version -eq "14.1") {
    # Use pre-installed Visual Studio
-} elseif ($vs_version -eq "9.0") {
-   curl -O https://download.microsoft.com/download/7/9/6/796EF2E4-801B-4FC4-AB28-B59FBF6D907B/VCForPython27.msi
-   msiexec.exe /i VCForPython27.msi /quiet
 } else {
    exit 1
 }
@@ -79,6 +81,10 @@ ls .\venv
 .\venv\Scripts\python.exe -m pip install wheeldir\$wheel
 
 # run tests
+# TODO: Python 3.8+ doesn't use PATH to find dependent DLLs
+$recombine_dll_dir="${HOME}/lyonstech/bin/"
+ls $recombine_dll_dir
+$env:PATH="$env:PATH;$recombine_dll_dir"
 .\venv\Scripts\\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
 if ($LASTEXITCODE -ne 0) {
    throw "Tests failed - will not copy wheel to output"
