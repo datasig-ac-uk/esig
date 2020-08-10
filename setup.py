@@ -42,6 +42,11 @@ esig_extension = Extension(
     extra_link_args=configuration.linker_args,
 )
 
+ESIG_DATA = ["VERSION", "ERROR_MESSAGE"]
+
+if configuration.platform == helpers.PLATFORMS.WINDOWS:
+    ESIG_DATA += ["lib", "libiomp5md.lib", "recombine.dll"]
+
 
 setup(
     name='esig',
@@ -62,7 +67,7 @@ setup(
     test_suite='esig.tests.get_suite',
 
     package_data={
-        'esig': ['VERSION', 'ERROR_MESSAGE'],
+        'esig': ESIG_DATA,
     },
 
     distclass=helpers.BinaryDistribution,
