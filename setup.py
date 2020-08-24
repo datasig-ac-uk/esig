@@ -45,7 +45,9 @@ esig_extension = Extension(
 ESIG_DATA = ["VERSION", "ERROR_MESSAGE"]
 
 if configuration.platform == helpers.PLATFORMS.WINDOWS:
-    ESIG_DATA += ["lib", "libiomp5md.dll", "recombine.dll"]
+    ESIG_DATA += [
+        os.path.join(os.path.expanduser("~"), "lyonstech", "bin", "libiomp5md.dll"),
+        os.path.join(os.path.expanduser("~"), "lyonstech", "bin", "recombine.dll")]
 
 
 setup(
