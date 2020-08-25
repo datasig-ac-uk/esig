@@ -46,11 +46,14 @@ PACKAGE_DATA = {
 	"esig": ["VERSION", "ERROR_MESSAGE"]
 }
 
+EAGER_RESOURCES = []
+
 if configuration.platform == helpers.PLATFORMS.WINDOWS:
-    PACKAGE_DATA[""] = [
-        os.path.join(os.path.expanduser("~"), "lyonstech", "bin", "libiomp5md.dll"),
-        os.path.join(os.path.expanduser("~"), "lyonstech", "bin", "recombine.dll")
+    PACKAGE_DATA["esig"] += [
+        os.path.join("libiomp5md.dll"),
+        os.path.join("recombine.dll")
     ]
+    EAGER_RESOURCES += ["libiomp5md.dll", "recombine.dll"]
 
 
 setup(
@@ -72,6 +75,7 @@ setup(
     test_suite='esig.tests.get_suite',
 
     package_data=PACKAGE_DATA,
+    eager_resources=EAGER_RESOURCES,
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
 
