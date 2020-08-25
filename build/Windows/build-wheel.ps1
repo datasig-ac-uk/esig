@@ -68,8 +68,8 @@ Invoke-Expression "$py_exe -m pip install virtualenv"
 
 # build the wheel
 pushd ..
-   cp ..\lyonstech\bin\recombine.dll ..\esig\recombine.dll
-   cp ..\lyonstech\bin\libiomp5md.dll ..\esig\libiomp5md.dll
+   cp ..\..\lyonstech\bin\recombine.dll ..\esig\recombine.dll
+   cp ..\..\lyonstech\bin\libiomp5md.dll ..\esig\libiomp5md.dll
    Invoke-Expression "$py_exe -m pip wheel -b Windows/ -w Windows/wheeldir/ .."
 popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
