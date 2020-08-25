@@ -42,12 +42,15 @@ esig_extension = Extension(
     extra_link_args=configuration.linker_args,
 )
 
-ESIG_DATA = ["VERSION", "ERROR_MESSAGE"]
+PACKAGE_DATA = {
+	"esig": ["VERSION", "ERROR_MESSAGE"]
+}
 
 if configuration.platform == helpers.PLATFORMS.WINDOWS:
-    ESIG_DATA += [
+    PACKAGE_DATA[""] = [
         os.path.join(os.path.expanduser("~"), "lyonstech", "bin", "libiomp5md.dll"),
-        os.path.join(os.path.expanduser("~"), "lyonstech", "bin", "recombine.dll")]
+        os.path.join(os.path.expanduser("~"), "lyonstech", "bin", "recombine.dll")
+    ]
 
 
 setup(
@@ -68,10 +71,7 @@ setup(
     packages=find_packages(),
     test_suite='esig.tests.get_suite',
 
-    package_data={
-        'esig': ESIG_DATA,
-    },
-
+    package_data=PACKAGE_DATA,
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
 
