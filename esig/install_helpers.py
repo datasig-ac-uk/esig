@@ -798,10 +798,10 @@ class InstallationConfiguration(object):
             # not sure why this is only needed on Windows
             #return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
             # todo: lose hardcoded knowledge of recombine installation dir
-            #from os.path import expanduser
-            #recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
-           # os.listdir(recombine_lib_dir)
-            #return_list.append(recombine_lib_dir)
+            from os.path import expanduser
+            recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
+            #os.listdir(recombine_lib_dir)
+            return_list.append(recombine_lib_dir)
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.

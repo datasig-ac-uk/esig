@@ -41,7 +41,7 @@ def get_version():
     """
     version_filename = os.path.join(ESIG_PACKAGE_ROOT, 'VERSION')
     f = open(version_filename, 'r')
-    version_string = f.read().split(' ')
+    version_string = f.read().strip().split(' ')
     f.close()
 
     return '.'.join(version_string)
