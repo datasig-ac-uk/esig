@@ -42,19 +42,6 @@ esig_extension = Extension(
     extra_link_args=configuration.linker_args,
 )
 
-PACKAGE_DATA = {
-	"esig": ["VERSION", "ERROR_MESSAGE"]
-}
-
-EAGER_RESOURCES = []
-
-if configuration.platform == helpers.PLATFORMS.WINDOWS:
-    PACKAGE_DATA["esig"] += [
-        os.path.join("libiomp5md.dll"),
-        os.path.join("recombine.dll")
-    ]
-    EAGER_RESOURCES += ["libiomp5md.dll", "recombine.dll"]
-
 
 setup(
     name='esig',
@@ -74,8 +61,10 @@ setup(
     packages=find_packages(),
     test_suite='esig.tests.get_suite',
 
-    package_data=PACKAGE_DATA,
-    eager_resources=EAGER_RESOURCES,
+    package_data={
+        'esig': ['VERSION', 'ERROR_MESSAGE'],
+    },
+
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
 
