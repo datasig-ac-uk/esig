@@ -3,6 +3,9 @@ import os
 import sys
 import fnmatch
 import platform
+
+from glob import glob as _glob
+
 from distutils import sysconfig
 from subprocess import Popen, PIPE
 from setuptools.dist import Distribution
@@ -17,6 +20,11 @@ from setuptools.command.build_ext import build_ext
 __author__ = 'David Maxwell <maxwelld90@gmail.com>'
 __date__ = '2017-09-05'
 __version__ = 5
+
+
+# I like this as a little helper function for globbing path components.
+def glob(*parts):
+    return _glob(os.path.join(*parts))
 
 
 def message_printer(message, is_failure=False, terminate=False):
@@ -293,15 +301,20 @@ class ComponentChecker(object):
         Returns:
             boolean: iif the library is found, True; False otherwise.
         """
+        #NOTE: I don't undertand why this code. Surely it would be better to use a glob here rather than fnmatch.
         library_wildcard = '{search_for}*.lib'.format(search_for=search_for)
 
         for path in paths_list:
-            try:
-                for f in os.listdir(path):
-                    if fnmatch.fnmatch(f, library_wildcard) and f.startswith(search_for):
-                        return True
-            except FileNotFoundError:
-                pass
+        #    try:
+        #        for f in os.listdir(path):
+        #            if fnmatch.fnmatch(f, library_wildcard) and f.startswith(search_for):
+        #                return True
+        #    except FileNotFoundError:  # This should never have occurred since f is taken from listdir.
+        #        pass
+
+            # I think this (much simpler) code does exactly the same thing.
+            if glob(path, library_wildcard):
+                return True
 
         return False
 
@@ -681,16 +694,26 @@ class InstallationConfiguration(object):
         # libalgebra and recombine sources + wrapper code for Python.
         # TODO: use standard os.path.join method here
         # TODO: remove dependency on "recombine" having been cloned into /build/recombine
-        if self.platform == PLATFORMS.WINDOWS:
-            return_list.append('.\\src\\')
-            return_list.append('.\\libalgebra\\')
-            return_list.append('.\\recombine\\')
-            return_list.append('.\\build\\recombine\\recombine\\')
-        else:
-            return_list.append('./src/')
-            return_list.append('./libalgebra/')
-            return_list.append('./recombine/')
-            return_list.append('./build/recombine/recombine/')
+        #if self.platform == PLATFORMS.WINDOWS:
+        #    return_list.append('.\\src\\')
+        #    return_list.append('.\\libalgebra\\')
+        #    return_list.append('.\\recombine\\')
+        #    return_list.append('.\\build\\recombine\\recombine\\')
+        #else:
+        #    return_list.append('./src/')
+        #    return_list.append('./libalgebra/')
+        #    return_list.append('./recombine/')
+        #    return_list.append('./build/recombine/recombine/')
+        _jn = os.path.join
+
+        # Platform independent joining. We probably don't need to use a join at all.
+        return_list.extend([
+            _jn(".", "src"),
+            _jn(".", "libalgebra"),
+            _jn(".", "recombine"),
+            _jn(".", "build", "recombine", "recombine")
+        ])
+        del _jn
 
         # Append any command-line supplied arguments to the list
         if self.__include_dirs is not None:
@@ -771,7 +794,7 @@ class InstallationConfiguration(object):
             return_list.append(os.path.join(boost_root_env, '{lib_directory}-{compiler_version}'.format(lib_directory=lib_directory[self.is_x64][0], compiler_version=compiler_version)))
             return_list.append(os.path.join(boost_root_env, lib_directory[self.is_x64][1], 'lib'))
             if not('MKLROOT' in os.environ):
-                raise "MKLROOT not defined."
+                raise RuntimeError("MKLROOT not defined.") #NOTE: errors must derive from Exception. I've wrapped this in a RuntimeError
             # not sure why this is only needed on Windows
             return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
             # todo: lose hardcoded knowledge of recombine installation dir
@@ -924,7 +947,7 @@ class InstallationConfiguration(object):
 
 
 # A series of constants that are provided by the module.
-MINIMUM_PYTHON_VERSION = (2,7)
+MINIMUM_PYTHON_VERSION = (2,7)  #NOTE: this should be changed for the new version
 MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
 PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS', 'OTHER'])
 

@@ -22,7 +22,8 @@ ESIG_PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
 import sys
 try:
     from os.path import expanduser
-    recombine_dll_dir = os.path.join(expanduser("~"), "lyonstech", "bin")
+    #recombine_dll_dir = os.path.join(expanduser("~"), "lyonstech", "bin")
+    recombine_dll_dir = ESIG_PACKAGE_ROOT
     os.add_dll_directory(recombine_dll_dir)
 except AttributeError:
     print("Ignoring attempt to add_dll_directory.")
