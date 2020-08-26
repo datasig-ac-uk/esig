@@ -793,15 +793,15 @@ class InstallationConfiguration(object):
 
             return_list.append(os.path.join(boost_root_env, '{lib_directory}-{compiler_version}'.format(lib_directory=lib_directory[self.is_x64][0], compiler_version=compiler_version)))
             return_list.append(os.path.join(boost_root_env, lib_directory[self.is_x64][1], 'lib'))
-            if not('MKLROOT' in os.environ):
-                raise RuntimeError("MKLROOT not defined.") #NOTE: errors must derive from Exception. I've wrapped this in a RuntimeError
+            #if not('MKLROOT' in os.environ):
+            #    raise RuntimeError("MKLROOT not defined.") #NOTE: errors must derive from Exception. I've wrapped this in a RuntimeError
             # not sure why this is only needed on Windows
             return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
             # todo: lose hardcoded knowledge of recombine installation dir
-            from os.path import expanduser
-            recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
-            os.listdir(recombine_lib_dir)
-            return_list.append(recombine_lib_dir)
+            #from os.path import expanduser
+            #recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
+           # os.listdir(recombine_lib_dir)
+            #return_list.append(recombine_lib_dir)
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
