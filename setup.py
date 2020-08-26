@@ -69,6 +69,7 @@ setup(
 
     description="This package provides \"rough path\" tools for analysing vector time series.",
     long_description=configuration.long_description,
+    long_description_content_type="text/markdown",  # Default is rst, update to markdown
 
     include_package_data=True,
     packages=find_packages(),
