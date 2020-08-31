@@ -26,7 +26,8 @@ try:
     recombine_dll_dir = ESIG_PACKAGE_ROOT
     os.add_dll_directory(recombine_dll_dir)
 except AttributeError:
-    print("Ignoring attempt to add_dll_directory.")
+    pass
+    #print("Ignoring attempt to add_dll_directory.")
 
 def get_version():
     """
