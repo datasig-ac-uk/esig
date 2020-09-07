@@ -800,7 +800,7 @@ class InstallationConfiguration(object):
             # todo: lose hardcoded knowledge of recombine installation dir
             from os.path import expanduser
             recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
-            os.listdir(recombine_lib_dir)
+            #os.listdir(recombine_lib_dir)
             return_list.append(recombine_lib_dir)
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
