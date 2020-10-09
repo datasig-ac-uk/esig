@@ -1,7 +1,8 @@
 import os
 from esig import install_helpers as helpers
 from setuptools import setup, find_packages, Extension
-
+from setuptools.command.build_ext import build_ext
+from tools.switch_generator import SwitchGenerator
 
 __author__ = 'David Maxwell <maxwelld90@gmail.com>'
 __date__ = '2017-09-01'
@@ -9,6 +10,45 @@ __date__ = '2017-09-01'
 
 configuration = helpers.CONFIGURATION
 configuration.package_abs_root = os.path.dirname(os.path.realpath(__file__))
+
+
+SWITCH_GEN = SwitchGenerator()
+
+#SWITCH_GEN = SwitchGenerator({
+#    2: 5,
+#    3: 5,
+#    4: 2,
+#    5: 2
+#})
+
+
+class BuildExtensionCommand(build_ext):
+    """
+    Extends the build_ext class, allowing for the injection of additional code into the build_ext process.
+    """
+    def run(self):
+        """
+        Attempts to import numpy and append the result of numpy.get_include() to the self.include_dirs list.
+        This is to avoid the circular issue of importing numpy at the top of the module.
+        See https://stackoverflow.com/a/42163080.
+
+        Args:
+            self (NumpyExtensionCommand): Instance of self.
+
+        Returns:
+            None
+        """
+        helpers.message_printer("Running extra esig pre-build commands...")
+
+        print("Building switch.h")
+        SWITCH_GEN.write_file()
+        print("Done")
+
+        import numpy
+        self.include_dirs.append(numpy.get_include())
+        build_ext.run(self)
+
+
 
 # https://stackoverflow.com/questions/2584595/building-a-python-module-and-linking-it-against-a-macosx-framework
 if configuration.platform == helpers.PLATFORMS.MACOS:
@@ -46,6 +86,12 @@ PACKAGE_DATA = {
 	"esig": ["VERSION", "ERROR_MESSAGE"]
 }
 
+EXTRAS_REQUIRE = {
+    "iisignature-backend": ["iisignature"],
+}
+
+
+
 EAGER_RESOURCES = []
 
 if configuration.platform == helpers.PLATFORMS.WINDOWS:
@@ -72,7 +118,7 @@ setup(
     long_description_content_type="text/markdown",  # Default is rst, update to markdown
 
     include_package_data=True,
-    packages=find_packages(),
+    packages=find_packages(exclude=("tools",)),
     test_suite='esig.tests.get_suite',
 
     package_data=PACKAGE_DATA,
@@ -83,6 +129,7 @@ setup(
     install_requires=['numpy>=1.7'],
     setup_requires=['numpy>=1.7'],
     tests_require=['numpy>=1.7'],
+    extras_require=EXTRAS_REQUIRE,
 
     classifiers=[
         'Development Status :: 3 - Alpha',
@@ -96,7 +143,7 @@ setup(
 
     cmdclass={
         'install': helpers.InstallExtensionCommand,
-        'build_ext': helpers.BuildExtensionCommand,
+        'build_ext': BuildExtensionCommand,
     },
 
 )

@@ -64,7 +64,7 @@ namespace {
 			  previous = next;
 		  }
 		}
-		std::vector<LIE*> pincrements;
+		std::vector<const LIE*> pincrements;
 		for (typename std::vector<LIE>::iterator it = increments.begin();
 			it != increments.end(); ++it)
 		  pincrements.push_back(&(*it));
@@ -354,10 +354,14 @@ extern "C" {
 	TOSIG_API int GetLogSig(PyArrayObject *stream, PyArrayObject *snk,
 		size_t width, size_t depth)
 	 {
+		try {
 		//execute the correct Templated Function and return the value
 #define TemplatedFn(depth,width) GetLogSigT<depth,width>(stream, snk)
 #include "switch.h"
 #undef TemplatedFn
+		} catch (std::exception& exc) {
+			PyErr_SetString(PyExc_RuntimeError, exc.what());
+		}
 		// only get here if the template arguments are out of range
 		return false;
 	 }
@@ -366,9 +370,13 @@ extern "C" {
 	TOSIG_API size_t GetLogSigSize(size_t width, size_t depth)
 	 {
 		//execute the correct Templated Function and return the value
+		try {
 #define TemplatedFn(depth,width) GetLogSigT<depth,width>()
 #include "switch.h"
 #undef TemplatedFn
+		} catch (std::exception& exc) {
+			PyErr_SetString(PyExc_RuntimeError, exc.what());
+		}
 		// only get here if the template arguments are out of range
 		return 0;
 	 }
@@ -378,9 +386,13 @@ extern "C" {
 		size_t width, size_t depth)
 	 {
 		//execute the correct Templated Function and return the value
+		try {
 #define TemplatedFn(depth,width) GetSigT<depth,width>(stream, snk)
 #include "switch.h"
 #undef TemplatedFn
+		} catch (std::exception& exc) {
+			PyErr_SetString(PyExc_RuntimeError, exc.what());
+		}
 		// only get here if the template arguments are out of range
 		return false;
 	 }
@@ -389,9 +401,13 @@ extern "C" {
 	TOSIG_API const size_t GetSigSize(size_t width, size_t depth)
 	 {
 		//execute the correct Templated Function and return the value
+		try {
 #define TemplatedFn(depth,width) GetSigT<depth,width>()
 #include "switch.h"
 #undef TemplatedFn
+		} catch (std::exception& exc) {
+			PyErr_SetString(PyExc_RuntimeError, exc.what());
+		}
 		// only get here if the template arguments are out of range
 		return 0;
 	 }

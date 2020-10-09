@@ -13,6 +13,7 @@ def get_suite():
     Returns:
         suite: A Python unittest suite, referring to all tests specified within the tests package.
     """
+    suite = unittest.TestLoader().discover()
     suite = unittest.TestSuite()
     suite.addTest(unittest.makeSuite(test_package.TestESIG))
     suite.addTest(unittest.makeSuite(test_package.TestRecombine))
@@ -27,11 +28,13 @@ def run_tests(terminate=False): # argument ignored
     Returns:
         terminates with exit code 1 if all tests pass successfully; 0 otherwise.
     """
-    suite = get_suite()
-    runner = unittest.TextTestRunner()
-    status = runner.run(suite).wasSuccessful()
+    #suite = get_suite()
+    #runner = unittest.TextTestRunner()
+    #status = runner.run(suite).wasSuccessful()
 
-    if not status:
-        sys.exit(1)
-    else:
-        sys.exit(0)
+    #if not status:
+    #    sys.exit(1)
+    #else:
+    #    sys.exit(0)
+
+    unittest.main(module="esig.tests")

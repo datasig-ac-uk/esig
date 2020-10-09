@@ -18,8 +18,8 @@ OUTPUTDIR=output   # location of tested wheels
 
 rm -rf $TMPDIR
 rm -rf wheelhouse
-rm -rf $OUTPUTDIR
-mkdir $OUTPUTDIR
+#rm -rf $OUTPUTDIR
+mkdir -p $OUTPUTDIR
 mkdir $TMPDIR
 
 pyexe=/opt/python/$py/bin/python
@@ -45,7 +45,8 @@ auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
 $pyexe -m virtualenv /tmp/$py
 source /tmp/$py/bin/activate
 pip install wheelhouse/esig*.whl
-python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
+#python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
+python -m unittest discover -s /data/esig/tests
 if [ $? -eq 0 ]
 then
 	echo "Tests passed - copying wheel to $OUTPUTDIR"
