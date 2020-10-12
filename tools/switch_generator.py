@@ -93,7 +93,7 @@ class SwitchGenerator:
         self.writeln("default :")
         text = "Legitimate depth of 2<->{} for records with width {} exceeds limit"
         self.writeln(
-            "throw std::runtime_error {{ \"{}\" }};".format(
+            "throw std::runtime_error ( \"{}\" );".format(
                 text.format(d, w)
             )
         )
@@ -101,13 +101,13 @@ class SwitchGenerator:
     def write_type_default(self):
         self.writeln("default :")
         text = "This type is not supported."
-        self.writeln("throw std::runtime_error {{ \"{}\" }};".format(text))
+        self.writeln("throw std::runtime_error ( \"{}\" );".format(text))
 
     def write_width_default(self):
         self.writeln("default :")
         text = "Legitimate width 2 <-> 256 exceeded"
         self.writeln(
-            "throw std::runtime_error {{ \"{}\" }};".format(text)
+            "throw std::runtime_error ( \"{}\" );".format(text)
         )
 
     def writeln(self, val):
