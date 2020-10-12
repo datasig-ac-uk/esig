@@ -85,7 +85,9 @@ ls .\venv
 # run tests
 # TODO: Python 3.8+ doesn't use PATH to find dependent DLLs
 
-.\venv\Scripts\\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
+#.\venv\Scripts\\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
+.\venv\Scripts\\python.exe -m unittest discover -s ..\..\esig\tests
+
 if ($LASTEXITCODE -ne 0) {
    throw "Tests failed - will not copy wheel to output"
 } else {

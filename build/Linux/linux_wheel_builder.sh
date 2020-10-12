@@ -18,7 +18,7 @@ OUTPUTDIR=output   # location of tested wheels
 
 rm -rf $TMPDIR
 rm -rf wheelhouse
-#rm -rf $OUTPUTDIR
+rm -rf $OUTPUTDIR
 mkdir -p $OUTPUTDIR
 mkdir $TMPDIR
 
