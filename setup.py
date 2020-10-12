@@ -1,5 +1,5 @@
 import os
-from esig import install_helpers as helpers
+from tools import install_helpers as helpers
 from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 from tools.switch_generator import SwitchGenerator
