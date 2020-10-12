@@ -25,6 +25,11 @@ class ArrayTestCase(unittest.TestCase):
     RTOL = 1e-3
     ATOL = 0.0
 
+    def assertEqual(self, actual, expected, *args, **kwargs):
+        if isinstance(actual, np.ndarray) or isinstance(expected, np.ndarray):
+            nptesting.assert_equal(actual, expected)
+        super().assertEqual(actual, expected, *args, **kwargs)
+
     def assert_allclose(self, actual, desired):
         """
         Custom assert method for Numpy arrays, built using
