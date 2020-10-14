@@ -64,7 +64,7 @@ namespace {
 			  previous = next;
 		  }
 		}
-		std::vector<const LIE*> pincrements;
+		std::vector<LIE*> pincrements;
 		for (typename std::vector<LIE>::iterator it = increments.begin();
 			it != increments.end(); ++it)
 		  pincrements.push_back(&(*it));
