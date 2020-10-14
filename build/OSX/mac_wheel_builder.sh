@@ -42,7 +42,7 @@ pyenv activate esig_test_env-$p
 pip install `ls ${TMPDIR}/*.whl`
 # run tests
 #python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
-python -m unittest discover -s "${pwd}/../../esig/tests"
+python -m unittest discover -s "../../esig/tests"
 if [ $? -eq 0 ]
 then
     echo "Tests passed."
