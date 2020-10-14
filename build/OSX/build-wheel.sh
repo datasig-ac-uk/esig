@@ -16,7 +16,8 @@ function brew_maybe_install {
 brew_maybe_install boost
 brew_maybe_install pyenv
 brew_maybe_install pyenv-virtualenv
-brew_maybe_install openssl # required for Python 3.7
+# Explicitly request openssl 1.1
+brew_maybe_install openssl@1.1 # required for Python 3.7
 
 # Python versions.
 eval "$(pyenv init -)"
