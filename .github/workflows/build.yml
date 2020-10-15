@@ -210,6 +210,7 @@ jobs:
         name: output
         path: build/Windows/output
 
+# Using Python3.7.9 instead of 3.7.0 to fix a strange build error
   win-py37-64bit:
     runs-on: windows-2019
     steps:
@@ -222,7 +223,7 @@ jobs:
           -vs_version 14.1 `
           -arch 64 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37 `
-          -py_installer 3.7.0/python-3.7.0-amd64.exe `
+          -py_installer 3.7.9/python-3.7.9-amd64.exe `
     - uses: actions/upload-artifact@v2
       with:
         name: output
