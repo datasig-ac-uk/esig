@@ -61,6 +61,6 @@ print(log_sig_keys) # prints " 1 2 [1,2]"
 There are two additional utility functions for computing the size of a signature or logsignature with a specified dimension and depth: `sigdim` and `logsigdim`.
 These functions return an integer that is the dimension of the Numpy array returned from the `stream2sig` or `stream2logsig` functions, respectively.
 
-esig also provides another function `recombine`, which performs a reduction of a measure defined on a large ensemble in a way so that the resulting measure has the same total mass, but is supported on a (relatively) small subset of the origional ensemble.
+esig also provides another function `recombine`, which performs a reduction of a measure defined on a large ensemble in a way so that the resulting measure has the same total mass, but is supported on a (relatively) small subset of the original ensemble.
 In particuar, the expected value over the ensemble with respect to the new measure agrees with that of the original measure.
 
