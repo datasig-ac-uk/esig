@@ -79,7 +79,7 @@ Invoke-Expression "$py_exe -m virtualenv venv"
 $wheel=(ls wheeldir\*.whl | Select-Object -First 1).Name
 
 echo $wheel
-ls .\venv
+ls .\venv\Scripts
 .\venv\Scripts\python.exe -m pip install wheeldir\$wheel
 
 # run tests
