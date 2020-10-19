@@ -21,8 +21,8 @@ PyDoc_STRVAR(stream2logsig_doc,
 	"stream2logsig(array(no_of_ticks x signal_dimension),"
 	" signature_degree) reads a 2 dimensional numpy array"
 	" of floats, \"the data in stream space\" and returns"
-	" a numpy vector containing the logsignature of the"
-	" vector series up to given signature_degree"
+	" a numpy vector containing the log signature of the"
+	" vector series up to given log signature degree"
 );
 
 PyDoc_STRVAR(stream2sig_doc,
@@ -30,33 +30,33 @@ PyDoc_STRVAR(stream2sig_doc,
 	" signature_degree) reads a 2 dimensional numpy array"
 	" of floats, \"the data in stream space\" and returns"
 	" a numpy vector containing the signature of the vector"
-	" series up to given signature_degree"
+	" series up to given signature degree"
 );
 
 PyDoc_STRVAR(logsigdim_doc, 
 	"logsigdim(signal_dimension, signature_degree) returns"
 	" a Py_ssize_t integer giving the dimension of the log"
-	" signature vector returned by array2logsig"
+	" signature vector returned by stream2logsig"
 );
 
 PyDoc_STRVAR(sigdim_doc, 
 	"sigdim(signal_dimension, signature_degree) returns"
 	" a Py_ssize_t integer giving the length of the"
-	" signature vector returned by array2logsig"
+	" signature vector returned by stream2logsig"
 );
 
 PyDoc_STRVAR(logsigkeys_doc, 
 	"logsigkeys(signal_dimension, signature_degree) returns,"
-	" in the order used by ...2logsig, a space separated ascii"
+	" in the order used by stream2logsig, a space separated ascii"
 	" string containing the keys associated the entries in the"
-	" log signature returned by ...2logsig"
+	" log signature returned by stream2logsig"
 );
 
 PyDoc_STRVAR(sigkeys_doc,
 	"sigkeys(signal_dimension, signature_degree) returns,"
-	" in the order used by ...2sig, a space separated ascii"
+	" in the order used by stream2sig, a space separated ascii"
 	" string containing the keys associated the entries in"
-	" the signature returned by ...2sig"
+	" the signature returned by stream2sig"
 );
 
 PyDoc_STRVAR(recombine_doc,
@@ -65,7 +65,7 @@ PyDoc_STRVAR(recombine_doc,
 	" array of vectors of type NP_DOUBLE referred to as"
 	" points, the selector is a list of indexes to rows in"
 	" the ensemble, weights is a list of positive weights of"
-	" equal length to the selector and defines an emirical"
+	" equal length to the selector and defines an empirical"
 	" measure on the points in the ensemble."
 	" Returns (retained_indexes, new weights) The arrays"
 	" index_array, weights_array are single index numpy arrays"
