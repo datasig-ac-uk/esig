@@ -1,2 +1,12 @@
 __pycache__
 .DS_Store
+
+.eggs/
+.mypy_cache/
+.venv
+*.egg-info/
+build/*/output/
+build/temp*/
+build/*/tmp/
+
+*.so*

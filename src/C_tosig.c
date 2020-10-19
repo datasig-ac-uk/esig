@@ -17,15 +17,84 @@
 
 /* #### Globals #################################### */
 
+PyDoc_STRVAR(stream2logsig_doc,
+	"stream2logsig(array(no_of_ticks x signal_dimension),"
+	" signature_degree) reads a 2 dimensional numpy array"
+	" of floats, \"the data in stream space\" and returns"
+	" a numpy vector containing the log signature of the"
+	" vector series up to given log signature degree"
+);
+
+PyDoc_STRVAR(stream2sig_doc,
+	"stream2logsig(array(no_of_ticks x signal_dimension),"
+	" signature_degree) reads a 2 dimensional numpy array"
+	" of floats, \"the data in stream space\" and returns"
+	" a numpy vector containing the signature of the vector"
+	" series up to given signature degree"
+);
+
+PyDoc_STRVAR(logsigdim_doc, 
+	"logsigdim(signal_dimension, signature_degree) returns"
+	" a Py_ssize_t integer giving the dimension of the log"
+	" signature vector returned by stream2logsig"
+);
+
+PyDoc_STRVAR(sigdim_doc, 
+	"sigdim(signal_dimension, signature_degree) returns"
+	" a Py_ssize_t integer giving the length of the"
+	" signature vector returned by stream2logsig"
+);
+
+PyDoc_STRVAR(logsigkeys_doc, 
+	"logsigkeys(signal_dimension, signature_degree) returns,"
+	" in the order used by stream2logsig, a space separated ascii"
+	" string containing the keys associated the entries in the"
+	" log signature returned by stream2logsig"
+);
+
+PyDoc_STRVAR(sigkeys_doc,
+	"sigkeys(signal_dimension, signature_degree) returns,"
+	" in the order used by stream2sig, a space separated ascii"
+	" string containing the keys associated the entries in"
+	" the signature returned by stream2sig"
+);
+
+PyDoc_STRVAR(recombine_doc,
+	"recombine(ensemble, selector=(0,1,2,...no_points-1),"
+	" weights = (1,1,..,1), degree = 1) ensemble is a numpy"
+	" array of vectors of type NP_DOUBLE referred to as"
+	" points, the selector is a list of indexes to rows in"
+	" the ensemble, weights is a list of positive weights of"
+	" equal length to the selector and defines an empirical"
+	" measure on the points in the ensemble."
+	" Returns (retained_indexes, new weights) The arrays"
+	" index_array, weights_array are single index numpy arrays"
+	" and must have the same dimension and represent the indexes"
+	" of the vectors and a mass distribution of positive weights"
+	" (and at least one must be strictly positive) on them."
+	" The returned weights are strictly positive, have the"
+	" same total mass - but are supported on a subset of the"
+	" initial chosen set of locations. If degree has its default"
+	" value of 1 then the vector data has the same integral under"
+	" both weight distributions; if degree is k then both sets of"
+	" weights will have the same moments for all degrees at most k;"
+	" the indexes returned are a subset of indexes in input"
+	" index_array and mass cannot be further recombined onto a"
+	" proper subset while preserving the integral and moments."
+	" The default is to index of all the points, the default"
+	" weights are 1. on each point indexed."
+	" The default degree is one."
+);
+
 /* ==== Set up the methods table ====================== */
 static PyMethodDef _C_tosigMethods[] = {
-		{"stream2logsig", tologsig, METH_VARARGS,"stream2logsig(array(no_of_ticks x signal_dimension), signature_degree) reads a 2 dimensional numpy array of floats, \"the data in stream space\" and returns a numpy vector containing the logsignature of the vector series up to given signature_degree"},
-		{"stream2sig", tosig, METH_VARARGS, "stream2logsig(array(no_of_ticks x signal_dimension), signature_degree) reads a 2 dimensional numpy array of floats, \"the data in stream space\" and returns a numpy vector containing the signature of the vector series up to given signature_degree"},
-		{"logsigdim", getlogsigsize, METH_VARARGS,"logsigdim(signal_dimension, signature_degree) returns a Py_ssize_t integer giving the dimension of the log signature vector returned by array2logsig"},
-		{"sigdim", getsigsize, METH_VARARGS,"sigdim(signal_dimension, signature_degree) returns a Py_ssize_t integer giving the length of the signature vector returned by array2logsig"},
-		{"logsigkeys",showlogsigkeys, METH_VARARGS, "logsigkeys(signal_dimension, signature_degree) returns, in the order used by ...2logsig, a space separated ascii string containing the keys associated the entries in the log signature returned by ...2logsig"},
-		{"sigkeys",showsigkeys, METH_VARARGS, "sigkeys(signal_dimension, signature_degree) returns, in the order used by ...2sig, a space separated ascii string containing the keys associated the entries in the signature returned by ...2sig"},
-		{"recombine", (PyCFunction) pyrecombine, METH_VARARGS | METH_KEYWORDS, "recombine(ensemble, selector=(0,1,2,...no_points-1), weights = (1,1,..,1), degree = 1) ensemble is a numpy array of vectors of type NP_DOUBLE referred to as points, the selector is a list of indexes to rows in the ensemble, weights is a list of positive weights of equal length to the selector and defines an emirical measure on the points in the ensemble. Returns (retained_indexes, new weights) The arrays index_array, weights_array are single index numpy arrays and must have the same dimension and represent the indexes of the vectors and a mass distribution of positive weights (and at least one must be strictly positive) on them. The returned weights are strictly positive, have the same total mass - but are supported on a subset of the initial chosen set of locations. If degree has its default value of 1 then the vector data has the same integral under both weight distributions; if degree is k then both sets of weights will have the same moments for all degrees at most k; the indexes returned are a subset of indexes in input index_array and mass cannot be further recombined onto a proper subset while preserving the integral and moments. The default is to index of all the points, the default weights are 1. on each point indexed. The default degree is one."},
+		{"stream2logsig", tologsig, METH_VARARGS, stream2logsig_doc},
+		{"stream2sig", tosig, METH_VARARGS, stream2sig_doc},
+		{"logsigdim", getlogsigsize, METH_VARARGS, logsigdim_doc},
+		{"sigdim", getsigsize, METH_VARARGS, sigdim_doc},
+		{"logsigkeys",showlogsigkeys, METH_VARARGS, logsigkeys_doc},
+		{"sigkeys",showsigkeys, METH_VARARGS, sigkeys_doc},
+		{"recombine", (PyCFunction) pyrecombine, METH_VARARGS | METH_KEYWORDS, recombine_doc},
 		{NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -104,7 +173,10 @@ static PyObject* tologsig(PyObject* self, PyObject* args)
 	vecout=(PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
 
 	/* Do the calculation. */
-	GetLogSig(seriesin, vecout, width, depth);
+	// SM 8/10/20: added error handling to the switch statement
+	// to be handled here
+	if (!GetLogSig(seriesin, vecout, width, depth))
+		return NULL;
 
 	return PyArray_Return(vecout);
 }
@@ -145,7 +217,10 @@ static PyObject* tosig(PyObject* self, PyObject* args)
 	vecout=(PyArrayObject*) PyArray_SimpleNew(1, dims, NPY_DOUBLE);
 
 	/* Do the calculation. */
-	GetSig(seriesin, vecout, width, depth);
+	// SM 8/10/20: added error handling to the switch statement
+	// to be handled here
+	if (!GetSig(seriesin, vecout, width, depth))
+		return NULL;
 
 	return PyArray_Return(vecout);
 }
@@ -164,6 +239,12 @@ static PyObject* getlogsigsize(PyObject* self, PyObject* args)
 		&width, &depth))  return NULL;
 
 	ans = GetLogSigSize((size_t)width, (size_t)depth);
+	
+	// SM 8/10/20: added error handling to the switch statement
+	// to be handled here
+	if (ans == 0)
+		return NULL;
+
 	return Py_BuildValue("n", ans);
 }
 
@@ -181,6 +262,12 @@ static PyObject* getsigsize(PyObject* self, PyObject* args)
 		&width, &depth))  return NULL;
 
 	ans = GetSigSize((size_t)width, (size_t)depth);
+
+	// SM 8/10/20: added error handling to the switch statement
+	// to be handled here
+	if (ans == 0)
+		return NULL;
+
 	return Py_BuildValue("n", ans);
 }
 

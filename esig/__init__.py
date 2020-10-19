@@ -5,9 +5,10 @@
 # Basic package functions
 #
 
-
+import functools
 import os
 
+import numpy
 
 __author__ = 'David Maxwell <dmaxwell@turing.ac.uk>'
 __date__ = '2017-07-21'
@@ -28,6 +29,33 @@ try:
 except AttributeError:
     pass
     #print("Ignoring attempt to add_dll_directory.")
+
+from esig.backends import get_backend, set_backend, list_backends
+
+try:
+    from esig.tosig import recombine
+except ImportError:
+    def recombine(*args, **kwargs):
+        raise NotImplementedError
+
+
+__all__ = [
+    "get_version",
+    "is_library_loaded",
+    "get_library_load_error",
+    "stream2sig",
+    "stream2logsig",
+    "logsigdim",
+    "sigdim",
+    "sigkeys",
+    "logsigkeys",
+    "recombine",
+    "get_backend",
+    "set_backend",
+    "list_backends",
+    "backends"
+]
+
 
 def get_version():
     """
@@ -81,3 +109,97 @@ def get_library_load_error():
         return None
     except ImportError as e:
         return e.msg
+
+
+def _verify_stream_arg(*types):
+    """
+    Helper decorator to provide type checking on the
+    Numpy arrays
+    """
+    if types and callable(types[0]):
+        fn = types[0]
+        types = None
+    else:
+        fn = None
+
+    types = types or (numpy.float32, numpy.float64)
+
+    def decorator(func):
+
+        @functools.wraps(func)
+        def wrapper(stream, *args, **kwargs):
+            as_array = numpy.array(stream)
+            if not as_array.dtype in types:
+                str_types = tuple(map(str, types))
+                raise TypeError("Values must be of one of the following types {}".format(str_types))
+            
+            return func(as_array, *args, **kwargs)
+        return wrapper
+    
+    if fn:
+        return decorator(fn)
+    return decorator
+
+
+@_verify_stream_arg
+def stream2sig(stream, depth):
+    """
+    Compute the signature of a stream
+    """
+    if depth <= 0:
+        raise ValueError("Depth must be at least 1")
+    elif depth == 1:
+        return numpy.concatenate([[1.0], numpy.sum(numpy.diff(stream, axis=0), axis=0)])
+
+    backend = get_backend()
+    return backend.compute_signature(stream, depth)
+
+
+@_verify_stream_arg
+def stream2logsig(stream, depth):
+    """
+    Compute the log signature of a stream
+    """
+    if depth <= 0:
+        raise ValueError("Depth must be at least 1")
+    elif depth == 1:
+        return numpy.sum(numpy.diff(stream, axis=0), axis=0)
+
+    backend = get_backend()
+    return backend.compute_log_signature(stream, depth)
+
+
+def logsigdim(dimension, depth):
+    """
+    Get the number of elements in the log signature
+    """
+    if dimension == 0:
+        raise ValueError("Dimension 0 is invalid")
+    if depth == 1:
+        return dimension
+    return get_backend().log_sig_dim(dimension, depth)
+
+
+def sigdim(dimension, depth):
+    """
+    Get the number of elements in the signature 
+    """
+    if dimension == 0:
+        raise ValueError("Dimension 0 is invalid")
+    if depth == 1:
+        return dimension
+    return get_backend().sig_dim(dimension, depth)
+
+
+def logsigkeys(dimension, depth):
+    """
+    Get the keys that correspond to the elements in the log signature
+    """
+    return get_backend().log_sig_keys(dimension, depth)
+
+
+def sigkeys(dimension, depth):
+    """
+    Get the keys that correspond to the elements in the signature
+    """
+    return get_backend().sig_keys(dimension, depth)

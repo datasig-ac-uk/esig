@@ -529,27 +529,7 @@ class InstallExtensionCommand(install):
         install.finalize_options(self)
 
 
-class BuildExtensionCommand(build_ext):
-    """
-    Extends the build_ext class, allowing for the injection of additional code into the build_ext process.
-    """
-    def run(self):
-        """
-        Attempts to import numpy and append the result of numpy.get_include() to the self.include_dirs list.
-        This is to avoid the circular issue of importing numpy at the top of the module.
-        See https://stackoverflow.com/a/42163080.
 
-        Args:
-            self (NumpyExtensionCommand): Instance of self.
-
-        Returns:
-            None
-        """
-        message_printer("Running extra esig pre-build commands...")
-
-        import numpy
-        self.include_dirs.append(numpy.get_include())
-        build_ext.run(self)
 
 
 class Enum(set):

@@ -1,4 +1,5 @@
 import sys
+import os
 import unittest
 from . import test_package
 
@@ -13,9 +14,10 @@ def get_suite():
     Returns:
         suite: A Python unittest suite, referring to all tests specified within the tests package.
     """
-    suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(test_package.TestESIG))
-    suite.addTest(unittest.makeSuite(test_package.TestRecombine))
+    package_root = os.path.dirname(os.path.abspath(__file__))
+    suite = unittest.TestLoader().discover(package_root)
+    #suite.addTest(unittest.makeSuite(test_package.TestESIG))
+    #suite.addTest(unittest.makeSuite(test_package.TestRecombine))
 
     return suite
 
@@ -35,3 +37,5 @@ def run_tests(terminate=False): # argument ignored
         sys.exit(1)
     else:
         sys.exit(0)
+
+    #unittest.main(module="esig.tests")

@@ -13,7 +13,7 @@ jobs:
     needs:
       - sdist
 
-      - mac-py35
+#      - mac-py35
       - mac-py36
       - mac-py37
       - mac-py38
@@ -68,18 +68,18 @@ jobs:
         path: build/sdist
 
   # Mac
-  mac-py35:
-    runs-on: macos-10.15
-    steps:
-    - uses: actions/checkout@v2
-    - name: Build for Python 3.5
-      run: |
-        source build/git-preamble.sh ${{ secrets.recombine_login }}
-        cd build/OSX && ./build-wheel.sh 3.5.5
-    - uses: actions/upload-artifact@v2
-      with:
-        name: output
-        path: build/OSX/output
+#  mac-py35:
+#    runs-on: macos-10.15
+#    steps:
+#    - uses: actions/checkout@v2
+#    - name: Build for Python 3.5
+#      run: |
+#        source build/git-preamble.sh ${{ secrets.recombine_login }}
+#        cd build/OSX && ./build-wheel.sh 3.5.5
+#    - uses: actions/upload-artifact@v2
+#      with:
+#        name: output
+#        path: build/OSX/output
 
   mac-py36:
     runs-on: macos-10.15
@@ -210,6 +210,7 @@ jobs:
         name: output
         path: build/Windows/output
 
+# Using Python3.7.9 instead of 3.7.0 to fix a strange build error
   win-py37-64bit:
     runs-on: windows-2019
     steps:
@@ -222,7 +223,7 @@ jobs:
           -vs_version 14.1 `
           -arch 64 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37 `
-          -py_installer 3.7.0/python-3.7.0-amd64.exe `
+          -py_installer 3.7.4/python-3.7.4-amd64.exe `
     - uses: actions/upload-artifact@v2
       with:
         name: output

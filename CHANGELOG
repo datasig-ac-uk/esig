@@ -1,0 +1,13 @@
+0.8.0
+    - Added Python interface in the package root to computation backends
+    - Added iisignature backend to allow computation of signatures using the iisignature package
+    - Added support for computing depth 1 signatures and logsignatures
+    - Added new unit tests.
+    - Made some changes to the build script
+    - Added Python 3.9 build target
+
+0.7.4
+    - Fixed message displayed for Python versions below 3.8 when importing esig
+0.7.3
+    - Added recombine function
+    
