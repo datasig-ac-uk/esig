@@ -8,4 +8,5 @@ include src/*.c
 include src/*.cpp
 include libalgebra/addons/*.h
 include libalgebra/libalgebra/*.h
+include tools/*.py
 exclude .DS_Store
