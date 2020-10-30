@@ -73,7 +73,8 @@ esig_extension = Extension(
         'src/C_tosig.h',
         'src/ToSig.cpp',
         'src/switch.h',
-        'recombine/TestVec/OstreamContainerOverloads.h'
+        'recombine/TestVec/OstreamContainerOverloads.h',
+        'recombine/_recombine.h'
     ],
     include_dirs=configuration.include_dirs,
     library_dirs=configuration.library_dirs,
@@ -125,6 +126,7 @@ setup(
     eager_resources=EAGER_RESOURCES,
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
+
 
     install_requires=['numpy>=1.7'],
     setup_requires=['numpy>=1.7'],

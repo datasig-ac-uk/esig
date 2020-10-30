@@ -64,3 +64,25 @@ These functions return an integer that is the dimension of the Numpy array retur
 esig also provides another function `recombine`, which performs a reduction of a measure defined on a large ensemble in a way so that the resulting measure has the same total mass, but is supported on a (relatively) small subset of the original ensemble.
 In particuar, the expected value over the ensemble with respect to the new measure agrees with that of the original measure.
 
+### Using alternative computation backends
+esig uses libalgebra as a backend for computing signatures and log signatures
+ by default.
+However, the computation backend can be changed to instead use an alternative
+ library for computing signatures and log signatures.
+This is achieved by using the `set_backend` function in esig and providing
+ the name of the backed that you wish to use.
+For example, we can switch to using the `iisignature` package as a backend by
+ first installing the `iisignature` package and then using the command
+```python3
+import esig
+esig.set_backend("iisignature")
+```
+To make it easier to install and use `iisignature` as a backend, it is
+ offered as an optional extra when installing esig:
+```
+python3.8 -m pip install esig[iisignature]
+```
+You can also define your own backend for performing calculations by creating
+ a class derived from `esig.backends.BackendBase`, implementing the methods
+ `describe_path` (log_signature) and `signature` and related methods.
+
