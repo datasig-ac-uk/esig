@@ -1,3 +1,10 @@
+0.8.2
+    - Added builds for Python3.9
+    - Updated README
+
+0.8.1
+    - Minor fixes to build routine
+
 0.8.0
     - Added Python interface in the package root to computation backends
     - Added iisignature backend to allow computation of signatures using the iisignature package
