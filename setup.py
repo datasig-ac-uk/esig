@@ -129,8 +129,8 @@ setup(
 
 
     install_requires=['numpy>=1.7'],
-    setup_requires=['numpy>=1.7', 'pandas'],
-    tests_require=['numpy>=1.7', 'pandas'],
+    setup_requires=['numpy>=1.7'],
+    tests_require=['numpy>=1.7'],
     extras_require=EXTRAS_REQUIRE,
 
     classifiers=[
