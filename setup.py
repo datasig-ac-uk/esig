@@ -127,6 +127,7 @@ setup(
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
 
+
     install_requires=['numpy>=1.7'],
     setup_requires=['numpy>=1.7', 'pandas'],
     tests_require=['numpy>=1.7', 'pandas'],
