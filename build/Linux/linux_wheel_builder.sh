@@ -45,7 +45,6 @@ auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
 $pyexe -m virtualenv /tmp/$py
 source /tmp/$py/bin/activate
 pip install wheelhouse/esig*.whl
-#python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
 python -m unittest discover -s /data/esig/tests
 if [ $? -eq 0 ]
 then
