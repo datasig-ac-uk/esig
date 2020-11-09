@@ -31,7 +31,7 @@ pip install --upgrade numpy
 pip install --upgrade delocate
 # build the wheel
 pushd .. # circular file path if run from OSX folder
-    pip wheel -b OSX/$TMPDIR -w OSX/$TMPDIR ..
+    pip wheel -w OSX/$TMPDIR ..
 popd
 # combine other dynamic libraries into the wheel to make it portable
 delocate-wheel -v $TMPDIR/esig*.whl
