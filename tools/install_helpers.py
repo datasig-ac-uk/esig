@@ -27,7 +27,6 @@ class InstallationConfiguration(object):
         print("Starting esig installer...")
         self.__package_abs_root = package_abs_root
         self.include_dirs = None
-        self.library_dirs = None
 
 
     @property
@@ -111,17 +110,12 @@ class InstallationConfiguration(object):
     @property
     def library_dirs(self):
         """
-        Returns a list of directories with which to search for libraries.
+        Return a list of directories to search for libraries.
 
         Returns:
             list of strings.
         """
         return_list = []
-
-        # TODO: why mixture of + and append? Do they both mean 'append'?
-        # Append any command-line supplied paths to the list
-        if self.library_dirs is not None:
-            return_list = return_list + self.library_dirs
 
         # Jump into Terry's old code.
         boost_root_env = ''
