@@ -159,28 +159,14 @@ class InstallationConfiguration(object):
         return_list.append(sysconfig.get_python_inc())
 
         # libalgebra and recombine sources + wrapper code for Python.
-        # TODO: use standard os.path.join method here
         # TODO: remove dependency on "recombine" having been cloned into /build/recombine
-        #if self.platform == PLATFORMS.WINDOWS:
-        #    return_list.append('.\\src\\')
-        #    return_list.append('.\\libalgebra\\')
-        #    return_list.append('.\\recombine\\')
-        #    return_list.append('.\\build\\recombine\\recombine\\')
-        #else:
-        #    return_list.append('./src/')
-        #    return_list.append('./libalgebra/')
-        #    return_list.append('./recombine/')
-        #    return_list.append('./build/recombine/recombine/')
-        _jn = os.path.join
 
-        # Platform independent joining. We probably don't need to use a join at all.
         return_list.extend([
-            _jn(".", "src"),
-            _jn(".", "libalgebra"),
-            _jn(".", "recombine"),
-            _jn(".", "build", "recombine", "recombine")
+            os.path.join(".", "src"),
+            os.path.join(".", "libalgebra"),
+            os.path.join(".", "recombine"),
+            os.path.join(".", "build", "recombine", "recombine")
         ])
-        del _jn
 
         # Append any command-line supplied arguments to the list
         if self.__include_dirs is not None:
