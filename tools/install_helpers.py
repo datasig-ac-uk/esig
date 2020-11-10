@@ -584,20 +584,6 @@ class InstallationConfiguration(object):
         return self.__package_abs_root
 
 
-    @package_abs_root.setter
-    def package_abs_root(self, path):
-        """
-        Sets the absolute root path of the esig package.
-
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
-            path (string): the path, represented as string
-        Returns:
-            None
-        """
-        self.__package_abs_root = path
-
-
     @property
     def include_dirs(self):
         """
