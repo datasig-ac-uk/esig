@@ -37,6 +37,8 @@ def message_printer(message, is_failure=False, terminate=False):
         is_failure (boolean): indicates whether the message represents a failure (and thus determines whether to use stdout or stderr).
         terminate (boolean): denotes whether the installer should stop after printing the message.
     """
+    MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
+
     def get_error_message():
         """
         Loads the error message from the ERROR_MESSAGE file. Assumes that it is located in the same directory as this module.
@@ -47,7 +49,6 @@ def message_printer(message, is_failure=False, terminate=False):
         Returns:
             string: the error message to display.
         """
-        MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
         dir_path = os.path.abspath(os.path.dirname(__file__))
         filename = os.path.join(dir_path, 'ERROR_MESSAGE')
         return_str = ""
