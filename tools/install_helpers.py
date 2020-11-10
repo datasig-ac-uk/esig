@@ -151,7 +151,6 @@ class InstallationConfiguration(object):
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
         elif self.platform == PLATFORM.LINUX:
-            pass
 #            include_directory = {
 #                True: 'x86_64',
 #                False: 'i386',
@@ -160,8 +159,8 @@ class InstallationConfiguration(object):
 #            return_list.append('/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is64bit]))
 #            return_list.append('/usr/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is64bit]))
 #
-#            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
-#                return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+           if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
+               return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
         return return_list
 
 
