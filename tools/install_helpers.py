@@ -55,23 +55,6 @@ class BinaryDistribution(Distribution):
         return False
 
 
-class InstallExtensionCommand(install):
-    """
-    Runs a series of checks to determine if the package can be successfully installed and run.
-    Extends the install class.
-    """
-    user_options = install.user_options + [
-        ('include-dirs=', None, None),
-        ('library-dirs=', None, None)
-    ]
-
-
-    def initialize_options(self):
-        install.initialize_options(self)
-        self.include_dirs = ''
-        self.library_dirs = ''
-
-
 class Enum(set):
     """
     A simple class emulating an enum type.
@@ -178,22 +161,6 @@ class InstallationConfiguration(object):
             return_list.append('/usr/include/')
 
         return return_list
-
-
-    @include_dirs.setter
-    def include_dirs(self, paths):
-        """
-        Sets the internal attribute for directories to include. Accepts a list of strings.
-        This is used if the additional command-line argument --include-dirs is provided.
-
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
-            paths (list): a list of strings, with each string representing a path
-        Returns:
-            None
-        """
-        if paths != '':
-            self.__include_dirs = paths.split(os.pathsep)
 
 
     @property
