@@ -538,9 +538,9 @@ class InstallationConfiguration(object):
     """
     The installation configuration class, an instance of which provides the relevant details required for installing the esig package.
     """
-    def __init__(self):
+    def __init__(self, package_abs_root):
         message_printer("Starting esig installer...")
-        self.__package_abs_root = os.path.dirname(os.path.realpath(__file__))
+        self.__package_abs_root = package_abs_root
         self.__include_dirs = None
         self.__library_dirs = None
 
@@ -845,6 +845,3 @@ class InstallationConfiguration(object):
 MINIMUM_PYTHON_VERSION = (2,7)  #NOTE: this should be changed for the new version
 MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
 PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS', 'OTHER'])
-
-# singleton
-CONFIGURATION = InstallationConfiguration()

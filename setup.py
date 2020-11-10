@@ -8,7 +8,7 @@ __author__ = 'David Maxwell <maxwelld90@gmail.com>'
 __date__ = '2017-09-01'
 
 
-configuration = helpers.CONFIGURATION
+configuration = helpers.InstallationConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
 
 SWITCH_GEN = SwitchGenerator()
