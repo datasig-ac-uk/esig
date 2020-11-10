@@ -59,15 +59,15 @@ class InstallationConfiguration(object):
         Returns:
             list of strings.
         """
-        return_list = []
+        dirs = []
 
         # Add Python's include directory.
-        return_list.append(sysconfig.get_python_inc())
+#        dirs.append(sysconfig.get_python_inc())
 
         # libalgebra and recombine sources + wrapper code for Python.
         # TODO: remove dependency on "recombine" having been cloned into /build/recombine
 
-        return_list.extend([
+        dirs.extend([
             os.path.join(".", "src"),
             os.path.join(".", "libalgebra"),
             os.path.join(".", "recombine"),
@@ -76,20 +76,20 @@ class InstallationConfiguration(object):
 
         # Add the contents of the CPATH environment variable.
         if 'CPATH' in os.environ and os.environ['CPATH'] != '':
-            return_list = os.environ['CPATH'].split(os.pathsep)
+            dirs = os.environ['CPATH'].split(os.pathsep)
 
         # This is now based upon Terry's code, to include standard locations for Boost.
         if 'BOOST_ROOT' in os.environ and os.environ['BOOST_ROOT'] != '':
-            return_list.append(os.environ['BOOST_ROOT'])
+            dirs.append(os.environ['BOOST_ROOT'])
 
         # On a Mac, Macports/Homebrew is likely to install headers to this location.
         if self.platform == PLATFORM.MACOS:
-            return_list.append('/opt/local/include/')
+            dirs.append('/opt/local/include/')
         # Fallback for not MacOS or Windows. Assume Linux.
         elif self.platform != PLATFORM.WINDOWS:
-            return_list.append('/usr/include/')
+            dirs.append('/usr/include/')
 
-        return return_list
+        return dirs
 
 
     @property
@@ -100,7 +100,7 @@ class InstallationConfiguration(object):
         Returns:
             list of strings.
         """
-        return_list = []
+        dirs = []
 
         if not 'BOOST_ROOT' in os.environ:
             raise RuntimeError("BOOST_ROOT not defined.")
@@ -113,29 +113,29 @@ class InstallationConfiguration(object):
             }
 
             lib1, lib2 = lib_directory[self.is64bit]
-            return_list.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0')))
-            return_list.append(os.path.join(boost_root_env, lib2, 'lib'))
+            dirs.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0'))
+            dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
 
             # not sure why this is only needed on Windows
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
-            return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
+            dirs.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
 
             # todo: lose hardcoded knowledge of recombine installation dir
             recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
-            return_list.append(recombine_lib_dir)
+            dirs.append(recombine_lib_dir)
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
         elif self.platform == PLATFORM.MACOS:
-#            return_list.append('/opt/local/lib/')
+#            dirs.append('/opt/local/lib/')
 
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
-                return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
+                dirs = dirs + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
         elif self.platform == PLATFORM.LINUX:
            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
-               return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
-        return return_list
+               dirs = dirs + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+        return dirs
 
 
 	# Python extension code built with distutils is compiled with the same set of compiler options,
