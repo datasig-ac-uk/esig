@@ -37,8 +37,7 @@ class BuildExtensionCommand(build_ext):
         Returns:
             None
         """
-        helpers.message_printer("Running extra esig pre-build commands...")
-
+        print("Running extra esig pre-build commands...")
         print("Building switch.h")
         SWITCH_GEN.write_file()
         print("Done")

@@ -24,96 +24,6 @@ def glob(*parts):
     return _glob(os.path.join(*parts))
 
 
-def message_printer(message, is_failure=False, terminate=False):
-    """
-    Prints a message to either stdout or stderr (depending upon the argument configuration).
-    Message can be a single line (string) or multi-line (list of strings).
-    If the message is indicating a failure, set is_failure to True to report to stderr. If is_failure is set to True, a general
-    message will also be displayed to the user indicating commonly occurring issues that may be preventing successful execution.
-    If the displayed message indicates that the installer cannot continue, setting terminate to True will stop the process.
-    This will occur after printing the message -- and the installer will stop with an error code of 1.
-
-    Args:
-        message (string): a single line of text to display.
-        message (list): a list of strings, each string representing a line of the output message.
-        is_failure (boolean): indicates whether the message represents a failure (and thus determines whether to use stdout or stderr).
-        terminate (boolean): denotes whether the installer should stop after printing the message.
-    """
-    MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
-
-    error_message = textwrap.dedent(
-    """If you see this message, compilation and installation unfortunately failed. If
-       building from source, the esig package requires the Boost C++ library to be
-       installed and correctly configured. Installation most likely failed because the
-       installer was not able to locate Boost.
-
-       Please make sure you have done the following.
-           * Downloaded and installed a copy of Boost.
-           How you do this varies from platform to platorm.
-           * Provided the necessary paths to Boost include files and libraries.
-           This is only necessary when installing Boost to a non-standard
-           location.
-           If you do this, you can use the --include-paths and --library-paths
-           arguments.
-
-       Once you have done this, esig should install successfully. For more
-       information, you can refer to the online documentation. It's available at
-       http://esig.readthedocs.io/en/latest/troubleshooting.html.""")
-
-    display_message = ""
-
-    if is_failure:
-        display_message = "{prefix}Something went wrong! Please review the messages below to rectify the problem.{linebreak}{prefix}{linebreak}".format(
-            prefix=MESSAGE_PREFIX,
-            linebreak=os.linesep,)
-
-    if type(message) == list:
-        for line in message:
-            display_message = ("{display_message}{prefix}{line}{linebreak}").format(
-                                    display_message=display_message,
-                                    linebreak=os.linesep,
-                                    prefix=MESSAGE_PREFIX,
-                                    line=line)
-
-        display_message = display_message.rstrip(os.linesep)
-    else:
-        display_message = "{display_message}{prefix}{message}".format(
-                            prefix=MESSAGE_PREFIX,
-                            display_message=display_message,
-                            linebreak=os.linesep,
-                            message=message,)
-
-    if is_failure or terminate:
-        display_message = '{display_message}{linebreak}'.format(
-            display_message=display_message,
-            linebreak=os.linesep,)
-
-    if is_failure:
-        display_message = ("{display_message}{prefix}{linebreak}"
-                           "{prefix}General Information{linebreak}"
-                           "{prefix}==================={linebreak}"
-                           "{error_message}").format(
-                               display_message=display_message,
-                               prefix=MESSAGE_PREFIX,
-                               linebreak=os.linesep,
-                               error_message=error_message)
-
-        print_destination = sys.stderr
-    else:
-        print_destination = sys.stdout
-
-    if terminate:
-        display_message = "{display_message}{prefix}{linebreak}{prefix}Now terminating.{linebreak}".format(
-                                display_message=display_message,
-                                linebreak=os.linesep,
-                                prefix=MESSAGE_PREFIX,)
-
-    print(display_message, file=print_destination)
-
-    if terminate:
-        sys.exit(1)
-
-
 def get_platform():
     """
     Returns an enum specifying the type of operating system currently used.
@@ -201,7 +111,7 @@ class InstallationConfiguration(object):
     The installation configuration class, an instance of which provides the relevant details required for installing the esig package.
     """
     def __init__(self, package_abs_root):
-        message_printer("Starting esig installer...", True)
+        print("Starting esig installer...")
         self.__package_abs_root = package_abs_root
         self.__include_dirs = None
         self.__library_dirs = None
