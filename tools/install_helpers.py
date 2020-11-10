@@ -21,17 +21,16 @@ class BinaryDistribution(Distribution):
 
 class InstallationConfiguration(object):
     """
-    The installation configuration class, an instance of which provides the relevant details required for installing the esig package.
+    The installation configuration class, providing details required for installing esig.
     """
     def __init__(self, package_abs_root):
         print("Starting esig installer...")
         self.__package_abs_root = package_abs_root
 
-
     @property
     def platform(self):
         """
-        Returns an enum specifying the type of operating system currently used.
+        Indicate the host platform.
 
         Returns:
             one of PLATFORM.WINDOWS, PLATFORM.LINUX or PLATFORM.MACOS.
@@ -48,7 +47,7 @@ class InstallationConfiguration(object):
         if reported_platform not in platform_map.keys():
             raise Exception(reported_platform + " not a recognised platform.")
 
-        return platform_enums[reported_platform]
+        return platform_map[reported_platform]
 
 
     @property
