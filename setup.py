@@ -142,7 +142,7 @@ setup(
         ],
 
     cmdclass={
-        'install': helpers.InstallExtensionCommand,
+#        'install': helpers.InstallExtensionCommand,
         'build_ext': BuildExtensionCommand,
     },
 
