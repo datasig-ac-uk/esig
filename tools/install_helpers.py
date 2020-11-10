@@ -544,21 +544,6 @@ class InstallationConfiguration(object):
         self.__include_dirs = None
         self.__library_dirs = None
 
-        self.__run_checks()
-
-
-    def __run_checks(self):
-        """
-        Does nothing.
-
-        Args:
-            self (InstallationConfiguration): instance of InstanceConfiguration.
-
-        Returns:
-            None
-        """
-        pass
-
 
     @property
     def platform(self):
