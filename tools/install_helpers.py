@@ -3,6 +3,7 @@ import os
 import sys
 import fnmatch
 import platform
+import textwrap
 
 from glob import glob as _glob
 
@@ -12,12 +13,13 @@ from setuptools.dist import Distribution
 from setuptools.command.install import install
 from setuptools.command.build_ext import build_ext
 
+
 #
 # Auxiliary classes and helper functions to assist with the building of esig.
 # These are used by the setup.py module -- which is in turn processed by setuptools.
 #
 
-# I like this as a little helper function for globbing path components.
+# Helper function for globbing path components.
 def glob(*parts):
     return _glob(os.path.join(*parts))
 
@@ -39,39 +41,24 @@ def message_printer(message, is_failure=False, terminate=False):
     """
     MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
 
-    def get_error_message():
-        """
-        Loads the error message from the ERROR_MESSAGE file. Assumes that it is located in the same directory as this module.
-        The message is then returned as a string.
+    error_message = textwrap.dedent(
+    """If you see this message, compilation and installation unfortunately failed. If
+       building from source, the esig package requires the Boost C++ library to be
+       installed and correctly configured. Installation most likely failed because the
+       installer was not able to locate Boost.
 
-        Args:
-            None
-        Returns:
-            string: the error message to display.
-        """
-        dir_path = os.path.abspath(os.path.dirname(__file__))
-        filename = os.path.join(dir_path, 'ERROR_MESSAGE')
-        return_str = ""
+       Please make sure you have done the following.
+           * Downloaded and installed a copy of Boost.
+           How you do this varies from platform to platorm.
+           * Provided the necessary paths to Boost include files and libraries.
+           This is only necessary when installing Boost to a non-standard
+           location.
+           If you do this, you can use the --include-paths and --library-paths
+           arguments.
 
-        f = open(filename, 'r')
-
-        for line in f:
-            line = line.strip()
-
-            line = "{prefix}{line}{linebreak}".format(
-                prefix=MESSAGE_PREFIX,
-                line=line,
-                linebreak=os.linesep,
-            )
-
-            return_str = "{return_str}{line}".format(
-                return_str=return_str,
-                line=line,
-            )
-
-        f.close()
-        return return_str
-
+       Once you have done this, esig should install successfully. For more
+       information, you can refer to the online documentation. It's available at
+       http://esig.readthedocs.io/en/latest/troubleshooting.html.""")
 
     display_message = ""
 
@@ -109,7 +96,7 @@ def message_printer(message, is_failure=False, terminate=False):
                                display_message=display_message,
                                prefix=MESSAGE_PREFIX,
                                linebreak=os.linesep,
-                               error_message=get_error_message())
+                               error_message=error_message)
 
         print_destination = sys.stderr
     else:
@@ -214,7 +201,7 @@ class InstallationConfiguration(object):
     The installation configuration class, an instance of which provides the relevant details required for installing the esig package.
     """
     def __init__(self, package_abs_root):
-        message_printer("Starting esig installer...")
+        message_printer("Starting esig installer...", True)
         self.__package_abs_root = package_abs_root
         self.__include_dirs = None
         self.__library_dirs = None
