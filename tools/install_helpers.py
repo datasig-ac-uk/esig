@@ -171,23 +171,6 @@ class ComponentChecker(object):
 
 
     @staticmethod
-    def check_python_version():
-        """
-        Checks the version of Python. If it is less than MINIMUM_PYTHON_VERSION, the method returns False.
-        Otherwise, True is returned.
-
-        Args:
-            None
-        Returns:
-            bool: True iif the Python version is suitable; False otherwise.
-        """
-        if sys.version_info < MINIMUM_PYTHON_VERSION:
-            return False
-
-        return True
-
-
-    @staticmethod
     def check_libraries(paths_list):
         """
         Checks for the availability of required library files, as specified in ComponentChecker._required_libraries.
@@ -583,13 +566,6 @@ class InstallationConfiguration(object):
         Returns:
             None
         """
-        if not ComponentChecker.check_python_version():
-            error_message = ["Your version of Python is incompatible with esig.",
-                             "At a minimum, you require version {version}. Please consider upgrading and try again.".format(
-                                 version='.'.join(str(x) for x in MINIMUM_PYTHON_VERSION))]
-
-            message_printer(error_message, is_failure=True, terminate=True)
-
         if sys.argv[1].lower() == 'install':
             for argument in sys.argv:
                 if argument.startswith('--include-dirs='):
