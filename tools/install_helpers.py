@@ -20,29 +20,6 @@ class BinaryDistribution(Distribution):
         return False
 
 
-class Enum(set):
-    """
-    A simple class emulating an enum type.
-    Extends the set type.
-    """
-    def __getattr__(self, name):
-        """
-        Given the name specified, returns the enum value corresponding to that name.
-        If the name does not exist, an AttributeError is raised.
-
-        Args:
-            name (string): the name of the enum to find
-        Returns:
-            string: the string representation (if it exists)
-        Raises:
-            AttributeError: raised if the enum name cannot be found within the instance.
-        """
-        if name in self:
-            return name
-
-        raise AttributeError
-
-
 class InstallationConfiguration(object):
     """
     The installation configuration class, an instance of which provides the relevant details required for installing the esig package.
@@ -59,18 +36,16 @@ class InstallationConfiguration(object):
         """
         Returns an enum specifying the type of operating system currently used.
 
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
         Returns:
-            PLATFORMS: an enum representation of the platform currently used (WINDOWS, LINUX, MACOS).
+            one of PLATFORM.WINDOWS, PLATFORM.LINUX or PLATFORM.MACOS.
         """
         reported_platform = platform.system().lower()
 
         platform_enums = {
-            'windows': PLATFORMS.WINDOWS,
-            'linux': PLATFORMS.LINUX,
-            'linux2': PLATFORMS.LINUX,
-            'darwin': PLATFORMS.MACOS,
+            'windows': PLATFORM.WINDOWS,
+            'linux': PLATFORM.LINUX,
+            'linux2': PLATFORM.LINUX,
+            'darwin': PLATFORM.MACOS,
         }
 
         if reported_platform not in platform_enums.keys():
@@ -82,10 +57,10 @@ class InstallationConfiguration(object):
     @property
     def is_x64(self):
         """
-        Returns a boolean indicating whether the current platform is 64-bit (True) or not (False).
+        Returns a boolean indicating whether the current platform is 64-bit.
 
         Returns:
-            bool: True if the platform is x64, False otherwise.
+            bool: True if the platform is 64-bit, False otherwise.
         """
         return sys.maxsize > 2**32
 
@@ -125,10 +100,10 @@ class InstallationConfiguration(object):
             return_list.append(os.environ['BOOST_ROOT'])
 
         # On a Mac, Macports/Homebrew is likely to install headers to this location.
-        if self.platform == PLATFORMS.MACOS:
+        if self.platform == PLATFORM.MACOS:
             return_list.append('/opt/local/include/')
         # Fallback for not MacOS or Windows. Assume Linux.
-        elif self.platform != PLATFORMS.WINDOWS:
+        elif self.platform != PLATFORM.WINDOWS:
             return_list.append('/usr/include/')
 
         return return_list
@@ -159,7 +134,7 @@ class InstallationConfiguration(object):
 
         # On Windows, we can follow a pretty set-in-stone path structure, all hailing from BOOST_ROOT.
         # The version of the MSVC compiler depends upon the version of Python being used.
-        if self.platform == PLATFORMS.WINDOWS:
+        if self.platform == PLATFORM.WINDOWS:
             lib_directory = {
                 True: ('lib64', 'x64'),
                 False: ('lib32', 'win32'),
@@ -184,12 +159,12 @@ class InstallationConfiguration(object):
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
-        elif self.platform == PLATFORMS.MACOS:
+        elif self.platform == PLATFORM.MACOS:
             return_list.append('/opt/local/lib/')
 
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
-        elif self.platform == PLATFORMS.LINUX:
+        elif self.platform == PLATFORM.LINUX:
             include_directory = {
                 True: 'x86_64',
                 False: 'i386',
@@ -215,7 +190,7 @@ class InstallationConfiguration(object):
         """
         args = []
 
-        if self.platform == PLATFORMS.WINDOWS:
+        if self.platform == PLATFORM.WINDOWS:
             args.append('/EHsc')
             args.append('/DWINVER=0x0601')
             args.append('/D_WIN32_WINNT=0x0601')
@@ -223,7 +198,7 @@ class InstallationConfiguration(object):
             args.append('/bigobj')
         else:
             # Clang will reject this when compiling C
-            if self.platform == PLATFORMS.LINUX:
+            if self.platform == PLATFORM.LINUX:
                 args.append('-std=c++11') # want c99 as well, but not possible (see above)
             args.append('-Wno-unused-but-set-variable') # moans on some platforms
 
@@ -239,7 +214,7 @@ class InstallationConfiguration(object):
 
         # How can we statically link for MACOS/LINUX? -static does not work on Linux.
 
-        if self.platform == PLATFORMS.MACOS:
+        if self.platform == PLATFORM.MACOS:
             args.append('-static')
 
         return args
@@ -283,13 +258,17 @@ class InstallationConfiguration(object):
             list: list of strings, with each string representing a library used
         """
         libs = {
-            PLATFORMS.WINDOWS: ['recombine'],
+            PLATFORM.WINDOWS: ['recombine'],
             # on the Mac, recombine is a framework, not a library; needs special treatment in setup.py
-            PLATFORMS.MACOS: ['boost_system-mt','boost_thread-mt'],
-            PLATFORMS.LINUX: ['boost_system','boost_thread', 'recombine'],
+            PLATFORM.MACOS: ['boost_system-mt','boost_thread-mt'],
+            PLATFORM.LINUX: ['boost_system','boost_thread', 'recombine'],
         }
 
         return libs[self.platform]
 
 
-PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS'])
+PLATFORM = {
+    WINDOWS: 'WINDOWS',
+    LINUX: 'LINUX',
+    MACOS: 'MACOS'
+}

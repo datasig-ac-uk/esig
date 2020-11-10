@@ -49,7 +49,7 @@ class BuildExtensionCommand(build_ext):
 
 
 # https://stackoverflow.com/questions/2584595/building-a-python-module-and-linking-it-against-a-macosx-framework
-if configuration.platform == helpers.PLATFORMS.MACOS:
+if configuration.platform == helpers.PLATFORM.MACOS:
     home = os.environ["HOME"]
     os.environ['LDFLAGS'] = \
         '-F ' + home + '/lyonstech/ ' + \
@@ -81,24 +81,24 @@ esig_extension = Extension(
     extra_link_args=configuration.linker_args,
 )
 
-PACKAGE_DATA = {
+package_data = {
 	"esig": ["VERSION", "ERROR_MESSAGE"]
 }
 
-EXTRAS_REQUIRE = {
+extras_require = {
     "iisignature-backend": ["iisignature"],
 }
 
 
 
-EAGER_RESOURCES = []
+eager_resources = []
 
-if configuration.platform == helpers.PLATFORMS.WINDOWS:
-    PACKAGE_DATA["esig"] += [
+if configuration.platform == helpers.PLATFORM.WINDOWS:
+    package_data["esig"] += [
         os.path.join("libiomp5md.dll"),
         os.path.join("recombine.dll")
     ]
-    EAGER_RESOURCES += ["libiomp5md.dll", "recombine.dll"]
+    eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
 
 setup(
@@ -120,8 +120,8 @@ setup(
     packages=find_packages(exclude=("tools",)),
     test_suite='esig.tests.get_suite',
 
-    package_data=PACKAGE_DATA,
-    eager_resources=EAGER_RESOURCES,
+    package_data=package_data,
+    eager_resources=eager_resources,
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
 
@@ -129,7 +129,7 @@ setup(
     install_requires=['numpy>=1.7'],
     setup_requires=['numpy>=1.7'],
     tests_require=['numpy>=1.7'],
-    extras_require=EXTRAS_REQUIRE,
+    extras_require=extras_require,
 
     classifiers=[
         'Development Status :: 3 - Alpha',
