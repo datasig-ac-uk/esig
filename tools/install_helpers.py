@@ -554,11 +554,7 @@ class InstallationConfiguration(object):
 
     def __run_checks(self):
         """
-        Runs a series of startup checks. At present:
-            - checks the version of Python;
-            - checks for required libraries; and
-            - checks for required header (include) files.
-        If all checks pass, then compilation should work.
+        Does nothing.
 
         Args:
             self (InstallationConfiguration): instance of InstanceConfiguration.
@@ -566,16 +562,7 @@ class InstallationConfiguration(object):
         Returns:
             None
         """
-        if sys.argv[1].lower() == 'install':
-            for argument in sys.argv:
-                if argument.startswith('--include-dirs='):
-                    self.include_dirs = argument[15:] # use length '--include-dirs=' instead
-
-                if argument.startswith('--library-dirs='):
-                    self.library_dirs = argument[15:] # use length '--library-dirs=' instead
-
-            ComponentChecker.check_libraries(self.library_dirs)
-            ComponentChecker.check_includes(self.include_dirs)
+        pass
 
 
     @property
