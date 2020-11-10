@@ -31,7 +31,6 @@ class Enum(set):
         If the name does not exist, an AttributeError is raised.
 
         Args:
-            self (Enum): an instance of type Enum
             name (string): the name of the enum to find
         Returns:
             string: the string representation (if it exists)
@@ -75,7 +74,7 @@ class InstallationConfiguration(object):
         }
 
         if reported_platform not in platform_enums.keys():
-            return PLATFORMS.OTHER
+            raise Exception(reported_platform + " not a recognised platform.")
 
         return platform_enums[reported_platform]
 
@@ -85,8 +84,6 @@ class InstallationConfiguration(object):
         """
         Returns a boolean indicating whether the current platform is 64-bit (True) or not (False).
 
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
         Returns:
             bool: True if the platform is x64, False otherwise.
         """
@@ -96,12 +93,9 @@ class InstallationConfiguration(object):
     def include_dirs(self):
         """
         Returns a list of directories with which to search for include files.
-        A series of hard-coded included paths are appended to the end of the stored list.
 
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
         Returns:
-            list: a list of strings, with each string denoting a path.
+            list of strings.
         """
         return_list = []
 
@@ -145,10 +139,8 @@ class InstallationConfiguration(object):
         """
         Returns a list of directories with which to search for libraries.
 
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
         Returns:
-            list: a list of strings, with each string denoting a path to a library include directory.
+            list of strings.
         """
         return_list = []
 
@@ -211,33 +203,15 @@ class InstallationConfiguration(object):
         return return_list
 
 
-    @library_dirs.setter
-    def library_dirs(self, paths):
-        """
-        Sets the internal attribute for directories in which libraries may be found.
-
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
-            paths (list): a list of strings, with each string representing a path
-        Returns:
-            None
-        """
-        if paths != '':
-            self.__library_dirs = paths.split(os.pathsep)
-
-
 	# Python extension code built with distutils is compiled with the same set of compiler options,
 	# regardless of whether it's C or C++. We use C _and_ C++, which rules out certain compiler options.
     @property
     def extra_compile_args(self):
         """
-        Returns a list of additional arguments that must be supplied to the compiler.
-        Platform and compiler dependent.
+        Returns a list of additional platform/compiler-dependent compiler arguments.
 
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
         Returns:
-            list: a list of strings, each string representing an argument to supply to the compiler.
+            list of strings.
         """
         args = []
 
@@ -259,8 +233,7 @@ class InstallationConfiguration(object):
     @property
     def linker_args(self):
         """
-        Returns a list of additional arguments that must be used by the linker.
-        Returned lists are platform and compiler dependent.
+        Returns a list of additional platform/compiler-dependent linker arguments.
         """
         args = []
 
@@ -275,39 +248,29 @@ class InstallationConfiguration(object):
     @property
     def esig_version(self):
         """
-        Returns a string representing the version number of esig.
-        The version is extracted from the VERSION file, found in the base of the package.
+        Extract the version number from the VERSION file found in the package root.
 
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
         Returns:
             str: a string representing the version number, in the format MAJOR.MINOR.RELEASE.
         """
         version_path = os.path.join(self.__package_abs_root, 'esig', 'VERSION')
 
         with open(version_path, 'r') as version_file:
-            version = (version_file.read().strip()).replace(' ', '.')
-
-        return version
+            return (version_file.read().strip()).replace(' ', '.')
 
 
     @property
     def long_description(self):
         """
-        Returns a string representing the long description for the esig package.
-        The long description of the contents of the README.md file in the base of the package.
+        Extract the contents of the README.md file found in the package root.
 
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
         Returns:
             str: a string representing the readme file.
         """
         readme_path = os.path.join(self.__package_abs_root, 'README.md')
 
         with open(readme_path, 'r') as f:
-            long_description = f.read()
-
-        return long_description
+            return f.read()
 
 
     @property
@@ -316,8 +279,6 @@ class InstallationConfiguration(object):
         Returns a list of libraries that are used by esig.
         Note that on Windows, library selection is done automatically, therefore no libraries are required.
 
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
         Returns:
             list: list of strings, with each string representing a library used
         """
@@ -326,10 +287,9 @@ class InstallationConfiguration(object):
             # on the Mac, recombine is a framework, not a library; needs special treatment in setup.py
             PLATFORMS.MACOS: ['boost_system-mt','boost_thread-mt'],
             PLATFORMS.LINUX: ['boost_system','boost_thread', 'recombine'],
-            PLATFORMS.OTHER: ['boost_system','boost_thread'],
         }
 
         return libs[self.platform]
 
 
-PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS', 'OTHER'])
+PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS'])
