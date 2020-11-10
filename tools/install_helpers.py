@@ -72,16 +72,6 @@ class InstallExtensionCommand(install):
         self.library_dirs = ''
 
 
-    def finalize_options(self):
-        if self.include_dirs != '':
-            CONFIGURATION.include_dirs = self.include_dirs
-
-        if self.library_dirs != '':
-            CONFIGURATION.library_dirs = self.library_dirs
-
-        install.finalize_options(self)
-
-
 class Enum(set):
     """
     A simple class emulating an enum type.
