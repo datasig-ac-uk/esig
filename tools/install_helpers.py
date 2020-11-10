@@ -47,6 +47,7 @@ def message_printer(message, is_failure=False, terminate=False):
         Returns:
             string: the error message to display.
         """
+        MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
         dir_path = os.path.abspath(os.path.dirname(__file__))
         filename = os.path.join(dir_path, 'ERROR_MESSAGE')
         return_str = ""
@@ -153,7 +154,6 @@ class ComponentChecker(object):
     """
     A class providing a series of static methods to check for the existence of modules and header files,
     or whatever needs to be checked for the compilation process to work successfully.
-    Fully decoupled from any other components of the installer's helpers. Noice.
     """
     _sample_includes = {
         'boost': ['boost/thread/shared_mutex.hpp'],
@@ -163,109 +163,6 @@ class ComponentChecker(object):
         'boost': {'system': ['libboost_system', 'libboost_system-mt'],
                   'thread': ['libboost_thread', 'libboost_thread-mt'],}
     }  # The names of libraries that are required for the compilation process. Alternative names can be used.
-
-
-    @staticmethod
-    def check_libraries(paths_list):
-        """
-        Checks for the availability of required library files, as specified in ComponentChecker._required_libraries.
-        Paths to potential locations where the libraries are stored is specified by parameter paths_list.
-        If, by the end of scanning all directories, one or more required libraries cannot be found, the installer will
-        display an error message explaining what to do to rectify the problem, and will terminate.
-
-        Args:
-            paths_list (list): a list of strings, with each string representing a system path to a location of libraries.
-        Returns:
-            None
-        """
-        platform = get_platform()
-
-        checkers = {
-            PLATFORMS.MACOS: ComponentChecker.__dyld_check,
-            PLATFORMS.WINDOWS: ComponentChecker.__win32_check,
-            PLATFORMS.LINUX: ComponentChecker.__ld_check,
-            PLATFORMS.OTHER: ComponentChecker.__ld_check,
-        }
-
-        def prepare_data_structure():
-            """
-            Prepares a data structure for processing. Obtains data from ComponentChecker._required_libraries.
-            Repurposes this initial data structure into a list of dictionaries, each dictionary containing information on
-            required libraries. Includes a boolean 'found' key/value pair, storing whether finding the library was successful or not.
-
-            Args:
-                None
-
-            Returns:
-                list: list of dictionaries, representing information on the libraries to locate.
-            """
-            return_ds = []
-
-            for package_name in ComponentChecker._required_libraries:
-                for library_name in ComponentChecker._required_libraries[package_name]:
-                    library_list = ComponentChecker._required_libraries[package_name][library_name]
-
-                    return_ds.append({'package': package_name,
-                                      'library_name': library_name,
-                                      'libraries': library_list, 'found': False})
-
-            return return_ds
-
-
-        def get_missing_libraries(library_list):
-            """
-            Returns a list of dictionaries where the required library has not been found.
-            Essentially, this function acts as a filter.
-
-            Args:
-                library_list (list): list of dictionaries representing information on libraries.
-
-            Returns:
-                list: filtered list of dictionaries, where only those where the associated library was not found are present.
-            """
-            return_list = []
-
-            for library in library_list:
-                if not library['found']:
-                    return_list.append(library)
-
-            return return_list
-
-        library_dict = prepare_data_structure()
-
-        # Iterate over the data structure, checking to see what libraries can be found.
-        for library_object in library_dict:
-            libraries = library_object['libraries']
-
-            for library in libraries:
-                exists = checkers[platform](paths_list, library)
-
-                if exists:
-                    library_object['found'] = True
-
-        missing_libraries = get_missing_libraries(library_dict)
-
-        if len(missing_libraries) > 0:
-            # If this condition evaluates to True, there's a missing library and we cannot continue.
-            missing_libraries_message = []
-
-            missing_libraries_message.append("We couldn't find one or more required libraries. It (or they) are listed below.")
-            missing_libraries_message.append("Please fix this problem before continuting.")
-            missing_libraries_message.append("Try using the --library-dirs argument when running the installer.")
-            missing_libraries_message.append("")
-            missing_libraries_message.append("Missing library/libraries:")
-
-            for library in missing_libraries:
-                missing_libraries_message.append("    Package {package_name}, library {library_name} ({library_list})".format(
-                    package_name=library['package'],
-                    library_name=library['library_name'],
-                    library_list=' or '.join(library['libraries'])
-                ))
-
-            message_printer(missing_libraries_message, is_failure=True, terminate=True)
-
-        message_printer("Required libraries found! Hurrah!")
-
 
     @staticmethod
     def __win32_check(paths_list, search_for):
@@ -463,20 +360,10 @@ class ComponentChecker(object):
         message_printer("Include files successfully found.")
 
 
+# Tells setuptools that package is a binary distribution
+# https://lucumr.pocoo.org/2014/1/27/python-on-wheels/
 class BinaryDistribution(Distribution):
-    """
-    A simple class that tells setuptools that the package is a binary distribution -- that is, it is not "pure" Python.
-    """
     def is_pure(self):
-        """
-        Always returns False, denoting that the package is not "pure" Python.
-
-        Args:
-            None
-
-        Returns:
-            bool: False
-        """
         return False
 
 
@@ -505,9 +392,6 @@ class InstallExtensionCommand(install):
             CONFIGURATION.library_dirs = self.library_dirs
 
         install.finalize_options(self)
-
-
-
 
 
 class Enum(set):
@@ -840,8 +724,4 @@ class InstallationConfiguration(object):
         return libs[self.platform]
 
 
-
-# A series of constants that are provided by the module.
-MINIMUM_PYTHON_VERSION = (2,7)  #NOTE: this should be changed for the new version
-MESSAGE_PREFIX = 'esig_install> '  # Prefix appended to every message displayed by this module.
 PLATFORMS = Enum(['WINDOWS', 'LINUX', 'MACOS', 'OTHER'])
