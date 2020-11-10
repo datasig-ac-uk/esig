@@ -13,30 +13,6 @@ from setuptools.dist import Distribution
 # These are used by the setup.py module -- which is in turn processed by setuptools.
 #
 
-def get_platform():
-    """
-    Returns an enum specifying the type of operating system currently used.
-
-    Args:
-        None
-    Returns:
-        PLATFORMS: an enum representation of the platform currently used (WINDOWS, LINUX, MACOS).
-    """
-    reported_platform = platform.system().lower()
-
-    platform_enums = {
-        'windows': PLATFORMS.WINDOWS,
-        'linux': PLATFORMS.LINUX,
-        'linux2': PLATFORMS.LINUX,
-        'darwin': PLATFORMS.MACOS,
-    }
-
-    if reported_platform not in platform_enums.keys():
-        return PLATFORMS.OTHER
-
-    return platform_enums[reported_platform]
-
-
 # Tells setuptools that package is a binary distribution
 # https://lucumr.pocoo.org/2014/1/27/python-on-wheels/
 class BinaryDistribution(Distribution):
@@ -89,7 +65,19 @@ class InstallationConfiguration(object):
         Returns:
             PLATFORMS: an enum representation of the platform currently used (WINDOWS, LINUX, MACOS).
         """
-        return get_platform()
+        reported_platform = platform.system().lower()
+
+        platform_enums = {
+            'windows': PLATFORMS.WINDOWS,
+            'linux': PLATFORMS.LINUX,
+            'linux2': PLATFORMS.LINUX,
+            'darwin': PLATFORMS.MACOS,
+        }
+
+        if reported_platform not in platform_enums.keys():
+            return PLATFORMS.OTHER
+
+        return platform_enums[reported_platform]
 
 
     @property
