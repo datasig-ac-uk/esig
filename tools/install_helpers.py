@@ -17,11 +17,6 @@ from setuptools.command.build_ext import build_ext
 # These are used by the setup.py module -- which is in turn processed by setuptools.
 #
 
-__author__ = 'David Maxwell <maxwelld90@gmail.com>'
-__date__ = '2017-09-05'
-__version__ = 5
-
-
 # I like this as a little helper function for globbing path components.
 def glob(*parts):
     return _glob(os.path.join(*parts))
