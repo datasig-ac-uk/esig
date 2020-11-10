@@ -140,21 +140,20 @@ class InstallationConfiguration(object):
                 False: ('lib32', 'win32'),
             }
 
-            if python_version[0] == 3 and python_version[1] < 5:
-                compiler_version = 'msvc-10.0'
-            else:
-                compiler_version = 'msvc-14.0'
-
-            return_list.append(os.path.join(boost_root_env, '{lib_directory}-{compiler_version}'.format(lib_directory=lib_directory[self.is_x64][0], compiler_version=compiler_version)))
+            return_list.append(
+                os.path.join(
+                    boost_root_env,
+                    '{lib_directory}-msvc-14.0'.format(lib_directory=lib_directory[self.is_x64][0])
+                )
+            )
             return_list.append(os.path.join(boost_root_env, lib_directory[self.is_x64][1], 'lib'))
             if not('MKLROOT' in os.environ):
-                raise RuntimeError("MKLROOT not defined.") #NOTE: errors must derive from Exception. I've wrapped this in a RuntimeError
+                raise RuntimeError("MKLROOT not defined.")
             # not sure why this is only needed on Windows
             return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
             # todo: lose hardcoded knowledge of recombine installation dir
             from os.path import expanduser
             recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
-            #os.listdir(recombine_lib_dir)
             return_list.append(recombine_lib_dir)
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
@@ -165,16 +164,17 @@ class InstallationConfiguration(object):
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
         elif self.platform == PLATFORM.LINUX:
-            include_directory = {
-                True: 'x86_64',
-                False: 'i386',
-            }
-
-            return_list.append('/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is_x64]))
-            return_list.append('/usr/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is_x64]))
-
-            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
-                return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+            pass
+#            include_directory = {
+#                True: 'x86_64',
+#                False: 'i386',
+#            }
+#
+#            return_list.append('/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is_x64]))
+#            return_list.append('/usr/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is_x64]))
+#
+#            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
+#                return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
         return return_list
 
 
