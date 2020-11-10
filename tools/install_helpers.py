@@ -540,7 +540,7 @@ class InstallationConfiguration(object):
     """
     def __init__(self):
         message_printer("Starting esig installer...")
-        self.__package_abs_root = None
+        self.__package_abs_root = os.path.dirname(os.path.realpath(__file__))
         self.__include_dirs = None
         self.__library_dirs = None
 
@@ -569,20 +569,6 @@ class InstallationConfiguration(object):
             bool: True if the platform is x64, False otherwise.
         """
         return sys.maxsize > 2**32
-
-    @property
-    def package_abs_root(self):
-        """
-        Returns the absolute root path of the esig package.
-        If not aleady set, None is returned.
-
-        Args:
-            self (InstallationConfiguration): an object instance of InstanceConfiguration
-        Returns:
-            string: a string representation of the path; None if not currently set.
-        """
-        return self.__package_abs_root
-
 
     @property
     def include_dirs(self):
