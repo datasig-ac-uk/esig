@@ -103,8 +103,9 @@ class InstallationConfiguration(object):
         dirs = []
 
         if not 'BOOST_ROOT' in os.environ:
-            raise RuntimeError("BOOST_ROOT not defined.")
-        boost_root_env = os.environ['BOOST_ROOT']
+            boost_rootenv = ""
+        else:
+            boost_root_env = os.environ['BOOST_ROOT']
 
         if self.platform == PLATFORM.WINDOWS:
             lib_directory = {
@@ -122,8 +123,7 @@ class InstallationConfiguration(object):
             dirs.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
 
             # todo: lose hardcoded knowledge of recombine installation dir
-            recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
-            dirs.append(recombine_lib_dir)
+            dirs.append(os.path.join(expanduser("~"), "lyonstech", "lib"))
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
