@@ -1,28 +1,17 @@
 from __future__ import print_function  # Include support for Python 2.7.x.
 import os
 import sys
-import fnmatch
 import platform
 import textwrap
 
-from glob import glob as _glob
-
 from distutils import sysconfig
-from subprocess import Popen, PIPE
 from setuptools.dist import Distribution
-from setuptools.command.install import install
-from setuptools.command.build_ext import build_ext
 
 
 #
 # Auxiliary classes and helper functions to assist with the building of esig.
 # These are used by the setup.py module -- which is in turn processed by setuptools.
 #
-
-# Helper function for globbing path components.
-def glob(*parts):
-    return _glob(os.path.join(*parts))
-
 
 def get_platform():
     """
