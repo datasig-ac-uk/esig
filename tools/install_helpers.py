@@ -26,7 +26,6 @@ class InstallationConfiguration(object):
     def __init__(self, package_abs_root):
         print("Starting esig installer...")
         self.__package_abs_root = package_abs_root
-        self.include_dirs = None
 
 
     @property
@@ -84,10 +83,6 @@ class InstallationConfiguration(object):
             os.path.join(".", "recombine"),
             os.path.join(".", "build", "recombine", "recombine")
         ])
-
-        # Append any command-line supplied arguments to the list
-        if self.include_dirs is not None:
-            return_list = return_list + self.include_dirs
 
         # Add the contents of the CPATH environment variable.
         if 'CPATH' in os.environ and os.environ['CPATH'] != '':
