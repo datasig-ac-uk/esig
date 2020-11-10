@@ -91,7 +91,6 @@ class InstallationConfiguration(object):
 
         return dirs
 
-
     @property
     def library_dirs(self):
         """
@@ -108,12 +107,11 @@ class InstallationConfiguration(object):
             boost_root_env = os.environ['BOOST_ROOT']
 
         if self.platform == PLATFORM.WINDOWS:
-            lib_directory = {
-                True: ('lib64', 'x64'),
-                False: ('lib32', 'win32'),
-            }
+            if self.is64bit:
+                lib1, lib2 = 'lib64', 'x64'
+            else:
+                lib1, lib2 = 'lib32', 'win32'
 
-            lib1, lib2 = lib_directory[self.is64bit]
             dirs.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0'))
             dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
 
@@ -128,15 +126,12 @@ class InstallationConfiguration(object):
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
         elif self.platform == PLATFORM.MACOS:
-#            dirs.append('/opt/local/lib/')
-
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 dirs = dirs + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
         elif self.platform == PLATFORM.LINUX:
-           if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
-               dirs = dirs + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
+                dirs = dirs + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
         return dirs
-
 
 	# Python extension code built with distutils is compiled with the same set of compiler options,
 	# regardless of whether it's C or C++. We use C _and_ C++, which rules out certain compiler options.
@@ -164,7 +159,6 @@ class InstallationConfiguration(object):
 
         return args
 
-
     @property
     def linker_args(self):
         """
@@ -179,7 +173,6 @@ class InstallationConfiguration(object):
 
         return args
 
-
     @property
     def esig_version(self):
         """
@@ -193,7 +186,6 @@ class InstallationConfiguration(object):
         with open(version_path, 'r') as version_file:
             return (version_file.read().strip()).replace(' ', '.')
 
-
     @property
     def long_description(self):
         """
@@ -206,7 +198,6 @@ class InstallationConfiguration(object):
 
         with open(readme_path, 'r') as f:
             return f.read()
-
 
     @property
     def used_libraries(self):
