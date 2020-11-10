@@ -1,4 +1,4 @@
-from __future__ import print_function  # Include support for Python 2.7.x.
+from enum import Enum
 import os
 import sys
 import platform
@@ -267,8 +267,7 @@ class InstallationConfiguration(object):
         return libs[self.platform]
 
 
-PLATFORM = {
-    WINDOWS: 'WINDOWS',
-    LINUX: 'LINUX',
-    MACOS: 'MACOS'
-}
+class PLATFORM(Enum):
+    WINDOWS = 1
+    LINUX = 2
+    MACOS = 3
