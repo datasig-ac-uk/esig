@@ -9,8 +9,7 @@ from setuptools.dist import Distribution
 
 
 #
-# Auxiliary classes and helper functions to assist with the building of esig.
-# These are used by the setup.py module -- which is in turn processed by setuptools.
+# Auxiliary classes used by setup.py.
 #
 
 # Tells setuptools that package is a binary distribution
@@ -27,8 +26,8 @@ class InstallationConfiguration(object):
     def __init__(self, package_abs_root):
         print("Starting esig installer...")
         self.__package_abs_root = package_abs_root
-        self.__include_dirs = None
-        self.__library_dirs = None
+        self.include_dirs = None
+        self.library_dirs = None
 
 
     @property
@@ -41,33 +40,33 @@ class InstallationConfiguration(object):
         """
         reported_platform = platform.system().lower()
 
-        platform_enums = {
+        platform_map = {
             'windows': PLATFORM.WINDOWS,
             'linux': PLATFORM.LINUX,
             'linux2': PLATFORM.LINUX,
             'darwin': PLATFORM.MACOS,
         }
 
-        if reported_platform not in platform_enums.keys():
+        if reported_platform not in platform_map.keys():
             raise Exception(reported_platform + " not a recognised platform.")
 
         return platform_enums[reported_platform]
 
 
     @property
-    def is_x64(self):
+    def is64bit(self):
         """
-        Returns a boolean indicating whether the current platform is 64-bit.
+        Indicate whether current platform is 64-bit.
 
         Returns:
-            bool: True if the platform is 64-bit, False otherwise.
+            bool: True if 64-bit, False otherwise.
         """
         return sys.maxsize > 2**32
 
     @property
     def include_dirs(self):
         """
-        Returns a list of directories with which to search for include files.
+        Return list of directories to search for include files.
 
         Returns:
             list of strings.
@@ -88,8 +87,8 @@ class InstallationConfiguration(object):
         ])
 
         # Append any command-line supplied arguments to the list
-        if self.__include_dirs is not None:
-            return_list = return_list + self.__include_dirs
+        if self.include_dirs is not None:
+            return_list = return_list + self.include_dirs
 
         # Add the contents of the CPATH environment variable.
         if 'CPATH' in os.environ and os.environ['CPATH'] != '':
@@ -121,8 +120,8 @@ class InstallationConfiguration(object):
 
         # TODO: why mixture of + and append? Do they both mean 'append'?
         # Append any command-line supplied paths to the list
-        if self.__library_dirs is not None:
-            return_list = return_list + self.__library_dirs
+        if self.library_dirs is not None:
+            return_list = return_list + self.library_dirs
 
         # Jump into Terry's old code.
         boost_root_env = ''
@@ -143,10 +142,10 @@ class InstallationConfiguration(object):
             return_list.append(
                 os.path.join(
                     boost_root_env,
-                    '{lib_directory}-msvc-14.0'.format(lib_directory=lib_directory[self.is_x64][0])
+                    '{lib_directory}-msvc-14.0'.format(lib_directory=lib_directory[self.is64bit][0])
                 )
             )
-            return_list.append(os.path.join(boost_root_env, lib_directory[self.is_x64][1], 'lib'))
+            return_list.append(os.path.join(boost_root_env, lib_directory[self.is64bit][1], 'lib'))
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
             # not sure why this is only needed on Windows
@@ -170,8 +169,8 @@ class InstallationConfiguration(object):
 #                False: 'i386',
 #            }
 #
-#            return_list.append('/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is_x64]))
-#            return_list.append('/usr/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is_x64]))
+#            return_list.append('/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is64bit]))
+#            return_list.append('/usr/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is64bit]))
 #
 #            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
 #                return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
