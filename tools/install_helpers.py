@@ -1,5 +1,6 @@
 from enum import Enum
 import os
+from os.path import expanduser
 import sys
 import platform
 import textwrap
@@ -27,16 +28,7 @@ class InstallationConfiguration(object):
         print("Starting esig installer...")
         self.__package_abs_root = package_abs_root
 
-    @property
-    def platform(self):
-        """
-        Indicate the host platform.
-
-        Returns:
-            one of PLATFORM.WINDOWS, PLATFORM.LINUX or PLATFORM.MACOS.
-        """
         reported_platform = platform.system().lower()
-
         platform_map = {
             'windows': PLATFORM.WINDOWS,
             'linux': PLATFORM.LINUX,
@@ -47,8 +39,7 @@ class InstallationConfiguration(object):
         if reported_platform not in platform_map.keys():
             raise Exception(reported_platform + " not a recognised platform.")
 
-        return platform_map[reported_platform]
-
+        self.platform = platform_map[reported_platform]
 
     @property
     def is64bit(self):
@@ -127,38 +118,26 @@ class InstallationConfiguration(object):
                 False: ('lib32', 'win32'),
             }
 
-            return_list.append(
-                os.path.join(
-                    boost_root_env,
-                    '{lib_directory}-msvc-14.0'.format(lib_directory=lib_directory[self.is64bit][0])
-                )
-            )
-            return_list.append(os.path.join(boost_root_env, lib_directory[self.is64bit][1], 'lib'))
+            lib1, lib2 = lib_directory[self.is64bit]
+
+            return_list.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0')))
+            return_list.append(os.path.join(boost_root_env, lib2, 'lib'))
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
             # not sure why this is only needed on Windows
             return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
             # todo: lose hardcoded knowledge of recombine installation dir
-            from os.path import expanduser
             recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
             return_list.append(recombine_lib_dir)
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
         elif self.platform == PLATFORM.MACOS:
-            return_list.append('/opt/local/lib/')
+#            return_list.append('/opt/local/lib/')
 
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 return_list = return_list + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
         elif self.platform == PLATFORM.LINUX:
-#            include_directory = {
-#                True: 'x86_64',
-#                False: 'i386',
-#            }
-#
-#            return_list.append('/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is64bit]))
-#            return_list.append('/usr/lib/{architecture}-linux-gnu/'.format(architecture=include_directory[self.is64bit]))
-#
            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
                return_list = return_list + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
         return return_list
