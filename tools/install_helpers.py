@@ -102,16 +102,10 @@ class InstallationConfiguration(object):
         """
         return_list = []
 
-        # Jump into Terry's old code.
-        boost_root_env = ''
-        python_version = sys.version_info
+        if not 'BOOST_ROOT' in os.environ:
+            raise RuntimeError("BOOST_ROOT not defined.")
+        boost_root_env = os.environ['BOOST_ROOT']
 
-        # Obtain the BOOST_ROOT environment variable.
-        if 'BOOST_ROOT' in os.environ and os.environ['BOOST_ROOT'] != '':
-            boost_root_env = os.environ['BOOST_ROOT']
-
-        # On Windows, we can follow a pretty set-in-stone path structure, all hailing from BOOST_ROOT.
-        # The version of the MSVC compiler depends upon the version of Python being used.
         if self.platform == PLATFORM.WINDOWS:
             lib_directory = {
                 True: ('lib64', 'x64'),
@@ -119,13 +113,14 @@ class InstallationConfiguration(object):
             }
 
             lib1, lib2 = lib_directory[self.is64bit]
-
             return_list.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0')))
             return_list.append(os.path.join(boost_root_env, lib2, 'lib'))
+
+            # not sure why this is only needed on Windows
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
-            # not sure why this is only needed on Windows
             return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
+
             # todo: lose hardcoded knowledge of recombine installation dir
             recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")
             return_list.append(recombine_lib_dir)
