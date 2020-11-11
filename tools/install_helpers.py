@@ -1,19 +1,16 @@
 from enum import Enum
 import os
 from os.path import expanduser
-import sys
 import platform
+from setuptools.dist import Distribution
+import sys
 import textwrap
 
-from distutils import sysconfig
-from setuptools.dist import Distribution
 
-
-#
 # Auxiliary classes used by setup.py.
-#
 
-# Tells setuptools that package is a binary distribution
+
+# Tell setuptools that package is a binary distribution.
 # https://lucumr.pocoo.org/2014/1/27/python-on-wheels/
 class BinaryDistribution(Distribution):
     def is_pure(self):
@@ -22,11 +19,11 @@ class BinaryDistribution(Distribution):
 
 class InstallationConfiguration(object):
     """
-    The installation configuration class, providing details required for installing esig.
+    Installation configuration class, providing details required to install esig.
     """
-    def __init__(self, package_abs_root):
+    def __init__(self, package_root):
         print("Starting esig installer...")
-        self.__package_abs_root = package_abs_root
+        self.package_root = package_root
 
         reported_platform = platform.system().lower()
         platform_map = {
@@ -48,7 +45,7 @@ class InstallationConfiguration(object):
         Return list of directories to search for include files.
 
         Returns:
-            list of strings.
+            list of directory paths.
         """
         # libalgebra and recombine sources + wrapper code for Python.
         # TODO: remove dependency on "recombine" having been cloned into /build/recombine
@@ -76,7 +73,7 @@ class InstallationConfiguration(object):
         Return a list of directories to search for libraries.
 
         Returns:
-            list of strings.
+            list of directory paths.
         """
         if not 'BOOST_ROOT' in os.environ:
             boost_root_env = None
@@ -86,29 +83,28 @@ class InstallationConfiguration(object):
         dirs = []
 
         if self.platform == PLATFORM.WINDOWS:
-            if self.is64bit:
-                lib1, lib2 = 'lib64', 'x64'
-            else:
-                lib1, lib2 = 'lib32', 'win32'
-
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
 
             # not sure why these are only needed on Windows
             if boost_root_env is not None:
-                dirs.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0'))
-                dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
+                if self.is64bit:
+                    dirs.append(os.path.join(boost_root_env, 'lib64-msvc-14.0'))
+                    dirs.append(os.path.join(boost_root_env, 'x64', 'lib'))
+                else:
+                    dirs.append(os.path.join(boost_root_env, 'lib32-msvc-14.0'))
+                    dirs.append(os.path.join(boost_root_env, 'win32', 'lib'))
 
             dirs.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
             # todo: lose hardcoded knowledge of recombine installation dir
             dirs.append(os.path.join(expanduser("~"), "lyonstech", "lib"))
 
         elif self.platform == PLATFORM.MACOS:
-            if 'DYLD_LIBRARY_PATH' in os.environ:
+            if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
                 dirs.append(os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep))
 
         elif self.platform == PLATFORM.LINUX:
-            if 'LD_LIBRARY_PATH' in os.environ:
+            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
                 dirs.append(os.environ['LD_LIBRARY_PATH'].split(os.pathsep))
 
         return dirs
@@ -118,10 +114,10 @@ class InstallationConfiguration(object):
     @property
     def extra_compile_args(self):
         """
-        Returns a list of additional platform/compiler-dependent compiler arguments.
+        Returns list of additional platform/compiler-dependent compiler arguments.
 
         Returns:
-            list of strings.
+            list of string arguments.
         """
         args = []
 
@@ -142,12 +138,11 @@ class InstallationConfiguration(object):
     @property
     def linker_args(self):
         """
-        Returns a list of additional platform/compiler-dependent linker arguments.
+        Return list of additional platform/compiler-dependent linker arguments.
         """
         args = []
 
-        # How can we statically link for MACOS/LINUX? -static does not work on Linux.
-
+        # Why only static on MACOS? (Apparently -static does not work on Linux.)
         if self.platform == PLATFORM.MACOS:
             args.append('-static')
 
@@ -156,12 +151,12 @@ class InstallationConfiguration(object):
     @property
     def esig_version(self):
         """
-        Extract the version number from the VERSION file found in the package root.
+        Extract version number from VERSION file found in package root.
 
         Returns:
-            str: a string representing the version number, in the format MAJOR.MINOR.RELEASE.
+            string representing the version number, in the format MAJOR.MINOR.PATCH.
         """
-        version_path = os.path.join(self.__package_abs_root, 'esig', 'VERSION')
+        version_path = os.path.join(self.package_root, 'esig', 'VERSION')
 
         with open(version_path, 'r') as version_file:
             return (version_file.read().strip()).replace(' ', '.')
@@ -169,12 +164,12 @@ class InstallationConfiguration(object):
     @property
     def long_description(self):
         """
-        Extract the contents of the README.md file found in the package root.
+        Extract contents of README.md file found in package root.
 
         Returns:
-            str: a string representing the readme file.
+            string contents of README.md
         """
-        readme_path = os.path.join(self.__package_abs_root, 'README.md')
+        readme_path = os.path.join(self.package_root, 'README.md')
 
         with open(readme_path, 'r') as f:
             return f.read()
@@ -182,11 +177,10 @@ class InstallationConfiguration(object):
     @property
     def used_libraries(self):
         """
-        Returns a list of libraries that are used by esig.
-        Note that on Windows, library selection is done automatically, therefore no libraries are required.
+        List libraries used by esig. On Windows, library selection is automatic, so Boost isn't included.
 
         Returns:
-            list: list of strings, with each string representing a library used
+            list of library names
         """
         libs = {
             PLATFORM.WINDOWS: ['recombine'],
