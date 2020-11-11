@@ -57,7 +57,7 @@ class InstallationConfiguration(object):
             os.path.join(".", "build", "recombine", "recombine")
         ]
 
-        if 'BOOST_ROOT' in os.environ:
+        if 'BOOST_ROOT' in os.environ and os.environ['BOOST_ROOT'] != '':
             dirs.append(os.environ['BOOST_ROOT'])
 
         if self.platform == PLATFORM.MACOS:
@@ -75,8 +75,9 @@ class InstallationConfiguration(object):
         Returns:
             list of directory paths.
         """
+
         if not 'BOOST_ROOT' in os.environ:
-            boost_root_env = None
+            boost_rootenv = ""
         else:
             boost_root_env = os.environ['BOOST_ROOT']
 
@@ -85,27 +86,29 @@ class InstallationConfiguration(object):
         if self.platform == PLATFORM.WINDOWS:
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
+            if self.is64bit:
+                lib1, lib2 = 'lib64', 'x64'
+            else:
+                lib1, lib2 = 'lib32', 'win32'
 
-            # not sure why these are only needed on Windows
-            if boost_root_env is not None:
-                if self.is64bit:
-                    dirs.append(os.path.join(boost_root_env, 'lib64-msvc-14.0'))
-                    dirs.append(os.path.join(boost_root_env, 'x64', 'lib'))
-                else:
-                    dirs.append(os.path.join(boost_root_env, 'lib32-msvc-14.0'))
-                    dirs.append(os.path.join(boost_root_env, 'win32', 'lib'))
+            dirs.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0'))
+            dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
 
+            # not sure why this is only needed on Windows
             dirs.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
+
             # todo: lose hardcoded knowledge of recombine installation dir
             dirs.append(os.path.join(expanduser("~"), "lyonstech", "lib"))
 
+        # On a Mac, our best guess for including libraries will be from /opt/local/lib.
+        # This is where Macports and Homebrew installs libraries to.
         elif self.platform == PLATFORM.MACOS:
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
-                dirs.append(os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep))
+                dirs = dirs + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
 
         elif self.platform == PLATFORM.LINUX:
             if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
-                dirs.append(os.environ['LD_LIBRARY_PATH'].split(os.pathsep))
+                dirs = dirs + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
 
         return dirs
 
@@ -117,7 +120,7 @@ class InstallationConfiguration(object):
         Returns list of additional platform/compiler-dependent compiler arguments.
 
         Returns:
-            list of string arguments.
+            list of strings.
         """
         args = []
 
@@ -138,11 +141,12 @@ class InstallationConfiguration(object):
     @property
     def linker_args(self):
         """
-        Return list of additional platform/compiler-dependent linker arguments.
+        Returns a list of additional platform/compiler-dependent linker arguments.
         """
         args = []
 
-        # Why only static on MACOS? (Apparently -static does not work on Linux.)
+        # How can we statically link for MACOS/LINUX? -static does not work on Linux.
+
         if self.platform == PLATFORM.MACOS:
             args.append('-static')
 
@@ -151,10 +155,9 @@ class InstallationConfiguration(object):
     @property
     def esig_version(self):
         """
-        Extract version number from VERSION file found in package root.
-
+        Extract the version number from the VERSION file found in the package root.
         Returns:
-            string representing the version number, in the format MAJOR.MINOR.PATCH.
+            str: a string representing the version number, in the format MAJOR.MINOR.RELEASE.
         """
         version_path = os.path.join(self.package_root, 'esig', 'VERSION')
 
@@ -164,10 +167,9 @@ class InstallationConfiguration(object):
     @property
     def long_description(self):
         """
-        Extract contents of README.md file found in package root.
-
+        Extract the contents of the README.md file found in the package root.
         Returns:
-            string contents of README.md
+            str: a string representing the readme file.
         """
         readme_path = os.path.join(self.package_root, 'README.md')
 
