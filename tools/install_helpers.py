@@ -110,29 +110,25 @@ class InstallationConfiguration(object):
             else:
                 lib1, lib2 = 'lib32', 'win32'
 
-            # todo: lose hardcoded knowledge of recombine installation dir
-            # not sure why this is only needed on Windows
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
 
             return [
+                # not sure why these are only needed on Windows
                 os.path.join(boost_root_env, lib1 + '-msvc-14.0'),
                 os.path.join(boost_root_env, lib2, 'lib'),
                 os.path.join(os.environ['MKLROOT'], "lib", "intel64"),
+                # todo: lose hardcoded knowledge of recombine installation dir
                 os.path.join(expanduser("~"), "lyonstech", "lib")
             ]
 
         elif self.platform == PLATFORM.MACOS:
-            if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
-                return os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
-            else
-                return []
+            assert 'DYLD_LIBRARY_PATH' in os.environ
+            return os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
 
         elif self.platform == PLATFORM.LINUX:
-            if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
-                return os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
-            else
-                return []
+            assert 'LD_LIBRARY_PATH' in os.environ
+            return os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
 
         assert False
 
