@@ -40,16 +40,7 @@ class InstallationConfiguration(object):
             raise Exception(reported_platform + " not a recognised platform.")
 
         self.platform = platform_map[reported_platform]
-
-    @property
-    def is64bit(self):
-        """
-        Indicate whether current platform is 64-bit.
-
-        Returns:
-            bool: True if 64-bit, False otherwise.
-        """
-        return sys.maxsize > 2**32
+        self.is64bit = sys.maxsize > 2**32
 
     @property
     def include_dirs(self):
@@ -59,34 +50,22 @@ class InstallationConfiguration(object):
         Returns:
             list of strings.
         """
-        dirs = []
-
-        # Add Python's include directory.
-#        dirs.append(sysconfig.get_python_inc())
-
         # libalgebra and recombine sources + wrapper code for Python.
         # TODO: remove dependency on "recombine" having been cloned into /build/recombine
 
-        dirs.extend([
+        dirs = [
             os.path.join(".", "src"),
             os.path.join(".", "libalgebra"),
             os.path.join(".", "recombine"),
             os.path.join(".", "build", "recombine", "recombine")
-        ])
+        ]
 
-        # Add the contents of the CPATH environment variable.
-        if 'CPATH' in os.environ and os.environ['CPATH'] != '':
-            dirs = os.environ['CPATH'].split(os.pathsep)
-
-        # This is now based upon Terry's code, to include standard locations for Boost.
-        if 'BOOST_ROOT' in os.environ and os.environ['BOOST_ROOT'] != '':
+        if 'BOOST_ROOT' in os.environ:
             dirs.append(os.environ['BOOST_ROOT'])
 
-        # On a Mac, Macports/Homebrew is likely to install headers to this location.
         if self.platform == PLATFORM.MACOS:
             dirs.append('/opt/local/include/')
-        # Fallback for not MacOS or Windows. Assume Linux.
-        elif self.platform != PLATFORM.WINDOWS:
+        elif self.platform == PLATFORM.LINUX:
             dirs.append('/usr/include/')
 
         return dirs
@@ -100,9 +79,11 @@ class InstallationConfiguration(object):
             list of strings.
         """
         if not 'BOOST_ROOT' in os.environ:
-            boost_rootenv = ""
+            boost_root_env = None
         else:
             boost_root_env = os.environ['BOOST_ROOT']
+
+        dirs = []
 
         if self.platform == PLATFORM.WINDOWS:
             if self.is64bit:
@@ -113,24 +94,24 @@ class InstallationConfiguration(object):
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
 
-            return [
-                # not sure why these are only needed on Windows
-                os.path.join(boost_root_env, lib1 + '-msvc-14.0'),
-                os.path.join(boost_root_env, lib2, 'lib'),
-                os.path.join(os.environ['MKLROOT'], "lib", "intel64"),
-                # todo: lose hardcoded knowledge of recombine installation dir
-                os.path.join(expanduser("~"), "lyonstech", "lib")
-            ]
+            # not sure why these are only needed on Windows
+            if boost_root_env is not None:
+                dirs.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0'))
+                dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
+
+            dirs.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
+            # todo: lose hardcoded knowledge of recombine installation dir
+            dirs.append(os.path.join(expanduser("~"), "lyonstech", "lib"))
 
         elif self.platform == PLATFORM.MACOS:
-            assert 'DYLD_LIBRARY_PATH' in os.environ
-            return os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
+            if 'DYLD_LIBRARY_PATH' in os.environ:
+                dirs.append(os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep))
 
         elif self.platform == PLATFORM.LINUX:
-            assert 'LD_LIBRARY_PATH' in os.environ
-            return os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+            if 'LD_LIBRARY_PATH' in os.environ:
+                dirs.append(os.environ['LD_LIBRARY_PATH'].split(os.pathsep))
 
-        assert False
+        return dirs
 
 	# Python extension code built with distutils is compiled with the same set of compiler options,
 	# regardless of whether it's C or C++. We use C _and_ C++, which rules out certain compiler options.
