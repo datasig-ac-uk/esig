@@ -99,8 +99,6 @@ class InstallationConfiguration(object):
         Returns:
             list of strings.
         """
-        dirs = []
-
         if not 'BOOST_ROOT' in os.environ:
             boost_rootenv = ""
         else:
@@ -112,26 +110,31 @@ class InstallationConfiguration(object):
             else:
                 lib1, lib2 = 'lib32', 'win32'
 
-            dirs.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0'))
-            dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
-
+            # todo: lose hardcoded knowledge of recombine installation dir
             # not sure why this is only needed on Windows
             if not('MKLROOT' in os.environ):
                 raise RuntimeError("MKLROOT not defined.")
-            dirs.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
 
-            # todo: lose hardcoded knowledge of recombine installation dir
-            dirs.append(os.path.join(expanduser("~"), "lyonstech", "lib"))
+            return [
+                os.path.join(boost_root_env, lib1 + '-msvc-14.0'),
+                os.path.join(boost_root_env, lib2, 'lib'),
+                os.path.join(os.environ['MKLROOT'], "lib", "intel64"),
+                os.path.join(expanduser("~"), "lyonstech", "lib")
+            ]
 
-        # On a Mac, our best guess for including libraries will be from /opt/local/lib.
-        # This is where Macports and Homebrew installs libraries to.
         elif self.platform == PLATFORM.MACOS:
             if 'DYLD_LIBRARY_PATH' in os.environ and os.environ['DYLD_LIBRARY_PATH'] != '':
-                dirs = dirs + os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
+                return os.environ['DYLD_LIBRARY_PATH'].split(os.pathsep)
+            else
+                return []
+
         elif self.platform == PLATFORM.LINUX:
             if 'LD_LIBRARY_PATH' in os.environ and os.environ['LD_LIBRARY_PATH'] != '':
-                dirs = dirs + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
-        return dirs
+                return os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
+            else
+                return []
+
+        assert False
 
 	# Python extension code built with distutils is compiled with the same set of compiler options,
 	# regardless of whether it's C or C++. We use C _and_ C++, which rules out certain compiler options.
