@@ -75,7 +75,6 @@ class InstallationConfiguration(object):
         Returns:
             list of directory paths.
         """
-
         if not 'BOOST_ROOT' in os.environ:
             boost_rootenv = ""
         else:
@@ -120,7 +119,7 @@ class InstallationConfiguration(object):
         Returns list of additional platform/compiler-dependent compiler arguments.
 
         Returns:
-            list of strings.
+            list of string arguments.
         """
         args = []
 
@@ -141,12 +140,11 @@ class InstallationConfiguration(object):
     @property
     def linker_args(self):
         """
-        Returns a list of additional platform/compiler-dependent linker arguments.
+        Return list of additional platform/compiler-dependent linker arguments.
         """
         args = []
 
         # How can we statically link for MACOS/LINUX? -static does not work on Linux.
-
         if self.platform == PLATFORM.MACOS:
             args.append('-static')
 
@@ -155,9 +153,10 @@ class InstallationConfiguration(object):
     @property
     def esig_version(self):
         """
-        Extract the version number from the VERSION file found in the package root.
+        Extract version number from VERSION file found in package root.
+
         Returns:
-            str: a string representing the version number, in the format MAJOR.MINOR.RELEASE.
+            string representing version number, in format MAJOR.MINOR.PATCH.
         """
         version_path = os.path.join(self.package_root, 'esig', 'VERSION')
 
@@ -167,9 +166,10 @@ class InstallationConfiguration(object):
     @property
     def long_description(self):
         """
-        Extract the contents of the README.md file found in the package root.
+        Extract contents of README.md file found in package root.
+
         Returns:
-            str: a string representing the readme file.
+            string contents of file.
         """
         readme_path = os.path.join(self.package_root, 'README.md')
 
