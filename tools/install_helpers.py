@@ -773,10 +773,18 @@ class InstallationConfiguration(object):
 
             return_list.append(os.path.join(boost_root_env, '{lib_directory}-{compiler_version}'.format(lib_directory=lib_directory[self.is_x64][0], compiler_version=compiler_version)))
             return_list.append(os.path.join(boost_root_env, lib_directory[self.is_x64][1], 'lib'))
-            if not('MKLROOT' in os.environ):
-                raise RuntimeError("MKLROOT not defined.") #NOTE: errors must derive from Exception. I've wrapped this in a RuntimeError
+            if not('HOME' in os.environ):
+                raise RuntimeError("HOME not defined.")
             # not sure why this is only needed on Windows
-            return_list.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
+            return_list.append(
+               os.path.join(
+                  os.environ['HOME'],
+                  "conda_pkgs_dir",
+                  "mkl-static-2021.1.1-intel_52",
+                  "Library",
+                  "lib"
+               )
+            )
             # todo: lose hardcoded knowledge of recombine installation dir
             from os.path import expanduser
             recombine_lib_dir = os.path.join(expanduser("~"), "lyonstech", "lib")

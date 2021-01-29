@@ -7,8 +7,6 @@ Set-PSDebug -Trace 1
 
 pushd ..\recombine
 .\doall-windows.ps1
-echo $env:MKLROOT
-ls $env:MKLROOT/lib/intel64
 popd
 
 if ($vs_version -eq "14.1") {
