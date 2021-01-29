@@ -91,11 +91,12 @@ class InstallationConfiguration(object):
             dirs.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0'))
             dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
 
-            # not sure why this is only needed on Windows
-            dir.append(
+            # ouch, depend on MKL having been installed by rcombine
+            dirs.append(
                os.path.join(
-                  os.environ['HOME'],
-                  "conda_pkgs_dir",
+                  os.environ['USERPROFILE'],
+                  "Miniconda3",
+                  "pkgs",
                   "mkl-static-2021.1.1-intel_52",
                   "Library",
                   "lib"
