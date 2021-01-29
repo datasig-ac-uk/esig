@@ -83,8 +83,6 @@ class InstallationConfiguration(object):
         dirs = []
 
         if self.platform == PLATFORM.WINDOWS:
-            if not('MKLROOT' in os.environ):
-                raise RuntimeError("MKLROOT not defined.")
             if self.is64bit:
                 lib1, lib2 = 'lib64', 'x64'
             else:
