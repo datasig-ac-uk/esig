@@ -31,7 +31,6 @@ jobs:
       - win-py38-64bit
       - win-py39-64bit
 
-
       # 32-bit recombine not available yet
 #      - linux-py35-32bit
 #      - linux-py36-32bit
@@ -294,7 +293,7 @@ jobs:
       with:
         name: output
         path: build/Windows/output
-    
+
 #  linux-py35-32bit:
 #    runs-on: ubuntu-18.04
 #    steps:
