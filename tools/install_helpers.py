@@ -83,8 +83,6 @@ class InstallationConfiguration(object):
         dirs = []
 
         if self.platform == PLATFORM.WINDOWS:
-            if not('MKLROOT' in os.environ):
-                raise RuntimeError("MKLROOT not defined.")
             if self.is64bit:
                 lib1, lib2 = 'lib64', 'x64'
             else:
@@ -93,8 +91,17 @@ class InstallationConfiguration(object):
             dirs.append(os.path.join(boost_root_env, lib1 + '-msvc-14.0'))
             dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
 
-            # not sure why this is only needed on Windows
-            dirs.append(os.path.join(os.environ['MKLROOT'], "lib", "intel64"))
+            # ouch, depend on MKL having been installed by rcombine
+            dirs.append(
+               os.path.join(
+                  os.environ['USERPROFILE'],
+                  "Miniconda3",
+                  "pkgs",
+                  "mkl-static-2021.1.1-intel_52",
+                  "Library",
+                  "lib"
+               )
+            )
 
             # todo: lose hardcoded knowledge of recombine installation dir
             dirs.append(os.path.join(expanduser("~"), "lyonstech", "lib"))
