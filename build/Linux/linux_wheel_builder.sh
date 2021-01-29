@@ -36,7 +36,7 @@ pushd ${recombine_install_dir}/bin # set_env_test_recombine.sh expects to run at
 popd
 
 pushd .. # circular file path if run from Linux folder
-	$pyexe -m pip wheel -b Linux/$TMPDIR -w Linux/$TMPDIR ..
+	$pyexe -m pip wheel -w Linux/$TMPDIR ..
 popd
 
 auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies
@@ -45,7 +45,6 @@ auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
 $pyexe -m virtualenv /tmp/$py
 source /tmp/$py/bin/activate
 pip install wheelhouse/esig*.whl
-#python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
 python -m unittest discover -s /data/esig/tests
 if [ $? -eq 0 ]
 then

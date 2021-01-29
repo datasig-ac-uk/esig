@@ -68,7 +68,7 @@ Invoke-Expression "$py_exe -m pip install virtualenv"
 pushd ..
    cp ~\lyonstech\bin\recombine.dll ..\esig\recombine.dll
    cp ~\lyonstech\bin\libiomp5md.dll ..\esig\libiomp5md.dll
-   Invoke-Expression "$py_exe -m pip wheel -b Windows/ -w Windows/wheeldir/ .."
+   Invoke-Expression "$py_exe -m pip wheel -w Windows/wheeldir/ .."
 popd
 if ($LASTEXITCODE -ne 0) { throw "pip wheel failed." }
 
@@ -83,7 +83,6 @@ ls .\venv\Scripts
 # run tests
 # TODO: Python 3.8+ doesn't use PATH to find dependent DLLs
 
-#.\venv\Scripts\\python.exe -c "import esig.tests as tests; tests.run_tests(terminate=True)"
 .\venv\Scripts\\python.exe -m unittest discover -s ..\..\esig\tests
 
 if ($LASTEXITCODE -ne 0) {
