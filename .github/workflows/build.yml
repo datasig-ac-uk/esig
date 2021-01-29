@@ -207,7 +207,6 @@ jobs:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
     - name: Run build
       run: |
         bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
@@ -226,7 +225,6 @@ jobs:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
     - name: Run build
       run: |
         bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
@@ -246,7 +244,6 @@ jobs:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
     - name: Run build
       run: |
         bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
@@ -265,7 +262,6 @@ jobs:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
     - name: Run build
       run: |
         bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
@@ -284,7 +280,6 @@ jobs:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
-    - uses: conda-incubator/setup-miniconda@v2
     - name: Run build
       run: |
         bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
