@@ -7,7 +7,8 @@ pushd .. # need to run in same directory as setup.py
 echo "Python version installed (>= 3.5 required):"
 python --version
 # Cython not present in GitHub macos-10.15 environment
-pip install -U pip
+pip --version
+pip install --upgrade pip==21.0.0
 pip install --user cython==0.29.17 # fix version for reproducibility
 python setup.py sdist --dist-dir=build/sdist
 rm -rf esig.egg-info
