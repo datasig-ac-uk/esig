@@ -92,7 +92,7 @@ class InstallationConfiguration(object):
             dirs.append(os.path.join(boost_root_env, lib2, 'lib'))
 
             # not sure why this is only needed on Windows
-            return_list.append(
+            dir.append(
                os.path.join(
                   os.environ['HOME'],
                   "conda_pkgs_dir",
