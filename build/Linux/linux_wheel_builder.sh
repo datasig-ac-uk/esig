@@ -7,13 +7,15 @@ set -u -o xtrace
 py=$1
 arch=$2 # {i686, x86_64}
 
-if ($arch -eq "i686") {
+if [ $arch -eq "i686" ]
+then
    $libdir="lib"
-} elseif ($arch -eq "x86_64") {
+elif [ $arch -eq "x86_64" ]
+then
    $libdir="lib64"
-} else {
+else
    exit 1
-}
+fi
 
 pushd ../recombine
 ./doall-linux.sh $libdir $arch
