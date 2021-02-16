@@ -5,10 +5,6 @@ param([string] $vs_version,            # {14.1}
 
 Set-PSDebug -Trace 1
 
-pushd ..\recombine
-.\doall-windows.ps1
-popd
-
 if ($vs_version -eq "14.1") {
    # Use pre-installed Visual Studio
 } else {
@@ -17,11 +13,17 @@ if ($vs_version -eq "14.1") {
 
 if ($arch -eq "32") {
    $boost_platform_dir="win32"
+   $conda_subdir="win-32"
 } elseif ($arch -eq "64") {
    $boost_platform_dir="x64"
+   $conda_subdir="win-64"
 } else {
    exit 1
 }
+
+pushd ..\recombine
+.\doall-windows.ps1 $conda_subdir
+popd
 
 $boost_lib_dir="lib$arch-msvc-$vs_version"
 $boost_installer="boost_1_68_0-msvc-$vs_version-$arch.exe"
