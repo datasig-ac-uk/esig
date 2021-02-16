@@ -9,10 +9,10 @@ arch=$2 # {i686, x86_64}
 
 if [[ $arch == "i686" ]]
 then
-   $libdir="lib"
+   libdir="lib"
 elif [[ "$arch" == "x86_64" ]]
 then
-   $libdir="lib64"
+   libdir="lib64"
 else
    exit 1
 fi
