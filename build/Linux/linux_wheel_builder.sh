@@ -5,12 +5,18 @@ set -u -o xtrace
 ### from the gzip-ed source.
 
 py=$1
-arch=$2
-libdir=lib64
-mkl_arch=intel64
+arch=$2 # {i686, x86_64}
+
+if ($arch -eq "i686") {
+   $libdir="lib"
+} elseif ($arch -eq "x86_64") {
+   $libdir="lib64"
+} else {
+   exit 1
+}
 
 pushd ../recombine
-./doall-linux.sh $libdir $mkl_arch
+./doall-linux.sh $libdir $arch
 popd
 
 TMPDIR=tmp         # working folder for pip wheel
