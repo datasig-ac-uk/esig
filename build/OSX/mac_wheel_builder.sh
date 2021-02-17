@@ -41,7 +41,7 @@ pyenv virtualenv $p esig_test_env-$p
 pyenv activate esig_test_env-$p
 pip install `ls ${TMPDIR}/*.whl`
 # run tests
-python -m unittest discover -s "../../esig/tests"
+python -m unittest discover -v -s "../../esig/tests"
 if [ $? -eq 0 ]
 then
     echo "Tests passed."
