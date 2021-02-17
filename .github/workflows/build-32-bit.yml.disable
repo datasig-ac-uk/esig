@@ -1,0 +1,40 @@
+name: build-wip
+
+on:
+  push:
+    paths-ignore:
+      - 'examples/**'
+      - 'doc/**'
+      - README.md
+
+jobs:
+  linux-py38-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp38-cp38 i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
+  win-py38-32bit:
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38-32 `
+          -py_installer 3.8.1/python-3.8.1.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
