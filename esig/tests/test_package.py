@@ -133,7 +133,6 @@ class TestESIG(TestCase):
         self.assertEqual(all(sigdiffa),0)
         self.assertEqual(all(sigdiffb),0)
         self.assertEqual(all(sigdiffc),0)
-        print("test_equivalence")
 
     def test_linsig(self):
         self.assertEqual(all(ax.linsig(y[0],4) - ts.stream2sig(x,4)),0)

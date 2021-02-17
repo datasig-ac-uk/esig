@@ -53,7 +53,7 @@ auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
 $pyexe -m virtualenv /tmp/$py
 source /tmp/$py/bin/activate
 pip install wheelhouse/esig*.whl
-python -m unittest discover -s /data/esig/tests
+python -m unittest discover -v -s /data/esig/tests
 if [ $? -eq 0 ]
 then
 	echo "Tests passed - copying wheel to $OUTPUTDIR"
