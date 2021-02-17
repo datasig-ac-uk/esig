@@ -1,4 +1,4 @@
-FROM recombine_builder_manylinux AS manylinux2014_x86_64_esig
+FROM recombine_builder_manylinux_x86_64 AS manylinux2014_x86_64_esig
 ENTRYPOINT ["/bin/bash", "-c"]
 SHELL ["/bin/bash", "-c"]
 RUN yum -y repolist

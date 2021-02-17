@@ -15,7 +15,7 @@ fi
 
 # Use recombine as base image for esig
 pushd ../recombine
-docker build -t recombine_builder_manylinux -f manylinux_${arch}.dockerfile .
+docker build -t recombine_builder_manylinux_${arch} -f manylinux_${arch}.dockerfile .
 popd
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
