@@ -1,6 +1,5 @@
-FROM recombine_builder_manylinux_i686 AS manylinux2014_i686_esig
+FROM recombine_builder_manylinux_i686 AS manylinux2010_i686_esig
 
-# remove "linux32" for now, may affect visible yum packages
 ENTRYPOINT ["/bin/bash", "-c"]
 SHELL ["/bin/bash", "-c"]
 RUN yum -y repolist
