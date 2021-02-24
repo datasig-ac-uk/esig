@@ -21,21 +21,6 @@ pushd ../recombine
 ./doall-linux.sh $libdir $arch
 popd
 
-# ****** TEMPORARY EXPERIMENT ******
-echo "========================================="
-echo "========================================="
-echo "========================================="
-echo "========================================="
-LD_LIBRARY_PATH=/opt/intel/compilers_and_libraries/linux/lib/intel64_lin:$LD_LIBRARY_PATH
-ls -la /opt/intel/compilers_and_libraries/linux/lib/intel64_lin
-# ls -laR ${HOME}/lyonstech
-readelf -d ${HOME}/lyonstech/lib64/librecombine.so | head -20
-echo "========================================="
-echo "========================================="
-echo "========================================="
-echo "========================================="
-# ****** TEMPORARY EXPERIMENT ******
-
 TMPDIR=tmp         # working folder for pip wheel
 OUTPUTDIR=output   # location of tested wheels
 
