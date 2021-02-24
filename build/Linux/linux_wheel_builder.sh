@@ -47,8 +47,10 @@ pushd .. # circular file path if run from Linux folder
 	$pyexe -m pip wheel -w Linux/$TMPDIR ..
 popd
 
+LD_LIBRARY_PATH=/opt/intel/mkl/../compiler/lib/intel64:$LD_LIBRARY_PATH # TEMPORARY HACK
+ls -Hla /opt/intel/mkl/../compiler/lib/intel64
 auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies
-auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
+auditwheel repair $TMPDIR/esig*.whl # will leave wheel in wheelhouse
 
 $pyexe -m virtualenv /tmp/$py
 source /tmp/$py/bin/activate
