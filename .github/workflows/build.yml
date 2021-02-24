@@ -13,7 +13,6 @@ jobs:
     needs:
       - sdist
 
-#      - mac-py35
       - mac-py36
       - mac-py37
       - mac-py38
@@ -31,11 +30,11 @@ jobs:
       - win-py38-64bit
       - win-py39-64bit
 
-      # 32-bit recombine not available yet
-#      - linux-py35-32bit
-#      - linux-py36-32bit
-#      - linux-py37-32bit
-#      - linux-py38-32bit
+      - linux-py35-32bit
+      - linux-py36-32bit
+      - linux-py37-32bit
+      - linux-py38-32bit
+# TODO: linux-py39-32bit
 
 #      - win-py35-32bit
 #      - win-py36-32bit
@@ -71,19 +70,6 @@ jobs:
         path: build/sdist
 
   # Mac
-#  mac-py35:
-#    runs-on: macos-10.15
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Build for Python 3.5
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/OSX && ./build-wheel.sh 3.5.5
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/OSX/output
-
   mac-py36:
     runs-on: macos-10.15
     steps:
@@ -239,7 +225,7 @@ jobs:
         name: output
         path: build/Windows/output
 
-# Using Python3.7.9 instead of 3.7.0 to fix a strange build error
+# Use Python3.7.9 instead of 3.7.0 to fix strange build error
   win-py37-64bit:
     runs-on: windows-2019
     steps:
@@ -294,57 +280,57 @@ jobs:
         name: output
         path: build/Windows/output
 
-#  linux-py35-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp35-cp35m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py35-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp35-cp35m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
-#  linux-py36-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp36-cp36m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py36-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp36-cp36m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
-#  linux-py37-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp37-cp37m i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py37-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp37-cp37m i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
-#  linux-py38-32bit:
-#    runs-on: ubuntu-18.04
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        source build/git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build/Linux && ./build-wheel.sh cp38-cp38 i686
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Linux/output
+  linux-py38-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp38-cp38 i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
 
 #  win-py35-32bit:
 #    runs-on: windows-2019

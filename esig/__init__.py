@@ -10,9 +10,6 @@ import os
 
 import numpy
 
-__author__ = 'David Maxwell <dmaxwell@turing.ac.uk>'
-__date__ = '2017-07-21'
-
 
 ESIG_PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
 
@@ -23,12 +20,10 @@ ESIG_PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
 import sys
 try:
     from os.path import expanduser
-    #recombine_dll_dir = os.path.join(expanduser("~"), "lyonstech", "bin")
     recombine_dll_dir = ESIG_PACKAGE_ROOT
     os.add_dll_directory(recombine_dll_dir)
 except AttributeError:
     pass
-    #print("Ignoring attempt to add_dll_directory.")
 
 from esig.backends import get_backend, set_backend, list_backends
 
@@ -132,10 +127,10 @@ def _verify_stream_arg(*types):
             if not as_array.dtype in types:
                 str_types = tuple(map(str, types))
                 raise TypeError("Values must be of one of the following types {}".format(str_types))
-            
+
             return func(as_array, *args, **kwargs)
         return wrapper
-    
+
     if fn:
         return decorator(fn)
     return decorator
@@ -182,7 +177,7 @@ def logsigdim(dimension, depth):
 
 def sigdim(dimension, depth):
     """
-    Get the number of elements in the signature 
+    Get the number of elements in the signature
     """
     if dimension == 0:
         raise ValueError("Dimension 0 is invalid")

@@ -11,7 +11,7 @@ class SwitchGenerator:
         (5, 6) : 6,
         (7, 9) : 5,
         (10, 16) : 4,
-        (17, 40) : 3,
+        #(17, 40) : 3,
         #(41, 256) : 2
     }
     indent_str = "    "
@@ -25,7 +25,7 @@ class SwitchGenerator:
             for i in range(mina, maxa+1)
         )
 
-    
+
     def __init__(self, spec=None, types=None, path=None):
         self.spec = spec or self.default_spec
         self.types = types or ["DPReal", "SPReal"]
@@ -33,7 +33,7 @@ class SwitchGenerator:
         self._file = None
         self.path = path or self._path
 
-    
+
     def _write_file(self):
         self.enter_switch("width")
         for k, v in self.spec.items():
@@ -67,7 +67,7 @@ class SwitchGenerator:
             self._write_file()
         self._file = None
         # self.write_config_bounds_header()
-   
+
     def enter_switch(self, var):
         self.writeln("switch ({}) {{".format(var))
         self.indentation += 1
@@ -132,7 +132,7 @@ class SwitchGenerator:
         for depth in self.spec:
             self.write_struct(depth)
         self.end_internal_namespace()
-         
+
     def start_internal_namespace(self):
         self.writeln("namespace {")
         self.indentation += 1
