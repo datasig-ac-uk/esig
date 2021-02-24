@@ -47,9 +47,12 @@ pushd .. # circular file path if run from Linux folder
 	$pyexe -m pip wheel -w Linux/$TMPDIR ..
 popd
 
-LD_LIBRARY_PATH=/opt/intel/mkl/../compiler/lib/intel64_lin:$LD_LIBRARY_PATH # TEMPORARY HACK
+# ****** TEMPORARY EXPERIMENT ******
+LD_LIBRARY_PATH=/opt/intel/mkl/../compiler/lib/intel64_lin:$LD_LIBRARY_PATH
 ls -la /opt/intel/mkl/../compiler/lib/intel64_lin
-ls -la ${recombine_install_dir}/bin
+ls -lar ${recombine_install_dir}/
+readelf -d binary-or-library | head -20
+# ****** TEMPORARY EXPERIMENT ******
 auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies
 auditwheel repair $TMPDIR/esig*.whl # will leave wheel in wheelhouse
 
