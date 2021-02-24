@@ -59,7 +59,7 @@ if configuration.platform == helpers.PLATFORM.MACOS:
 esig_extension = Extension(
     'esig.tosig',
     sources=[
-        'src/C_tosig.c',
+        'src/tosig.cpp',
         'src/Cpp_ToSig.cpp',
         'src/ToSig.cpp',
         'recombine/_recombine.cpp',
