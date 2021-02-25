@@ -14,7 +14,6 @@
 #include <stddef.h>
 #include <numpy/arrayobject.h>
 
-#include "C_tosig.h"
 #include <math.h>
 #include "ToSig.h"
 
