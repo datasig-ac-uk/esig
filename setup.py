@@ -89,6 +89,7 @@ esig_extension = Extension(
     depends=esig_depends,
     include_dirs=configuration.include_dirs,
     library_dirs=configuration.library_dirs,
+    define_macros=configuration.extension_macro_definitions,
     libraries=configuration.used_libraries,
     extra_compile_args=configuration.extra_compile_args,
     extra_link_args=configuration.linker_args,
