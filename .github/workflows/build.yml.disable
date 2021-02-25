@@ -34,11 +34,11 @@ jobs:
       - linux-py36-32bit
       - linux-py37-32bit
       - linux-py38-32bit
-# TODO: linux-py39-32bit
+      - linux-py39-32bit
 
-#      - win-py35-32bit
-#      - win-py36-32bit
-#      - win-py37-32bit
+      - win-py35-32bit
+      - win-py36-32bit
+      - win-py37-32bit
 #      - win-py38-32bit
     if: github.ref == 'refs/heads/release'
     steps:
@@ -345,59 +345,59 @@ jobs:
         name: output
         path: build/Linux/output
 
-#  win-py35-32bit:
-#    runs-on: windows-2019
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 32 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32 `
-#          -py_installer 3.5.4/python-3.5.4.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py35-32bit:
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python35-32 `
+          -py_installer 3.5.4/python-3.5.4.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py36-32bit:
-#    runs-on: windows-2019
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 32 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36-32 `
-#          -py_installer 3.6.5/python-3.6.5.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py36-32bit:
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python36-32 `
+          -py_installer 3.6.5/python-3.6.5.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
-#  win-py37-32bit:
-#    runs-on: windows-2019
-#    steps:
-#    - uses: actions/checkout@v2
-#    - name: Run build
-#      run: |
-#        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
-#        cd build\Windows
-#        .\build-wheel.ps1 `
-#          -vs_version 14.1 `
-#          -arch 32 `
-#          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
-#          -py_installer 3.7.0/python-3.7.0.exe `
-#    - uses: actions/upload-artifact@v2
-#      with:
-#        name: output
-#        path: build/Windows/output
+  win-py37-32bit:
+    runs-on: windows-2019
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
+          -py_installer 3.7.0/python-3.7.0.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
 
 #  win-py38-32bit:
 #    runs-on: windows-2019
