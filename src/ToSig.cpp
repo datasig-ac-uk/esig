@@ -132,18 +132,19 @@ namespace {
 		fn0001(VECTOR& ans):_ans(ans)
 		{
 		}
-
+#ifndef LIBALGEBRA_VECTORS_H
 		template <class T>
         void operator()(T& element)
         {
             _ans[KeyToIndex<TENSOR, WIDTH>(element.first)] = element.second;
         }
-
+#else
         template <typename T>
         void operator()(T& element)
         {
 		    _ans[KeyToIndex<TENSOR, WIDTH> (element.key())] = element.value();
         }
+#endif
 	};
 
 	//[&ans] (const decltype(*(arg.begin()))& element){
@@ -174,18 +175,19 @@ namespace {
 		fn0002(VECTOR& ans):_ans(ans)
 		{
 		}
-
+#ifndef LIBALGEBRA_VECTORS_H
 		template <class T>
         void operator()(T& element)
         {
             _ans[element.first - 1] = element.second;
         }
-
+#else
         template <typename T>
         void operator()(T& element)
         {
 		    _ans[element.key() - 1] = element.value();
         }
+#endif
 	};
 
 	template <class S, class LIE, size_t WIDTH, size_t DEPTH>

@@ -69,6 +69,7 @@ esig_depends = [
     'src/switch.h',
 ]
 
+
 if not configuration.no_recombine:
     esig_sources.extend([
         'recombine/_recombine.cpp',

@@ -1,5 +1,6 @@
 import unittest
 import numpy as np
+import esig
 from esig import tosig as ts
 from unittest import TestCase
 from esig.tests import auxiliaryfunct as ax
@@ -154,5 +155,6 @@ class TestESIG(TestCase):
 
 class TestRecombine(TestCase):
 
+    @unittest.skipIf(esig.NO_RECOMBINE)
     def test_recombine(self):
         self.assertEqual(recombine.test(), 0)

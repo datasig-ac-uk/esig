@@ -29,7 +29,10 @@ from esig.backends import get_backend, set_backend, list_backends
 
 try:
     from esig.tosig import recombine
+    NO_RECOMBINE = False
 except ImportError:
+    NO_RECOMBINE = True
+
     def recombine(*args, **kwargs):
         raise NotImplementedError
 
