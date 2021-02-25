@@ -332,6 +332,19 @@ jobs:
         name: output
         path: build/Linux/output
 
+  linux-py39-32bit:
+    runs-on: ubuntu-18.04
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp39-cp39 i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+
 #  win-py35-32bit:
 #    runs-on: windows-2019
 #    steps:
