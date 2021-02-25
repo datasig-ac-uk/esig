@@ -8,7 +8,7 @@ on:
       - README.md
 
 jobs:
-  win-py38-32bit:
+  win-py37-32bit:
     runs-on: windows-2019
     steps:
     - uses: actions/checkout@v2
@@ -19,8 +19,8 @@ jobs:
         .\build-wheel.ps1 `
           -vs_version 14.1 `
           -arch 32 `
-          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python38-32 `
-          -py_installer 3.8.1/python-3.8.1.exe `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python37-32 `
+          -py_installer 3.7.0/python-3.7.0.exe `
     - uses: actions/upload-artifact@v2
       with:
         name: output
