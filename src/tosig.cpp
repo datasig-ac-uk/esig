@@ -333,7 +333,8 @@ static PyObject* getsigsize(PyObject* self, PyObject* args)
 }
 
 #ifndef ESIG_NO_RECOMBINE
-/* ==== Reduces the support of a probabiity measure on vectors to the minimal support size with the same expectation/ moments <= degree=========================
+/* ==== Reduces the support of a probability measure on vectors to the minimal support size with the same
+ * expectation/ moments <= degree=========================
 	Returns two the new probability measure via two NEW scalar NumPy arrays of same length indices (Py_ssize_t) and weights (double)
 	interface:  py_recombine(N_vectors_of_dimension_D(N,D) and optionally: , k_indices, k_weights, degree = 1)
 				indices are Py_INTP; vectors and weights are doubles, degree is int

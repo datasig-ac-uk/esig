@@ -54,6 +54,7 @@ namespace {
 	{
 	  npy_intp numRows = PyArray_DIM(stream, 0);
 		std::vector<LIE> increments;
+		increments.reserve(numRows);
 		if (numRows > 0) {
 		  npy_intp rowId = 0;
 		  LIE previous = row_to_lie<LIE, WIDTH>(stream,rowId++);
@@ -64,7 +65,9 @@ namespace {
 			  previous = next;
 		  }
 		}
+
 		std::vector<const LIE*> pincrements;
+		pincrements.reserve(increments.size());
 		for (typename std::vector<LIE>::iterator it = increments.begin();
 			it != increments.end(); ++it)
 		  pincrements.push_back(&(*it));
@@ -131,10 +134,16 @@ namespace {
 		}
 
 		template <class T>
-	void operator()(T& element)
-	{
-		_ans[KeyToIndex<TENSOR, WIDTH>(element.first)] = element.second;
-	}
+        void operator()(T& element)
+        {
+            _ans[KeyToIndex<TENSOR, WIDTH>(element.first)] = element.second;
+        }
+
+        template <typename T>
+        void operator()(T& element)
+        {
+		    _ans[KeyToIndex<TENSOR, WIDTH> (element.key())] = element.value();
+        }
 	};
 
 	//[&ans] (const decltype(*(arg.begin()))& element){
@@ -167,10 +176,16 @@ namespace {
 		}
 
 		template <class T>
-	void operator()(T& element)
-	{
-		_ans[element.first - 1] = element.second;
-	}
+        void operator()(T& element)
+        {
+            _ans[element.first - 1] = element.second;
+        }
+
+        template <typename T>
+        void operator()(T& element)
+        {
+		    _ans[element.key() - 1] = element.value();
+        }
 	};
 
 	template <class S, class LIE, size_t WIDTH, size_t DEPTH>

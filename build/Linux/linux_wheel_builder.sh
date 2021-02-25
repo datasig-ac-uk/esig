@@ -44,7 +44,7 @@ pushd ${recombine_install_dir}/bin # set_env_test_recombine.sh expects to run at
 popd
 
 pushd .. # circular file path if run from Linux folder
-	$pyexe -m pip wheel -w Linux/$TMPDIR ..
+	$pyexe -m pip wheel -w Linux/$TMPDIR .. 
 popd
 
 auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies

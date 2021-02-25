@@ -33,6 +33,10 @@ class InstallationConfiguration(object):
             'darwin': PLATFORM.MACOS,
         }
 
+        # I'd really like a Walrus operator here
+        add_recombine = os.environ.get("ESIG_WITH_RECOMBINE")
+        self.no_recombine = add_recombine is None
+
         if reported_platform not in platform_map.keys():
             raise Exception(reported_platform + " not a recognised platform.")
 
@@ -53,9 +57,13 @@ class InstallationConfiguration(object):
         dirs = [
             os.path.join(".", "src"),
             os.path.join(".", "libalgebra"),
-            os.path.join(".", "recombine"),
-            os.path.join(".", "build", "recombine", "recombine")
         ]
+
+        if not self.no_recombine:
+            dirs.extend([
+                os.path.join(".", "recombine"),
+                os.path.join(".", "build", "recombine", "recombine")
+            ])
 
         if 'BOOST_ROOT' in os.environ and os.environ['BOOST_ROOT'] != '':
             dirs.append(os.environ['BOOST_ROOT'])
@@ -103,8 +111,9 @@ class InstallationConfiguration(object):
                )
             )
 
-            # todo: lose hardcoded knowledge of recombine installation dir
-            dirs.append(os.path.join(expanduser("~"), "lyonstech", "lib"))
+            if not self.no_recombine:
+                # todo: lose hardcoded knowledge of recombine installation dir
+                dirs.append(os.path.join(expanduser("~"), "lyonstech", "lib"))
 
         # On a Mac, our best guess for including libraries will be from /opt/local/lib.
         # This is where Macports and Homebrew installs libraries to.
@@ -117,6 +126,12 @@ class InstallationConfiguration(object):
                 dirs = dirs + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
 
         return dirs
+
+    @property
+    def extension_macro_definitions(self):
+        if self.no_recombine:
+            return [("ESIG_NO_RECOMBINE", "")]
+        return []
 
 	# Python extension code built with distutils is compiled with the same set of compiler options,
 	# regardless of whether it's C or C++. We use C _and_ C++, which rules out certain compiler options.
@@ -197,6 +212,19 @@ class InstallationConfiguration(object):
             PLATFORM.MACOS: ['boost_system-mt','boost_thread-mt'],
             PLATFORM.LINUX: ['boost_system','boost_thread', "boost_serialization", 'recombine'],
         }
+        if self.platform == PLATFORM.WINDOWS:
+            libs = []
+            if not self.no_recombine:
+                libs.append("recombine")
+            return libs
+        elif self.platform == PLATFORM.MACOS:
+            return ["boost_system-mt", "boost_thread-mt"],
+        elif self.platform == PLATFORM.LINUX:
+            libs = ["boost_system", "boost_thread"]
+            if not self.no_recombine:
+                libs.append("recombine")
+            return libs
+
 
         return libs[self.platform]
 
