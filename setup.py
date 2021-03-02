@@ -4,9 +4,6 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 from tools.switch_generator import SwitchGenerator
 
-__author__ = 'David Maxwell <maxwelld90@gmail.com>'
-__date__ = '2017-09-01'
-
 
 configuration = helpers.InstallationConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
@@ -91,11 +88,15 @@ extras_require = {
 
 
 
+eager_resources = []
+
 if configuration.platform == helpers.PLATFORM.WINDOWS:
     package_data["esig"] += [
         os.path.join("libiomp5md.dll"),
         os.path.join("recombine.dll")
     ]
+    # not sure why this is needed, and if it is, why package_data also needs to mention them
+    eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
 
 setup(
@@ -111,13 +112,14 @@ setup(
 
     description="This package provides \"rough path\" tools for analysing vector time series.",
     long_description=configuration.long_description,
-    long_description_content_type="text/markdown",  # Default is rst, update to markdown
+    long_description_content_type="text/markdown",
 
     include_package_data=True,
     packages=find_packages(exclude=("tools",)),
     test_suite='esig.tests.get_suite',
 
     package_data=package_data,
+    eager_resources=eager_resources,
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
 
@@ -127,18 +129,18 @@ setup(
     extras_require=extras_require,
 
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Scientific/Engineering :: Mathematics',
         ],
 
     cmdclass={
-#        'install': helpers.InstallExtensionCommand,
         'build_ext': BuildExtensionCommand,
-    },
-
+    }
 )

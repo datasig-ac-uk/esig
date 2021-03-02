@@ -1,1 +1,1 @@
-Helper scripts and dockerfiles to help build the Python wheels for different architectures and Python versions. See READMEs in Linux, OSX, and Windows subdirectories for instructions on building for that platform.
+Scripts and Docker files to help build the Python wheels for different architectures and Python versions.
