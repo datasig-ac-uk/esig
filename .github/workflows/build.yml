@@ -40,6 +40,7 @@ jobs:
       - win-py36-32bit
       - win-py37-32bit
 #     - win-py38-32bit
+#     - win-py38-32bit
 
     if: github.ref == 'refs/heads/release'
     steps:
