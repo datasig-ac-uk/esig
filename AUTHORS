@@ -1,18 +1,14 @@
-# 
-# ESIG PACKAGE AUTHORS (COMPLETE LIST)
-# 
+#
+# ESIG PACKAGE CONTRIBUTORS
+#
 # A list of the people who have contributed to esig.
-# Note that individuals may be missing from the list.
 # Contact Terry Lyons if you contributed but are not included.
-#
-# Entries are of the format ``Name <email@domain.tld> (url)`` with the ``(url)``.
-# The (url) portion is optional.
-#
 
 Terry Lyons <software@lyonstech.net>
-
-Greg Gyurko
+Greg Gyurko <gyurko@maths.ox.ac.uk>
 Alexandru Cioba <a.cioba.12@ucl.ac.uk>
 Radoslaw Kowalski <r.kowalski.pyzdry@gmail.com>
-David Maxwell <maxwelld90@gmail.com> (http://www.dmax.org.uk)
+David Maxwell <maxwelld90@gmail.com>
 Nick Barlow <nbarlow@turing.ac.uk>
+Roly Perera <rperera@turing.ac.uk>
+Sam Morley <sam.morley@maths.ox.ac.uk>
