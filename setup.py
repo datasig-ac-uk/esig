@@ -4,9 +4,6 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 from tools.switch_generator import SwitchGenerator
 
-__author__ = 'David Maxwell <maxwelld90@gmail.com>'
-__date__ = '2017-09-01'
-
 
 configuration = helpers.InstallationConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
@@ -135,15 +132,16 @@ setup(
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Scientific/Engineering :: Mathematics',
         ],
 
     cmdclass={
-#        'install': helpers.InstallExtensionCommand,
         'build_ext': BuildExtensionCommand,
     },
 
