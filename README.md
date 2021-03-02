@@ -6,7 +6,7 @@ The Python package [esig](https://pypi.org/project/esig/) provides a toolset (pr
 
 ## Installation
 esig can be installed from a wheel using pip in most cases.
-The wheels contain all of the dependencies and thus make it easy to use the package. 
+The wheels contain all of the dependencies and thus make it easy to use the package.
 For example, on Python 3.8, you can install esig using the following console command:
 ```
 python3.8 -m pip install esig
@@ -85,4 +85,3 @@ python3.8 -m pip install esig[iisignature]
 You can also define your own backend for performing calculations by creating
  a class derived from `esig.backends.BackendBase`, implementing the methods
  `describe_path` (log_signature) and `signature` and related methods.
-

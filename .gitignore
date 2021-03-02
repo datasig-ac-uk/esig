@@ -6,7 +6,9 @@ __pycache__
 .venv
 *.egg-info/
 build/*/output/
+build/recombine/
 build/temp*/
 build/*/tmp/
 
 *.so*
+*.whl

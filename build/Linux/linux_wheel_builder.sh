@@ -5,12 +5,20 @@ set -u -o xtrace
 ### from the gzip-ed source.
 
 py=$1
-arch=$2
-libdir=lib64
-mkl_arch=intel64
+arch=$2 # {i686, x86_64}
+
+if [[ $arch == "i686" ]]
+then
+   libdir="lib"
+elif [[ "$arch" == "x86_64" ]]
+then
+   libdir="lib64"
+else
+   exit 1
+fi
 
 pushd ../recombine
-./doall-linux.sh $libdir $mkl_arch
+./doall-linux.sh $libdir $arch
 popd
 
 TMPDIR=tmp         # working folder for pip wheel
@@ -36,17 +44,16 @@ pushd ${recombine_install_dir}/bin # set_env_test_recombine.sh expects to run at
 popd
 
 pushd .. # circular file path if run from Linux folder
-	$pyexe -m pip wheel -b Linux/$TMPDIR -w Linux/$TMPDIR ..
+	$pyexe -m pip wheel -w Linux/$TMPDIR ..
 popd
 
 auditwheel show $TMPDIR/esig*.whl	# useful to see dependencies
-auditwheel repair $TMPDIR/esig*.whl # puts wheel into wheelhouse
+auditwheel repair $TMPDIR/esig*.whl # will leave wheel in wheelhouse
 
 $pyexe -m virtualenv /tmp/$py
 source /tmp/$py/bin/activate
 pip install wheelhouse/esig*.whl
-#python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
-python -m unittest discover -s /data/esig/tests
+python -m unittest discover -v -s /data/esig/tests
 if [ $? -eq 0 ]
 then
 	echo "Tests passed - copying wheel to $OUTPUTDIR"

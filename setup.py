@@ -4,12 +4,8 @@ from setuptools import setup, find_packages, Extension
 from setuptools.command.build_ext import build_ext
 from tools.switch_generator import SwitchGenerator
 
-__author__ = 'David Maxwell <maxwelld90@gmail.com>'
-__date__ = '2017-09-01'
 
-
-configuration = helpers.CONFIGURATION
-configuration.package_abs_root = os.path.dirname(os.path.realpath(__file__))
+configuration = helpers.InstallationConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
 
 SWITCH_GEN = SwitchGenerator()
@@ -38,8 +34,7 @@ class BuildExtensionCommand(build_ext):
         Returns:
             None
         """
-        helpers.message_printer("Running extra esig pre-build commands...")
-
+        print("Running extra esig pre-build commands...")
         print("Building switch.h")
         SWITCH_GEN.write_file()
         print("Done")
@@ -51,7 +46,7 @@ class BuildExtensionCommand(build_ext):
 
 
 # https://stackoverflow.com/questions/2584595/building-a-python-module-and-linking-it-against-a-macosx-framework
-if configuration.platform == helpers.PLATFORMS.MACOS:
+if configuration.platform == helpers.PLATFORM.MACOS:
     home = os.environ["HOME"]
     os.environ['LDFLAGS'] = \
         '-F ' + home + '/lyonstech/ ' + \
@@ -83,24 +78,25 @@ esig_extension = Extension(
     extra_link_args=configuration.linker_args,
 )
 
-PACKAGE_DATA = {
+package_data = {
 	"esig": ["VERSION", "ERROR_MESSAGE"]
 }
 
-EXTRAS_REQUIRE = {
+extras_require = {
     "iisignature-backend": ["iisignature"],
 }
 
 
 
-EAGER_RESOURCES = []
+eager_resources = []
 
-if configuration.platform == helpers.PLATFORMS.WINDOWS:
-    PACKAGE_DATA["esig"] += [
+if configuration.platform == helpers.PLATFORM.WINDOWS:
+    package_data["esig"] += [
         os.path.join("libiomp5md.dll"),
         os.path.join("recombine.dll")
     ]
-    EAGER_RESOURCES += ["libiomp5md.dll", "recombine.dll"]
+    # not sure why this is needed, and if it is, why package_data also needs to mention them
+    eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
 
 setup(
@@ -116,36 +112,35 @@ setup(
 
     description="This package provides \"rough path\" tools for analysing vector time series.",
     long_description=configuration.long_description,
-    long_description_content_type="text/markdown",  # Default is rst, update to markdown
+    long_description_content_type="text/markdown",
 
     include_package_data=True,
     packages=find_packages(exclude=("tools",)),
     test_suite='esig.tests.get_suite',
 
-    package_data=PACKAGE_DATA,
-    eager_resources=EAGER_RESOURCES,
+    package_data=package_data,
+    eager_resources=eager_resources,
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
-
 
     install_requires=['numpy>=1.7'],
     setup_requires=['numpy>=1.7'],
     tests_require=['numpy>=1.7'],
-    extras_require=EXTRAS_REQUIRE,
+    extras_require=extras_require,
 
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
-        'Programming Language :: Python :: 2.7',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
         'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
         'Topic :: Scientific/Engineering :: Mathematics',
         ],
 
     cmdclass={
-        'install': helpers.InstallExtensionCommand,
         'build_ext': BuildExtensionCommand,
-    },
-
+    }
 )

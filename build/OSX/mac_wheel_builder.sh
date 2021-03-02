@@ -31,7 +31,7 @@ pip install --upgrade numpy
 pip install --upgrade delocate
 # build the wheel
 pushd .. # circular file path if run from OSX folder
-    pip wheel -b OSX/$TMPDIR -w OSX/$TMPDIR ..
+    pip wheel -w OSX/$TMPDIR ..
 popd
 # combine other dynamic libraries into the wheel to make it portable
 delocate-wheel -v $TMPDIR/esig*.whl
@@ -41,8 +41,7 @@ pyenv virtualenv $p esig_test_env-$p
 pyenv activate esig_test_env-$p
 pip install `ls ${TMPDIR}/*.whl`
 # run tests
-#python -c 'import esig.tests as tests; tests.run_tests(terminate=True)'
-python -m unittest discover -s "../../esig/tests"
+python -m unittest discover -v -s "../../esig/tests"
 if [ $? -eq 0 ]
 then
     echo "Tests passed."
