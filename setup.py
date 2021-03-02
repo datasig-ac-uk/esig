@@ -112,7 +112,7 @@ setup(
 
     description="This package provides \"rough path\" tools for analysing vector time series.",
     long_description=configuration.long_description,
-    long_description_content_type="text/markdown",  # Default is rst, update to markdown
+    long_description_content_type="text/markdown",
 
     include_package_data=True,
     packages=find_packages(exclude=("tools",)),
@@ -123,14 +123,13 @@ setup(
     distclass=helpers.BinaryDistribution,
     ext_modules=[esig_extension],
 
-
     install_requires=['numpy>=1.7'],
     setup_requires=['numpy>=1.7'],
     tests_require=['numpy>=1.7'],
     extras_require=extras_require,
 
     classifiers=[
-        'Development Status :: 3 - Alpha',
+        'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
         'Programming Language :: Python :: 3',
         'Programming Language :: Python :: 3.5',
@@ -143,6 +142,5 @@ setup(
 
     cmdclass={
         'build_ext': BuildExtensionCommand,
-    },
-
+    }
 )
