@@ -325,7 +325,7 @@ namespace {
 }
 
 // A C++ function returning a string of labels
-extern TOSIG_API std::string ShowLogSigLabels(size_t width, size_t depth)
+TOSIG_API std::string ShowLogSigLabels(size_t width, size_t depth)
 {
 	//execute the correct Templated Function and return the value
 #define TemplatedFn(depth,width) liebasis2stringT<depth,width>()
@@ -336,7 +336,7 @@ extern TOSIG_API std::string ShowLogSigLabels(size_t width, size_t depth)
 }
 
 // A C++ function returning a string of labels
-extern TOSIG_API std::string ShowSigLabels(size_t width, size_t depth)
+TOSIG_API std::string ShowSigLabels(size_t width, size_t depth)
 {
 	//execute the correct Templated Function and return the value
 #define TemplatedFn(depth,width) tensorbasis2stringT<depth,width>()
@@ -346,72 +346,67 @@ extern TOSIG_API std::string ShowSigLabels(size_t width, size_t depth)
 	return std::string();
 }
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 
-	// compute log signature of path at src and place answer in snk
-	TOSIG_API int GetLogSig(PyArrayObject *stream, PyArrayObject *snk,
-		size_t width, size_t depth)
-	 {
-		try {
-		//execute the correct Templated Function and return the value
+// compute log signature of path at src and place answer in snk
+TOSIG_API int GetLogSig(PyArrayObject *stream, PyArrayObject *snk,
+    size_t width, size_t depth)
+ {
+    try {
+    //execute the correct Templated Function and return the value
 #define TemplatedFn(depth,width) GetLogSigT<depth,width>(stream, snk)
 #include "switch.h"
 #undef TemplatedFn
-		} catch (std::exception& exc) {
-			PyErr_SetString(PyExc_RuntimeError, exc.what());
-		}
-		// only get here if the template arguments are out of range
-		return false;
-	 }
+    } catch (std::exception& exc) {
+        PyErr_SetString(PyExc_RuntimeError, exc.what());
+    }
+    // only get here if the template arguments are out of range
+    return false;
+ }
 
-	// get required size for snk
-	TOSIG_API size_t GetLogSigSize(size_t width, size_t depth)
-	 {
-		//execute the correct Templated Function and return the value
-		try {
+// get required size for snk
+TOSIG_API size_t GetLogSigSize(size_t width, size_t depth)
+ {
+    //execute the correct Templated Function and return the value
+    try {
 #define TemplatedFn(depth,width) GetLogSigT<depth,width>()
 #include "switch.h"
 #undef TemplatedFn
-		} catch (std::exception& exc) {
-			PyErr_SetString(PyExc_RuntimeError, exc.what());
-		}
-		// only get here if the template arguments are out of range
-		return 0;
-	 }
+    } catch (std::exception& exc) {
+        PyErr_SetString(PyExc_RuntimeError, exc.what());
+    }
+    // only get here if the template arguments are out of range
+    return 0;
+ }
 
-	// a wrapper un-templated function that calls the correct template instance
-	TOSIG_API int GetSig(PyArrayObject *stream, PyArrayObject *snk,
-		size_t width, size_t depth)
-	 {
-		//execute the correct Templated Function and return the value
-		try {
+// a wrapper un-templated function that calls the correct template instance
+TOSIG_API int GetSig(PyArrayObject *stream, PyArrayObject *snk,
+    size_t width, size_t depth)
+ {
+    //execute the correct Templated Function and return the value
+    try {
 #define TemplatedFn(depth,width) GetSigT<depth,width>(stream, snk)
 #include "switch.h"
 #undef TemplatedFn
-		} catch (std::exception& exc) {
-			PyErr_SetString(PyExc_RuntimeError, exc.what());
-		}
-		// only get here if the template arguments are out of range
-		return false;
-	 }
+    } catch (std::exception& exc) {
+        PyErr_SetString(PyExc_RuntimeError, exc.what());
+    }
+    // only get here if the template arguments are out of range
+    return false;
+ }
 
-	// get required size for snk
-	TOSIG_API const size_t GetSigSize(size_t width, size_t depth)
-	 {
-		//execute the correct Templated Function and return the value
-		try {
+// get required size for snk
+TOSIG_API size_t GetSigSize(size_t width, size_t depth)
+ {
+    //execute the correct Templated Function and return the value
+    try {
 #define TemplatedFn(depth,width) GetSigT<depth,width>()
 #include "switch.h"
 #undef TemplatedFn
-		} catch (std::exception& exc) {
-			PyErr_SetString(PyExc_RuntimeError, exc.what());
-		}
-		// only get here if the template arguments are out of range
-		return 0;
-	 }
+    } catch (std::exception& exc) {
+        PyErr_SetString(PyExc_RuntimeError, exc.what());
+    }
+    // only get here if the template arguments are out of range
+    return 0;
+ }
 
-#ifdef __cplusplus
-}
-#endif
+
