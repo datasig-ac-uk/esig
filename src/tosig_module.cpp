@@ -94,6 +94,7 @@ PyDoc_STRVAR(recombine_doc,
 );
 #endif
 
+int not_valid_matrix(PyArrayObject* mat);
 
 /* ==== Method declarations ========================== */
 
