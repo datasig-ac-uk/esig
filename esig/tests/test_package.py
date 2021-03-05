@@ -2,6 +2,7 @@ import unittest
 import numpy as np
 from esig import tosig as ts
 from unittest import TestCase
+import esig
 from esig.tests import auxiliaryfunct as ax
 from esig.tests import esigtests as rado
 from esig.tests import recombinetests as recombine
@@ -154,5 +155,6 @@ class TestESIG(TestCase):
 
 class TestRecombine(TestCase):
 
+    @unittest.skipIf(esig.NO_RECOMBINE, "Recombine not installed")
     def test_recombine(self):
         self.assertEqual(recombine.test(), 0)
