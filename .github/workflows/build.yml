@@ -405,7 +405,7 @@ jobs:
         name: output
         path: build/Windows/output
 
-        win-py36-32bit:
+  win-py36-32bit:
     runs-on: windows-2019
     env:
       ESIG_WITH_RECOMBINE: 1
