@@ -101,7 +101,7 @@ extras_require = {
 
 eager_resources = []
 
-if configuration.platform == helpers.PLATFORM.WINDOWS:
+if not configuration.no_recombine and configuration.platform == helpers.PLATFORM.WINDOWS:
     package_data["esig"] += [
         os.path.join("libiomp5md.dll"),
         os.path.join("recombine.dll")

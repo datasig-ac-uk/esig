@@ -217,6 +217,8 @@ class InstallationConfiguration(object):
                 libs.append("recombine")
             return libs
 
+        raise RuntimeError("Platform has no libraries defined")
+
 
 class PLATFORM(Enum):
     WINDOWS = 1
