@@ -83,7 +83,7 @@ package_data = {
 }
 
 extras_require = {
-    "iisignature-backend": ["iisignature"],
+    "iisignature": ["iisignature"],
 }
 
 
