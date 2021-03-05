@@ -36,6 +36,8 @@ class InstallationConfiguration(object):
         if reported_platform not in platform_map.keys():
             raise Exception(reported_platform + " not a recognised platform.")
 
+        self.no_recombine = "ESIG_WITH_RECOMBINE" not in os.environ
+
         self.platform = platform_map[reported_platform]
         self.is64bit = sys.maxsize > 2**32
 
@@ -117,6 +119,13 @@ class InstallationConfiguration(object):
                 dirs = dirs + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
 
         return dirs
+
+    @property
+    def define_macros(self):
+        args = []
+        if self.no_recombine:
+            args.append(("ESIG_NO_RECOMBINE", None))
+        return args
 
 	# Python extension code built with distutils is compiled with the same set of compiler options,
 	# regardless of whether it's C or C++. We use C _and_ C++, which rules out certain compiler options.

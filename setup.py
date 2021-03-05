@@ -46,33 +46,44 @@ class BuildExtensionCommand(build_ext):
 
 
 # https://stackoverflow.com/questions/2584595/building-a-python-module-and-linking-it-against-a-macosx-framework
-if configuration.platform == helpers.PLATFORM.MACOS:
+if not configuration.no_recombine and configuration.platform == helpers.PLATFORM.MACOS:
     home = os.environ["HOME"]
     os.environ['LDFLAGS'] = \
         '-F ' + home + '/lyonstech/ ' + \
         '-framework recombine ' + \
         '-Wl,-rpath,' + home + '/lyonstech/'
 
-esig_extension = Extension(
-    'esig.tosig',
-    sources=[
-        'src/C_tosig.c',
-        'src/Cpp_ToSig.cpp',
-        'src/ToSig.cpp',
+esig_sources = [
+    'src/C_tosig.c',
+    'src/Cpp_ToSig.cpp',
+    'src/ToSig.cpp',
+]
+
+esig_depends = [
+    'src/ToSig.h',
+    'src/C_tosig.h',
+    'src/ToSig.cpp',
+    'src/switch.h',
+]
+
+if configuration.no_recombine:
+    esig_sources.extend([
         'recombine/_recombine.cpp',
         'recombine/TestVec/RdToPowers2.cpp'
-    ],
-    # relationship between depends and include_dirs is unclear
-    depends=[
-        'src/ToSig.h',
-        'src/C_tosig.h',
-        'src/ToSig.cpp',
-        'src/switch.h',
+    ])
+    esig_depends.extend([
         'recombine/TestVec/OstreamContainerOverloads.h',
         'recombine/_recombine.h'
-    ],
+    ])
+
+esig_extension = Extension(
+    'esig.tosig',
+    sources=esig_sources,
+    # relationship between depends and include_dirs is unclear
+    depends=esig_depends,
     include_dirs=configuration.include_dirs,
     library_dirs=configuration.library_dirs,
+    define_macros=configuration.define_macros,
     libraries=configuration.used_libraries,
     extra_compile_args=configuration.extra_compile_args,
     extra_link_args=configuration.linker_args,
