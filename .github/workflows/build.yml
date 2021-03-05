@@ -75,7 +75,7 @@ jobs:
   mac-py36:
     runs-on: macos-10.15
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Build for Python 3.6
@@ -90,7 +90,7 @@ jobs:
   mac-py37:
     runs-on: macos-10.15
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Build for Python 3.7
@@ -105,7 +105,7 @@ jobs:
   mac-py38:
     runs-on: macos-10.15
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Build for Python 3.8
@@ -120,7 +120,7 @@ jobs:
   mac-py39:
     runs-on: macos-10.15
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
       - uses: actions/checkout@v2
       - name: Build for Python 3.9
@@ -136,7 +136,7 @@ jobs:
   linux-py35-64bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -151,7 +151,7 @@ jobs:
   linux-py36-64bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -166,7 +166,7 @@ jobs:
   linux-py37-64bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -181,7 +181,7 @@ jobs:
   linux-py38-64bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -196,7 +196,7 @@ jobs:
   linux-py39-64bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
       - uses: actions/checkout@v2
       - name: Run build
@@ -212,7 +212,7 @@ jobs:
   win-py35-64bit:
     runs-on: windows-2019
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -232,7 +232,7 @@ jobs:
   win-py36-64bit:
     runs-on: windows-2019
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -253,7 +253,7 @@ jobs:
   win-py37-64bit:
     runs-on: windows-2019
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -273,7 +273,7 @@ jobs:
   win-py38-64bit:
     runs-on: windows-2019
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -293,7 +293,7 @@ jobs:
   win-py39-64bit:
     runs-on: windows-2019
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -313,7 +313,7 @@ jobs:
   linux-py35-32bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -328,7 +328,7 @@ jobs:
   linux-py36-32bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -343,7 +343,7 @@ jobs:
   linux-py37-32bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -358,7 +358,7 @@ jobs:
   linux-py38-32bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -373,7 +373,7 @@ jobs:
   linux-py39-32bit:
     runs-on: ubuntu-18.04
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -388,7 +388,7 @@ jobs:
   win-py36-32bit:
     runs-on: windows-2019
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -408,7 +408,7 @@ jobs:
   win-py37-32bit:
     runs-on: windows-2019
     env:
-      ESIG_WITH_RECOMBINE: true
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
