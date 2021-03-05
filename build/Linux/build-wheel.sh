@@ -20,6 +20,5 @@ popd
 docker build -t esig_builder_linux_${arch} -f Dockerfile_${arch}.dockerfile .
 
 # Build esig and recombine inside the container
-docker run --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} \
-   -e ESIG_WITH_RECOMBINE=1 \
+docker run --rm -v ${PWD}/../..:/data esig_builder_linux_${arch} -env ESIG_WITH_RECOMBINE \
    "source ~/.bashrc; cd /data/build/Linux; ./linux_wheel_builder.sh $1 $arch" || exit 1
