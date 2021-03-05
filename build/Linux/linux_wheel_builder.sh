@@ -43,6 +43,7 @@ pushd ${recombine_install_dir}/bin # set_env_test_recombine.sh expects to run at
 	source set_env_test_recombine.sh $libdir # set LD_LIBRARY_PATH and OMP options
 popd
 
+echo $ESIG_WITH_RECOMBINE
 pushd .. # circular file path if run from Linux folder
 	$pyexe -m pip wheel -w Linux/$TMPDIR ..
 popd
