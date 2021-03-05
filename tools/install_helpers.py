@@ -210,7 +210,7 @@ class InstallationConfiguration(object):
                 libs.append("recombine")
             return libs
         elif self.platform == PLATFORM.MACOS:
-            return ["boost_system-mt", "boost_thread-mt"],
+            return ["boost_system-mt", "boost_thread-mt"]
         elif self.platform == PLATFORM.LINUX:
             libs = ["boost_system", "boost_thread"]
             if not self.no_recombine:
