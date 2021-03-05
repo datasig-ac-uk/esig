@@ -66,7 +66,7 @@ esig_depends = [
     'src/switch.h',
 ]
 
-if configuration.no_recombine:
+if not configuration.no_recombine:
     esig_sources.extend([
         'recombine/_recombine.cpp',
         'recombine/TestVec/RdToPowers2.cpp'
