@@ -55,9 +55,13 @@ class InstallationConfiguration(object):
         dirs = [
             os.path.join(".", "src"),
             os.path.join(".", "libalgebra"),
-            os.path.join(".", "recombine"),
-            os.path.join(".", "build", "recombine", "recombine")
         ]
+
+        if not self.no_recombine:
+            dirs.extend([
+                os.path.join(".", "recombine"),
+                os.path.join(".", "build", "recombine", "recombine")
+            ])
 
         if 'BOOST_ROOT' in os.environ and os.environ['BOOST_ROOT'] != '':
             dirs.append(os.environ['BOOST_ROOT'])
@@ -200,14 +204,18 @@ class InstallationConfiguration(object):
         Returns:
             list of library names
         """
-        libs = {
-            PLATFORM.WINDOWS: ['recombine'],
-            # on the Mac, recombine is a framework, not a library; needs special treatment in setup.py
-            PLATFORM.MACOS: ['boost_system-mt','boost_thread-mt'],
-            PLATFORM.LINUX: ['boost_system','boost_thread', 'recombine'],
-        }
-
-        return libs[self.platform]
+        if self.platform == PLATFORM.WINDOWS:
+            libs = []
+            if not self.no_recombine:
+                libs.append("recombine")
+            return libs
+        elif self.platform == PLATFORM.MACOS:
+            return ["boost_system-mt", "boost_thread-mt"],
+        elif self.platform == PLATFORM.LINUX:
+            libs = ["boost_system", "boost_thread"]
+            if not self.no_recombine:
+                libs.append("recombine")
+            return libs
 
 
 class PLATFORM(Enum):
