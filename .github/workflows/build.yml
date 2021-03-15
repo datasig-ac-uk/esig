@@ -36,9 +36,6 @@ jobs:
       - linux-py38-32bit
       - linux-py39-32bit
 
-      # 32-bit Windows builds for Python 3.5, 3.8 and 3.9 have recombine DISABLED
-      # see https://github.com/datasig-ac-uk/esig/issues/89
-
       - win-py35-32bit
       - win-py36-32bit
       - win-py37-32bit
