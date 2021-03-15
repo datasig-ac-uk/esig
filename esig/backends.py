@@ -166,7 +166,7 @@ if iisignature:
 
 
 
-    BACKENDS["iisignature"] = LibalgebraBackend
+    BACKENDS["iisignature"] = IIsignatureBackend
 
 
 # set the default backend
