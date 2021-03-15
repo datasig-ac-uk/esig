@@ -390,6 +390,8 @@ jobs:
 
   win-py35-32bit:
     runs-on: windows-2019
+    env:
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -448,6 +450,8 @@ jobs:
 
   win-py38-32bit:
     runs-on: windows-2019
+    env:
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
@@ -466,6 +470,8 @@ jobs:
 
   win-py39-32bit:
     runs-on: windows-2019
+    env:
+      ESIG_WITH_RECOMBINE: 1
     steps:
     - uses: actions/checkout@v2
     - name: Run build
