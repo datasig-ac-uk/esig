@@ -13,7 +13,9 @@
 #include "C_tosig.h"
 #include <math.h>
 #include "ToSig.h"
+#ifndef ESIG_NO_RECOMBINE
 #include "_recombine.h"
+#endif
 
 /* #### Globals #################################### */
 
@@ -59,6 +61,7 @@ PyDoc_STRVAR(sigkeys_doc,
 	" the signature returned by stream2sig"
 );
 
+#ifndef ESIG_NO_RECOMBINE
 PyDoc_STRVAR(recombine_doc,
 	"recombine(ensemble, selector=(0,1,2,...no_points-1),"
 	" weights = (1,1,..,1), degree = 1) ensemble is a numpy"
@@ -85,6 +88,7 @@ PyDoc_STRVAR(recombine_doc,
 	" weights are 1. on each point indexed."
 	" The default degree is one."
 );
+#endif
 
 /* ==== Set up the methods table ====================== */
 static PyMethodDef _C_tosigMethods[] = {
@@ -94,7 +98,9 @@ static PyMethodDef _C_tosigMethods[] = {
 		{"sigdim", getsigsize, METH_VARARGS, sigdim_doc},
 		{"logsigkeys",showlogsigkeys, METH_VARARGS, logsigkeys_doc},
 		{"sigkeys",showsigkeys, METH_VARARGS, sigkeys_doc},
+#ifndef ESIG_NO_RECOMBINE
 		{"recombine", (PyCFunction) pyrecombine, METH_VARARGS | METH_KEYWORDS, recombine_doc},
+#endif
 		{NULL, NULL, 0, NULL}        /* Sentinel */
 };
 
@@ -271,6 +277,7 @@ static PyObject* getsigsize(PyObject* self, PyObject* args)
 	return Py_BuildValue("n", ans);
 }
 
+#ifndef ESIG_NO_RECOMBINE
 /* ==== Reduces the support of a probabiity measure on vectors to the minimal support size with the same expectation/ moments <= degree=========================
 	Returns two the new probability measure via two NEW scalar NumPy arrays of same length indices (Py_ssize_t) and weights (double)
 	interface:  py_recombine(N_vectors_of_dimension_D(N,D) and optionally: , k_indices, k_weights, degree = 1)
@@ -436,6 +443,8 @@ exit:;
 		//https://stackoverflow.com/questions/6994725/reversing-axis-in-numpy-array-using-c-api/6997311#6997311
 		//https://stackoverflow.com/questions/6994725/reversing-axis-in-numpy-array-using-c-api/6997311#699731
 }
+
+#endif
 
 /* ==== Check that PyArrayObject is a double (Float) type and a matrix ==============
     return 1 if an error and raise exception */

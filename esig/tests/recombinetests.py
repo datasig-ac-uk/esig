@@ -9,7 +9,7 @@ import esig
 def test ():
    failures = 0
 
-   dimension = 240 ## big test set this to 2400 small test 240
+   dimension = 60 ## big test set this to 2400 small test 240
    no_points = 100000
 
    print("preparing data ({},{})".format(no_points,dimension))

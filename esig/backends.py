@@ -11,13 +11,16 @@ try:
     from esig import tosig
 except ImportError:
     # Error occurs during build sequence, since tosig does not exist
-    pass
+    tosig = None
 
 
 try:
     import iisignature
 except ImportError:
+    if tosig is None:
+        raise ImportError("No available backend for signature calculations, please reinstall esig.")
     iisignature = None
+
 
 BACKENDS = {}
 
@@ -163,7 +166,7 @@ if iisignature:
 
 
 
-    BACKENDS["iisignature"] = LibalgebraBackend
+    BACKENDS["iisignature"] = IIsignatureBackend
 
 
 # set the default backend
