@@ -36,6 +36,8 @@ class InstallationConfiguration(object):
         if reported_platform not in platform_map.keys():
             raise Exception(reported_platform + " not a recognised platform.")
 
+        self.no_recombine = "ESIG_WITH_RECOMBINE" not in os.environ
+
         self.platform = platform_map[reported_platform]
         self.is64bit = sys.maxsize > 2**32
 
@@ -53,9 +55,13 @@ class InstallationConfiguration(object):
         dirs = [
             os.path.join(".", "src"),
             os.path.join(".", "libalgebra"),
-            os.path.join(".", "recombine"),
-            os.path.join(".", "build", "recombine", "recombine")
         ]
+
+        if not self.no_recombine:
+            dirs.extend([
+                os.path.join(".", "recombine"),
+                os.path.join(".", "build", "recombine", "recombine")
+            ])
 
         if 'BOOST_ROOT' in os.environ and os.environ['BOOST_ROOT'] != '':
             dirs.append(os.environ['BOOST_ROOT'])
@@ -117,6 +123,13 @@ class InstallationConfiguration(object):
                 dirs = dirs + os.environ['LD_LIBRARY_PATH'].split(os.pathsep)
 
         return dirs
+
+    @property
+    def define_macros(self):
+        args = []
+        if self.no_recombine:
+            args.append(("ESIG_NO_RECOMBINE", None))
+        return args
 
 	# Python extension code built with distutils is compiled with the same set of compiler options,
 	# regardless of whether it's C or C++. We use C _and_ C++, which rules out certain compiler options.
@@ -191,14 +204,20 @@ class InstallationConfiguration(object):
         Returns:
             list of library names
         """
-        libs = {
-            PLATFORM.WINDOWS: ['recombine'],
-            # on the Mac, recombine is a framework, not a library; needs special treatment in setup.py
-            PLATFORM.MACOS: ['boost_system-mt','boost_thread-mt'],
-            PLATFORM.LINUX: ['boost_system','boost_thread', 'recombine'],
-        }
+        if self.platform == PLATFORM.WINDOWS:
+            libs = []
+            if not self.no_recombine:
+                libs.append("recombine")
+            return libs
+        elif self.platform == PLATFORM.MACOS:
+            return ["boost_system-mt", "boost_thread-mt"]
+        elif self.platform == PLATFORM.LINUX:
+            libs = ["boost_system", "boost_thread"]
+            if not self.no_recombine:
+                libs.append("recombine")
+            return libs
 
-        return libs[self.platform]
+        raise RuntimeError("Platform has no libraries defined")
 
 
 class PLATFORM(Enum):
