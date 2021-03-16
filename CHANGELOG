@@ -1,5 +1,6 @@
 0.9.0
     - Switched Linux support to manylinux2010
+    - Support for 32-bit platforms
 
 0.8.2
     - Added builds for Python3.9
@@ -20,4 +21,3 @@
     - Fixed message displayed for Python versions below 3.8 when importing esig
 0.7.3
     - Added recombine function
-
