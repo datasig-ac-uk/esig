@@ -64,7 +64,12 @@ namespace {
 			  previous = next;
 		  }
 		}
+#ifndef LIBALGEBRA_VECTORS_H
 		std::vector<LIE*> pincrements;
+#else
+		std::vector<const LIE*> pincrements;
+#endif
+		pincrements.reserve(increments.size());
 		for (typename std::vector<LIE>::iterator it = increments.begin();
 			it != increments.end(); ++it)
 		  pincrements.push_back(&(*it));
@@ -174,11 +179,19 @@ namespace {
 		{
 		}
 
+#ifndef LIBALGEBRA_VECTORS_H
 		template <class T>
-	void operator()(T& element)
-	{
-		_ans[element.first - 1] = element.second;
-	}
+        void operator()(T& element)
+        {
+            _ans[element.first - 1] = element.second;
+        }
+#else
+        template <class T>
+        void operator()(T& element)
+        {
+            _ans[element.key() - 1] = element.value();
+        }
+#endif
 	};
 
 	template <class S, class LIE, size_t WIDTH, size_t DEPTH>
