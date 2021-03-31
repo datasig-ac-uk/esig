@@ -54,7 +54,7 @@ if not configuration.no_recombine and configuration.platform == helpers.PLATFORM
         '-Wl,-rpath,' + home + '/lyonstech/'
 
 esig_sources = [
-    'src/tosig.cpp',
+    'src/tosig_module.cpp',
     'src/Cpp_ToSig.cpp',
     'src/ToSig.cpp',
 ]
