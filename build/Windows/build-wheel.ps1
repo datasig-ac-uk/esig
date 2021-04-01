@@ -64,6 +64,7 @@ Invoke-Expression "$py_exe -m pip install numpy"
 Invoke-Expression "$py_exe -m pip install wheel"
 Invoke-Expression "$py_exe -m pip install delocate"
 Invoke-Expression "$py_exe -m pip install --upgrade setuptools"
+Invoke-Expression "$py_exe -m pip install --upgrade pip"
 Invoke-Expression "$py_exe -m pip install virtualenv"
 
 # build the wheel
@@ -87,7 +88,7 @@ ls .\venv\Scripts
 # TODO: Python 3.8+ doesn't use PATH to find dependent DLLs
 
 echo (Invoke-Expression ".\venv\Scripts\python.exe --version")
-.\venv\Scripts\python.exe -v -m unittest discover -v -s ..\..\esig\tests
+.\venv\Scripts\python.exe -m unittest discover -v -s ..\..\esig\tests
 
 if ($LASTEXITCODE -ne 0) {
    throw "Tests failed - will not copy wheel to output"
