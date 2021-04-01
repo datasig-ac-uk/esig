@@ -79,17 +79,18 @@ Invoke-Expression "$py_exe -m virtualenv venv"
 $wheel=(ls wheeldir\*.whl | Select-Object -First 1).Name
 
 echo $wheel
-ls .\venv
+
 ls .\venv\Scripts
 .\venv\Scripts\python.exe -m pip install wheeldir\$wheel
 
 # run tests
 # TODO: Python 3.8+ doesn't use PATH to find dependent DLLs
 
+echo (Invoke-Expression ".\venv\Scripts\python.exe --version")
 .\venv\Scripts\python.exe -m unittest discover -v -s ..\..\esig\tests
 
 if ($LASTEXITCODE -ne 0) {
-   throw "Tests failed with code $LASTEXITCODE - will not copy wheel to output"
+   throw "Tests failed - will not copy wheel to output"
 } else {
    echo "Tests passed - copying wheel to output"
    mkdir output
