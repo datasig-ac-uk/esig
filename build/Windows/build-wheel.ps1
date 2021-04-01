@@ -81,7 +81,7 @@ $wheel=(ls wheeldir\*.whl | Select-Object -First 1).Name
 echo $wheel
 
 ls .\venv\Scripts
-.\venv\Scripts\python.exe -m pip install wheeldir\$wheel
+.\venv\Scripts\python.exe -v -d -m pip install wheeldir\$wheel
 
 # run tests
 # TODO: Python 3.8+ doesn't use PATH to find dependent DLLs
