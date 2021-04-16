@@ -87,7 +87,7 @@ echo $wheel
 # TODO: Python 3.8+ doesn't use PATH to find dependent DLLs
 
 echo (Invoke-Expression ".\venv\Scripts\python.exe --version")
-.\venv\Scripts\python.exe -vvv -X faulthandler -m unittest discover -v -s ..\..\esig\tests
+.\venv\Scripts\python.exe -m unittest discover -v -s ..\..\esig\tests
 
 if ($LASTEXITCODE -ne 0) {
    throw "Tests failed - will not copy wheel to output"
