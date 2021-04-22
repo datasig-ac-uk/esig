@@ -54,14 +54,13 @@ if not configuration.no_recombine and configuration.platform == helpers.PLATFORM
         '-Wl,-rpath,' + home + '/lyonstech/'
 
 esig_sources = [
-    'src/C_tosig.c',
+    'src/tosig_module.cpp',
     'src/Cpp_ToSig.cpp',
     'src/ToSig.cpp',
 ]
 
 esig_depends = [
     'src/ToSig.h',
-    'src/C_tosig.h',
     'src/ToSig.cpp',
     'src/switch.h',
 ]

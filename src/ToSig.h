@@ -29,26 +29,18 @@
 #endif
 
 
-#ifdef __cplusplus
-#include <string>
-extern TOSIG_API std::string ShowLogSigLabels(size_t width, size_t depth);
-extern TOSIG_API std::string ShowSigLabels(size_t width, size_t depth);
-extern "C" {
-#endif
 
-	// get required size for snk
-	const TOSIG_API size_t GetSigSize(size_t width, size_t depth);
-	// compute signature of path at src and place answer in snk
-	int TOSIG_API GetSig(PyArrayObject *stream, PyArrayObject *snk, 
-		size_t width, size_t depth);
+// get required size for snk
+TOSIG_API const size_t GetSigSize(size_t width, size_t depth);
+// compute signature of path at src and place answer in snk
+TOSIG_API int GetSig(PyArrayObject *stream, PyArrayObject *snk,
+    size_t width, size_t depth);
 
-	// get required size for snk
-	size_t TOSIG_API GetLogSigSize(size_t width, size_t depth);
-	// compute signature of path at src and place answer in snk
-	int TOSIG_API GetLogSig(PyArrayObject *stream, PyArrayObject *snk, 
-		size_t width, size_t depth);
-#ifdef __cplusplus
-}
-#endif
+// get required size for snk
+TOSIG_API size_t GetLogSigSize(size_t width, size_t depth);
+// compute signature of path at src and place answer in snk
+TOSIG_API int GetLogSig(PyArrayObject *stream, PyArrayObject *snk,
+    size_t width, size_t depth);
+
 
 #endif // ToSig_h__
