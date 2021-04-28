@@ -166,7 +166,7 @@ if iisignature:
 
 
 
-    BACKENDS["iisignature"] = IIsignatureBackend
+    BACKENDS["iisignature"] = IISignatureBackend
 
 
 # set the default backend
