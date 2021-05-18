@@ -67,8 +67,8 @@ echo (Invoke-Expression "$py_exe --version")
 
 Invoke-Expression "$py_exe -m pip install wheel"
 #Invoke-Expression "$py_exe -m pip install delocate"
-#Invoke-Expression "$py_exe -m pip install --upgrade setuptools"
-#Invoke-Expression "$py_exe -m pip install --upgrade pip"
+Invoke-Expression "$py_exe -m pip install --upgrade setuptools"
+Invoke-Expression "$py_exe -m pip install --upgrade pip"
 Invoke-Expression "$py_exe -m pip install virtualenv"
 
 # build the wheel

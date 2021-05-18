@@ -33,7 +33,7 @@ pip install --upgrade wheel
 # https://numpy.org/devdocs/user/depending_on_numpy.html
 #pip install oldest-supported-numpy
 
-#pip install --upgrade delocate
+pip install --upgrade delocate
 # build the wheel
 pushd .. # circular file path if run from OSX folder
     pip wheel -w OSX/$TMPDIR ..
