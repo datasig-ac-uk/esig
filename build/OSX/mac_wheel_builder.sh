@@ -27,7 +27,12 @@ pyenv activate esig_build_env-$p
 # install python dependencies
 pip install --upgrade pip
 pip install --upgrade wheel
-pip install --no-cache-dir --only-binary :all: 'numpy>=1.17.0'
+
+#pip install --no-cache-dir --only-binary :all: 'numpy>=1.17.0'
+# Try oldest-supported-numpy package
+# https://numpy.org/devdocs/user/depending_on_numpy.html
+pip install oldest-supported-numpy
+
 pip install --upgrade delocate
 # build the wheel
 pushd .. # circular file path if run from OSX folder
