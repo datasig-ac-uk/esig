@@ -27,7 +27,7 @@ pyenv activate esig_build_env-$p
 # install python dependencies
 pip install --upgrade pip
 pip install --upgrade wheel
-pip install  --only-binary :all: 'numpy>=1.7.0'
+pip install --no-cache-dir --only-binary :all: 'numpy>=1.7.0'
 pip install --upgrade delocate
 # build the wheel
 pushd .. # circular file path if run from OSX folder

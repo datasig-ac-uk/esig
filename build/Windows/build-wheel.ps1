@@ -60,7 +60,7 @@ $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
 echo (Invoke-Expression "$py_exe --version")
 
-Invoke-Expression "$py_exe -m pip install  --only-binary :all: 'numpy>=1.7.0'"
+Invoke-Expression "$py_exe -m pip install --no-cache-dir --only-binary :all: 'numpy>=1.7.0'"
 Invoke-Expression "$py_exe -m pip install wheel"
 Invoke-Expression "$py_exe -m pip install delocate"
 Invoke-Expression "$py_exe -m pip install --upgrade setuptools"
