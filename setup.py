@@ -108,7 +108,6 @@ if not configuration.no_recombine and configuration.platform == helpers.PLATFORM
     # not sure why this is needed, and if it is, why package_data also needs to mention them
     eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
-
 setup(
     name='esig',
     version=configuration.esig_version,
@@ -134,7 +133,17 @@ setup(
     ext_modules=[esig_extension],
 
     install_requires=['numpy>=1.7'],
-    setup_requires=['numpy>=1.7'],
+    setup_requires=[
+        # Get the oldest version of Numpy that is supported on each platform
+        # This is only for the build phase.
+        "oldest-supported-numpy",
+
+        # Needs at least version 0.34.2 for auditwheel
+        "wheel>=0.34.2",
+
+        # On MacOS we need the delocate package to perform the same work as auditwheel
+        "delocate>=0.8.2;platform_system=='darwin'"
+    ],
     tests_require=['numpy>=1.7'],
     extras_require=extras_require,
 
@@ -154,3 +163,4 @@ setup(
         'build_ext': BuildExtensionCommand,
     }
 )
+
