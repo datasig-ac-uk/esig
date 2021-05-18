@@ -38,7 +38,7 @@ $pyexe -m pip install -U 'wheel>=0.34.2' # need at least this version for auditw
 
 # Try oldest-supported-numpy package
 # https://numpy.org/devdocs/user/depending_on_numpy.html
-$py_exe -m pip install oldest-supported-numpy
+$pyexe -m pip install oldest-supported-numpy
 
 # recombine build step will have left library here
 recombine_install_dir=${HOME}/lyonstech
