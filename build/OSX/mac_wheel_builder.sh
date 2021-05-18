@@ -26,7 +26,7 @@ pyenv activate esig_build_env-$p
 
 # install python dependencies
 pip install --upgrade pip
-#pip install --upgrade wheel
+pip install --upgrade wheel
 
 #pip install --no-cache-dir --only-binary :all: 'numpy>=1.17.0'
 # Try oldest-supported-numpy package

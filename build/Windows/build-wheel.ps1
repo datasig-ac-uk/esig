@@ -65,7 +65,7 @@ echo (Invoke-Expression "$py_exe --version")
 # https://numpy.org/devdocs/user/depending_on_numpy.html
 #Invoke-Expression "$py_exe -m pip install oldest-supported-numpy"
 
-#Invoke-Expression "$py_exe -m pip install wheel"
+Invoke-Expression "$py_exe -m pip install wheel"
 #Invoke-Expression "$py_exe -m pip install delocate"
 #Invoke-Expression "$py_exe -m pip install --upgrade setuptools"
 #Invoke-Expression "$py_exe -m pip install --upgrade pip"
