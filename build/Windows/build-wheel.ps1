@@ -60,9 +60,13 @@ $py_exe=$py_install_dir + "\python.exe"
 echo $py_exe
 echo (Invoke-Expression "$py_exe --version")
 
-Invoke-Expression "$py_exe -m pip install numpy"
+#Invoke-Expression "$py_exe -m pip install --no-cache-dir --only-binary :all: 'numpy>=1.17.0'"
+# Try oldest-supported-numpy package
+# https://numpy.org/devdocs/user/depending_on_numpy.html
+#Invoke-Expression "$py_exe -m pip install oldest-supported-numpy"
+
 Invoke-Expression "$py_exe -m pip install wheel"
-Invoke-Expression "$py_exe -m pip install delocate"
+#Invoke-Expression "$py_exe -m pip install delocate"
 Invoke-Expression "$py_exe -m pip install --upgrade setuptools"
 Invoke-Expression "$py_exe -m pip install --upgrade pip"
 Invoke-Expression "$py_exe -m pip install virtualenv"

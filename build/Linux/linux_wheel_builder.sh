@@ -33,8 +33,12 @@ mkdir $TMPDIR
 pyexe=/opt/python/$py/bin/python
 ls -la /opt/python # see what Python versions there are
 $pyexe -m pip install -U pip virtualenv
-$pyexe -m pip install wheel==0.34.2 # need at least this version for auditwheel 3.1.1 (Python 3.7)
-$pyexe -m pip install -U numpy
+$pyexe -m pip install -U 'wheel>=0.34.2' # need at least this version for auditwheel 3.1.1 (Python 3.7)
+#$pyexe -m pip install --no-cache-dir --only-binary :all: 'numpy>=1.17.0'
+
+# Try oldest-supported-numpy package
+# https://numpy.org/devdocs/user/depending_on_numpy.html
+#$pyexe -m pip install oldest-supported-numpy
 
 # recombine build step will have left library here
 recombine_install_dir=${HOME}/lyonstech
