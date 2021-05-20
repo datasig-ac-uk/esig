@@ -12,7 +12,7 @@ class SwitchGenerator:
         (7, 9) : 5,
         (10, 16) : 4,
         (17, 40) : 3,
-        # (41, 256) : 2
+        (41, 256) : 2
     }
     indent_str = "    "
     endln = "\n"
