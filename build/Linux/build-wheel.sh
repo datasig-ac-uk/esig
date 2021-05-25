@@ -13,6 +13,7 @@ else
    exit 1
 fi
 
+
 # Use recombine as base image for esig
 pushd ../recombine
 docker build -t recombine_builder_manylinux_${arch} -f manylinux_${arch}.dockerfile .

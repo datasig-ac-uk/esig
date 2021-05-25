@@ -78,6 +78,7 @@ if not configuration.no_recombine:
 esig_extension = Extension(
     'esig.tosig',
     sources=esig_sources,
+    language="c++",
     # relationship between depends and include_dirs is unclear
     depends=esig_depends,
     include_dirs=configuration.include_dirs,
