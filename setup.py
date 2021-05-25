@@ -37,6 +37,7 @@ class BuildExtensionCommand(build_ext):
         print("Running extra esig pre-build commands...")
         print("Building switch.h")
         SWITCH_GEN.write_file()
+        SWITCH_GEN.write_config_bounds_header()
         print("Done")
 
         import numpy

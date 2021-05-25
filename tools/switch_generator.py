@@ -25,14 +25,12 @@ class SwitchGenerator:
             for i in range(mina, maxa+1)
         )
 
-
     def __init__(self, spec=None, types=None, path=None):
         self.spec = spec or self.default_spec
         self.types = types or ["DPReal", "SPReal"]
         self.indentation = 0
         self._file = None
         self.path = path or self._path
-
 
     def _write_file(self):
         self.enter_switch("width")
@@ -116,9 +114,9 @@ class SwitchGenerator:
             self.indent_str*self.indentation + val + self.endln
         )
 
-
     def write_config_bounds_header(self):
         path = os.path.join(self.path, "config_bounds.h")
+        print("Writing config bounds header:", path)
         with open(path, "wt", encoding="UTF-8") as f:
             self._file = f
             self._write_config_bounds_header()
@@ -134,7 +132,7 @@ class SwitchGenerator:
         self.end_internal_namespace()
 
     def start_internal_namespace(self):
-        self.writeln("namespace {")
+        self.writeln("namespace config_bounds {")
         self.indentation += 1
 
     def end_internal_namespace(self):
@@ -144,17 +142,22 @@ class SwitchGenerator:
 
     def write_struct(self, width=None):
         self.write_struct_head(width)
+        if width is None:
+            return
         self.write_struct_values(width)
         self.write_struct_end()
-
 
     def write_struct_head(self, width):
         template_str = "" if width else "DEG W"
         template_args = "<{width}>".format(width=width) if width else ""
         self.writeln("template <{template_str}>".format(template_str=template_str))
-        self.writeln("struct config_check{template_args}".format(template_args=template_args))
-        self.writeln("{")
-        self.indentation += 1
+        self.writeln("struct config_check{template_args}{sc}".format(
+            template_args=template_args,
+            sc=";\n" if width is None else ""
+        ))
+        if width is not None:
+            self.writeln("{")
+            self.indentation += 1
 
     def write_struct_values(self, width):
         if not width:
