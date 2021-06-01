@@ -5,14 +5,14 @@ class SwitchGenerator:
     _path = "src"
     _default_spec = {
     #letters_range : max_depth
-        (2, 2) : 5,
-        (3, 3) : 4,
-         (4, 4) : 4,
-        (5, 6) : 3,
-        # (7, 9) : 2,
-        # (10, 16) : 2,
-        # (17, 40) : 2,
-        #(41, 128) : 2
+        (2, 2) : 16,
+        (3, 3) : 10,
+        (4, 4) : 8,
+        (5, 6) : 6,
+        (7, 9) : 5,
+        (10, 16) : 4,
+        (17, 40) : 3,
+        (41, 128) : 2
     }
     indent_str = "    "
     endln = "\n"
@@ -216,6 +216,6 @@ class SwitchGenerator:
 
 
 if __name__ == "__main__":
-    import sys
-    g = SwitchGenerator(path=sys.argv[1])
+    g = SwitchGenerator(path="test.txt")
+
     g.write_file()
