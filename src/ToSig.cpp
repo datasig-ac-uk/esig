@@ -349,9 +349,13 @@ namespace {
 extern TOSIG_API std::string ShowLogSigLabels(size_t width, size_t depth)
 {
 	//execute the correct Templated Function and return the value
+	try {
 #define TemplatedFn(depth,width) liebasis2stringT<depth,width>()
 #include "switch.h"
 #undef TemplatedFn
+    } catch (std::exception& exc) {
+        PyErr_SetString(PyExc_RuntimeError, exc.what());
+    }
 	// only get here if the template arguments are out of range
 	return std::string();
 }
@@ -360,9 +364,13 @@ extern TOSIG_API std::string ShowLogSigLabels(size_t width, size_t depth)
 extern TOSIG_API std::string ShowSigLabels(size_t width, size_t depth)
 {
 	//execute the correct Templated Function and return the value
+	try {
 #define TemplatedFn(depth,width) tensorbasis2stringT<depth,width>()
 #include "switch.h"
 #undef TemplatedFn
+    } catch (std::exception& exc) {
+        PyErr_SetString(PyExc_RuntimeError, exc.what());
+    }
 	// only get here if the template arguments are out of range
 	return std::string();
 }

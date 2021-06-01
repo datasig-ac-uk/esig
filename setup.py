@@ -78,6 +78,7 @@ if not configuration.no_recombine:
 esig_extension = Extension(
     'esig.tosig',
     sources=esig_sources,
+    language="c++",
     # relationship between depends and include_dirs is unclear
     depends=esig_depends,
     include_dirs=configuration.include_dirs,
@@ -108,7 +109,6 @@ if not configuration.no_recombine and configuration.platform == helpers.PLATFORM
     # not sure why this is needed, and if it is, why package_data also needs to mention them
     eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
-
 setup(
     name='esig',
     version=configuration.esig_version,
@@ -134,7 +134,11 @@ setup(
     ext_modules=[esig_extension],
 
     install_requires=['numpy>=1.7'],
-    setup_requires=['numpy>=1.7'],
+    setup_requires=[
+        # Get the oldest version of Numpy that is supported on each platform
+        # This is only for the build phase.
+        "oldest-supported-numpy",
+    ],
     tests_require=['numpy>=1.7'],
     extras_require=extras_require,
 
@@ -154,3 +158,4 @@ setup(
         'build_ext': BuildExtensionCommand,
     }
 )
+

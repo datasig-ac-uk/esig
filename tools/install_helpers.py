@@ -149,10 +149,15 @@ class InstallationConfiguration(object):
             args.append('/D_WIN32_WINNT=0x0601')
             args.append('/D_SCL_SECURE_NO_WARNINGS')
             args.append('/bigobj')
+            args.append('/Zm70') # reduce memory usage
         else:
             # Clang will reject this when compiling C
             if self.platform == PLATFORM.LINUX:
                 args.append('-std=c++11') # want c99 as well, but not possible (see above)
+                args.extend(["-s", "-g0",
+                             "--param=ggc-min-expand=20",
+                             "--param=ggc-min-heapsize=8192"
+                             ])
             args.append('-Wno-unused-but-set-variable') # moans on some platforms
 
         return args
