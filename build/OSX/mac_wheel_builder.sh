@@ -14,6 +14,7 @@ OUTPUTDIR=output   # location of tested wheels
 # setup for pyenv and virtualenv
 eval "$(pyenv init -)"
 eval "$(pyenv virtualenv-init -)"
+export PATH="$(pyenv root)/shims:${PATH}"
 
 rm -rf $TMPDIR
 rm -rf $OUTPUTDIR
