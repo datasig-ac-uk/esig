@@ -12,7 +12,7 @@ class SwitchGenerator:
         (7, 9) : 5,
         (10, 16) : 4,
         (17, 40) : 3,
-        (41, 128) : 2
+        #(41, 128) : 2
     }
     indent_str = "    "
     endln = "\n"
@@ -216,6 +216,6 @@ class SwitchGenerator:
 
 
 if __name__ == "__main__":
-    g = SwitchGenerator(path="test.txt")
-
+    import sys
+    g = SwitchGenerator(path=sys.argv[1])
     g.write_file()
