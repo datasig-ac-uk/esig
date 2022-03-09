@@ -137,7 +137,7 @@ jobs:
           name: output
           path: build/OSX/output
           
-    mac-py310:
+  mac-py310:
     runs-on: macos-10.15
     env:
       ESIG_WITH_RECOMBINE: 1
