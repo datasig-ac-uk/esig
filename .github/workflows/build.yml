@@ -17,30 +17,35 @@ jobs:
       - mac-py37
       - mac-py38
       - mac-py39
+      - mac-py310
 
       - linux-py35-64bit
       - linux-py36-64bit
       - linux-py37-64bit
       - linux-py38-64bit
       - linux-py39-64bit
+      - linux-py310-64bit
 
       - win-py35-64bit
       - win-py36-64bit
       - win-py37-64bit
       - win-py38-64bit
       - win-py39-64bit
+      - win-py310-64bit
 
       - linux-py35-32bit
       - linux-py36-32bit
       - linux-py37-32bit
       - linux-py38-32bit
       - linux-py39-32bit
+      - linux-py310-32bit
 
       - win-py35-32bit
       - win-py36-32bit
       - win-py37-32bit
       - win-py38-32bit
       - win-py39-32bit
+      - win-py310-32bit
 
     if: github.ref == 'refs/heads/release'
     steps:
@@ -131,6 +136,22 @@ jobs:
         with:
           name: output
           path: build/OSX/output
+          
+    mac-py310:
+    runs-on: macos-10.15
+    env:
+      ESIG_WITH_RECOMBINE: 1
+    steps:
+      - uses: actions/checkout@v2
+      - name: Build for Python 3.10
+        run: |
+          source build/git-preamble.sh ${{ secrets.recombine_login }}
+          cd build/OSX && ./build-wheel.sh 3.10.0
+      - uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: build/OSX/output
+
 
   # Linux
   linux-py35-64bit:
@@ -208,6 +229,21 @@ jobs:
           name: output
           path: build/Linux/output
 
+  linux-py310-64bit:
+    runs-on: ubuntu-18.04
+    env:
+      ESIG_WITH_RECOMBINE: 1
+    steps:
+      - uses: actions/checkout@v2
+      - name: Run build
+        run: |
+          source build/git-preamble.sh ${{ secrets.recombine_login }}
+          cd build/Linux && ./build-wheel.sh cp310-cp310 x86_64
+      - uses: actions/upload-artifact@v2
+        with:
+          name: output
+          path: build/Linux/output
+          
   # Windows
   win-py35-64bit:
     runs-on: windows-2019
@@ -309,6 +345,27 @@ jobs:
       with:
         name: output
         path: build/Windows/output
+        
+  win-py310-64bit:
+    runs-on: windows-2019
+    env:
+      ESIG_WITH_RECOMBINE: 1
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 64 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python310
+          -py_installer 3.10.0/python-3.10.0-amd64.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
+
 
   linux-py35-32bit:
     runs-on: ubuntu-18.04
@@ -384,7 +441,22 @@ jobs:
       with:
         name: output
         path: build/Linux/output
-
+        
+  linux-py310-32bit:
+    runs-on: ubuntu-18.04
+    env:
+      ESIG_WITH_RECOMBINE: 1
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        source build/git-preamble.sh ${{ secrets.recombine_login }}
+        cd build/Linux && ./build-wheel.sh cp310-cp310 i686
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Linux/output
+        
   win-py35-32bit:
     runs-on: windows-2019
     env:
@@ -480,6 +552,27 @@ jobs:
           -arch 32 `
           -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python39-32 `
           -py_installer 3.9.0/python-3.9.0.exe `
+    - uses: actions/upload-artifact@v2
+      with:
+        name: output
+        path: build/Windows/output
+        
+        
+  win-py310-32bit:
+    runs-on: windows-2019
+    env:
+      ESIG_WITH_RECOMBINE: 1
+    steps:
+    - uses: actions/checkout@v2
+    - name: Run build
+      run: |
+        bash .\build\git-preamble.sh ${{ secrets.recombine_login }}
+        cd build\Windows
+        .\build-wheel.ps1 `
+          -vs_version 14.1 `
+          -arch 32 `
+          -py_install_dir C:\Users\runneradmin\AppData\Local\Programs\Python\Python310-32 `
+          -py_installer 3.10.0/python-3.10.0.exe `
     - uses: actions/upload-artifact@v2
       with:
         name: output
