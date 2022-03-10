@@ -18,7 +18,11 @@ jobs:
 
       - name: Get Boost x64
         id: boost
-        run: choco install -no-progress -y boost-msvc-14.2
+        #run: choco install -no-progress -y boost-msvc-14.2
+        run: | 
+          nuget install boost
+          nuget install boost_system-vc142 
+          nuget install boost_thread-vc142
         if: runner.os == 'Windows'
 
       - name: Get Boost macos
