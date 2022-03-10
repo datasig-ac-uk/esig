@@ -18,7 +18,7 @@ jobs:
 
       - name: Get Boost x64
         id: boost
-        run: choco install boost-msvc-14.2
+        run: choco install -no-progress -y boost-msvc-14.2
         if: runner.os == 'Windows'
 
       - name: Get Boost macos
