@@ -1,4 +1,5 @@
 import os
+import platform
 #from tools import install_helpers as helpers
 #from setuptools import setup, find_packages, Extension
 #from setuptools.command.build_ext import build_ext
@@ -101,10 +102,10 @@ from skbuild import setup
 
 CMAKE_OPTIONS = []
 
-if "BOOST_ROOT" in os.environ:
-    CMAKE_OPTIONS.append("-DBOOST_ROOT=%s" % os.environ["BOOST_ROOT"])
-if "BOOST_LIBRARYDIR" in os.environ:
-    CMAKE_OPTIONS.append("-DBOOST_LIBRARYDIR=%s" % os.environ["BOOST_LIBRARYDIR"])
+if "BOOST_ROOT%s" % platform.machine() in os.environ:
+    CMAKE_OPTIONS.append("-DBOOST_ROOT=%s" % os.environ["BOOST_ROOT%s" % platform.machine()])
+if "BOOST_LIBRARYDIR%s" % platform.machine() in os.environ:
+    CMAKE_OPTIONS.append("-DBOOST_LIBRARYDIR=%s" % os.environ["BOOST_LIBRARYDIR%s" % platform.machine()])
 
 # eager_resources = []
 #

@@ -45,6 +45,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.3.1
         env:
           BOOST_ROOT: ${{ steps.boost-x64.outputs.root }}
+          BOOST_LIBRARYDIR: ${{ steps.boost-x64
           RECOMBINE_USER: rolyp
           RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
