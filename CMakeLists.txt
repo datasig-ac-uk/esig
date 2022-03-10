@@ -7,16 +7,18 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 #set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 
-find_package(Git REQUIRED)
-
 if (SKBUILD)
 
     find_package(PythonExtensions REQUIRED)
+    find_package(NumPy REQUIRED)
 
 
     add_library(tosig MODULE)
     python_extension_module(tosig)
     execute_process(COMMAND ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/switch_generator.py" "${CMAKE_CURRENT_SOURCE_DIR}/src")
+
+    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
+    target_include_directories(tosig PRIVATE ${NumPy_INCLUDE_DIR})
 
 else()
 
@@ -46,6 +48,14 @@ else()
     Python_add_library(tosig MODULE WITH_SOABI)
     target_link_libraries(tosig PRIVATE Python::NumPy)
 endif()
+
+
+if(EXISTS "${CMAKE_SOURCE_DIR}/build/recombine")
+
+
+endif()
+
+
 
 target_sources(tosig PRIVATE
         src/Cpp_ToSig.cpp
