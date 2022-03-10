@@ -12,7 +12,6 @@ build-backend = "setuptools.build_meta"
 [tool.cibuildwheel]
 before-all = "bash ./build/git-preamble.sh"
 skip = ["*-musl*", "pp*"]
-environment= { BOOST_ROOT="${BOOST_ROOT}" }
 
 
 [tool.cibuildwheel.linux]
