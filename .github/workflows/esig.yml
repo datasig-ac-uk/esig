@@ -20,11 +20,11 @@ jobs:
         id: boost
         uses: egor-tensin/build-boost@v1
         with:
-          boost-version: 1.68.0
+          version: 1.68.0
           libraries: system thread
           platform: x86 x64
           configuration: Release
-        if: runner.os != 'ubuntu-20.04'
+        if: ! runner.os == 'ubuntu-20.04'
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
