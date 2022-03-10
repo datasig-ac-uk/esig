@@ -54,10 +54,11 @@ endif()
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/build/recombine")
 #    add_subdirectory("${CMAKE_SOURCE_DIR}/build/recombine")
-
+    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 else()
     target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 endif()
+
 
 target_link_libraries(tosig Boost::system Boost::boost Boost::thread)
 
