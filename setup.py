@@ -99,7 +99,12 @@ from skbuild import setup
 #     "iisignature": ["iisignature"],
 # }
 
+CMAKE_OPTIONS = []
 
+if "BOOST_ROOT" in os.environ:
+    CMAKE_OPTIONS.append("-DBOOST_ROOT=%s" % os.environ["BOOST_ROOT"])
+if "BOOST_LIBRARYDIR" in os.environ:
+    CMAKE_OPTIONS.append("-DBOOST_LIBRARYDIR=%s" % os.environ["BOOST_LIBRARYDIR"])
 
 # eager_resources = []
 #
@@ -144,6 +149,7 @@ setup(
     tests_require=['numpy>=1.7'],
     # extras_require=extras_require,
 
+    cmake_args=CMAKE_OPTIONS,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
