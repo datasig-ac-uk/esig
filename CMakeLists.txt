@@ -17,6 +17,8 @@ if (SKBUILD)
 
     add_library(tosig MODULE)
     python_extension_module(tosig)
+
+    message(STATUS "Generating switch.h")
     execute_process(COMMAND ${PYTHON_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/switch_generator.py" "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
     set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
