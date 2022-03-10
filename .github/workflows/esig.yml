@@ -17,23 +17,8 @@ jobs:
         uses: actions/checkout@v2
 
       - name: Get Boost x64
-        id: boost-x64
-        uses: egor-tensin/build-boost@v1
-        with:
-          version: 1.71.0
-          libraries: system thread
-          platform: x64
-          configuration: Release
-        if: runner.os == 'Windows'
-
-      - name: Get Boost x86
-        id: boost-x86
-        uses: egor-tensin/build-boost@v1
-        with:
-          version: 1.71.0
-          libraries: system thread
-          platform: x86
-          configuration: Release
+        id: boost
+        run: choco install boost-msvc-14.2
         if: runner.os == 'Windows'
 
       - name: Get Boost macos
