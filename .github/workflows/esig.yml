@@ -44,8 +44,10 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
         env:
-          BOOST_ROOT: ${{ steps.boost-x64.outputs.root }}
-          BOOST_LIBRARYDIR: ${{ steps.boost-x64
+          BOOST_ROOTx86_64: ${{ steps.boost-x64.outputs.root }}
+          BOOST_LIBRARYDIRx86_64: ${{ steps.boost-x64.outputs.librarydir }}
+          BOOST_ROOTi386: ${{ steps.boost-x86.outputs.root }}
+          BOOST_LIBRARYDIRi386: ${{ steps.boost-x86.outputs.librarydir }}
           RECOMBINE_USER: rolyp
           RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
