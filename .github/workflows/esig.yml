@@ -16,13 +16,23 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
-      - name: Get Boost
+      - name: Get Boost x64
         id: boost
         uses: egor-tensin/build-boost@v1
         with:
           version: 1.71.0
           libraries: system thread
           platform: x64
+          configuration: Release
+        if: runner.os != 'Linux'
+
+      - name: Get Boost x86
+        id: boost
+        uses: egor-tensin/build-boost@v1
+        with:
+          version: 1.71.0
+          libraries: system thread
+          platform: x86
           configuration: Release
         if: runner.os != 'Linux'
 
