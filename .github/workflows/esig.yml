@@ -24,7 +24,7 @@ jobs:
           libraries: system thread
           platform: x64
           configuration: Release
-        if: runner.os == 'Linux'
+        if: runner.os == 'Windows'
 
       - name: Get Boost x86
         id: boost-x86
@@ -39,7 +39,7 @@ jobs:
       - name: Get Boost macos
         id: boost-macos
         run: brew install boost
-        if: runner.os == "macOS"
+        if: runner.os == 'macOS'
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
