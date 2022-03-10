@@ -59,6 +59,9 @@ else()
     target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 endif()
 
+if(MSVC)
+    target_compile_options(tosig PRIVATE /bigobj)
+endif()
 
 target_link_libraries(tosig Boost::system Boost::boost Boost::thread)
 
