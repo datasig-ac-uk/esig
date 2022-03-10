@@ -24,7 +24,7 @@ jobs:
           libraries: system thread
           platform: x86 x64
           configuration: Release
-        if: ! runner.os == 'Linux'
+        if: runner.os != 'Linux'
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
