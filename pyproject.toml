@@ -1,0 +1,20 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "scikit-build",
+    "cmake",
+    "ninja; platform_system!='Windows'",
+    "oldest-supported-numpy"
+]
+build-backend = "setuptools.build_meta"
+
+[tool.cibuildwheel]
+before-all = "bash ./build/git-preamble.sh"
+
+
+[tool.cibuildwheel.linux]
+before-all = "yum install boost148-devel"
+environment-pass = ["RECOMBINE_USER", "RECOMBINE_TOKEN"]
+
+[tool.cibuildwheel.windows]

@@ -1,0 +1,39 @@
+name: Build esig
+
+on: [push]
+
+jobs:
+  build_wheels:
+    name: Build wheels on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ubuntu-20.04, windows-2019, macos-10.15]
+
+
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v2
+
+      - name: Get Boost
+        id: boost
+        uses: egor-tensin/build-boost@v1
+        with:
+          boost-version: 1.68.0
+          libraries: system thread
+          platform: x86 x64
+          configuration: Release
+        if: runner.os != ubuntu-20.04
+
+      - name: Build wheels
+        uses: pypa/cibuildwheel@v2.3.1
+        env:
+          BOOST_ROOT: ${{ steps.boost.outputs.root }}
+          RECOMBINE_USER: rolyp
+          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
+
+      - name: Cache outputs
+        uses: actions/upload-artifact@v2
+        with:
+          path: ./wheelhouse/*.whl
