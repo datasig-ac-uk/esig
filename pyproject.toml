@@ -13,6 +13,8 @@ build-backend = "setuptools.build_meta"
 before-all = "bash ./build/git-preamble.sh"
 skip = ["*-musl*", "pp*"]
 
+[tool.cibuildwheel.windows]
+environment = { BOOST_ROOT="C:\\local\\boost_1_74_0" }
 
 [tool.cibuildwheel.linux]
 before-all = "yum install boost148-devel"
