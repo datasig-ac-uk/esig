@@ -7,6 +7,8 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 #set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 
+find_package(Boost COMPONENTS system thread REQUIRED)
+
 if (SKBUILD)
 
     find_package(PythonExtensions REQUIRED)
@@ -51,13 +53,13 @@ endif()
 
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/build/recombine")
-    add_subdirectory("${CMAKE_SOURCE_DIR}/build/recombine")
+#    add_subdirectory("${CMAKE_SOURCE_DIR}/build/recombine")
 
 else()
     target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 endif()
 
-
+target_link_libraries(tosig Boost::system Boost::boost Boost::thread)
 
 target_sources(tosig PRIVATE
         src/Cpp_ToSig.cpp
