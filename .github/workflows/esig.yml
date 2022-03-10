@@ -20,7 +20,7 @@ jobs:
         id: boost
         uses: egor-tensin/build-boost@v1
         with:
-          version: 1.68.0
+          version: 1.71.0
           libraries: system thread
           platform: x64
           configuration: Release
