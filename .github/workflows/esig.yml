@@ -39,7 +39,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
         env:
-          BOOST_ROOT: ${{ steps.boost.outputs.root }}
+          BOOST_ROOT: ${{ steps.boost-x64.outputs.root }}
           RECOMBINE_USER: rolyp
           RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 

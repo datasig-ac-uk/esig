@@ -51,8 +51,10 @@ endif()
 
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/build/recombine")
+    add_subdirectory("${CMAKE_SOURCE_DIR}/build/recombine")
 
-
+else()
+    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 endif()
 
 
@@ -69,7 +71,6 @@ target_sources(tosig PRIVATE
 
 
 
-target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 
 target_include_directories(tosig PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/libalgebra")
 
