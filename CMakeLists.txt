@@ -7,6 +7,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 #set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 
+if (WIN32)
+    set(Boost_NO_BOOST_CMAKE ON)
+endif()
+
+
 find_package(Boost COMPONENTS system thread REQUIRED)
 
 message(STATUS "Boost thread library: ${Boost_THREAD_LIBRARY_RELEASE}")
