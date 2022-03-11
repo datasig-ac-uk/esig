@@ -110,6 +110,11 @@ from skbuild import setup
 #     # not sure why this is needed, and if it is, why package_data also needs to mention them
 #     eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
+CMAKE_SETTINGS = []
+if "VCPKG_INSTALLATION_ROOT" in os.environ:
+    CMAKE_SETTINGS.append("DCMAKE_TOOLCHAIN_FILE=%s/scripts/buildsystems/vcpkg.cmake" % os.environ["VCPKG_INSTALLATION_ROOT"])
+
+
 setup(
     name='esig',
     # version=configuration.esig_version,
