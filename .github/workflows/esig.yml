@@ -19,7 +19,7 @@ jobs:
       - name: Get Boost x64
         id: boost
         run: |
-          nuget install boost-vc142 -Version 1.78.0
+          nuget install boost-vc142 -Version 1.78.0 -OutputDirectory C:\local\
 #        run: |
 #          choco install -no-progress -y boost-msvc-14.2
 #          choco list -l
