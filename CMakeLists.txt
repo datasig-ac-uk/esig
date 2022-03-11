@@ -82,7 +82,7 @@ if(MSVC)
     target_compile_options(tosig PRIVATE /bigobj)
 endif()
 
-target_link_libraries(tosig Boost::system Boost::boost Boost::thread)
+target_link_libraries(tosig Boost::system Boost::boost Boost::thread Boost::dynamic_linking)
 
 target_sources(tosig PRIVATE
         src/Cpp_ToSig.cpp
