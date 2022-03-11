@@ -139,6 +139,7 @@ setup(
     # distclass=helpers.BinaryDistribution,
     # ext_modules=[esig_extension],
 
+    cmake_args=CMAKE_SETTINGS,
     install_requires=['numpy>=1.7'],
     setup_requires=[
         # Get the oldest version of Numpy that is supported on each platform
