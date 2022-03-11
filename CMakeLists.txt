@@ -7,9 +7,6 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 #set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 
-if (WIN32)
-    set(Boost_USE_STATIC_LIBS ON)
-endif()
 
 
 find_package(Boost COMPONENTS system thread REQUIRED)
