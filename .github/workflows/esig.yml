@@ -26,7 +26,10 @@ jobs:
 #          choco install -no-progress -y boost-msvc-14.2
 #          choco list -l
         run: |
-          vcpkg install boost...
+          vcpkg install boost-system:x86-windows
+          vcpkg install boost-system:x64-windows
+          vcpkg install boost-thread:x64-windows
+          vcpkg install boost-thread:x86-windows
         if: runner.os == 'Windows'
 
       - name: Get Boost macos
