@@ -102,8 +102,8 @@ from skbuild import setup
 
 CMAKE_OPTIONS = []
 
-if "BOOST_ROOT%s" % platform.machine() in os.environ:
-    CMAKE_OPTIONS.append("-DBOOST_ROOT=%s" % os.environ["BOOST_ROOT%s" % platform.machine()])
+if "BOOST_ROOT" in os.environ:
+    CMAKE_OPTIONS.append("-DBOOST_ROOT=%s" % os.environ["BOOST_ROOT"])
 if "BOOST_LIBRARYDIR%s" % platform.machine() in os.environ:
     CMAKE_OPTIONS.append("-DBOOST_LIBRARYDIR=%s" % os.environ["BOOST_LIBRARYDIR%s" % platform.machine()])
 
