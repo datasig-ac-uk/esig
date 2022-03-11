@@ -20,6 +20,7 @@ jobs:
         id: boost
         run: |
           nuget install boost-vc142 -Version 1.78.0 -OutputDirectory C:\local\
+          echo "boost_root=C:\local\" >> $GITHUB_ENV
 #        run: |
 #          choco install -no-progress -y boost-msvc-14.2
 #          choco list -l
@@ -33,6 +34,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
         env:
+          BOOST_ROOT: ${{ env.boost_root }}
           RECOMBINE_USER: rolyp
           RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
