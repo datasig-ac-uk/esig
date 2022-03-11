@@ -17,9 +17,8 @@ set(Python_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/venv")
 if (SKBUILD)
 
     find_package(PythonExtensions REQUIRED)
-#    find_package(NumPy REQUIRED)
+    find_package(NumPy REQUIRED)
 
-    set(NumPy_INCLUDE_DIR /home/sam/datasig/esig/venv/lib/python3.10/site-packages/numpy/core/include)
 
     add_library(tosig MODULE)
     python_extension_module(tosig)
