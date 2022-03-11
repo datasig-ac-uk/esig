@@ -8,8 +8,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 
 if (WIN32)
-    set(Boost_NO_BOOST_CMAKE ON)
-    set(Boost_USE_STATIC_LIBS OFF)
+    set(Boost_USE_STATIC_LIBS ON)
 endif()
 
 
