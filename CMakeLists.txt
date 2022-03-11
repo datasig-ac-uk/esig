@@ -6,12 +6,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 #set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
-if (WIN32)
-    set(Boost_NO_BOOST_CMAKE ON)
-endif ()
 
 find_package(Boost COMPONENTS system thread REQUIRED)
 
+message(STATUS "Boost thread library: ${Boost_THREAD_LIBRARY_RELEASE}")
+message(STATUS "Boost system library: ${Boost_SYSTEM_LIBRARY_RELEASE}")
 
 set(Python_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/venv")
 if (SKBUILD)
