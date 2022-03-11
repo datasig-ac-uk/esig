@@ -18,7 +18,7 @@ jobs:
 
       - name: Get Boost x64
         id: boost
-        run: |
+#        run: |
 #          nuget install boost-vc142 -Version 1.78.0 -OutputDirectory C:\local\
 #          echo "boost_root=C:\\local" >> $GITHUB_ENV
 #          ls C:\local\
