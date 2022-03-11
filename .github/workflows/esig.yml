@@ -23,6 +23,7 @@ jobs:
           nuget install boost_system-vc142 -Version 1.78 -OutputDirectory C:\local\
           nuget install boost_thread-vc142 -Version 1.78 -OutputDirectory C:\local\
           echo "boost_root=C:\local\" >> $GITHUB_ENV
+          ls C:\local\
 #        run: |
 #          choco install -no-progress -y boost-msvc-14.2
 #          choco list -l
