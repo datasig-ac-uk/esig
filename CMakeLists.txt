@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 if (WIN32)
     set(Boost_NO_BOOST_CMAKE ON)
+    set(Boost_USE_STATIC_LIBS OFF)
 endif()
 
 
