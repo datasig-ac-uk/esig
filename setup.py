@@ -100,13 +100,6 @@ from skbuild import setup
 #     "iisignature": ["iisignature"],
 # }
 
-CMAKE_OPTIONS = []
-
-if "BOOST_ROOT" in os.environ:
-    CMAKE_OPTIONS.append("-DBOOST_ROOT=%s" % os.environ["BOOST_ROOT"])
-if "BOOST_LIBRARYDIR%s" % platform.machine() in os.environ:
-    CMAKE_OPTIONS.append("-DBOOST_LIBRARYDIR=%s" % os.environ["BOOST_LIBRARYDIR%s" % platform.machine()])
-
 # eager_resources = []
 #
 # if not configuration.no_recombine and configuration.platform == helpers.PLATFORM.WINDOWS:
@@ -150,7 +143,6 @@ setup(
     tests_require=['numpy>=1.7'],
     # extras_require=extras_require,
 
-    cmake_args=CMAKE_OPTIONS,
     classifiers=[
         'Development Status :: 4 - Beta',
         'Intended Audience :: Developers',
