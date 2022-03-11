@@ -12,6 +12,15 @@ find_package(Boost COMPONENTS system thread REQUIRED)
 message(STATUS "Boost thread library: ${Boost_THREAD_LIBRARY_RELEASE}")
 message(STATUS "Boost system library: ${Boost_SYSTEM_LIBRARY_RELEASE}")
 
+if(NOT EXISTS "${Boost_THREAD_LIBRARY_RELEASE}")
+    message(FATAL_ERROR "Boost thread library not found")
+endif()
+
+if (NOT EXISTS "${Boost_SYSTEM_LIBRARY_RELEASE}")
+    message(FATAL_ERROR "Boost system library not found")
+endif ()
+
+
 set(Python_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/venv")
 if (SKBUILD)
 
