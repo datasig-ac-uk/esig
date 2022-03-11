@@ -112,7 +112,9 @@ from skbuild import setup
 
 CMAKE_SETTINGS = []
 if "VCPKG_INSTALLATION_ROOT" in os.environ:
-    CMAKE_SETTINGS.append("DCMAKE_TOOLCHAIN_FILE=%s/scripts/buildsystems/vcpkg.cmake" % os.environ["VCPKG_INSTALLATION_ROOT"])
+    from pathlib import Path
+    tmp = Path(os.environ["VCPKG_INSTALLATION_ROOT"], "scripts", "buildsystems", "vcpkg.cmake")
+    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % tmp)
 
 
 setup(
