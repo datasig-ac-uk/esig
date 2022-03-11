@@ -6,14 +6,20 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 #set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 #set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
+if (WIN32)
+    set(Boost_NO_BOOST_CMAKE ON)
+endif ()
 
 find_package(Boost COMPONENTS system thread REQUIRED)
 
+
+set(Python_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/venv")
 if (SKBUILD)
 
     find_package(PythonExtensions REQUIRED)
-    find_package(NumPy REQUIRED)
+#    find_package(NumPy REQUIRED)
 
+    set(NumPy_INCLUDE_DIR /home/sam/datasig/esig/venv/lib/python3.10/site-packages/numpy/core/include)
 
     add_library(tosig MODULE)
     python_extension_module(tosig)
@@ -26,7 +32,6 @@ if (SKBUILD)
 
 else()
 
-    set(Python_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/venv")
 
     # Look for Virtual environments first
     set(Python_FIND_VIRTUALENV FIRST)
