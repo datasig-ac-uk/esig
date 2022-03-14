@@ -8,5 +8,5 @@ if [ ! -z "${RECOMBINE_USER}" -a ! -z "${RECOMBINE_TOKEN}"} ]; then
   git submodule sync --recursive
   git -c "http.extraheader=$auth_header" -c protocol.version=2 submodule update --init --force --recursive --depth=1
 
-  git clone https://${RECOMBINE_USER}:${RECOMBINE_TOKEN}@github.com/terrylyons/recombine.git build/recombine
+  git clone https://${RECOMBINE_USER}:${RECOMBINE_TOKEN}@github.com/terrylyons/recombine.git build/recombine -b use-findblas
 fi
