@@ -34,3 +34,4 @@ endif()
 find_package(BLAS)
 
 message(STATUS "BLAS: ${BLAS_LIBRARIES}")
+message(FATAL_ERROR "stop")
