@@ -22,7 +22,6 @@ if (NOT EXISTS "${Boost_SYSTEM_LIBRARY_RELEASE}")
     message(FATAL_ERROR "Boost system library not found")
 endif ()
 
-include(cmake/findPyMKL.cmake)
 
 
 set(Python_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/venv")
@@ -40,7 +39,6 @@ if (SKBUILD)
     target_include_directories(tosig PRIVATE ${NumPy_INCLUDE_DIR})
 
 else()
-
 
     # Look for Virtual environments first
     set(Python_FIND_VIRTUALENV FIRST)
@@ -67,10 +65,12 @@ else()
     target_link_libraries(tosig PRIVATE Python::NumPy)
 endif()
 
-
 if(EXISTS "${CMAKE_SOURCE_DIR}/build/recombine")
 #    add_subdirectory("${CMAKE_SOURCE_DIR}/build/recombine")
-    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
+    add_subdirectory(build/recombine)
+    target_link_libraries(tosig PRIVATE recombine)
+
+#    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 else()
     target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 endif()
