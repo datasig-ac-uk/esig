@@ -20,7 +20,7 @@ if (SKBUILD)
 
     set(ENV{MKLROOT} ${MKL_ROOT})
 
-    if (STREQUAL "${ARCH}" "x86_64")
+    if ("${ARCH}" STREQUAL "x86_64" OR "${ARCH}" STREQUAL "AMD64")
         set(BLA_VENDOR Intel10_64ilp)
     elseif(STREQUAL "${ARCH}" "x86")
         set(BLA_VENDOR Intel10_32)
