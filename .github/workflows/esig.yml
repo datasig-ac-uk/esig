@@ -8,7 +8,7 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [windows-2019]
+        os: [ubuntu-20.04, windows-2019]
 
 
 
@@ -32,17 +32,25 @@ jobs:
           vcpkg install boost-thread:x86-windows
         if: runner.os == 'Windows'
 
+#TODO: replace brew with vcpkg
       - name: Get Boost macos
         id: boost-macos
         run: brew install boost
         if: runner.os == 'macOS'
 
+# In the future, this can be replaced by a download of the binary
+      - name: Get recombine
+        run: |
+          bash ./build/git-preamble.sh
+        continue-on-error: true
+        env:
+          RECOMBINE_USER: rolyp
+          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
+
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
         env:
           BOOST_ROOT: ${{ env.boost_root }}
-          RECOMBINE_USER: rolyp
-          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2

@@ -10,10 +10,8 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
-before-all = "bash ./build/git-preamble.sh"
 skip = ["*-musl*", "pp*"]
 
 
 [tool.cibuildwheel.linux]
 before-all = "yum install boost148-devel"
-environment-pass = ["RECOMBINE_USER", "RECOMBINE_TOKEN"]

@@ -6,8 +6,8 @@ class SwitchGenerator:
     _default_spec = {
     #letters_range : max_depth
         (2, 2) : 2,
-        (3, 3) : 2,
-        (4, 4) : 2,
+        # (3, 3) : 2,
+        # (4, 4) : 2,
         # (5, 6) : 2,
         # (7, 9) : 2,
         # (10, 16) : 2,

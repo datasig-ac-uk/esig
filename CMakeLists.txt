@@ -22,13 +22,13 @@ if (NOT EXISTS "${Boost_SYSTEM_LIBRARY_RELEASE}")
     message(FATAL_ERROR "Boost system library not found")
 endif ()
 
+include(cmake/findPyMKL.cmake)
+
 
 set(Python_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/venv")
 if (SKBUILD)
-
     find_package(PythonExtensions REQUIRED)
     find_package(NumPy REQUIRED)
-
 
     add_library(tosig MODULE)
     python_extension_module(tosig)
