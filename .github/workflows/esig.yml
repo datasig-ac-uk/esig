@@ -15,6 +15,10 @@ jobs:
     steps:
       - name: Checkout repo
         uses: actions/checkout@v2
+        
+      - name: setup environment
+        run: |
+          echo ${CONDA} >> $GITHUB_PATH
 
       # In the future, this can be replaced by a download of the binary
       - name: Get recombine
@@ -46,9 +50,9 @@ jobs:
         if: runner.os != 'Linux' && steps.clone_recombine.outcome == 'success'
         shell: bash
         run: |
-          ${CONDA} install -c intel -y intel-openmp==2022-03-03
-          ${CONDA} install -c intel -y mkl-devel==2022-03-03
-          ${CONDA} install -c intel -y mkl-static==2022-03-03
+          conda install -c intel -y intel-openmp==2022-03-03
+          conda install -c intel -y mkl-devel==2022-03-03
+          conda install -c intel -y mkl-static==2022-03-03
 
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
