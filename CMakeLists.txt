@@ -25,10 +25,9 @@ endif ()
 
 if (SKBUILD)
 
-    execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print(sys.prefix)"
-            OUT_VARIABLE Python_ROOT_DIR
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
+    file(TO_CMAKE_PATH ${PYTHON_EXECUTABLE} PYTHON_EXE)
+    get_filename_component(Python_ROOT_DIR "${PYTHON_EXE}" DIRECTORY)
+    unset(PYTHON_EXE)
 
 else()
     # Look for Virtual environments first
