@@ -18,11 +18,11 @@ if (SKBUILD)
     message(STATUS "ARCH: ${ARCH}")
 
 
-    set(ENV{MKLROOT} ${MKL_ROOT})
+#    set(ENV{MKLROOT} ${MKL_ROOT})
 
-    if ("${ARCH}" STREQUAL "x86_64" OR "${ARCH}" STREQUAL "AMD64")
+    if (ARCH STREQUAL "x86_64" OR ARCH STREQUAL "AMD64")
         set(BLA_VENDOR Intel10_64ilp)
-    elseif(STREQUAL "${ARCH}" "x86")
+    elseif(ARCH STREQUAL "x86")
         set(BLA_VENDOR Intel10_32)
     else()
         message(FATAL_ERROR "Unrecognised architecture")
@@ -31,6 +31,6 @@ if (SKBUILD)
 endif()
 
 
-find_package(BLAS)
+find_package(BLAS REQUIRED)
 
 message(STATUS "BLAS: ${BLAS_LIBRARIES}")

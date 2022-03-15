@@ -166,7 +166,7 @@ static PyMethodDef _C_tosigMethods[] = {
 
 static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
-        "tosig",     /* m_name */
+        "_tosig",     /* m_name */
         "This is the tosig module from ESIG",  /* m_doc */
         -1,                  /* m_size */
         _C_tosigMethods,    /* m_methods */
@@ -178,7 +178,7 @@ static struct PyModuleDef moduledef = {
 
 // Module init function for Python 3.x only.
 PyMODINIT_FUNC
-PyInit_tosig(void){
+PyInit__tosig(void){
 
     PyObject *m;
 

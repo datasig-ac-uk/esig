@@ -16,6 +16,16 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      # In the future, this can be replaced by a download of the binary
+      - name: Get recombine
+        id: clone_recombine
+        run: |
+          bash ./build/git-preamble.sh
+        continue-on-error: true
+        env:
+          RECOMBINE_USER: rolyp
+          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
+
       - name: Get Boost x64
         id: boost
 #        run: |
@@ -32,20 +42,18 @@ jobs:
           vcpkg install boost-thread:x86-windows
         if: runner.os == 'Windows'
 
+      - name: Get MKL
+        if: runner.os != Linux && steps.clone_recombine.outcome == success
+        run: |
+          vcpkg install intel-mkl
+
+
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
         id: boost-macos
         run: brew install boost
         if: runner.os == 'macOS'
 
-# In the future, this can be replaced by a download of the binary
-      - name: Get recombine
-        run: |
-          bash ./build/git-preamble.sh
-        continue-on-error: true
-        env:
-          RECOMBINE_USER: rolyp
-          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1

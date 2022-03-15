@@ -5,10 +5,10 @@ class SwitchGenerator:
     _path = "src"
     _default_spec = {
     #letters_range : max_depth
-        (2, 2) : 2,
-        # (3, 3) : 2,
-        # (4, 4) : 2,
-        # (5, 6) : 2,
+        (2, 2) : 5,
+        (3, 3) : 4,
+         (4, 4) : 4,
+        (5, 6) : 3,
         # (7, 9) : 2,
         # (10, 16) : 2,
         # (17, 40) : 2,
