@@ -43,7 +43,7 @@ jobs:
         if: runner.os == 'Windows'
 
       - name: Get MKL
-        if: runner.os != Linux && steps.clone_recombine.outcome == success
+        if: runner.os != 'Linux' && steps.clone_recombine.outcome == 'success'
         run: |
           vcpkg install intel-mkl
 
