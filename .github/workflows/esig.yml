@@ -44,6 +44,7 @@ jobs:
 
       - name: Get MKL
         if: runner.os != 'Linux' && steps.clone_recombine.outcome == 'success'
+        shell: bash
         run: |
           ${CONDA} install -c intel -y intel-openmp==2022-03-03
           ${CONDA} install -c intel -y mkl-devel==2022-03-03
