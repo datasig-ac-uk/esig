@@ -23,7 +23,6 @@ if (NOT EXISTS "${Boost_SYSTEM_LIBRARY_RELEASE}")
 endif ()
 
 
-set(Python_ROOT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/venv")
 if (SKBUILD)
 
     execute_process(COMMAND ${PYTHON_EXECUTABLE} -c "import sys; print(sys.prefix)"
@@ -38,10 +37,9 @@ else()
         set(Python_ROOT_DIR "${CMAKE_SOURCE_DIR}/venv")
     endif()
 
-    message(STATUS "FIND_VIRTUALENV: ${Python_FIND_VIRTUALENV}")
 endif()
 
-find_package(Python 3 REQUIRED
+find_package(Python REQUIRED
         COMPONENTS
         Interpreter
         Development
