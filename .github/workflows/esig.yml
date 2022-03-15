@@ -45,8 +45,9 @@ jobs:
       - name: Get MKL
         if: runner.os != 'Linux' && steps.clone_recombine.outcome == 'success'
         run: |
-          vcpkg install intel-mkl
-
+          ${CONDA} install -c intel -y intel-openmp==2022-03-03
+          ${CONDA} install -c intel -y mkl-devel==2022-03-03
+          ${CONDA} install -c intel -y mkl-static==2022-03-03
 
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
