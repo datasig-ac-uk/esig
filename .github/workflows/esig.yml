@@ -29,12 +29,10 @@ jobs:
       - name: Get MKL
         if: runner.os == 'Windows' && steps.clone_recombine.outcome == 'success'
         shell: bash
-        env:
-          MKLROOT: D:\a\MKL
         run: |
-          nuget install intelmkl.devel.win-x64 -OutputDirectory $MKLROOT
-          nuget install intelmkl.devel.win-x86 -OutputDirectory $MKLROOT
-          echo "MKLROOT=$MKLROOT" >> $GITHUB_ENV
+          pip install mkl-devel
+          echo "MKLROOT=$(python -c 'import sys; print(sys.prefix, end=\"\")')" >> $GITHUB_ENV
+          echo $MKLROOT
           find $MKLROOT -name "mkl.h"
           vcpkg install intel-mkl
 
