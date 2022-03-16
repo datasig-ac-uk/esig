@@ -31,6 +31,4 @@ if (SKBUILD)
 endif()
 
 
-find_package(BLAS REQUIRED)
-
-message(STATUS "BLAS: ${BLAS_LIBRARIES}")
+find_package(MKL REQUIRED)
