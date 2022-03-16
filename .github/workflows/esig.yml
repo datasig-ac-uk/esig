@@ -43,10 +43,11 @@ jobs:
         if: runner.os == 'Windows'
 
       - name: Get MKL
-        if: runner.os != 'Linux' && steps.clone_recombine.outcome == 'success'
+        if: runner.os == 'Windows' && steps.clone_recombine.outcome == 'success'
         run: |
-          nuget install intelmkl.devel.win-x64
-          nuget install intelmkl.devel.win-x86
+          nuget install intelmkl.devel.win-x64 -OutputDirectory D:\a\MKL
+          nuget install intelmkl.devel.win-x86 -OutputDirectory D:\a\MKL
+          echo "MKLROOT=D:\a\MKL" >> $GITHUB_ENV
 
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
