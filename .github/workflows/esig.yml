@@ -44,10 +44,12 @@ jobs:
 
       - name: Get MKL
         if: runner.os == 'Windows' && steps.clone_recombine.outcome == 'success'
+        env:
+          MKLROOT: D:\a\MKL
         run: |
-          nuget install intelmkl.devel.win-x64 -OutputDirectory D:\a\MKL
-          nuget install intelmkl.devel.win-x86 -OutputDirectory D:\a\MKL
-          echo "MKLROOT=D:\a\MKL" >> $GITHUB_ENV
+          nuget install intelmkl.devel.win-x64 -OutputDirectory ${MKLROOT}
+          nuget install intelmkl.devel.win-x86 -OutputDirectory ${MKLROOT}
+          echo "MKLROOT=${MKLROOT}" >> $GITHUB_ENV
           vcpkg install intel-mkl
 
 #TODO: replace brew with vcpkg
