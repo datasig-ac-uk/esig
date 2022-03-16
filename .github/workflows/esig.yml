@@ -26,6 +26,18 @@ jobs:
           RECOMBINE_USER: rolyp
           RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
+      - name: Get MKL
+        if: runner.os == 'Windows' && steps.clone_recombine.outcome == 'success'
+        shell: bash
+        env:
+          MKLROOT: D:\a\MKL
+        run: |
+          nuget install intelmkl.devel.win-x64 -OutputDirectory $MKLROOT
+          nuget install intelmkl.devel.win-x86 -OutputDirectory $MKLROOT
+          echo "MKLROOT=$MKLROOT" >> $GITHUB_ENV
+          vcpkg install intel-mkl
+
+
       - name: Get Boost x64
         id: boost
 #        run: |
@@ -41,17 +53,6 @@ jobs:
           vcpkg install boost-thread:x64-windows
           vcpkg install boost-thread:x86-windows
         if: runner.os == 'Windows'
-
-      - name: Get MKL
-        if: runner.os == 'Windows' && steps.clone_recombine.outcome == 'success'
-        env:
-          MKLROOT: D:\a\MKL
-        run: |
-          nuget install intelmkl.devel.win-x64 -OutputDirectory %MKLROOT%
-          nuget install intelmkl.devel.win-x86 -OutputDirectory %MKLROOT%
-          echo "MKLROOT=%MKLROOT%" >> $GITHUB_ENV
-          vcpkg install intel-mkl
-
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
         id: boost-macos
