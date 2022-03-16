@@ -30,12 +30,9 @@ jobs:
         if: runner.os == 'Windows' && steps.clone_recombine.outcome == 'success'
         shell: bash
         run: |
-          pip install mkl-devel
-          python_root=$(dirname $(dirname $(which Python)))
-          echo $python_root
-          echo "MKLROOT=$python_root" >> $GITHUB_ENV
-          echo $MKLROOR
-          find $MKLROOT -name "mkl.h"
+          curl -v -o intel-mkl-installer.exe https://registrationcenter-download.intel.com/akdlm/irc_nas/18590/w_onemkl_p_2022.0.3.171_offline.exe
+          intel-mkl-installer.exe -a -s -eula accept 
+          find -name mkl.h 
 
 
       - name: Get Boost x64
