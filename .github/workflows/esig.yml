@@ -48,6 +48,7 @@ jobs:
           nuget install intelmkl.devel.win-x64 -OutputDirectory D:\a\MKL
           nuget install intelmkl.devel.win-x86 -OutputDirectory D:\a\MKL
           echo "MKLROOT=D:\a\MKL" >> $GITHUB_ENV
+          vcpkg install intel-mkl
 
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
@@ -61,6 +62,7 @@ jobs:
         env:
           BOOST_ROOT: ${{ env.boost_root }}
           MKLROOT: ${{ env.MKLROOT }}
+          CMAKE_PREFIX_PATH: ${{ env.MKLROOT }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2
