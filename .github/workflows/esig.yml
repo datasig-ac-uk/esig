@@ -31,7 +31,9 @@ jobs:
         shell: bash
         run: |
           pip install mkl-devel
-          echo "MKLROOT=$(basename $(which python))" >> $GITHUB_ENV
+          python_root=$(basename $(basename $(which Python)))
+          echo $python_root
+          echo "MKLROOT=$python_root" >> $GITHUB_ENV
           echo $MKLROOR
           find $MKLROOT -name "mkl.h"
           vcpkg install intel-mkl
