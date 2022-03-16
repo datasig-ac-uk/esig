@@ -45,8 +45,8 @@ jobs:
       - name: Get MKL
         if: runner.os != 'Linux' && steps.clone_recombine.outcome == 'success'
         run: |
-          pip install mkl-devel
-
+          nuget install intelmkl.devel.win-x64
+          nuget install intelmkl.devel.win-x86
 
 #TODO: replace brew with vcpkg
       - name: Get Boost macos

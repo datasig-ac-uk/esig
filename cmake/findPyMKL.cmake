@@ -31,4 +31,3 @@ if (SKBUILD)
 endif()
 
 
-find_package(MKL REQUIRED)
