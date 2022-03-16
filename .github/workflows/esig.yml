@@ -35,6 +35,7 @@ jobs:
           nuget install intelmkl.devel.win-x64 -OutputDirectory $MKLROOT
           nuget install intelmkl.devel.win-x86 -OutputDirectory $MKLROOT
           echo "MKLROOT=$MKLROOT" >> $GITHUB_ENV
+          find $MKLROOT -name "mkl.h"
           vcpkg install intel-mkl
 
 
