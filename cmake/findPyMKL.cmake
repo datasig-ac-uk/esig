@@ -20,13 +20,6 @@ if (SKBUILD)
 
 #    set(ENV{MKLROOT} ${MKL_ROOT})
 
-    if (ARCH STREQUAL "x86_64" OR ARCH STREQUAL "AMD64")
-        set(BLA_VENDOR Intel10_64ilp)
-    elseif(ARCH STREQUAL "x86")
-        set(BLA_VENDOR Intel10_32)
-    else()
-        message(FATAL_ERROR "Unrecognised architecture")
-    endif()
 
 endif()
 
