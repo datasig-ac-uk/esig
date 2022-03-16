@@ -31,7 +31,7 @@ jobs:
         shell: bash
         run: |
           pip install mkl-devel
-          python_root=$(basename $(basename $(which Python)))
+          python_root=$(dirname $(dirname $(which Python)))
           echo $python_root
           echo "MKLROOT=$python_root" >> $GITHUB_ENV
           echo $MKLROOR
