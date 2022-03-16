@@ -16,9 +16,8 @@ if (SKBUILD)
             OUTPUT_STRIP_TRAILING_WHITESPACE
             )
     message(STATUS "ARCH: ${ARCH}")
-
-
-#    set(ENV{MKLROOT} ${MKL_ROOT})
+    set(ENV{MKLROOT} ${MKL_ROOT})
+    message(STATUS "MKLROOT ${MKL_ROOT}")
 
 
 endif()
