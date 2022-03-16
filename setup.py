@@ -116,10 +116,7 @@ if "VCPKG_INSTALLATION_ROOT" in os.environ:
     tmp = Path(os.environ["VCPKG_INSTALLATION_ROOT"], "scripts", "buildsystems", "vcpkg.cmake")
     CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % tmp)
 
-SETUP_REQUIRES = [
-    "mkl-devel"
-]
-
+CMAKE_SETTINGS.append("-DMKL_ROOT=D:\\a\\MKL\\")
 
 setup(
     name='esig',
@@ -147,7 +144,6 @@ setup(
 
     cmake_args=CMAKE_SETTINGS,
     install_requires=['numpy>=1.7'],
-    setup_requires=SETUP_REQUIRES,
     tests_require=['numpy>=1.7'],
     # extras_require=extras_require,
 
