@@ -36,7 +36,6 @@ jobs:
           echo "MKLROOT=$python_root" >> $GITHUB_ENV
           echo $MKLROOR
           find $MKLROOT -name "mkl.h"
-          vcpkg install intel-mkl
 
 
       - name: Get Boost x64
