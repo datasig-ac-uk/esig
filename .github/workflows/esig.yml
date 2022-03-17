@@ -37,10 +37,7 @@ jobs:
           ls /d/a/
           /d/a/webimage_extracted/bootstrapper.exe -s --list-components
           /d/a/webimage_extracted/bootstrapper.exe -s --action install --eula=accept -p=NEED_VS2017_INTEGRATION=0 -p=NEED_VS2019_INTEGRATION=0 -p=NEED_VS2022_INTEGRATION=0 --log-dir=. \
-            --components \
-              intel.oneapi.win.mkl.devel:\
-              intel.oneapi.win.mkl.runtime:\
-              intel.oneapi.win.openmp
+            --components intel.oneapi.win.mkl.devel:intel.oneapi.win.mkl.runtime:intel.oneapi.win.openmp
           
           find -name mkl.h 
 
