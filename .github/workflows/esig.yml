@@ -32,13 +32,11 @@ jobs:
         shell: bash
         run: |
           curl -v -o /d/a/intel-mkl-installer.exe https://registrationcenter-download.intel.com/akdlm/irc_nas/18599/w_BaseKit_p_2022.1.3.210_offline.exe
-          ls /d/a/
           /d/a/intel-mkl-installer.exe -s -x -f /d/a/webimage_extracted --log extract.log 
-          ls /d/a/
+          rm -v /d/a/intel-mkl-installer.exe
           /d/a/webimage_extracted/bootstrapper.exe -s --list-components
           /d/a/webimage_extracted/bootstrapper.exe -s --action install --eula=accept -p=NEED_VS2017_INTEGRATION=0 -p=NEED_VS2019_INTEGRATION=0 -p=NEED_VS2022_INTEGRATION=0 --log-dir=. \
             --components intel.oneapi.win.mkl.devel:intel.oneapi.win.mkl.runtime:intel.oneapi.win.openmp \
-            --install-dir /d/a/MKL/
           
           find -name mkl.h 
 
