@@ -32,7 +32,7 @@ jobs:
         run: |
           curl -v -o D:\a\intel-mkl-installer.exe https://registrationcenter-download.intel.com/akdlm/irc_nas/18590/w_onemkl_p_2022.0.3.171_offline.exe
           ls /d/a/
-          D:\a\intel-mkl-installer.exe -a -s -eula accept 
+          /d/a/intel-mkl-installer.exe -a -s -eula accept 
           find -name mkl.h 
 
 
