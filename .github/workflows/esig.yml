@@ -27,6 +27,7 @@ jobs:
           RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
       - name: Get MKL
+        id: get-mkl-windows
         if: runner.os == 'Windows' && steps.clone_recombine.outcome == 'success'
         shell: bash
         run: |
@@ -38,6 +39,15 @@ jobs:
           /d/a/webimage_extracted/bootstrapper.exe -s --action install --eula=accept -p=NEED_VS2017_INTEGRATION=0 -p=NEED_VS2019_INTEGRATION=0 -p=NEED_VS2022_INTEGRATION=0 --log-dir=.
           find -name mkl.h 
 
+      - name: save mkl logs
+        uses: actions/upload_artifact@v2
+        if: always()
+        with:
+          name: mkl-install-logs-${{ github.job }}
+          path: |
+            bootstrapper*
+            installer*
+          retention-days: 7
 
       - name: Get Boost x64
         id: boost
