@@ -35,8 +35,8 @@ jobs:
           /d/a/intel-mkl-installer.exe -s -x -f /d/a/webimage_extracted --log extract.log 
           rm -v /d/a/intel-mkl-installer.exe
           /d/a/webimage_extracted/bootstrapper.exe -s --components intel.oneapi.win.cpp-compiler --action install --eula=accept -p=NEED_VS2017_INTEGRATION=0 -p=NEED_VS2019_INTEGRATION=0 -p=NEED_VS2022_INTEGRATION=0 --log-dir=. --ignore-errors
-          find -name mkl.h /c/
-          echo "run C:\\Program Files (x86)\\Intel\\setvars.bat" >> $GITHUB_ENV
+          find /c/ -name mkl.h
+          echo "run /c C:\\Program Files (x86)\\Intel\\setvars.bat" >> $GITHUB_ENV
 
       - name: save mkl logs
         uses: actions/upload-artifact@v2
