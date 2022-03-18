@@ -118,6 +118,10 @@ if "VCPKG_INSTALLATION_ROOT" in os.environ:
 
 CMAKE_SETTINGS.append("-DMKL_ROOT=D:\\a\\MKL\\")
 
+
+print("PREFIX_PATH", os.environ["CMAKE_PREFIX_PATH"])
+
+
 setup(
     name='esig',
     # version=configuration.esig_version,
