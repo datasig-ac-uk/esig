@@ -35,7 +35,6 @@ jobs:
           /d/a/intel-mkl-installer.exe -s -x -f /d/a/webimage_extracted --log extract.log 
           rm -v /d/a/intel-mkl-installer.exe
           /d/a/webimage_extracted/bootstrapper.exe -s --components intel.oneapi.win.cpp-compiler --action install --eula=accept -p=NEED_VS2017_INTEGRATION=0 -p=NEED_VS2019_INTEGRATION=0 -p=NEED_VS2022_INTEGRATION=0 --log-dir=. --ignore-errors
-          find /c/ -name mkl.h
           echo "cmake_prefixC:\\Program Files (x86)\\Intel\\MKL\\lib\\cmake" >> $GITHUB_ENV
 
       - name: save mkl logs
