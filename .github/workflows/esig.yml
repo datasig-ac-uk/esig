@@ -35,7 +35,8 @@ jobs:
           /d/a/intel-mkl-installer.exe -s -x -f /d/a/webimage_extracted --log extract.log 
           rm -v /d/a/intel-mkl-installer.exe
           /d/a/webimage_extracted/bootstrapper.exe -s --components intel.oneapi.win.cpp-compiler --action install --eula=accept -p=NEED_VS2017_INTEGRATION=0 -p=NEED_VS2019_INTEGRATION=0 -p=NEED_VS2022_INTEGRATION=0 --log-dir=. --ignore-errors
-          find -name mkl.h 
+          find -name mkl.h /c/
+          echo "run C:\\Program Files (x86)\\Intel\\setvars.bat" >> $GITHUB_ENV
 
       - name: save mkl logs
         uses: actions/upload-artifact@v2
@@ -73,8 +74,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.3.1
         env:
           BOOST_ROOT: ${{ env.boost_root }}
-          MKLROOT: ${{ env.MKLROOT }}
-          CMAKE_PREFIX_PATH: ${{ env.MKLROOT }}
+          ONEAPI_SCRIPT: ${{ env.oneapi_script }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2
