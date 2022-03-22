@@ -7,6 +7,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 #set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 #set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 
+include(GNUInstallDirs)
 
 
 find_package(Boost COMPONENTS system thread REQUIRED)
@@ -102,7 +103,10 @@ set_target_properties(tosig PROPERTIES
 target_include_directories(tosig PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/libalgebra")
 
 
-install(TARGETS tosig DESTINATION ${CMAKE_SOURCE_DIR}/esig)
+install(TARGETS tosig
+        LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}/esig
+        INCLUDE DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
+        )
 
 
 
