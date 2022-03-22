@@ -116,13 +116,7 @@ if "VCPKG_INSTALLATION_ROOT" in os.environ:
     tmp = Path(os.environ["VCPKG_INSTALLATION_ROOT"], "scripts", "buildsystems", "vcpkg.cmake")
     CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % tmp)
 
-CMAKE_SETTINGS.append("-DMKL_ROOT=%s" % os.environ['CMAKE_PREFIX_PATH'])
-p = Path(os.environ["CMAKE_PREFIX_PATH"]) / "lib" / "cmake"
-assert p.exists()
-cm = p.rglob("*.cmake")
-print("CMAKE_FILES:", cm)
 
-print("PREFIX_PATH", os.environ["CMAKE_PREFIX_PATH"])
 
 
 setup(
