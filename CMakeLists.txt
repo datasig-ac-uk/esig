@@ -55,7 +55,6 @@ message(STATUS "Numpy includes: ${Python_NumPy_INCLUDE_DIRS}")
 message(STATUS "Generating switch.h")
 execute_process(COMMAND ${Python_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/switch_generator.py" "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
-include(cmake/findPyMKL.cmake)
 
 Python_add_library(tosig MODULE WITH_SOABI)
 target_link_libraries(tosig PRIVATE Python::NumPy)
@@ -71,6 +70,18 @@ target_sources(tosig PRIVATE
 
 if(EXISTS "${CMAKE_SOURCE_DIR}/build/recombine")
     #    add_subdirectory("${CMAKE_SOURCE_DIR}/build/recombine")
+    execute_process(COMMAND ${Python_EXECUTABLE} -c "import platform; print(platform.architecture()[0])"
+            OUTPUT_VARIABLE arch
+            OUTPUT_STRIP_TRAILING_WHITESPACE
+            )
+
+    if (arch STREQUAL "64bit")
+        set(RECOMBINE_ARCH x86_64)
+    else()
+        set(RECOMBINE_ARCH x86)
+    endif()
+
+
     add_subdirectory(build/recombine)
     target_link_libraries(tosig PRIVATE recombine)
     target_include_directories(tosig PRIVATE
