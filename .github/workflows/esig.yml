@@ -49,14 +49,14 @@ jobs:
         run: |
           curl -v -o OAPI_installer.dmg "$URL"
           sudo hdiutil attach OAPI_installer.dmg -quiet
-          sudo /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOS/bootstrapper --eula accept --action install --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
-          sudo hdiutil detatch /Volumes/OAPI_installer.dmg
+          sudo /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOS/bootstrapper -s --eula accept --action install --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
+          sudo hdiutil detatch /Volumes/OAPI_installer.dmg -quiet
         env:
           URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
 
       - name: save mkl logs
         uses: actions/upload-artifact@v2
-        if: always()
+        if: runner.os == 'Windows' && always()
         with:
           name: mkl-install-logs-${{ github.job }}
           path: |
@@ -66,13 +66,6 @@ jobs:
 
       - name: Get Boost x64
         id: boost
-#        run: |
-#          nuget install boost-vc142 -Version 1.78.0 -OutputDirectory C:\local\
-#          echo "boost_root=C:\\local" >> $GITHUB_ENV
-#          ls C:\local\
-#        run: |
-#          choco install -no-progress -y boost-msvc-14.2
-#          choco list -l
         run: |
           vcpkg install boost-system:x86-windows
           vcpkg install boost-system:x64-windows
