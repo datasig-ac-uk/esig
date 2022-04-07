@@ -47,11 +47,12 @@ jobs:
         id: get-mkl-Mac
         if: runner.os == 'macOS' && steps.clone_recombine.outcome == 'success'
         run: |
-          curl -v -o OAPI_installer.dmg https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
+          curl -v -o OAPI_installer.dmg "$URL"
           sudo hdiutil attach OAPI_installer.dmg -quiet
-          ls /Volumes
-          sudo /Volumes/OAPI_installer.dmg/bootstrapper.app/Contents/MacOS/bootstrapper --eula accept --action install --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
+          sudo /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOS/bootstrapper --eula accept --action install --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
           sudo hdiutil detatch /Volumes/OAPI_installer.dmg
+        env:
+          URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
 
       - name: save mkl logs
         uses: actions/upload-artifact@v2
