@@ -48,7 +48,7 @@ jobs:
         if: runner.os == 'macOS' && steps.clone_recombine.outcome == 'success'
         run: |
           curl -v -o OAPI_installer.dmg https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
-          sudo hdiutil attach OAPI_installer.dmg -quiet
+          sudo hdiutil attach OAPI_installer.dmg
           pushd /Volumes/OAPI_installer/bootstrapper.app/Contents/MacOS/bootstrapper --eula accept --action install --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
 
 
