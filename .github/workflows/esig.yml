@@ -50,7 +50,7 @@ jobs:
           curl -v -o OAPI_installer.dmg "$URL"
           sudo hdiutil attach OAPI_installer.dmg -quiet
           sudo /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOS/bootstrapper -s --eula accept --action install --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
-          sudo hdiutil detatch /Volumes/OAPI_installer.dmg -quiet
+          sudo hdiutil detach /Volumes/OAPI_installer.dmg -quiet
         env:
           URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
 
