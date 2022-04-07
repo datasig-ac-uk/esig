@@ -87,6 +87,7 @@ jobs:
         env:
           BOOST_ROOT: ${{ env.boost_root }}
           CMAKE_PREFIX_PATH: ${{ env.cmake_prefix }}
+          MKLROOT: ${{ env.MKLROOT }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2
