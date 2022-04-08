@@ -118,7 +118,7 @@ if "VCPKG_INSTALLATION_ROOT" in os.environ:
 
 
 def exclude_framework_hook(cmake_manifest):
-    return list(filter(lambda name: not (name.contains(".framework")), cmake_manifest))
+    return list(filter(lambda name: (".framework" not in name), cmake_manifest))
 
 
 setup(
