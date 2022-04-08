@@ -69,22 +69,12 @@ target_sources(tosig PRIVATE
         src/ToSig.h
         src/tosig_module.cpp)
 
-if(EXISTS "${CMAKE_SOURCE_DIR}/build/recombine")
-    #    add_subdirectory("${CMAKE_SOURCE_DIR}/build/recombine")
-    execute_process(COMMAND ${Python_EXECUTABLE} -c "import platform; print(platform.architecture()[0])"
-            OUTPUT_VARIABLE arch
-            OUTPUT_STRIP_TRAILING_WHITESPACE
-            )
 
-    if (arch STREQUAL "64bit")
-        set(RECOMBINE_ARCH x86_64)
-    else()
-        set(RECOMBINE_ARCH x86)
-    endif()
+find_package(recombine CONFIG QUIET)
 
-
-    add_subdirectory(build/recombine)
-    target_link_libraries(tosig PRIVATE recombine)
+if(recombine_FOUND)
+    message(STATUS "Recombine found")
+    target_link_libraries(tosig PRIVATE recombine::recombine)
     target_include_directories(tosig PRIVATE
             ${CMAKE_SOURCE_DIR}/recombine
             )
@@ -93,8 +83,11 @@ if(EXISTS "${CMAKE_SOURCE_DIR}/build/recombine")
 
     #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 else()
+    message(STATUS "Recombine not found")
     target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 endif()
+
+
 if(MSVC)
     target_compile_options(tosig PRIVATE /bigobj)
 endif()

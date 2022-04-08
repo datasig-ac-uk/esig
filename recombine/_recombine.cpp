@@ -1,6 +1,6 @@
 // private headers
 #include "_recombine.h"
-#include "recombine/recombine.h"
+#include <recombine/recombine.h>
 #include "TestVec/RdToPowers.h" // CMultiDimensionalBufferHelper
 #include "TestVec/EvaluateAllMonomials.h" //EvaluateAllMonomials::F
 #include <vector>
