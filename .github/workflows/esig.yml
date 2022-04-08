@@ -53,7 +53,6 @@ jobs:
           sudo hdiutil attach OAPI_installer.dmg -quiet
           sudo /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOS/bootstrapper -s --eula accept --action install --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
           sudo hdiutil detach /Volumes/"$(basename "$URL" .dmg)" -quiet
-          brew install libomp
           ls /opt/intel/oneapi
           echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
         env:
@@ -80,7 +79,10 @@ jobs:
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
         id: boost-macos
-        run: brew install boost
+        run: |
+          brew install boost
+          brew install libomp
+          brew install ninja
         if: runner.os == 'macOS'
 
 
