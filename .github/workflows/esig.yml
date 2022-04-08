@@ -58,15 +58,7 @@ jobs:
         env:
           URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
 
-      - name: Build Recombine
-        id: build-recombine
-        if: steps.clone_recombine.outcome == 'success' && runner.os != 'Linux'
-        run: |
-          pushd build/recombine
-          cmake -S . -B recombine_build -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\external
-          cmake -B recombine_build --target=install
-          popd
-          echo "recombine_prefix=$(pwd)/external" >> $GITHUB_ENV 
+
 
       - name: Get Boost x64
         id: boost
@@ -85,6 +77,15 @@ jobs:
           brew install ninja
         if: runner.os == 'macOS'
 
+      - name: Build Recombine
+        id: build-recombine
+        if: steps.clone_recombine.outcome == 'success' && runner.os != 'Linux'
+        run: |
+          pushd build/recombine
+          cmake -S . -B recombine_build -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\external
+          cmake -B recombine_build --target=install
+          popd
+          echo "recombine_prefix=$(pwd)/external" >> $GITHUB_ENV 
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
