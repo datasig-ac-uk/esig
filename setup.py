@@ -117,6 +117,8 @@ if "VCPKG_INSTALLATION_ROOT" in os.environ:
     CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % tmp)
 
 
+def exclude_framework_hook(cmake_manifest):
+    return list(filter(lambda name: not (name.contains(".framework")), cmake_manifest))
 
 
 setup(
@@ -142,6 +144,7 @@ setup(
     # eager_resources=eager_resources,
     # distclass=helpers.BinaryDistribution,
     # ext_modules=[esig_extension],
+    cmake_process_manifest_hook=exclude_framework_hook,
 
     cmake_args=CMAKE_SETTINGS,
     install_requires=['numpy>=1.7'],

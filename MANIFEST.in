@@ -1,11 +1,6 @@
 include README.md
 include LICENSE
 include AUTHORS
-include esig/VERSION
-include src/*.h
-include src/*.c
-include src/*.cpp
-include libalgebra/addons/*.h
-include libalgebra/libalgebra/*.h
+include esig/*
 include tools/*.py
 exclude .DS_Store
