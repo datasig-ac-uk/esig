@@ -87,7 +87,7 @@ jobs:
           source ${{ env.oneapi_script }}
           pushd build/recombine
           cmake -S . -B recombine_build -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\external
-          cmake -B recombine_build --target install
+          cmake --install recombine_build
           popd
           echo "recombine_prefix=$(pwd)/external" >> $GITHUB_ENV
         env:
