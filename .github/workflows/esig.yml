@@ -85,7 +85,9 @@ jobs:
           cmake -S . -B recombine_build -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=..\external
           cmake -B recombine_build --target=install
           popd
-          echo "recombine_prefix=$(pwd)/external" >> $GITHUB_ENV 
+          echo "recombine_prefix=$(pwd)/external" >> $GITHUB_ENV
+        env:
+          MKLROOT: ${{ env.MKLROOT }}
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
