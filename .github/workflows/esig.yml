@@ -21,7 +21,7 @@ jobs:
       - name: Checkout recombine
         uses: actions/checkout@v3
         with:
-          repository: "https://github.com/terrylyons/recombine.git"
+          repository: terrylyons/recombine
           ref: use-findblas
           token: ${{ secrets.recombine_login }}
           path: build/recombine
