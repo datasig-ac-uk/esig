@@ -8,7 +8,8 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        os: [#windows-2019,
+        os: [
+          windows-2019,
           macos-10.15]
 
 
@@ -17,15 +18,24 @@ jobs:
       - name: Checkout repo
         uses: actions/checkout@v2
 
+      - name: Checkout recombine
+        uses: actions/checkout@v3
+        with:
+          repository: "https://github.com/terrylyons/recombine.git"
+          ref: use-findblas
+          token: ${{ secrets.recombine_login }}
+          path: build/recombine
+
+
       # In the future, this can be replaced by a download of the binary
-      - name: Get recombine
-        id: clone_recombine
-        run: |
-          bash ./build/git-preamble.sh
-        continue-on-error: true
-        env:
-          RECOMBINE_USER: rolyp
-          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
+#      - name: Get recombine
+#        id: clone_recombine
+#        run: |
+#          bash ./build/git-preamble.sh
+#        continue-on-error: true
+#        env:
+#          RECOMBINE_USER: rolyp
+#          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
       - name: Get MKL
         id: get-mkl-windows
