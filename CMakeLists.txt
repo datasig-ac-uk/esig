@@ -70,11 +70,14 @@ target_sources(tosig PRIVATE
         src/tosig_module.cpp)
 
 
-find_package(recombine CONFIG QUIET)
+#find_package(recombine CONFIG QUIET))
 
-if(recombine_FOUND)
+
+if(EXISTS build/recombine)
+    set(RECOMBINE_MAKE_FRAMEWORK OFF)
+    add_subdirectory(build/recombine)
     message(STATUS "Recombine found")
-    target_link_libraries(tosig PRIVATE recombine::recombine)
+    target_link_libraries(tosig PRIVATE recombine)
     target_include_directories(tosig PRIVATE
             ${CMAKE_SOURCE_DIR}/recombine
             )

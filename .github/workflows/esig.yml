@@ -80,18 +80,18 @@ jobs:
           brew install ninja
         if: runner.os == 'macOS'
 
-      - name: Build Recombine
-        id: build-recombine
-        if: steps.clone_recombine.outcome == 'success' && runner.os != 'Linux'
-        run: |
-          source ${{ env.oneapi_script }}
-          pushd build/recombine
-          cmake -S . -B recombine_build -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../esig
-          cmake --install recombine_build
-          popd
-          echo "recombine_prefix=$(pwd)/esig" >> $GITHUB_ENV
-        env:
-          MKLROOT: ${{ env.MKLROOT }}
+#      - name: Build Recombine
+#        id: build-recombine
+#        if: steps.clone_recombine.outcome == 'success' && runner.os != 'Linux'
+#        run: |
+#          source ${{ env.oneapi_script }}
+#          pushd build/recombine
+#          cmake -S . -B recombine_build -GNinja -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=../esig
+#          cmake --install recombine_build
+#          popd
+#          echo "recombine_prefix=$(pwd)/esig" >> $GITHUB_ENV
+#        env:
+#          MKLROOT: ${{ env.MKLROOT }}
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
