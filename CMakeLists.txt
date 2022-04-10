@@ -103,7 +103,6 @@ target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boo
 
 set_target_properties(tosig PROPERTIES
         LIBRARY_OUTPUT_NAME _tosig
-        INSTALL_RPATH "$ORIGIN/lib"
         )
 
 
