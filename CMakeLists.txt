@@ -10,6 +10,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(GNUInstallDirs)
 
 
+message(STATUS "USING MKL_ROOT ${MKL_ROOT}")
+find_package(MKL CONFIG REQUIRED)
+
 find_package(Boost COMPONENTS system thread REQUIRED)
 
 message(STATUS "Boost thread library: ${Boost_THREAD_LIBRARY_RELEASE}")

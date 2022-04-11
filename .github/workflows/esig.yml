@@ -109,9 +109,8 @@ jobs:
         uses: pypa/cibuildwheel@v2.3.1
         env:
           BOOST_ROOT: ${{ env.boost_root }}
-          CMAKE_PREFIX_PATH: "${{ env.MKLROOT }}/lib/cmake"
+          CMAKE_PREFIX_PATH: ${{ env.MKLROOT }}
           MKLROOT: ${{ env.MKLROOT }}
-          ONEAPI_SCRIPT: ${{ env.oneapi_script }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2
