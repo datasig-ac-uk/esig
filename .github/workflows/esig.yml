@@ -82,6 +82,7 @@ jobs:
           vcpkg install boost-system:x64-windows
           vcpkg install boost-thread:x64-windows
           vcpkg install boost-thread:x86-windows
+          vcpkg install intel-mkl
         if: runner.os == 'Windows'
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
