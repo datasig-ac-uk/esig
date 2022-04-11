@@ -121,6 +121,9 @@ def exclude_framework_hook(cmake_manifest):
     return list(filter(lambda name: (".framework" not in name), cmake_manifest))
 
 
+if "MKLROOT" in os.environ and os.environ["MKLROOT"]:
+    CMAKE_SETTINGS.append("-DMKL_ROOT=%s" % os.environ["MKLROOT"])
+
 setup(
     name='esig',
     # version=configuration.esig_version,
