@@ -123,6 +123,8 @@ def exclude_framework_hook(cmake_manifest):
 
 if "MKLROOT" in os.environ and os.environ["MKLROOT"]:
     CMAKE_SETTINGS.append("-DMKL_ROOT=%s" % os.environ["MKLROOT"])
+    p = Path(os.environ["MKLROOT"], "lib", "cmake", "mkl")
+    CMAKE_SETTINGS.append("-DMKL_DIR=%s" % p)
 
 setup(
     name='esig',
