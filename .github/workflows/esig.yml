@@ -49,7 +49,6 @@ jobs:
           curl -v -o /d/a/intel-mkl-installer.exe "$URL"
           /d/a/intel-mkl-installer.exe -s -x -f /d/a/webimage_extracted --log extract.log 
           rm -v /d/a/intel-mkl-installer.exe
-          /d/a/webimage_extracted/bootstrapper.exe -s --action install --eula accept
           /d/a/webimage_extracted/bootstrapper.exe -s --action install --config ./build/oneapi-install-config-x64-windows.ini --log-dir=.
           curl -v -o /d/a/intel-mkl-installer-x86.exe "$URL32"
           /d/a/intel-mkl-installer-x86.exe -s -x -f /d/a/webimage_extracted_x86 --log extractx86.log
