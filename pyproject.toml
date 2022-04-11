@@ -16,7 +16,7 @@ skip = ["*-musl*", "pp*"]
 
 
 [tool.cibuildwheel.windows]
-before-all = "source $ONEAPI_SCRIPT"
+before-all = "$ONEAPI_SCRIPT"
 
 [tool.cibuildwheel.macos]
 before-all = "source $ONEAPI_SCRIPT"
