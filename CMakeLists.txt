@@ -73,6 +73,16 @@ target_sources(tosig PRIVATE
 
 #find_package(recombine CONFIG QUIET))
 set(RECOMBINE_MAKE_FRAMEWORK OFF)
+
+execute_process(COMMAND "${Python_EXECUTABLE}" -c "import platform; print(platform.architecture()[0])"
+        OUTPUT_VARIABLE arch
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+if (arch STREQUAL "64bit")
+    set(RECOMBINE_ARCH x86_64)
+else()
+    set(RECOMBINE_ARCH x86)
+endif()
 add_subdirectory(build/recombine)
 message(STATUS "Recombine found")
 target_link_libraries(tosig PRIVATE recombine)
