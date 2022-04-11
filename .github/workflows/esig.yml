@@ -41,9 +41,19 @@ jobs:
 #          RECOMBINE_USER: rolyp
 #          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
+      - name: MKL Cache
+        id: mkl-cache-get-windows
+        if: runner.os == 'Windows'
+        uses: actions/cache@v3
+        with:
+          key: ${{ runner.os }}-oneapi-dir
+          path: |
+            C:\\Program Files (x86)\\Intel\\oneAPI
+        
+
       - name: Get MKL
         id: get-mkl-windows
-        if: runner.os == 'Windows' && steps.clone_recombine.outcome == 'success'
+        if: runner.os == 'Windows' && steps.mkl-cache-get-windows.outputs.cache-hit != 'true'
         shell: bash
         run: |
           curl -v -o /d/a/intel-mkl-installer.exe "$URL"
@@ -75,6 +85,13 @@ jobs:
           URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
 
 
+      - name: cache-boost-windows
+        id: cache-boost-windows
+        uses: actions/cache@v3
+        if: runner.os == 'Windows'
+        with:
+          path: C:\vcpkg\packages
+          key: win-boost-packages
 
       - name: Get Boost x64
         id: boost
@@ -83,7 +100,8 @@ jobs:
           vcpkg install boost-system:x64-windows
           vcpkg install boost-thread:x64-windows
           vcpkg install boost-thread:x86-windows
-        if: runner.os == 'Windows'
+        if: runner.os == 'Windows' && steps.cache-boost-windows.outputs.cache-hit != 'true'
+
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
         id: boost-macos
@@ -110,7 +128,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.3.1
         env:
           BOOST_ROOT: ${{ env.boost_root }}
-          MKLROOT: ${{ env.MKLROOT }}
+#          MKLROOT: ${{ env.MKLROOT }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2
