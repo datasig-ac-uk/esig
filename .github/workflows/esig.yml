@@ -109,7 +109,7 @@ jobs:
         uses: pypa/cibuildwheel@v2.3.1
         env:
           BOOST_ROOT: ${{ env.boost_root }}
-          CMAKE_PREFIX_PATH: "${{ env.cmake_prefix }}:${{ env.recombine_prefix }}"
+          CMAKE_PREFIX_PATH: "${{ env.MKLROOT }}/lib/cmake"
           MKLROOT: ${{ env.MKLROOT }}
           ONEAPI_SCRIPT: ${{ env.oneapi_script }}
 
