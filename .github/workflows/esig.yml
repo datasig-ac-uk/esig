@@ -113,6 +113,7 @@ jobs:
           BOOST_ROOT: ${{ env.boost_root }}
           CMAKE_PREFIX_PATH: "${{ env.cmake_prefix }}:${{ env.recombine_prefix }}"
           MKLROOT: ${{ env.MKLROOT }}
+          ONEAPI_SCRIPT: ${{ env.oneapi_script }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2

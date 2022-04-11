@@ -15,5 +15,11 @@ build-backend = "setuptools.build_meta"
 skip = ["*-musl*", "pp*"]
 
 
+[tool.cibuildwheel.windows]
+before-all = "source $ONEAPI_SCRIPT"
+
+[tool.cibuildwheel.macos]
+before-all = "source $ONEAPI_SCRIPT"
+
 [tool.cibuildwheel.linux]
 before-all = "yum install boost-devel"
