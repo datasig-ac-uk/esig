@@ -83,6 +83,8 @@ if (arch STREQUAL "64bit")
 else()
     set(RECOMBINE_ARCH x86)
 endif()
+
+find_package(MKL CONFIG)
 add_subdirectory(build/recombine)
 message(STATUS "Recombine found")
 target_link_libraries(tosig PRIVATE recombine)
