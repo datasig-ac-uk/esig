@@ -46,13 +46,13 @@ jobs:
         run: |
           rm -rf "$VCPKG_INSTALLATION_ROOT"
           ./build/vcpkg/bootstrap-vcpkg.sh
-          ${{ matrix.mono }} `build/vcpkg/vcpkg fetch nuget | tail -n 1`
-          sources add
-            -source "https://nuget.pkg.github.com/datasig-ac-uk/index.json"
-            -storepasswordincleartext
-            -name "GitHub"
-            -username "datasig-ac-uk"
-            -password "${{ secrets.GITHUB_TOKEN }}"
+          ${{ matrix.mono }} `build/vcpkg/vcpkg fetch nuget | tail -n 1` \
+            sources add \
+            -source "https://nuget.pkg.github.com/datasig-ac-uk/index.json" \
+            -storepasswordincleartext \
+            -name "GitHub" \
+            -username "datasig-ac-uk" \
+            -password "${{ secrets.GITHUB_TOKEN }}" \
 
       # In the future, this can be replaced by a download of the binary
 #      - name: Get recombine
