@@ -98,11 +98,11 @@ jobs:
 
       - name: Set MKL vars
         if: runner.os == 'Windows'
-        shell: bash
+        shell: cmd
         run: |
           'C:/Program Files (x86)/Intel/oneAPI/setvars.bat'
-          printenv
-          echo "MKLROOT=${MKLROOT}" >> $GITHUB_ENV
+          set 
+          echo "MKLROOT=%MKLROOT%" >> %GITHUB_ENV%
 
 
       - name: Get MKL Mac
