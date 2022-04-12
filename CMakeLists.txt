@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 include(GNUInstallDirs)
 
+list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
 
 find_package(Boost COMPONENTS system thread REQUIRED)
@@ -84,7 +85,13 @@ else()
     set(RECOMBINE_ARCH x86)
 endif()
 
-set(BLA_VENDOR ALL)
+find_package(OpenMP REQUIRED)
+set(BLA_VENDOR "Intel10_ilp64")
+set(BLA_STATIC ON)
+set(BLA_SIZEOF_INTEGER "8")
+find_package(BLAS REQUIRED)
+
+
 find_package(LAPACK REQUIRED)
 
 add_subdirectory(build/recombine)
