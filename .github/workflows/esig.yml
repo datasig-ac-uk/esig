@@ -45,7 +45,7 @@ jobs:
         shell: bash
         run: |
           rm -rf "$VCPKG_INSTALLATION_ROOT"
-          ./build/bootstrap-vcpkg.sh
+          ./build/vcpkg/bootstrap-vcpkg.sh
           ${{ matrix.mono }} `build/vcpkg/vcpkg fetch nuget | tail -n 1`
           sources add
             -source "https://nuget.pkg.github.com/datasig-ac-uk/index.json"
