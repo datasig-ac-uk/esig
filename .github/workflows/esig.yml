@@ -100,7 +100,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: cmd
         run: |
-          "C:/Program Files (x86)/Intel/oneAPI/setvars.bat"
+          @call "C:/Program Files (x86)/Intel/oneAPI/setvars.bat"
           set 
           echo "MKLROOT=%MKLROOT%" >> %GITHUB_ENV%
 
