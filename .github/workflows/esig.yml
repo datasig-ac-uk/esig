@@ -74,6 +74,7 @@ jobs:
           path: |
             C:/Program Files (x86)/Intel/oneAPI
             !C:/Program Files (x86)/Intel/oneAPI/Installer/**
+            !C:/Program Files (x86)/Intel/oneAPI/conda_channel/**
         
 
       - name: Get MKL
@@ -122,8 +123,8 @@ jobs:
         id: boost
         shell: bash
         run: |
-          build/vcpkg install boost-system boost-thread --triplet x86-windows
-          build/vcpkg install boost-system boost-thread --triplet x64-windows
+          build/vcpkg/vcpkg install boost-system boost-thread --triplet x86-windows
+          build/vcpkg/vcpkg install boost-system boost-thread --triplet x64-windows
         if: runner.os == 'Windows' && steps.cache-boost-windows.outputs.cache-hit != 'true'
 
 #TODO: replace brew with vcpkg
