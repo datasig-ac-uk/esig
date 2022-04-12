@@ -129,13 +129,15 @@ jobs:
 #          path: C:/vcpkg/packages
 #          key: win-boost-packages
 
-      - name: Get Boost x64
-        id: boost
+      - name: Get Boost Windows
+        id: boost-windows
         shell: bash
         run: |
           build/vcpkg/vcpkg install boost-system boost-thread intel-mkl --triplet x86-windows
           build/vcpkg/vcpkg install boost-system boost-thread intel-mkl --triplet x64-windows
         if: runner.os == 'Windows' && steps.cache-boost-windows.outputs.cache-hit != 'true'
+        env:
+          VCPKG_KEEP_ENV_VARS: "MKLROOT"
 
 #TODO: replace brew with vcpkg
       - name: Get Boost macos
