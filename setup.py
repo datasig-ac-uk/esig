@@ -114,17 +114,14 @@ CMAKE_SETTINGS = []
 if "VCPKG_INSTALLATION_ROOT" in os.environ:
     from pathlib import Path
     tmp = Path(os.environ["VCPKG_INSTALLATION_ROOT"], "scripts", "buildsystems", "vcpkg.cmake")
-    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % tmp)
+    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (Path.cwd() / "build" / "vcpkg" / "scripts" / "buildsystems" / "vcpkg.cmake"))
+
 
 
 def exclude_framework_hook(cmake_manifest):
     return list(filter(lambda name: (".framework" not in name), cmake_manifest))
 
 
-if "MKLROOT" in os.environ and os.environ["MKLROOT"]:
-    CMAKE_SETTINGS.append("-DMKL_ROOT=%s" % os.environ["MKLROOT"])
-    p = Path(os.environ["MKLROOT"], "lib", "cmake", "mkl")
-    CMAKE_SETTINGS.append("-DMKL_DIR=%s" % p)
 
 setup(
     name='esig',

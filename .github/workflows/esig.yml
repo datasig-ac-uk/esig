@@ -2,6 +2,10 @@ name: Build esig
 
 on: [push]
 
+env:
+  VCPKG_BINARY_SOURCES: 'clear;nuget;GitHub;readwrite'
+
+
 jobs:
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
@@ -12,6 +16,13 @@ jobs:
           windows-2019,
           #macos-10.15
         ]
+        include:
+          - os: 'windows-2019'
+            mono: ''
+#          - os: 'macos-10.15'
+#            mono: 'mono'
+#          - os: 'ubuntu-20.04'
+#            mono: 'mono'
 
 
 
@@ -30,6 +41,18 @@ jobs:
           token: ${{ secrets.recombine_login }}
           path: build/recombine
 
+      - name: Setup submodule vcpkg
+        shell: bash
+        run: |
+          rm -rf "$VCPKG_INSTALLATION_ROOT"
+          build/bootstrap-vcpkg
+          ${{ matrix.mono }} `build/vcpkg/vcpkg fetch nuget | tail -n 1`
+          sources add
+            -source "https://nuget.pkg.github.com/datasig-ac-uk/index.json"
+            -storepasswordincleartext
+            -name "GitHub"
+            -username "datasig-ac-uk"
+            -password "${{ secrets.GITHUB_TOKEN }}"
 
       # In the future, this can be replaced by a download of the binary
 #      - name: Get recombine
@@ -49,6 +72,7 @@ jobs:
           key: ${{ runner.os }}-oneapi-dir
           path: |
             C:/Program Files (x86)/Intel/oneAPI
+            !C:/Program Files (x86)/Intel/oneAPI/Installer
         
 
       - name: Get MKL
@@ -85,21 +109,19 @@ jobs:
           URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
 
 
-      - name: cache-boost-windows
-        id: cache-boost-windows
-        uses: pat-s/always-upload-cache@v3.0.1
-        if: runner.os == 'Windows'
-        with:
-          path: C:/vcpkg/packages
-          key: win-boost-packages
+#      - name: cache-boost-windows
+#        id: cache-boost-windows
+#        uses: pat-s/always-upload-cache@v3.0.1
+#        if: runner.os == 'Windows'
+#        with:
+#          path: C:/vcpkg/packages
+#          key: win-boost-packages
 
       - name: Get Boost x64
         id: boost
         run: |
-          vcpkg install boost-system:x86-windows
-          vcpkg install boost-system:x64-windows
-          vcpkg install boost-thread:x64-windows
-          vcpkg install boost-thread:x86-windows
+          build/vcpkg install boost-system boost-thread --triplet x86-windows
+          build/vcpkg install boost-system boost-thread --triplet x64-windows
         if: runner.os == 'Windows' && steps.cache-boost-windows.outputs.cache-hit != 'true'
 
 #TODO: replace brew with vcpkg
