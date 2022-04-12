@@ -84,8 +84,9 @@ else()
     set(RECOMBINE_ARCH x86)
 endif()
 
+set(BLA_VENDOR ALL)
+find_package(LAPACK REQUIRED)
 
-find_package(MKL CONFIG NO_MODULE)
 add_subdirectory(build/recombine)
 message(STATUS "Recombine found")
 target_link_libraries(tosig PRIVATE recombine)
