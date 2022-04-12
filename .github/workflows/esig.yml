@@ -100,7 +100,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          echo "MKLROOT=C:/Progam Files (x86)/Intel/oneAPI/mkl/latest" >> $GITHUB_ENV
+          echo "MKLROOT=C:/Progam Files (x86)/Intel/oneAPI/mkl/2022.0.3" >> $GITHUB_ENV
 
 
       - name: Get MKL Mac
