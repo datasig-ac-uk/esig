@@ -41,6 +41,7 @@ jobs:
           token: ${{ secrets.recombine_login }}
           path: build/recombine
 
+# https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md
       - name: Setup submodule vcpkg
         shell: bash
         run: |
@@ -119,6 +120,7 @@ jobs:
 
       - name: Get Boost x64
         id: boost
+        shell: bash
         run: |
           build/vcpkg install boost-system boost-thread --triplet x86-windows
           build/vcpkg install boost-system boost-thread --triplet x64-windows
