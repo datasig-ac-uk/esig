@@ -100,7 +100,7 @@ jobs:
         if: runner.os == 'Windows'
         shell: bash
         run: |
-          cmd.exe /c "C:/Program Files (x86)/Intel/oneAPI/setvars.bat"
+          'C:/Program Files (x86)/Intel/oneAPI/setvars.bat'
           printenv
           echo "MKLROOT=${MKLROOT}" >> $GITHUB_ENV
 
