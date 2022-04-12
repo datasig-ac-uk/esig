@@ -102,7 +102,7 @@ jobs:
 #          set
 #          echo "MKLROOT=%MKLROOT%" >> %GITHUB_ENV%
         run: |
-          echo "MKLROOT=C:/Program Files (x86)/Intel/oneAPI/mkl/2022.0.3/" >> $GITHUB_ENV
+          echo "MKLROOT=C:/Program Files (x86)/Intel/oneAPI/mkl" >> $GITHUB_ENV
           echo "CMAKE_PREFIX_PATH=C:/Program Files (x86)/Intel/oneAPI/mkl/2022.0.3/lib" >> $GITHUB_ENV
 
       - name: Get MKL Mac

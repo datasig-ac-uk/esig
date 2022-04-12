@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.16)
+cmake_minimum_required(VERSION 3.18)
 project(esig)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -84,9 +84,8 @@ else()
     set(RECOMBINE_ARCH x86)
 endif()
 
-set(BLA_PREFER_PKGCONFIG ON)
 
-find_package(MKL CONFIG)
+find_package(MKL CONFIG NO_MODULE)
 add_subdirectory(build/recombine)
 message(STATUS "Recombine found")
 target_link_libraries(tosig PRIVATE recombine)
