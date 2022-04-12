@@ -98,12 +98,13 @@ jobs:
 
       - name: Set MKL vars
         if: runner.os == 'Windows'
-        shell: cmd
+        shell: bash
+#        run: |
+#          @call "C:/Program Files (x86)/Intel/oneAPI/setvars.bat"
+#          set
+#          echo "MKLROOT=%MKLROOT%" >> %GITHUB_ENV%
         run: |
-          @call "C:/Program Files (x86)/Intel/oneAPI/setvars.bat"
-          set 
-          echo "MKLROOT=%MKLROOT%" >> %GITHUB_ENV%
-
+          echo "MKLROOT=C:/Program Files (x86)/Intel/oneAPI/mkl/2022.0.3/" >> $GITHUB_ENV
 
       - name: Get MKL Mac
         id: get-mkl-Mac
@@ -132,8 +133,8 @@ jobs:
         id: boost
         shell: bash
         run: |
-          build/vcpkg/vcpkg install boost-system boost-thread --triplet x86-windows
-          build/vcpkg/vcpkg install boost-system boost-thread --triplet x64-windows
+          build/vcpkg/vcpkg install boost-system boost-thread intel-mkl --triplet x86-windows
+          build/vcpkg/vcpkg install boost-system boost-thread intel-mkl --triplet x64-windows
         if: runner.os == 'Windows' && steps.cache-boost-windows.outputs.cache-hit != 'true'
 
 #TODO: replace brew with vcpkg
