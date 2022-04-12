@@ -84,6 +84,8 @@ else()
     set(RECOMBINE_ARCH x86)
 endif()
 
+set(BLA_PREFER_PKGCONFIG ON)
+
 find_package(MKL CONFIG)
 add_subdirectory(build/recombine)
 message(STATUS "Recombine found")
