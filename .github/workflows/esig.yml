@@ -163,7 +163,6 @@ jobs:
         uses: pypa/cibuildwheel@v2.3.1
         env:
           BOOST_ROOT: ${{ env.boost_root }}
-          MKLROOT: ${{ env.MKLROOT }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2

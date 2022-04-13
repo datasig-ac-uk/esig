@@ -85,14 +85,7 @@ else()
     set(RECOMBINE_ARCH x86)
 endif()
 
-find_package(OpenMP REQUIRED)
-set(BLA_VENDOR "Intel10_ilp64")
-set(BLA_STATIC ON)
-set(BLA_SIZEOF_INTEGER "8")
-find_package(BLAS REQUIRED)
 
-
-find_package(LAPACK REQUIRED)
 
 add_subdirectory(build/recombine)
 message(STATUS "Recombine found")
