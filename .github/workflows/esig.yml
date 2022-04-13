@@ -71,10 +71,11 @@ jobs:
         uses: pat-s/always-upload-cache@v3.0.1
         with:
           key: ${{ runner.os }}-oneapi-dir
-          path: |
-            C:/Program Files (x86)/Intel/oneAPI
+          path: |           
             !C:/Program Files (x86)/Intel/oneAPI/Installer/**
             !C:/Program Files (x86)/Intel/oneAPI/conda_channel/**
+            C:/Program Files (x86)/Intel/oneAPI
+
         
 
       - name: Get MKL
