@@ -72,8 +72,8 @@ jobs:
         with:
           key: ${{ runner.os }}-oneapi-dir
           path: |           
-            !C:/Program Files (x86)/Intel/oneAPI/Installer/**
             !C:/Program Files (x86)/Intel/oneAPI/conda_channel/**
+            !C:/Program Files (x86)/Intel/oneAPI/Installer/**
             C:/Program Files (x86)/Intel/oneAPI
 
         
