@@ -53,7 +53,8 @@ jobs:
             -storepasswordincleartext \
             -name "GitHub" \
             -username "datasig-ac-uk" \
-            -password "${{ secrets.GITHUB_TOKEN }}" \
+            -password "${{ secrets.GITHUB_TOKEN }}"
+          
 
       # In the future, this can be replaced by a download of the binary
 #      - name: Get recombine

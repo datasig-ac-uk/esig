@@ -113,11 +113,11 @@ from pathlib import Path
 CMAKE_SETTINGS = []
 vcpkg = Path("build", "vcpkg")
 if vcpkg.exists():
-    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg / "scripts" / "buildsystems" / "vcpkg.cmake"))
+    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
 elif "VCPKG_INSTALLATION_ROOT" in os.environ:
     vcpkg = Path(os.environ["VCPKG_INSTALLATION_ROOT"])
     if vcpkg.exists():
-        CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg / "scripts" / "buildsystems" / "vcpkg.cmake"))
+        CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
 
 
 def filter_cmake_manifests(cmake_manifest):
