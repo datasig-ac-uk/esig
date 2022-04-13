@@ -6,7 +6,7 @@ import platform
 #from tools.switch_generator import SwitchGenerator
 
 from skbuild import setup
-
+from pathlib import Path
 
 #configuration = helpers.InstallationConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
@@ -89,8 +89,8 @@ from skbuild import setup
 #     define_macros=configuration.define_macros,
 #     libraries=configuration.used_libraries,
 #     extra_compile_args=configuration.extra_compile_args,
-#     extra_link_args=configuration.linker_args,
 # )
+#     extra_link_args=configuration.linker_args,
 #
 # package_data = {
 # 	"esig": ["VERSION", "ERROR_MESSAGE"]
@@ -111,15 +111,25 @@ from skbuild import setup
 #     eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
 CMAKE_SETTINGS = []
-if "VCPKG_INSTALLATION_ROOT" in os.environ:
-    from pathlib import Path
-    tmp = Path(os.environ["VCPKG_INSTALLATION_ROOT"], "scripts", "buildsystems", "vcpkg.cmake")
-    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (Path.cwd() / "build" / "vcpkg" / "scripts" / "buildsystems" / "vcpkg.cmake"))
+vcpkg = Path("build", "vcpkg")
+if vcpkg.exists():
+    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg / "scripts" / "buildsystems" / "vcpkg.cmake"))
+elif "VCPKG_INSTALLATION_ROOT" in os.environ:
+    vcpkg = Path(os.environ["VCPKG_INSTALLATION_ROOT"])
+    if vcpkg.exists():
+        CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg / "scripts" / "buildsystems" / "vcpkg.cmake"))
 
 
+def filter_cmake_manifests(cmake_manifest):
 
-def exclude_framework_hook(cmake_manifest):
-    return list(filter(lambda name: (".framework" not in name), cmake_manifest))
+    def _filter(item):
+        if item.endswith(".pc"):
+            return False
+        elif item.endswith(".cmake"):
+            return False
+        return True
+
+    return list(filter(_filter, cmake_manifest))
 
 
 

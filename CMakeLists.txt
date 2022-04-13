@@ -87,17 +87,17 @@ endif()
 
 
 
-add_subdirectory(build/recombine)
-message(STATUS "Recombine found")
-target_link_libraries(tosig PRIVATE recombine)
-target_include_directories(tosig PRIVATE
-        ${CMAKE_SOURCE_DIR}/recombine
-        )
 
-target_sources(tosig PRIVATE recombine/_recombine.cpp recombine/TestVec/RdToPowers2.cpp)
 
 if(EXISTS build/recombine)
+    add_subdirectory(build/recombine)
+    message(STATUS "Recombine found")
+    target_link_libraries(tosig PRIVATE recombine)
+    target_include_directories(tosig PRIVATE
+            ${CMAKE_SOURCE_DIR}/recombine
+            )
 
+    target_sources(tosig PRIVATE recombine/_recombine.cpp recombine/TestVec/RdToPowers2.cpp)
 
     #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 else()
