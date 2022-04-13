@@ -159,7 +159,7 @@ jobs:
 #          popd
 #          echo "recombine_prefix=$(pwd)/esig" >> $GITHUB_ENV
 #        env:
-#          MKLROOT: ${{ env.MKLROOT }}
+          MKLROOT: ${{ env.MKLROOT }}
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1

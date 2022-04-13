@@ -4,8 +4,15 @@ project(esig)
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-#set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
-#set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
+set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
+set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
+
+# Installing needs special handling here because the target is ultimately
+# a Python wheel rather than a standard directory structure.
+set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/esig" )
+set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/esig" )
+set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/esig/include" )
+
 
 include(GNUInstallDirs)
 
@@ -89,14 +96,11 @@ endif()
 
 
 
-if(EXISTS build/recombine)
-    add_subdirectory(build/recombine)
+if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
     message(STATUS "Recombine found")
+    add_subdirectory(build/recombine)
     target_link_libraries(tosig PRIVATE recombine)
-    target_include_directories(tosig PRIVATE
-            ${CMAKE_SOURCE_DIR}/recombine
-            )
-
+    target_include_directories(tosig PRIVATE ${CMAKE_SOURCE_DIR}/recombine)
     target_sources(tosig PRIVATE recombine/_recombine.cpp recombine/TestVec/RdToPowers2.cpp)
 
     #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
