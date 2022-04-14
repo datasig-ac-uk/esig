@@ -63,7 +63,7 @@ message(STATUS "Python root: ${Python_ROOT_DIR}")
 find_package(Python 3 REQUIRED
         COMPONENTS
         Interpreter
-        Development
+        Development.Module
         NumPy
         )
 
