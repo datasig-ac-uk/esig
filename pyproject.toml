@@ -20,7 +20,8 @@ before-all = "source $ONEAPI_SCRIPT"
 
 [tool.cibuildwheel.linux]
 before-all = [
-    "yum install boost-devel",
-    "cp build/linux-oneapi-yum-config /etc/yum.repos.d",
-    "yum install intel-basekit intel-basekit-32bit"
+    "yum install -y boost-devel",
+    "cp -v build/linux-oneapi-yum-config /etc/yum.repos.d/oneAPI.repo",
+    "yum install -y intel-basekit",
+    "yum install -y intel-basekit-32bit"
     ]
