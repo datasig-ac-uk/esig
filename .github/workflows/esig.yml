@@ -66,22 +66,22 @@ jobs:
 #          RECOMBINE_USER: rolyp
 #          RECOMBINE_TOKEN: ${{ secrets.recombine_login }}
 
-      - name: MKL Cache
-        id: mkl-cache-get-windows
-        if: runner.os == 'Windows'
-        uses: pat-s/always-upload-cache@v3.0.1
-        with:
-          key: ${{ runner.os }}-oneapi-dir
-          path: |           
-            !C:/Program Files (x86)/Intel/oneAPI/Installer/**
-            C:/Program Files (x86)/Intel/oneAPI
-            !C:/Program Files (x86)/Intel/oneAPI/conda_channel/**
+#      - name: MKL Cache
+#        id: mkl-cache-get-windows
+#        if: runner.os == 'Windows'
+#        uses: pat-s/always-upload-cache@v3.0.1
+#        with:
+#          key: ${{ runner.os }}-oneapi-dir
+#          path: |
+#            !C:/Program Files (x86)/Intel/oneAPI/Installer/**
+#            C:/Program Files (x86)/Intel/oneAPI
+#            !C:/Program Files (x86)/Intel/oneAPI/conda_channel/**
 
         
 
       - name: Get MKL
         id: get-mkl-windows
-        if: runner.os == 'Windows' && steps.mkl-cache-get-windows.outputs.cache-hit != 'true'
+        if: runner.os == 'Windows' # && steps.mkl-cache-get-windows.outputs.cache-hit != 'true'
         shell: bash
         run: |
           curl -v -o /d/a/intel-mkl-installer.exe "$URL"
