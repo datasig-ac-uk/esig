@@ -36,10 +36,10 @@ endif ()
 
 
 if (SKBUILD)
-    message(STATUS "skbuild environment")
-    file(TO_CMAKE_PATH ${PYTHON_EXECUTABLE} PYTHON_EXE)
-    cmake_path(REMOVE_FILENAME "${PYTHON_EXECUTABLE}" OUTPUT_VARIABLE PYTHON_EXE)
-    cmake_path(NORMAL_PATH "${PYTHON_EXE}/../")
+    message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
+    cmake_path(REMOVE_FILENAME PYTHON_EXECUTABLE OUTPUT_VARIABLE PYTHON_EXE)
+    cmake_path(APPEND PYTHON_EXE "../")
+    cmake_path(NORMAL_PATH PYTHON_EXE)
     set(Python_ROOT_DIR "${PYTHON_EXE}")
     unset(PYTHON_EXE)
 

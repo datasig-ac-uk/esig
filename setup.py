@@ -110,14 +110,16 @@ from pathlib import Path
 #     # not sure why this is needed, and if it is, why package_data also needs to mention them
 #     eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
+
 CMAKE_SETTINGS = []
-vcpkg = Path("build", "vcpkg")
-if vcpkg.exists():
-    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
-elif "VCPKG_INSTALLATION_ROOT" in os.environ:
-    vcpkg = Path(os.environ["VCPKG_INSTALLATION_ROOT"])
+if not platform.system() == "Linux":
+    vcpkg = Path("build", "vcpkg")
     if vcpkg.exists():
         CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
+    elif "VCPKG_INSTALLATION_ROOT" in os.environ:
+        vcpkg = Path(os.environ["VCPKG_INSTALLATION_ROOT"])
+        if vcpkg.exists():
+            CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
 
 
 def filter_cmake_manifests(cmake_manifest):
