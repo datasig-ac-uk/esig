@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.18)
+cmake_minimum_required(VERSION 3.21)
 project(esig)
 
 set(CMAKE_CXX_STANDARD 11)
@@ -36,9 +36,11 @@ endif ()
 
 
 if (SKBUILD)
-
+    message(STATUS "skbuild environment")
     file(TO_CMAKE_PATH ${PYTHON_EXECUTABLE} PYTHON_EXE)
-    get_filename_component(Python_ROOT_DIR "${PYTHON_EXE}" DIRECTORY)
+    cmake_path(REMOVE_FILENAME "${PYTHON_EXECUTABLE}" OUTPUT_VARIABLE PYTHON_EXE)
+    cmake_path(NORMAL_PATH "${PYTHON_EXE}/../")
+    set(Python_ROOT_DIR "${PYTHON_EXE}")
     unset(PYTHON_EXE)
 
 else()
