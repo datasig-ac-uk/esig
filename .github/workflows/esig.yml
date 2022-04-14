@@ -115,11 +115,11 @@ jobs:
           sudo /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOs/install.sh -s --eula accept --action install \
             --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
           sudo hdiutil detach /Volumes/"$(basename "$URL" .dmg)" -quiet
-          curl -v -o OAPI_HPC.dmg "$HPCURL"
-          sudo hdiutil attach OAPI_HPC.dmg -quiet
-          sudo /Volumes/"$(basename "$HPCURL" .dmg)"/bootstrapper.app/Contents/MacOs/install.sh --silent --eula accept --action install \
-            --components intel.oneapi.mac.cpp-compiler
-          sudo hdiutil detatch /Volumes/"$(basename "$HPCURL" .dmg)" -quiet
+#          curl -v -o OAPI_HPC.dmg "$HPCURL"
+#          sudo hdiutil attach OAPI_HPC.dmg -quiet
+#          sudo /Volumes/"$(basename "$HPCURL" .dmg)"/bootstrapper.app/Contents/MacOs/install.sh --silent --eula accept --action install \
+#            --components intel.oneapi.mac.cpp-compiler
+#          sudo hdiutil detatch /Volumes/"$(basename "$HPCURL" .dmg)" -quiet
           echo "oneapi_root=/opt/intel/oneapi" >> $GITHUB_ENV
           echo "ONEAPI_SCRIPT=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
           echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
