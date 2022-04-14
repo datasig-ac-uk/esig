@@ -22,6 +22,7 @@ before-all = "source $ONEAPI_SCRIPT"
 before-all = [
     "yum install -y boost-devel",
     "cp -v build/linux-oneapi-yum-config /etc/yum.repos.d/oneAPI.repo",
-    "yum install -y intel-basekit",
-    "yum install -y intel-basekit-32bit"
+#    "yum install -y intel-oneapi-compiler-shared-2021.2.0",
+    "yum install -y intel-oneapi-mkl-devel",
+    "yum install -y intel-oneapi-mkl-32bit-devel"
     ]
