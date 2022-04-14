@@ -37,6 +37,7 @@ endif ()
 
 if (SKBUILD)
     message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
+    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
     cmake_path(REMOVE_FILENAME PYTHON_EXECUTABLE OUTPUT_VARIABLE PYTHON_EXE)
     cmake_path(APPEND PYTHON_EXE "../")
     cmake_path(NORMAL_PATH PYTHON_EXE)
@@ -57,7 +58,7 @@ else()
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
-find_package(Python REQUIRED
+find_package(Python 3 REQUIRED
         COMPONENTS
         Interpreter
         Development
