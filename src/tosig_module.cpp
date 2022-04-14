@@ -293,8 +293,7 @@ static PyObject* getlogsigsize(PyObject* self, PyObject* args)
     Py_ssize_t depth, width, ans;
 
     /* Parse tuple */
-    if (!PyArg_ParseTuple(args, "nn",
-                          &width, &depth))  return NULL;
+    if (!PyArg_ParseTuple(args, "nn", &width, &depth))  return NULL;
 
     ans = GetLogSigSize((size_t)width, (size_t)depth);
 
