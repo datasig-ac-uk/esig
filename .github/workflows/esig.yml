@@ -140,7 +140,6 @@ jobs:
         env:
           VCPKG_KEEP_ENV_VARS: "MKLROOT"
 
-#      TODO replace brew with vcpkg
       - name: Get Boost macos
         id: boost-macos
         run: |
@@ -160,7 +159,7 @@ jobs:
 #          popd
 #          echo "recombine_prefix=$(pwd)/esig" >> $GITHUB_ENV
 #        env:
-          MKLROOT: ${{ env.MKLROOT }}
+#          MKLROOT: ${{ env.MKLROOT }}
 
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
