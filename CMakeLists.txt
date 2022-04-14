@@ -149,8 +149,8 @@ set_target_properties(tosig PROPERTIES
         )
 
 
-target_include_directories(tosig PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/libalgebra")
-
+add_subdirectory(libalgebra)
+target_link_libraries(tosig PRIVATE Libalgebra::Libalgebra)
 
 install(TARGETS tosig
         LIBRARY DESTINATION esig
