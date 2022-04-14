@@ -27,6 +27,19 @@ namespace {
     template <unsigned Width, unsigned Depth>
     using tensor_type = alg::free_tensor<field_t, Width, Depth, alg::vectors::dense_vector>;
 
+    template <unsigned Width, unsigned Depth>
+    using cbh_type = alg::cbh<field_t, Width, Depth, tensor_type<Width, Depth>, lie_type<Width, Depth>>;
+
+    template <unsigned Width, unsigned Depth>
+    using maps_type = alg::maps<field_t, Width, Depth, tensor_type<Width, Depth>, lie_type<Width, Depth>>;
+
+    template <unsigned Width, unsigned Depth>
+    using lie_data_access = alg::vectors::dtl::data_access < alg::vectors::dense_vector < alg::lie_basis<Width, Depth>, field_t>>;
+
+    template <unsigned Width, unsigned Depth>
+    using tensor_data_access = alg::vectors::dtl::data_access<alg::vectors::dense_vector<alg::free_tensor_basis<Width, Depth>, field_t>>;
+
+
   /**
    * row_to_lie - replaces vector_to_lie
    * @param stream pointer to stream as PyArrayObject, assumed to have two dimensions, the row is assumed to be of length WIDTH
@@ -58,24 +71,31 @@ namespace {
    * @param stream pointer to stream as PyArrayObject, assumed to have two dimensions, the row is assumed to be of length WIDTH
    * @return the log signature of the stream as LIE
    */
-	template <class LIE, class CBH, size_t WIDTH>
-	LIE GetLogSignature(PyArrayObject *stream)
+	template <unsigned Width, unsigned Depth>
+	lie_type<Width, Depth> GetLogSignature(PyArrayObject *stream)
 	{
-	    npy_intp numRows = PyArray_DIM(stream, 0);
+        auto* real_stream = PyArray_GETCONTIGUOUS(stream);
+        npy_intp numRows = PyArray_DIM(real_stream, 0);
 
-		std::vector<LIE> increments;
-		if (numRows > 0) {
-		  npy_intp rowId = 0;
-		  LIE previous = row_to_lie<LIE, WIDTH>(stream,rowId++);
+        try {
+            std::vector<lie_type<Width, Depth>> increments;
+            increments.reserve(numRows-1);
+            if (numRows > 0) {
+                npy_intp rowId = 0;
+                auto previous = row_to_lie<Width, Depth>(real_stream, rowId++);
 
-		  for (; rowId < numRows; ++rowId) {
-			  LIE next(row_to_lie<LIE, WIDTH>(stream,rowId));
-			  increments.push_back(next - previous);
-			  previous = next;
-		  }
-		}
-		CBH cbh;
-		return (!increments.empty()) ? cbh.full(increments.begin(), increments.end()) : LIE();
+                for (; rowId < numRows; ++rowId) {
+                    auto next(row_to_lie<Width, Depth>(real_stream, rowId));
+                    increments.push_back(next - previous);
+                    previous = next;
+                }
+            }
+            cbh_type<Width, Depth> cbh;
+            return (!increments.empty()) ? cbh.full(increments.begin(), increments.end()) : lie_type<Width, Depth>();
+        } catch (...) {
+            Py_DECREF(real_stream);
+            throw;
+        }
 	}
   /*
 	template <class LIE, class STATE, class CBH, size_t WIDTH>
@@ -156,21 +176,14 @@ namespace {
 	//}
 
 
-	template <class S, class TENSOR, size_t WIDTH, size_t DEPTH>
-	void unpack_tensor_to_SNK(const TENSOR& arg, PyArrayObject *snk)
+	template <unsigned Width, unsigned Depth>
+	void unpack_tensor_to_SNK(const tensor_type<Width, Depth>& arg, PyArrayObject *snk)
 	{
-		const size_t unpacked_tensor_dimension = (WIDTH > 1)
-			? ((size_t(alg::ConstPower < WIDTH, DEPTH + 1 > ::ans) - 1) / (WIDTH -
-			1))
-			: WIDTH * DEPTH + 1 ;
+        const auto& base = alg::vectors::dtl::vector_base_access::convert(arg);
+        auto* range_begin = tensor_data_access<Width, Depth>::range_begin(base);
+        auto* range_end = tensor_data_access<Width, Depth>::range_end(base);
 
-		std::vector<S> ans(unpacked_tensor_dimension, 0);
-		fn0001<std::vector<S>, TENSOR, WIDTH> ff(ans);
-		std::for_each(arg.begin(), arg.end(), ff);
-		//std::copy(ans.begin(), ans.end(), snk);
-		//return ans;
-		for(npy_intp i=0; i<(npy_intp) unpacked_tensor_dimension; ++i)
-		  *((double *)PyArray_GETPTR1(snk,i)) = ans[i];
+        std::copy(range_begin, range_end, PyArray_DATA(snk));
 	}
 
 	template <class VECTOR>
@@ -195,31 +208,21 @@ namespace {
 #endif
 	};
 
-	template <class S, class LIE, size_t WIDTH, size_t DEPTH>
-	void unpack_lie_to_SNK(const LIE& arg, PyArrayObject *snk)
+	template <unsigned Width, unsigned Depth>
+	void unpack_lie_to_SNK(const lie_type<Width, Depth>& arg, PyArrayObject *snk)
 	{
-		// basis is a static public element of every object derived from algebra
-		// expand the basis so it spans the lie elements of our degree to fix the basis
-		LIE::basis.growup(DEPTH);
-		size_t basis_size = LIE::basis.size();
-		std::vector<S> ans(basis_size);
-		fn0002<std::vector<S> > ff(ans);
-		std::for_each(arg.begin(), arg.end(), ff);
-		//std::copy(ans.begin(), ans.end(), snk);
-		//return ans;
-		for(npy_intp i=0; i<(npy_intp) basis_size; ++i)
-		  *((double *)PyArray_GETPTR1(snk,i)) = ans[i];
+        const auto& base = alg::vectors::dtl::vector_base_access::convert(arg);
+        auto* range_begin = lie_data_access<Width, Depth>::range_begin(base);
+        auto* range_end = lie_data_access<Width, Depth>::range_end(base);
+
+        std::copy(range_begin, range_end, PyArray_DATA(snk));
 	}
 
-	template <size_t WIDTH, size_t DEPTH>
+	template <unsigned Width, unsigned Depth>
 	std::string liebasis2stringT()
 	{
-		typedef double S;
-		typedef double Q;
 		//typedef alg::free_tensor<S, Q, WIDTH, DEPTH> TENSOR;
-		typedef alg::lie<S, Q, WIDTH, DEPTH> LIE;
-
-		LIE::basis.growup(DEPTH);
+        using LIE = lie_type<Width, Depth>;
 
 		std::string ans;
 		for (typename LIE::BASIS::KEY k = LIE::basis.begin(); k != LIE::basis.end();
@@ -228,15 +231,13 @@ namespace {
 		return ans;
 	}
 
-	template <size_t WIDTH, size_t DEPTH>
+	template <unsigned Width, unsigned Depth>
 	std::string tensorbasis2stringT()
 	{
-		typedef double S;
-		typedef double Q;
-		typedef alg::free_tensor<S, Q, WIDTH, DEPTH> TENSOR;
-		//typedef alg::lie<S, Q, WIDTH, DEPTH> LIE;
+        //typedef alg::lie<S, Q, WIDTH, DEPTH> LIE;
+        using TENSOR = tensor_type<Width, Depth>;
 
-		std::string ans;
+        std::string ans;
 		for (typename TENSOR::BASIS::KEY k = TENSOR::basis.begin();
 			k < TENSOR::basis.end(); k = TENSOR::basis.nextkey(k))
 			ans += std::string(" (") + TENSOR::basis.key2string(k) +
@@ -249,18 +250,14 @@ namespace {
    * @param stream pointer to stream as PyArrayObject, assumed to have two dimensions, the row is assumed to be of length WIDTH
    * @param snk pointer to C array, the result is written into this array
    */
-	template <size_t WIDTH, size_t DEPTH>
+	template <unsigned Width, unsigned Depth>
 	bool GetSigT(PyArrayObject *stream, PyArrayObject *snk)
 	{
-		typedef alg::free_tensor<S, Q, WIDTH, DEPTH> TENSOR;
-		typedef alg::lie<S, Q, WIDTH, DEPTH> LIE;
-		typedef alg::maps<S, Q, WIDTH, DEPTH> MAPS;
-		typedef alg::cbh<S, Q, WIDTH, DEPTH> CBH;
 		Py_BEGIN_ALLOW_THREADS;
-		LIE logans = GetLogSignature<LIE, CBH, WIDTH>(stream);
-		MAPS maps;
-		TENSOR signature = exp(maps.l2t(logans));
-		unpack_tensor_to_SNK<S, TENSOR, WIDTH, DEPTH>(signature, snk);
+		auto logans = GetLogSignature<Width, Depth>(stream);
+		maps_type<Width, Depth> maps;
+		auto signature = exp(maps.l2t(logans));
+		unpack_tensor_to_SNK(signature, snk);
 		Py_END_ALLOW_THREADS;
 		return true;
 	}
@@ -291,7 +288,7 @@ namespace {
    * @return size of the vectorised signature
    */
 	template <size_t WIDTH, size_t DEPTH>
-	const size_t GetSigT()
+	size_t GetSigT()
 	{
 		const size_t unpacked_tensor_dimension = (WIDTH > 1)
 			? ((size_t(alg::ConstPower < WIDTH, DEPTH + 1 > ::ans) - 1) / (WIDTH -
@@ -304,15 +301,10 @@ namespace {
    * GetLogSigT - computes size of the vectorised log-signature
    * @return size of the vectorised log-signature
    */
-	template <size_t WIDTH, size_t DEPTH>
+	template <unsigned Width, unsigned Depth>
 	size_t GetLogSigT()
 	{
-		typedef const double array[WIDTH];
-		typedef double S;
-		typedef double Q;
-		typedef alg::lie<S, Q, WIDTH, DEPTH> LIE;
-		LIE::basis.growup(DEPTH);
-		return LIE::basis.size();
+        return lie_type<Width, Depth>::BASIS::start_of_degree(Depth+1);
 	}
 
   /**
@@ -320,14 +312,12 @@ namespace {
    * @param stream pointer to stream as PyArrayObject, assumed to have two dimensions, the row is assumed to be of length WIDTH
    * @param snk pointer to C array, the result is written into this array
    */
-	template <size_t WIDTH, size_t DEPTH>
+	template <unsigned Width, unsigned Depth>
 	bool GetLogSigT(PyArrayObject *stream, PyArrayObject *snk)
 	{
-		typedef alg::lie<S, Q, WIDTH, DEPTH> LIE;
-		typedef alg::cbh<S, Q, WIDTH, DEPTH> CBH;
 		Py_BEGIN_ALLOW_THREADS;
-		LIE logans = GetLogSignature<LIE, CBH, WIDTH>(stream);
-		unpack_lie_to_SNK<S, LIE, WIDTH, DEPTH>(logans, snk);
+		auto logans = GetLogSignature<Width, Depth>(stream);
+		unpack_lie_to_SNK(logans, snk);
 		Py_END_ALLOW_THREADS;
 		return true;
 	}
@@ -429,7 +419,7 @@ TOSIG_API int GetSig(PyArrayObject *stream, PyArrayObject *snk,
  }
 
 // get required size for snk
-TOSIG_API const size_t GetSigSize(size_t width, size_t depth)
+TOSIG_API size_t GetSigSize(size_t width, size_t depth)
  {
     //execute the correct Templated Function and return the value
     try {
