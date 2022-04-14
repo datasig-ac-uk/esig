@@ -33,12 +33,12 @@ namespace {
    * @param rowId index of row to be converted to LIE
    * @return row as LIE (the entries in the row are coefficients of the letters) 
    */
-	template <class LIE, size_t WIDTH>
-	LIE row_to_lie(PyArrayObject *stream, npy_intp rowId)
+	template <unsigned Width, unsigned Depth>
+	lie_type<Width, Depth> row_to_lie(PyArrayObject *stream, npy_intp rowId)
 	{
-		LIE ans;
-		for (alg::LET i = 1; i <= WIDTH; ++i)
-		  ans += LIE(i, *((S*) PyArray_GETPTR2(stream,rowId,(npy_intp) i-1)) );
+		lie_type<Width, Depth> ans;
+		for (alg::LET i = 1; i <= static_cast<alg::LET>(Width); ++i)
+		  ans += lie_type<Width, Depth>(i, *((S*) PyArray_GETPTR2(stream,rowId,(npy_intp) i-1)) );
 		return ans;
 	}
   
