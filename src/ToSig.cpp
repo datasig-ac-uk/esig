@@ -24,6 +24,9 @@ namespace {
     template <unsigned Width, unsigned Depth>
     using lie_type = alg::lie<field_t, Width, Depth, alg::vectors::dense_vector>;
 
+    template <unsigned Width, unsigned Depth>
+    using tensor_type = alg::free_tensor<field_t, Width, Depth, alg::vectors::dense_vector>;
+
   /**
    * row_to_lie - replaces vector_to_lie
    * @param stream pointer to stream as PyArrayObject, assumed to have two dimensions, the row is assumed to be of length WIDTH
