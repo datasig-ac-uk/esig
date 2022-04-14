@@ -13,7 +13,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
 skip = ["*-musl*", "pp*"]
-build_verbosity = 1
+build-verbosity = 1
 
 [tool.cibuildwheel.macos]
 before-all = "source $ONEAPI_SCRIPT"
