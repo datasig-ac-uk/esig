@@ -13,17 +13,17 @@ jobs:
     strategy:
       matrix:
         os: [
-#          windows-2019,
-          macos-10.15,
-#          ubuntu-20.04
+          windows-2019,
+#          macos-10.15,
+          ubuntu-20.04
         ]
         include:
-#          - os: 'windows-2019'
-#            mono: ''
-          - os: 'macos-10.15'
-            mono: 'mono'
-#          - os: 'ubuntu-20.04'
+          - os: 'windows-2019'
+            mono: ''
+#          - os: 'macos-10.15'
 #            mono: 'mono'
+          - os: 'ubuntu-20.04'
+            mono: 'mono'
 
     steps:
       - name: Checkout repo
