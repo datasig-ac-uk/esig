@@ -115,7 +115,7 @@ jobs:
           sudo /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOS/bootstrapper -s --eula accept --action install --components intel.oneapi.mac.mkl.devel:intel.oneapi.mac.tbb.devel
           sudo hdiutil detach /Volumes/"$(basename "$URL" .dmg)" -quiet
           echo "oneapi_root=/opt/intel/oneapi" >> $GITHUB_ENV
-          echo "oneapi_script=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
+          echo "ONEAPI_SCRIPT=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
           echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
         env:
           URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
