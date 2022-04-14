@@ -3,13 +3,14 @@
 #include "ToSig.h" //Python.h must come first
 #include "stdafx.h"
 
-#include "libalgebra/libalgebra.h"
 #include <utility>
 #include <iostream>
 #include "libalgebra/constpower.h"
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <libalgebra/libalgebra.h>
+#include <libalgebra/coefficients/coefficients.h>
 #include "libalgebra/lie_basis.h"
 
 //#include <lie_basis.h>
@@ -17,7 +18,12 @@ namespace {
 
 	typedef double S;
 	typedef double Q;
-        
+
+    using field_t = alg::coefficients::double_field;
+
+    template <unsigned Width, unsigned Depth>
+    using lie_type = alg::lie<field_t, Width, Depth, alg::vectors::dense_vector>;
+
   /**
    * row_to_lie - replaces vector_to_lie
    * @param stream pointer to stream as PyArrayObject, assumed to have two dimensions, the row is assumed to be of length WIDTH

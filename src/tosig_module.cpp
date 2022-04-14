@@ -196,7 +196,6 @@ PyInit__tosig(void){
 
 
 
-
 /* ==== Operate on Matrix as a vector time series returning a vectorlog signature ==
     Returns a NEW NumPy vector
     interface:  tologsig(series1, depth)
