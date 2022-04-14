@@ -4,7 +4,6 @@ requires = [
     "wheel",
     "scikit-build",
     "cmake",
-    "mkl-devel",
     "ninja; platform_system!='Windows'",
     "oldest-supported-numpy",
     "numpy"
@@ -22,9 +21,6 @@ repair-wheel-command = ""
 [tool.cibuildwheel.linux]
 before-all = [
     "yum install -y boost-devel",
-    "cp -v build/linux-oneapi-yum-config /etc/yum.repos.d/oneAPI.repo",
-#    "yum install -y intel-oneapi-compiler-shared-2021.2.0",
-    "yum install -y intel-oneapi-mkl-devel",
-    "yum install -y intel-oneapi-mkl-devel-32bit"
+    "build/install-mkl-linux.sh"
     ]
 repair-wheel-command = ""
