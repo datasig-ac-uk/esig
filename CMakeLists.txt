@@ -9,9 +9,9 @@ set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 
 # Installing needs special handling here because the target is ultimately
 # a Python wheel rather than a standard directory structure.
-set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/esig" )
-set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/esig" )
-set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/esig/include" )
+#set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/esig" )
+#set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/esig" )
+#set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/esig/include" )
 if (WIN32)
     set(RECOMBINE_INSTALL_DEPENDENTS ON)
 endif()
