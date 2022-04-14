@@ -73,17 +73,8 @@ namespace {
 			  previous = next;
 		  }
 		}
-#ifndef LIBALGEBRA_VECTORS_H
-		std::vector<LIE*> pincrements;
-#else
-		std::vector<const LIE*> pincrements;
-#endif
-		pincrements.reserve(increments.size());
-		for (typename std::vector<LIE>::iterator it = increments.begin();
-			it != increments.end(); ++it)
-		  pincrements.push_back(&(*it));
 		CBH cbh;
-		return (pincrements.size() != 0) ? cbh.full(pincrements) : LIE();
+		return (!increments.empty()) ? cbh.full(increments.begin(), increments.end()) : LIE();
 	}
   /*
 	template <class LIE, class STATE, class CBH, size_t WIDTH>
