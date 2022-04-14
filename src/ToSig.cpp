@@ -61,7 +61,8 @@ namespace {
 	template <class LIE, class CBH, size_t WIDTH>
 	LIE GetLogSignature(PyArrayObject *stream)
 	{
-	  npy_intp numRows = PyArray_DIM(stream, 0);
+	    npy_intp numRows = PyArray_DIM(stream, 0);
+
 		std::vector<LIE> increments;
 		if (numRows > 0) {
 		  npy_intp rowId = 0;
