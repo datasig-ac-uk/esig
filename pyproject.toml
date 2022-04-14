@@ -18,7 +18,7 @@ skip = ["*-musl*", "pp*"]
 
 [tool.cibuildwheel.linux]
 before-all = [
-    "sudo yum install boost-devel",
-    "sudo cp build/linux-oneapi-yum-config /etc/yum.repos.d",
-    "sudo yum install intel-basekit intel-basekit-32bit"
+    "yum install boost-devel",
+    "cp build/linux-oneapi-yum-config /etc/yum.repos.d",
+    "yum install intel-basekit intel-basekit-32bit"
     ]
