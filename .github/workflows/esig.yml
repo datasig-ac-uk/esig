@@ -116,7 +116,6 @@ jobs:
           pushd /Volumes/"$(basename "$URL" .fmg)"/bootstrapper.app/Contents/MacOs
           sudo ./install.sh --silent --eula accept --components intel.oneapi.mac.mkl.devel
           popd
-#          sudo /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOs/bootstrapper -s --eula accept --action install --components intel.oneapi.mac.mkl.devel
           sudo hdiutil detach /Volumes/"$(basename "$URL" .dmg)" -quiet
           echo "oneapi_root=/opt/intel/oneapi" >> $GITHUB_ENV
           echo "ONEAPI_SCRIPT=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
