@@ -21,6 +21,6 @@ repair-wheel-command = ""
 [tool.cibuildwheel.linux]
 before-all = [
     "yum install -y boost-devel",
-    "build/install-mkl-linux.sh"
+    "bash build/install-mkl-linux.sh"
     ]
 repair-wheel-command = ""
