@@ -113,7 +113,7 @@ jobs:
         run: |
           curl -v -o OAPI_installer.dmg "$URL"
           sudo hdiutil attach OAPI_installer.dmg -quiet
-          pushd /Volumes/"$(basename "$URL" .fmg)"/bootstrapper.app/Contents/MacOs
+          pushd /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOs
           sudo ./install.sh --silent --eula accept --components intel.oneapi.mac.mkl.devel
           popd
           sudo hdiutil detach /Volumes/"$(basename "$URL" .dmg)" -quiet
