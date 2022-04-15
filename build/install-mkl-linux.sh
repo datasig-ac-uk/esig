@@ -17,5 +17,5 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
 #    rpm --import https://yum.repose.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
 
 #    yum install -y --skip-broken intel-oneapi-common-vars intel-oneapi-openmp-common intel-oneapi-openmp-32bit intel-oneapi-tbb-32bit intel-oneapi-tbb-common intel-oneapi-mkl-common intel-oneapi-mkl-32bit
-    yum install -y openblas
+    yum install -y libopenblas-dev
 fi
