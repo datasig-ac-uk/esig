@@ -11,7 +11,7 @@ requires = [
 build-backend = "setuptools.build_meta"
 
 [tool.cibuildwheel]
-skip = ["*-musl*", "pp*", "*x86_64*"]
+skip = ["*-musl*", "pp*", "*i686*"]
 build-verbosity = 1
 
 [tool.cibuildwheel.macos]
