@@ -83,7 +83,7 @@ execute_process(COMMAND ${Python_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/
 
 
 #find_package(recombine CONFIG QUIET))
-set(RECOMBINE_MAKE_FRAMEWORK OFF)
+
 
 execute_process(COMMAND "${Python_EXECUTABLE}" -c "import platform; print(platform.architecture()[0])"
         OUTPUT_VARIABLE arch
@@ -95,7 +95,7 @@ else ()
     set(RECOMBINE_ARCH x86)
 endif ()
 
-
+set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
 if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
     message(STATUS "Recombine found")
     add_subdirectory(build/recombine)
