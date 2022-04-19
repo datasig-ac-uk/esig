@@ -16,6 +16,7 @@ set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
 
 if(APPLE)
+    set(CMAKE_MACOSX_RPATH ON)
     set(CMAKE_INSTALL_RPATH @loader_path)
 else()
     set(CMAKE_INSTALL_RPATH $ORIGIN)
@@ -95,7 +96,7 @@ else ()
     set(RECOMBINE_ARCH x86)
 endif ()
 
-set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
+#set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
 if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
     message(STATUS "Recombine found")
     add_subdirectory(build/recombine)
