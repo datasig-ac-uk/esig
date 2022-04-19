@@ -15,6 +15,12 @@ set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/esig/include" )
 set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
 
+if(APPLE)
+    set(CMAKE_INSTALL_RPATH @loader_path)
+else()
+    set(CMAKE_INSTALL_RPATH $ORIGIN)
+endif()
+
 
 #list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
 
@@ -97,15 +103,14 @@ if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
     #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
     set_target_properties(recombine PROPERTIES
             NO_SONAME ON
-            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-            INSTALL_RPATH $ORIGIN)
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+
 else ()
     message(STATUS "Recombine not found")
     #target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 endif ()
 
 Python_add_library(tosig MODULE WITH_SOABI)
-set_target_properties(tosig PROPERTIES INSTALL_RPATH "$ORIGIN")
 target_link_libraries(tosig PRIVATE Python::NumPy)
 
 
