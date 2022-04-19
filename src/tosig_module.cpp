@@ -11,13 +11,13 @@
 // python/numpy functions in different translation units
 // so we wont!
 
-#include <stddef.h>
+#include <cstddef>
 #include <numpy/arrayobject.h>
 
-#include <math.h>
+#include <cmath>
 #include "ToSig.h"
 
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
 #include "_recombine.h"
 #endif
 
@@ -33,7 +33,7 @@ static PyObject *tologsig(PyObject *self, PyObject *args);
 static PyObject *tosig(PyObject *self, PyObject *args);
 static PyObject *getlogsigsize(PyObject *self, PyObject *args);
 static PyObject *getsigsize(PyObject *self, PyObject *args);
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
 static PyObject *pyrecombine(PyObject *self, PyObject *args, PyObject *keywds);
 #endif
 PyObject *showsigkeys(PyObject *self, PyObject *args);
@@ -119,7 +119,7 @@ PyDoc_STRVAR(sigkeys_doc,
 " string containing the keys associated the entries in"
 " the signature returned by stream2sig"
 );
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
 PyDoc_STRVAR(recombine_doc,
 "recombine(ensemble, selector=(0,1,2,...no_points-1),"
 " weights = (1,1,..,1), degree = 1) ensemble is a numpy"
@@ -157,7 +157,7 @@ static PyMethodDef _C_tosigMethods[] = {
         {"sigdim", getsigsize, METH_VARARGS, sigdim_doc},
         {"logsigkeys",showlogsigkeys, METH_VARARGS, logsigkeys_doc},
         {"sigkeys",showsigkeys, METH_VARARGS, sigkeys_doc},
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
         {"recombine", (PyCFunction) pyrecombine, METH_VARARGS | METH_KEYWORDS, recombine_doc},
 #endif
         {NULL, NULL, 0, NULL}        /* Sentinel */
@@ -329,7 +329,7 @@ static PyObject* getsigsize(PyObject* self, PyObject* args)
     return Py_BuildValue("n", ans);
 }
 
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
 /* ==== Reduces the support of a probability measure on vectors to the minimal support size with the same
  * expectation/ moments <= degree=========================
 	Returns two the new probability measure via two NEW scalar NumPy arrays of same length indices (Py_ssize_t) and weights (double)

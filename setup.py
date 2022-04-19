@@ -129,6 +129,10 @@ def filter_cmake_manifests(cmake_manifest):
             return False
         elif item.endswith(".cmake"):
             return False
+        elif item.endswith(".cpp"):
+            return False
+        elif item.endswith(".h"):
+            return False
         return True
 
     return list(filter(_filter, cmake_manifest))

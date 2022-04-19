@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
 set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
-
+include(GNUInstallDirs)
 # Installing needs special handling here because the target is ultimately
 # a Python wheel rather than a standard directory structure.
 set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/esig" )
@@ -14,9 +14,10 @@ set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/esig" )
 set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/esig/include" )
 set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
-include(GNUInstallDirs)
 
-list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+
+#list(PREPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR}/cmake)
+
 
 
 find_package(Boost COMPONENTS system thread REQUIRED)
@@ -75,7 +76,36 @@ message(STATUS "Generating switch.h")
 execute_process(COMMAND ${Python_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/switch_generator.py" "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 
+#find_package(recombine CONFIG QUIET))
+set(RECOMBINE_MAKE_FRAMEWORK OFF)
+
+execute_process(COMMAND "${Python_EXECUTABLE}" -c "import platform; print(platform.architecture()[0])"
+        OUTPUT_VARIABLE arch
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        )
+if (arch STREQUAL "64bit")
+    set(RECOMBINE_ARCH x86_64)
+else ()
+    set(RECOMBINE_ARCH x86)
+endif ()
+
+
+if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
+    message(STATUS "Recombine found")
+    add_subdirectory(build/recombine)
+
+    #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
+    set_target_properties(recombine PROPERTIES
+            NO_SONAME ON
+            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+            INSTALL_RPATH $ORIGIN)
+else ()
+    message(STATUS "Recombine not found")
+    #target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
+endif ()
+
 Python_add_library(tosig MODULE WITH_SOABI)
+set_target_properties(tosig PROPERTIES INSTALL_RPATH "$ORIGIN")
 target_link_libraries(tosig PRIVATE Python::NumPy)
 
 
@@ -88,45 +118,23 @@ target_sources(tosig PRIVATE
         src/tosig_module.cpp)
 
 
-#find_package(recombine CONFIG QUIET))
-set(RECOMBINE_MAKE_FRAMEWORK OFF)
-
-execute_process(COMMAND "${Python_EXECUTABLE}" -c "import platform; print(platform.architecture()[0])"
-        OUTPUT_VARIABLE arch
-        OUTPUT_STRIP_TRAILING_WHITESPACE
-        )
-if (arch STREQUAL "64bit")
-    set(RECOMBINE_ARCH x86_64)
-else()
-    set(RECOMBINE_ARCH x86)
-endif()
 
 
 
 
-
-if(EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
-    message(STATUS "Recombine found")
-    add_subdirectory(build/recombine)
-    target_link_libraries(tosig PRIVATE recombine)
-    target_include_directories(tosig PRIVATE ${CMAKE_SOURCE_DIR}/recombine)
-    target_sources(tosig PRIVATE recombine/_recombine.cpp recombine/TestVec/RdToPowers2.cpp)
-
-    #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
-else()
-    message(STATUS "Recombine not found")
-    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
-endif()
 
 
 if(MSVC)
     target_compile_options(tosig PRIVATE /bigobj)
 endif()
 
-
-target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boost::dynamic_linking)
-
-
+if (TARGET recombine)
+    target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boost::dynamic_linking)
+    target_link_libraries(tosig PRIVATE recombine)
+    target_include_directories(tosig PRIVATE ${CMAKE_SOURCE_DIR}/recombine)
+    target_sources(tosig PRIVATE recombine/_recombine.cpp recombine/TestVec/RdToPowers2.cpp)
+    target_compile_definitions(tosig PRIVATE ESIG_WITH_RECOMBINE)
+endif()
 #add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/libalgebra")
 
 set_target_properties(tosig PROPERTIES

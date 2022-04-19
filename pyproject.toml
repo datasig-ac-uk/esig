@@ -5,8 +5,7 @@ requires = [
     "scikit-build",
     "cmake",
     "ninja; platform_system!='Windows'",
-    "oldest-supported-numpy",
-    "numpy"
+    "oldest-supported-numpy"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -16,11 +15,9 @@ build-verbosity = 1
 
 [tool.cibuildwheel.macos]
 before-all = "source $ONEAPI_SCRIPT"
-repair-wheel-command = ""
 
 [tool.cibuildwheel.linux]
 before-all = [
     "yum install -y boost-devel",
     "bash build/install-mkl-linux.sh"
     ]
-repair-wheel-command = ""
