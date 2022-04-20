@@ -106,10 +106,11 @@ if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
     add_subdirectory(build/recombine)
 
     #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
-    set_target_properties(recombine PROPERTIES
+    if(NOT APPLE)
+        set_target_properties(recombine PROPERTIES
             NO_SONAME ON
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-
+    endif()
 else ()
     message(STATUS "Recombine not found")
     #target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
