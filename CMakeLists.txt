@@ -17,8 +17,8 @@ set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
 if(APPLE)
 #    set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)
-    set(CMAKE_MACOSX_RPATH ON)
-    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
+#    set(CMAKE_MACOSX_RPATH ON)
+#    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
 else()
     set(CMAKE_INSTALL_RPATH $ORIGIN)
 endif()
@@ -107,7 +107,7 @@ if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
             NO_SONAME ON
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     if (APPLE)
-        set_target_properties(recombine PROPERTIES INSTALL_RPATH @loader_path)
+#        set_target_properties(recombine PROPERTIES INSTALL_RPATH @loader_path)
     endif()
 
 else ()
@@ -131,7 +131,7 @@ target_sources(tosig PRIVATE
 if(MSVC)
     target_compile_options(tosig PRIVATE /bigobj)
 elseif(APPLE)
-    set_target_properties(tosig PROPERTIES INSTALL_RPATH @loader_path)
+#    set_target_properties(tosig PROPERTIES INSTALL_RPATH @loader_path)
 endif()
 
 target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boost::dynamic_linking)
