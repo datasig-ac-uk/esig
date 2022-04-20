@@ -121,7 +121,7 @@ jobs:
           echo "ONEAPI_SCRIPT=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
           echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
         env:
-          URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92_offline.dmg
+          URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
 
 
 #      - name: cache-boost-windows
