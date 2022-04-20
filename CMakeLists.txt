@@ -16,8 +16,9 @@ set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
 
 if(APPLE)
-#    set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)
-#    set(CMAKE_MACOSX_RPATH ON)
+    set(CMAKE_SKIP_BUILD_RPATH OFF)
+    set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
+    set(CMAKE_MACOSX_RPATH ON)
 #    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
     set(CMAKE_INSTALL_RPATH @loader_path)
 else()
@@ -107,10 +108,6 @@ if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
     set_target_properties(recombine PROPERTIES
             NO_SONAME ON
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
-    if (APPLE)
-        set_target_properties(recombine PROPERTIES INSTALL_NAME_DIR @rpath)
-#        set_target_properties(recombine PROPERTIES INSTALL_RPATH @loader_path)
-    endif()
 
 else ()
     message(STATUS "Recombine not found")
