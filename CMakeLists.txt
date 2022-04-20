@@ -17,7 +17,7 @@ set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
 if(APPLE)
     set(CMAKE_MACOSX_RPATH ON)
-    set(CMAKE_INSTALL_RPATH @loader_path)
+    set(CMAKE_INSTALL_RPATH "")
 else()
     set(CMAKE_INSTALL_RPATH $ORIGIN)
 endif()
