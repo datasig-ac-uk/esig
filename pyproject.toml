@@ -15,7 +15,7 @@ build-verbosity = 1
 
 [tool.cibuildwheel.macos]
 before-all = "source $ONEAPI_SCRIPT"
-repair-command = ""
+repair-wheel-command = ""
 
 [tool.cibuildwheel.linux]
 before-all = [
