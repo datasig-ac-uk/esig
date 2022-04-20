@@ -16,8 +16,9 @@ set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
 
 if(APPLE)
-    set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
-#    set(CMAKE_MACOSX_RPATH ON)
+#    set(CMAKE_BUILD_WITH_INSTALL_RPATH OFF)
+    set(CMAKE_MACOSX_RPATH ON)
+    set(CMAKE_INSTALL_RPATH_USE_LINK_PATH FALSE)
 else()
     set(CMAKE_INSTALL_RPATH $ORIGIN)
 endif()
@@ -127,16 +128,10 @@ target_sources(tosig PRIVATE
         src/tosig_module.cpp)
 
 
-
-
-
-
-
-
 if(MSVC)
     target_compile_options(tosig PRIVATE /bigobj)
 elseif(APPLE)
-#    set_target_properties(tosig PROPERTIES INSTALL_RPATH @loader_path)
+    set_target_properties(tosig PROPERTIES INSTALL_RPATH @loader_path)
 endif()
 
 target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boost::dynamic_linking)

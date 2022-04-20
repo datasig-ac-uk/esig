@@ -125,6 +125,7 @@ if not platform.system() == "Linux":
 def filter_cmake_manifests(cmake_manifest):
 
     def _filter(item):
+        item = str(item)
         if item.endswith(".pc"):
             return False
         elif item.endswith(".cmake"):
