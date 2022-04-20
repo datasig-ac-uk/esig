@@ -105,7 +105,7 @@ if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
             NO_SONAME ON
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     if (APPLE)
-        set_target_properties(recombine PROPERTIES INSTALL_RPATH @rpath)
+        set_target_properties(recombine PROPERTIES INSTALL_RPATH @loader_path)
     endif()
 
 else ()
@@ -138,8 +138,8 @@ elseif(APPLE)
     set_target_properties(tosig PROPERTIES INSTALL_RPATH @loader_path)
 endif()
 
+target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boost::dynamic_linking)
 if (TARGET recombine)
-    target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boost::dynamic_linking)
     target_link_libraries(tosig PRIVATE recombine)
     target_include_directories(tosig PRIVATE ${CMAKE_SOURCE_DIR}/recombine)
     target_sources(tosig PRIVATE recombine/_recombine.cpp recombine/TestVec/RdToPowers2.cpp)
