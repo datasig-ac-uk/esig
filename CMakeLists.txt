@@ -9,9 +9,9 @@ set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 include(GNUInstallDirs)
 # Installing needs special handling here because the target is ultimately
 # a Python wheel rather than a standard directory structure.
-set(CMAKE_INSTALL_LIBDIR "${CMAKE_INSTALL_PREFIX}/esig" )
-set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}/esig" )
-set(CMAKE_INSTALL_INCLUDEDIR "${CMAKE_INSTALL_PREFIX}/esig/include" )
+set(CMAKE_INSTALL_LIBDIR "esig" )
+set(CMAKE_INSTALL_BINDIR "esig" )
+set(CMAKE_INSTALL_INCLUDEDIR "esig/include" )
 set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
 
