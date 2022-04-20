@@ -108,6 +108,7 @@ if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
             NO_SONAME ON
             LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     if (APPLE)
+        set_target_properties(recombine PROPERTIES INSTALL_NAME_DIR @rpath)
 #        set_target_properties(recombine PROPERTIES INSTALL_RPATH @loader_path)
     endif()
 
