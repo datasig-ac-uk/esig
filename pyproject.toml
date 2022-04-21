@@ -10,13 +10,14 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
-test-require =  [ "pytest" ]
-test-command = "pytest {project}/esig/tests"
-before-test = "pip install numpy --prefer-binary"
 
 [tool.cibuildwheel]
-skip = ["*-musl*", "pp*", "*x86_64", "cp31*-*linux_i686"]
+skip = ["*-musl*", "pp*", "cp31*-*linux_i686"]
 build-verbosity = 1
+
+test-require = ["pytest"]
+test-command = "pytest {project}/esig/tests"
+before-test = "pip install numpy --prefer-binary"
 
 [tool.cibuildwheel.windows]
 repair-wheel-command = "delvewheel show {wheel} && delvewheel repair {wheel}"
