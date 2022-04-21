@@ -157,6 +157,7 @@ setup(
 
     include_package_data=True,
     # packages=find_packages(exclude=("tools",)),
+    packages=["esig"],
     test_suite='esig.tests.get_suite',
 
     # package_data=package_data,
