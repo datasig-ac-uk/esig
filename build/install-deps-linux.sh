@@ -5,7 +5,13 @@ arch=$(uname -m)
 echo $arch
 
 
-yum install -y boost-devel boost-serialization
+yum install -y boost-devel
+
+# Boost installed by yum on CentOS 7 is version 1.53, which doesn't include the unordered_map headers
+# so let's get those.
+pushd /tmp || exit
+git clone
+
 
 # We can expand this later to get the right libraries on other architectures if necessary
 if [[ $arch =~ ([xX]86_64|[aA][mM][dD]64) ]]; then
@@ -29,7 +35,7 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
     fi
 
     echo ${url}
-    pushd /
+    pushd / || exit 1
     if curl -SL "${url}" | tar -xvzf -; then
       echo "Downloaded $?"
     else
