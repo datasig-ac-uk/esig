@@ -49,9 +49,11 @@ namespace {
 	template <unsigned Width, unsigned Depth>
 	lie_type<Width, Depth> row_to_lie(PyArrayObject *stream, npy_intp rowId)
 	{
-		lie_type<Width, Depth> ans;
-		for (alg::LET i = 1; i <= static_cast<alg::LET>(Width); ++i)
-		  ans += lie_type<Width, Depth>(i, *((S*) PyArray_GETPTR2(stream,rowId,(npy_intp) i-1)) );
+        auto *begin = reinterpret_cast<const double *>(PyArray_GETPTR2(stream, rowId, 0));
+        auto *end = reinterpret_cast<const double *>(PyArray_GETPTR2(stream, rowId + 1, 0));
+        lie_type<Width, Depth> ans(begin, end);
+//		for (alg::LET i = 1; i <= static_cast<alg::LET>(Width); ++i)
+//		  ans += lie_type<Width, Depth>(i, *((S*) PyArray_GETPTR2(stream,rowId,(npy_intp) i-1)) );
 		return ans;
 	}
   
