@@ -32,7 +32,7 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
 
     if curl -f -o /openblas.tar.gz "${url}"; then
       pushd / >> /dev/null
-      tar -xzf openblas.tar.gz
+      tar -xzvf openblas.tar.gz
       popd >> /dev/null || exit 1
     else
       ## download openblas source and compile?
