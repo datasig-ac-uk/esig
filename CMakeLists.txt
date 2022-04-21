@@ -163,12 +163,6 @@ install(FILES
         "${CMAKE_CURRENT_LIST_DIR}/esig/backends.py"
         "${CMAKE_CURRENT_LIST_DIR}/esig/tosig.py"
         "${CMAKE_CURRENT_LIST_DIR}/esig/VERSION"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/tests/__init__.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/tests/auxiliaryfunct.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/tests/recombinetests.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/tests/test_backends.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/tests/test_multithreading.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/tests/test_package.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/tests/test_package_interface.py"
         DESTINATION esig
         )
+install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/esig/tests" DESTINATION esig)
