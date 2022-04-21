@@ -28,9 +28,9 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
       url="${base_loc}/linux_${arch}"
     fi
 
-    curl -f -o /openblas.tar.gz "$url"
+    echo ${url}
 
-    if [[ -z $? ]]; then
+    if curl -f -o /openblas.tar.gz "${url}"; then
       pushd / >> /dev/null
       tar -xzf openblas.tar.gz
       popd >> /dev/null || exit 1

@@ -10,6 +10,8 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
+test-command="pytest "
+
 
 [tool.cibuildwheel]
 skip = ["*-musl*", "pp*", "*x86_64"]
