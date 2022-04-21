@@ -10,7 +10,7 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
-test-require =  [ "pytest" ]
+test-require =  [ "pytest", "numpy" ]
 test-command = "pytest {project}/esig/tests"
 
 
