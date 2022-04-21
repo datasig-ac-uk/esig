@@ -111,7 +111,7 @@ from pathlib import Path
 #     eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
 
-CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION"]
+CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
 if not platform.system() == "Linux":
     vcpkg = Path("build", "vcpkg")
     if vcpkg.exists():
