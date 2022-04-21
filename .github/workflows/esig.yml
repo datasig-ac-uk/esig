@@ -9,6 +9,10 @@ on:
       - 'examples/**'
       - 'doc/**'
       - README.md
+  pull_request:
+    branches:
+      - develop
+    types: [ opened, reopened, synchronize]
 
 
 env:
