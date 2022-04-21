@@ -23,7 +23,4 @@ before-all = "source $ONEAPI_SCRIPT"
 #repair-wheel-command = ""
 
 [tool.cibuildwheel.linux]
-before-all = [
-    "yum install -y boost-devel",
-    "bash build/install-mkl-linux.sh"
-    ]
+before-all = "bash build/install-deps-linux.sh"

@@ -1,11 +1,11 @@
 #! /bin/bash
 
 
-
-
-
 arch=$(uname -m)
 echo $arch
+
+
+yum install -y boost-devel
 
 # We can expand this later to get the right libraries on other architectures if necessary
 if [[ $arch =~ ([xX]86_64|[aA][mM][dD]64) ]]; then
@@ -17,5 +17,28 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
 #    rpm --import https://yum.repos.intel.com/intel-gpg-keys/GPG-PUB-KEY-INTEL-SW-PRODUCTS-2019.PUB
 
 #    yum install -y --skip-broken intel-oneapi-common-vars intel-oneapi-openmp-common intel-oneapi-openmp-32bit intel-oneapi-tbb-32bit intel-oneapi-tbb-common intel-oneapi-mkl-common intel-oneapi-mkl-32bit
-    yum install -y blas-devel blas-static atlas-devel atlas-static
+
+    ## Borrowing some code to import openblas from Numpy for getting openblas from anaconda's repository
+    openblas_long="v0.3.19-22-g5188aede"
+    base_loc="https://anaconda.org/multibuild-wheels-staging/openblas-libs/${openblas_long}/download"
+    if [[ $MANYLINUX_POLICY ]]; then
+      url="${base_loc}/${MANYLINUX_POLICY}_${MANYLINUX_PLATFORM}.tar.gz"
+    else
+      url="${base_loc}/linux_${arch}"
+    fi
+
+    curl -f -o /openblas.tar.gz "$url"
+
+    if [[ -z $? ]]; then
+      pushd / >> /dev/null
+      tar -xzf openblas.tar.gz
+      popd >> /dev/null || exit 1
+    else
+      ## download openblas source and compile?
+      echo "Cannot install openblas here yet"
+      exit 1
+    fi
+
+
+
 fi
