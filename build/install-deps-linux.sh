@@ -21,8 +21,9 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
     ## Borrowing some code to import openblas from Numpy for getting openblas from anaconda's repository
     openblas_long="v0.3.19-22-g5188aede"
     base_loc="https://anaconda.org/multibuild-wheels-staging/openblas-libs/${openblas_long}/download"
-    if [[ $MANYLINUX_POLICY ]]; then
-      url="${base_loc}/openblas-${openblas_long}-${MANYLINUX_POLICY}_${MANYLINUX_PLATFORM}.tar.gz"
+    if [[ $AUDITWHEEL_POLICY ]]; then
+      echo "Auditwheel policy $AUDITWHEEL_POLICY and arch $AUDITWHEEL_PLATFORM"
+      url="${base_loc}/openblas-${openblas_long}-${AUDITWHEEL_POLICY}_${AUDITWHEEL_PLATFORM}.tar.gz"
     else
       url="${base_loc}/linux_${arch}"
     fi
