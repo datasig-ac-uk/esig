@@ -158,11 +158,11 @@ install(TARGETS tosig
         )
 #install(FILES ${CMAKE_CURRENT_LIST_DIR}/esig/*.py DESTINATION ${CMAKE_INSTALL_PREFIX}/esig)
 
-install(FILES
-        "${CMAKE_CURRENT_LIST_DIR}/esig/__init__.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/backends.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/tosig.py"
-        "${CMAKE_CURRENT_LIST_DIR}/esig/VERSION"
-        DESTINATION esig
-        )
-install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/esig/tests" DESTINATION esig)
+#install(FILES
+#        "${CMAKE_CURRENT_LIST_DIR}/esig/__init__.py"
+#        "${CMAKE_CURRENT_LIST_DIR}/esig/backends.py"
+#        "${CMAKE_CURRENT_LIST_DIR}/esig/tosig.py"
+#        "${CMAKE_CURRENT_LIST_DIR}/esig/VERSION"
+#        DESTINATION esig
+#        )
+#install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/esig/tests" DESTINATION esig)
