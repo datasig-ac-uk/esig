@@ -168,7 +168,6 @@ setup(
 
     cmake_args=CMAKE_SETTINGS,
     install_requires=['numpy>=1.7'],
-    tests_require=['numpy>=1.7'],
     # extras_require=extras_require,
 
     classifiers=[
