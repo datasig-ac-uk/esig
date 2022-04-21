@@ -31,9 +31,10 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
     echo ${url}
 
     if curl -f -o /openblas.tar.gz "${url}"; then
-      pushd / >> /dev/null
+      echo "Downloaded $?"
+      pushd /
       tar -xzvf openblas.tar.gz
-      popd >> /dev/null || exit 1
+      popd || exit 1
     else
       ## download openblas source and compile?
       echo "Cannot install openblas here yet"
