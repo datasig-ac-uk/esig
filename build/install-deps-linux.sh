@@ -5,7 +5,7 @@ arch=$(uname -m)
 echo $arch
 
 
-yum install -y boost-devel
+yum install -y boost-devel boost-serialization
 
 # We can expand this later to get the right libraries on other architectures if necessary
 if [[ $arch =~ ([xX]86_64|[aA][mM][dD]64) ]]; then
