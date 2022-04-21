@@ -8,7 +8,7 @@ import threading
 import numpy
 
 # try:
-from esig import tosig
+from . import _tosig
 # except ImportError:
 #    # Error occurs during build sequence, since tosig does not exist
     # tosig = None
