@@ -5,7 +5,6 @@
 
 #include <utility>
 #include <iostream>
-#include "libalgebra/constpower.h"
 #include <vector>
 #include <algorithm>
 #include <string>
@@ -185,7 +184,7 @@ namespace {
         auto* range_begin = tensor_data_access<Width, Depth>::range_begin(base);
         auto* range_end = tensor_data_access<Width, Depth>::range_end(base);
 
-        std::copy(range_begin, range_end, PyArray_DATA(snk));
+        std::copy(range_begin, range_end, reinterpret_cast<double*>(PyArray_DATA(snk)));
 	}
 
 	template <class VECTOR>
@@ -217,7 +216,7 @@ namespace {
         auto* range_begin = lie_data_access<Width, Depth>::range_begin(base);
         auto* range_end = lie_data_access<Width, Depth>::range_end(base);
 
-        std::copy(range_begin, range_end, PyArray_DATA(snk));
+        std::copy(range_begin, range_end, reinterpret_cast<double*>(PyArray_DATA(snk)));
 	}
 
 	template <unsigned Width, unsigned Depth>
