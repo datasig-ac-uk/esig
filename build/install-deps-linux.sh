@@ -30,7 +30,7 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
 
     echo ${url}
     pushd /
-    if curl -o openblas.tar.gz "${url}"; then
+    if curl -v -o openblas.tar.gz "${url}"; then
       echo "Downloaded $?"
 
       tar -xzvf openblas.tar.gz
