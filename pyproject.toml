@@ -28,7 +28,7 @@ before-all = "source $ONEAPI_SCRIPT"
 [tool.cibuildwheel.linux]
 before-all = "bash build/install-deps-linux.sh"
 
-[tool.cibuildwheel.overrides]
+[[tool.cibuildwheel.overrides]]
 select = "*linux*i686*"
 # Numpy does not build wheels for Python3.10+ on i686 architecture, so
 # we can't really support this either.
