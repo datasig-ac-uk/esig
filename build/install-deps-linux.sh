@@ -7,11 +7,6 @@ echo $arch
 
 yum install -y boost-devel
 
-# Boost installed by yum on CentOS 7 is version 1.53, which doesn't include the unordered_map headers
-# so let's get those.
-pushd /tmp || exit
-git clone
-
 
 # We can expand this later to get the right libraries on other architectures if necessary
 if [[ $arch =~ ([xX]86_64|[aA][mM][dD]64) ]]; then
