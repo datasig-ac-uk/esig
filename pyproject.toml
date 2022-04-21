@@ -10,7 +10,8 @@ requires = [
 ]
 build-backend = "setuptools.build_meta"
 
-test-command="pytest "
+test-require =  [ "pytest" ]
+test-command = "pytest {project}/esig/tests"
 
 
 [tool.cibuildwheel]
