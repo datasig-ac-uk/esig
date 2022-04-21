@@ -7,11 +7,11 @@ import threading
 
 import numpy
 
-try:
-    from esig import tosig
-except ImportError:
-    # Error occurs during build sequence, since tosig does not exist
-    tosig = None
+# try:
+from esig import tosig
+# except ImportError:
+#    # Error occurs during build sequence, since tosig does not exist
+    # tosig = None
 
 
 try:
