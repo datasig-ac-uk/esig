@@ -22,8 +22,8 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
     openblas_long="v0.3.19-22-g5188aede"
     base_loc="https://anaconda.org/multibuild-wheels-staging/openblas-libs/${openblas_long}/download"
     if [[ $AUDITWHEEL_POLICY ]]; then
-      echo "Auditwheel policy $AUDITWHEEL_POLICY and arch $AUDITWHEEL_PLAT"
-      url="${base_loc}/openblas-${openblas_long}-${AUDITWHEEL_POLICY}_${AUDITWHEEL_PLAT}.tar.gz"
+      echo "Auditwheel policy $AUDITWHEEL_POLICY and arch ${AUDITWHEEL_ARCH}"
+      url="${base_loc}/openblas-${openblas_long}-${AUDITWHEEL_POLICY}_${AUDITWHEEL_ARCH}.tar.gz"
     else
       url="${base_loc}/linux_${arch}"
     fi
