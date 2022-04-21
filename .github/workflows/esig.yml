@@ -210,9 +210,9 @@ jobs:
           name: dist
           path: ./wheelhouse/*.whl
 
-      - name: Create GitHub release
-        #run: |
-        # gh release create "v$(<esig/VERSION)" ./dist/*.whl
+#      - name: Create GitHub release
+#        run: |
+#          gh release create "v$(<esig/VERSION)" ./dist/*.whl
       - name: Publish
         run: |
           python -m twine upload dist/*
