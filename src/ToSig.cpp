@@ -254,12 +254,10 @@ namespace {
 	template <unsigned Width, unsigned Depth>
 	bool GetSigT(PyArrayObject *stream, PyArrayObject *snk)
 	{
-		Py_BEGIN_ALLOW_THREADS;
 		auto logans = GetLogSignature<Width, Depth>(stream);
 		maps_type<Width, Depth> maps;
 		auto signature = exp(maps.l2t(logans));
 		unpack_tensor_to_SNK(signature, snk);
-		Py_END_ALLOW_THREADS;
 		return true;
 	}
 
@@ -316,10 +314,8 @@ namespace {
 	template <unsigned Width, unsigned Depth>
 	bool GetLogSigT(PyArrayObject *stream, PyArrayObject *snk)
 	{
-		Py_BEGIN_ALLOW_THREADS;
 		auto logans = GetLogSignature<Width, Depth>(stream);
 		unpack_lie_to_SNK(logans, snk);
-		Py_END_ALLOW_THREADS;
 		return true;
 	}
 

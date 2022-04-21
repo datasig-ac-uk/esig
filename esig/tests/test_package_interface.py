@@ -226,7 +226,7 @@ class TestLogSignatureInterface(ArrayTestCase):
 
         width = 2
 
-        for depth in range(2, 10):
+        for depth in range(2, 5):
             with self.subTest(depth=depth):
                 log_sig = esig.stream2logsig(STREAM, depth)
                 size = esig.logsigdim(width, depth)
