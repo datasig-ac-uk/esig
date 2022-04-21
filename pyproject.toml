@@ -12,7 +12,7 @@ build-backend = "setuptools.build_meta"
 
 
 [tool.cibuildwheel]
-skip = ["*-musl*", "pp*", "*i686*"]
+skip = ["*-musl*", "pp*"]
 build-verbosity = 1
 
 [tool.cibuildwheel.windows]
