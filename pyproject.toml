@@ -15,7 +15,7 @@ build-backend = "setuptools.build_meta"
 skip = ["*-musl*", "pp*", "cp31*-*linux_i686"]
 build-verbosity = 1
 
-test-require = ["pytest"]
+test-requires = ["pytest"]
 test-command = "pytest {project}/esig/tests"
 before-test = "pip install numpy --prefer-binary"
 
