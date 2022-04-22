@@ -18,7 +18,6 @@ build-verbosity = 1
 
 test-requires = ["pytest", "numpy"]
 test-command = [
-    "python -c \"import esig; print(esig.__spec__.origin)\"",
     "pytest {project}/esig/tests"
     ]
 
