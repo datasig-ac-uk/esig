@@ -5,8 +5,7 @@ requires = [
     "scikit-build",
     "cmake",
     "ninja; platform_system!='Windows'",
-    "oldest-supported-numpy",
-    "delvewheel; platform_system=='Windows'"
+    "oldest-supported-numpy"
 ]
 build-backend = "setuptools.build_meta"
 
@@ -21,7 +20,8 @@ test-command = [
     ]
 
 [tool.cibuildwheel.windows]
-repair-wheel-command = "delvewheel show {wheel} && delvewheel repair {wheel}"
+before-build = "pip install delvewheel"
+repair-wheel-command = "delvewheel show {wheel} && delvewheel repair -w {dest_dir} {wheel}"
 
 [tool.cibuildwheel.macos]
 before-all = "source $ONEAPI_SCRIPT"
