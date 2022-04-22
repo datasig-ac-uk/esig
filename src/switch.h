@@ -17,8 +17,12 @@ switch (width) {
         return TemplatedFn(2, 5);
         break;
 
+        case 6 :
+        return TemplatedFn(2, 6);
+        break;
+
         default :
-        throw std::runtime_error ( "Legitimate depth of 2<->5 for records with width 2 exceeds limit" );
+        throw std::runtime_error ( "Legitimate depth of 2<->6 for records with width 2 exceeds limit" );
     }
     break;
 

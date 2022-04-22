@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(esig)
+project(src/esig)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,9 +9,9 @@ set(CMAKE_CXX_DEFAULT_VISIBILITY hidden)
 include(GNUInstallDirs)
 # Installing needs special handling here because the target is ultimately
 # a Python wheel rather than a standard directory structure.
-set(CMAKE_INSTALL_LIBDIR "esig" )
-set(CMAKE_INSTALL_BINDIR "esig" )
-set(CMAKE_INSTALL_INCLUDEDIR "esig/include" )
+set(CMAKE_INSTALL_LIBDIR "src/esig" )
+set(CMAKE_INSTALL_BINDIR "src/esig" )
+set(CMAKE_INSTALL_INCLUDEDIR "src/esig/include" )
 set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
 
@@ -153,7 +153,7 @@ add_subdirectory(libalgebra)
 target_link_libraries(tosig PRIVATE Libalgebra::Libalgebra)
 
 install(TARGETS tosig
-        LIBRARY DESTINATION esig
+        LIBRARY DESTINATION src/esig
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         )
 #install(FILES ${CMAKE_CURRENT_LIST_DIR}/esig/*.py DESTINATION ${CMAKE_INSTALL_PREFIX}/esig)

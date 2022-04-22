@@ -5,7 +5,7 @@ import numpy as np
 
 import esig
 
-from esig.tests.test_package_interface import ArrayTestCase
+from .test_package_interface import ArrayTestCase
 
 
 class TestMultiThreadingCalculations(ArrayTestCase):

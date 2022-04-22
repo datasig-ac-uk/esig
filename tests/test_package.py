@@ -3,9 +3,9 @@ import numpy as np
 from esig import tosig as ts
 from unittest import TestCase
 import esig
-from esig.tests import auxiliaryfunct as ax
-from esig.tests import esigtests as rado
-from esig.tests import recombinetests as recombine
+from . import auxiliaryfunct as ax
+from . import esigtests as rado
+from . import recombinetests as recombine
 
 
 # Tree-like equivalence of paths and equivalence class signature invariance. Non-generic paths used since pruning is generically unnecessary.

@@ -7,6 +7,7 @@ import platform
 
 from skbuild import setup
 from pathlib import Path
+from setuptools import find_packages
 
 #configuration = helpers.InstallationConfiguration(os.path.dirname(os.path.realpath(__file__)))
 
@@ -156,8 +157,8 @@ setup(
     # long_description_content_type="text/markdown",
 
     include_package_data=True,
-    # packages=find_packages(exclude=("tools",)),
-    packages=["esig"],
+    package_dir={"": "src"},
+    packages=find_packages(where="src"),
     test_suite='esig.tests.get_suite',
 
     # package_data=package_data,
