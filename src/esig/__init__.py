@@ -26,7 +26,7 @@ except AttributeError:
     pass
 
 from esig.backends import get_backend, set_backend, list_backends
-from esig.tosig import recombine
+from esig.tosig import recombine, NO_RECOMBINE
 
 
 __all__ = [
