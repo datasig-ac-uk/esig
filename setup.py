@@ -122,6 +122,9 @@ if not platform.system() == "Linux":
         if vcpkg.exists():
             CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
 
+    if platform.system() == 'Windows':
+        CMAKE_SETTINGS.append("-DRECOMBINE_INSTALL_DEPENDENTS:BOOL=ON")
+
 
 def filter_cmake_manifests(cmake_manifest):
 
