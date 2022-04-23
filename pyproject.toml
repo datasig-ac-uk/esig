@@ -20,8 +20,8 @@ test-command = [
     ]
 
 [tool.cibuildwheel.windows]
-before-build = "pip install delvewheel --ignore-in-wheel"
-repair-wheel-command = "delvewheel show {wheel} && delvewheel repair -w {dest_dir} {wheel}"
+before-build = "pip install delvewheel "
+repair-wheel-command = "delvewheel show {wheel} --ignore-in-wheel && delvewheel repair -w {dest_dir} --ignore-in-wheel {wheel}"
 
 [tool.cibuildwheel.macos]
 before-all = "source $ONEAPI_SCRIPT"
