@@ -29,7 +29,6 @@ elif [[ $arch =~ ([xX]86|i386|i686) ]]; then
       url="${base_loc}/linux_${arch}"
     fi
 
-    echo ${url}
     pushd / || exit 1
     if curl -SL "${url}" | tar -xvzf -; then
       echo "Downloaded $?"
