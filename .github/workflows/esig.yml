@@ -145,19 +145,11 @@ jobs:
           echo "oneapi_root=/opt/intel/oneapi" >> $GITHUB_ENV
           echo "ONEAPI_SCRIPT=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
           echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
-          pushd / || exit 1
-          
         
-          sudo curl -SL -o "openblas.tar.gz" "${OPENBLAS_URL}"
-          if sudo gtar -xzvf openblas.tar.gz; then
-            echo "Downloaded $?"
-          else
-            exit 1
-          fi
-          popd || exit 1
+          arch -arm64 brew install openblas
+
         env:
           URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
-          OPENBLAS_URL: https://anaconda.org/multibuild-wheels-staging/openblas-libs/v0.3.19-22-g5188aede/openblas64_-v0.3.19-22.g5188aede-macosx_11_0_arm64-gf_f26990f.tar.gz
 
 
 
