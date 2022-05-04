@@ -148,8 +148,8 @@ jobs:
           pushd / || exit 1
           
         
-          curl -SL -o "openblas.tar.gz" "${OPENBLAS_URL}"
-          if gtar -xzvf openblas.tar.gz; then
+          sudo curl -SL -o "openblas.tar.gz" "${OPENBLAS_URL}"
+          if sudo gtar -xzvf openblas.tar.gz; then
             echo "Downloaded $?"
           else
             exit 1
