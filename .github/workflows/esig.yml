@@ -146,7 +146,7 @@ jobs:
           echo "ONEAPI_SCRIPT=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
           echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
           pushd / || exit 1
-          if curl -SL "${OPENBLAS_URL}" | tar -xzvf -; then
+          if curl -SL "${OPENBLAS_URL}" | gtar -xzvf -; then
             echo "Downloaded $?"
           else
             exit 1
