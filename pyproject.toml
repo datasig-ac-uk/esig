@@ -25,6 +25,7 @@ repair-wheel-command = "delvewheel show {wheel} --ignore-in-wheel && delvewheel 
 
 [tool.cibuildwheel.macos]
 before-all = "source $ONEAPI_SCRIPT"
+archs=["x86_63", "arm64"]
 #repair-wheel-command = ""
 
 [tool.cibuildwheel.linux]

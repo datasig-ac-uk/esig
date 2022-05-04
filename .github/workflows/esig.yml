@@ -20,23 +20,35 @@ env:
 
 
 jobs:
+
+
+
+
+
   build_wheels:
     name: Build wheels on ${{ matrix.os }}
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
         os: [
-          windows-2019,
+#          windows-2019,
           macos-10.15,
-          ubuntu-20.04
+#          macos-11,   # Apple Silicon build
+#          ubuntu-20.04
         ]
         include:
-          - os: 'windows-2019'
-            mono: ''
+#          - os: 'windows-2019'
+#            mono: ''
+#            arch: ''
           - os: 'macos-10.15'
             mono: 'mono'
-          - os: 'ubuntu-20.04'
-            mono: 'mono'
+            arch: 'x86_64'
+#          - os: 'macos-11'
+#            mono: 'mono'
+#            arch: 'arm64'
+#          - os: 'ubuntu-20.04'
+#            mono: 'mono'
+#            arch: ''
 
     steps:
       - name: Checkout repo
@@ -133,8 +145,17 @@ jobs:
           echo "oneapi_root=/opt/intel/oneapi" >> $GITHUB_ENV
           echo "ONEAPI_SCRIPT=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
           echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
+          pushd / || exit 1
+          if curl -SL "${OPENBLAS_URL}" | tar -xzvf -; then
+            echo "Downloaded $?"
+          else
+            exit 1
+          fi
+          popd || exit 1
         env:
           URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
+          OPENBLAS_URL: https://anaconda.org/multibuild-wheels-staging/openblas-libs/v0.3.19-22-g5188aede/openblas64_-v0.3.19-22.g5188aede-macosx_11_0_arm64-gf_f26990f.tar.gz
+
 
 
 #      - name: cache-boost-windows
