@@ -1,3 +1,12 @@
+0.9.8
+    - Added support for Python3.10.
+    - Updated build system to use cibuildwheel in Github actions.
+    - Updated libalgebra to benefit from improvements to performance
+    - Deprecated tosig submodule. The functions formerly from this module are available
+      via the top-level esig module. The tosig module will be removed in version 1.0.
+    - Removed builds on 32-bit Linux for Python 3.8+. There is no Numpy wheels on this
+      architecture for these versions of Python.
+
 0.9.0
     - Switched Linux support to manylinux2010
     - Support for 32-bit platforms

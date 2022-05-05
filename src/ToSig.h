@@ -31,7 +31,7 @@
 
 
 // get required size for snk
-TOSIG_API const size_t GetSigSize(size_t width, size_t depth);
+TOSIG_API size_t GetSigSize(size_t width, size_t depth);
 // compute signature of path at src and place answer in snk
 TOSIG_API int GetSig(PyArrayObject *stream, PyArrayObject *snk,
     size_t width, size_t depth);

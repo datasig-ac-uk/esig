@@ -7,24 +7,23 @@ import threading
 
 import numpy
 
-try:
-    from esig import tosig
-except ImportError:
-    # Error occurs during build sequence, since tosig does not exist
-    tosig = None
+# try:
+from . import _tosig as tosig
+# except ImportError:
+#    # Error occurs during build sequence, since tosig does not exist
+    # tosig = None
 
 
 try:
     import iisignature
 except ImportError:
-    if tosig is None:
-        raise ImportError("No available backend for signature calculations, please reinstall esig.")
     iisignature = None
 
 
 BACKENDS = {}
 
-
+_BACKEND_LOCK = threading.RLock()
+_BACKEND_DEFAULT = None
 _BACKEND_CONTAINER = threading.local()
 
 
@@ -32,6 +31,10 @@ def get_backend():
     """
     Get the current global backend used for computing signatures.
     """
+    global _BACKEND_CONTAINER
+    if not hasattr(_BACKEND_CONTAINER, "context"):
+        with _BACKEND_LOCK:
+            _BACKEND_CONTAINER.context = _BACKEND_DEFAULT()
     return _BACKEND_CONTAINER.context
 
 
@@ -49,6 +52,15 @@ def set_backend(cls_or_name):
         _BACKEND_CONTAINER.context = cls_or_name()
     else:
         raise TypeError("Backend must be a subclass of the BackendBase class or str")
+
+
+def set_default_backend(cls):
+    """
+    Set the default backend across all threads.
+    :param cls: Backend class to use.
+    """
+    with _BACKEND_LOCK:
+        _BACKEND_DEFAULT = cls
 
 
 def list_backends():
@@ -170,4 +182,4 @@ if iisignature:
 
 
 # set the default backend
-set_backend(LibalgebraBackend)
+_BACKEND_DEFAULT = LibalgebraBackend

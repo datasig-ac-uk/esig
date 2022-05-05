@@ -1,8 +1,8 @@
 // private headers
-#include "recombine/recombine.h"
+#include "_recombine.h"
+#include <recombine/recombine.h>
 #include "TestVec/RdToPowers.h" // CMultiDimensionalBufferHelper
 #include "TestVec/EvaluateAllMonomials.h" //EvaluateAllMonomials::F
-#include "_recombine.h"
 #include <vector>
 
 void _recombineC(size_t stCubatureDegree, ptrdiff_t dimension, ptrdiff_t no_locations, ptrdiff_t* pno_kept_locations, const void** ppLocationBuffer, double* pdWeightBuffer, size_t* KeptLocations, double* NewWeights)

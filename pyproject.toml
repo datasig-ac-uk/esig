@@ -1,0 +1,31 @@
+[build-system]
+requires = [
+    "setuptools>=42",
+    "wheel",
+    "scikit-build",
+    "cmake",
+    "ninja; platform_system!='Windows'",
+    "oldest-supported-numpy"
+]
+build-backend = "setuptools.build_meta"
+
+
+[tool.cibuildwheel]
+skip = ["*-musl*", "pp*", "cp3{8,9,10}-*linux_i686"]
+build-verbosity = 1
+
+test-requires = ["pytest", "numpy"]
+test-command = [
+    "pytest {project}/tests"
+    ]
+
+[tool.cibuildwheel.windows]
+before-build = "pip install delvewheel "
+repair-wheel-command = "delvewheel show {wheel} --ignore-in-wheel && delvewheel repair -w {dest_dir} --ignore-in-wheel {wheel}"
+
+[tool.cibuildwheel.macos]
+before-all = "source $ONEAPI_SCRIPT"
+#repair-wheel-command = ""
+
+[tool.cibuildwheel.linux]
+before-all = "bash build/install-deps-linux.sh"
