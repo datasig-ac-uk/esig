@@ -7,18 +7,16 @@ import threading
 
 import numpy
 
-try:
-    from esig import tosig
-except ImportError:
-    # Error occurs during build sequence, since tosig does not exist
-    tosig = None
+# try:
+from . import _tosig as tosig
+# except ImportError:
+#    # Error occurs during build sequence, since tosig does not exist
+    # tosig = None
 
 
 try:
     import iisignature
 except ImportError:
-    if tosig is None:
-        raise ImportError("No available backend for signature calculations, please reinstall esig.")
     iisignature = None
 
 

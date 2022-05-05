@@ -1,0 +1,11 @@
+include README.md
+include LICENSE
+include AUTHORS
+include CMakeLists.txt
+include cmake/*
+include esig/*
+include tools/*.py
+include recombine/*
+recursive-include src *.h *.cpp
+recursive-include libalgebra *
+exclude .DS_Store

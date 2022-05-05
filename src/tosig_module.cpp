@@ -11,13 +11,13 @@
 // python/numpy functions in different translation units
 // so we wont!
 
-#include <stddef.h>
+#include <cstddef>
 #include <numpy/arrayobject.h>
 
-#include <math.h>
+#include <cmath>
 #include "ToSig.h"
 
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
 #include "_recombine.h"
 #endif
 
@@ -33,7 +33,7 @@ static PyObject *tologsig(PyObject *self, PyObject *args);
 static PyObject *tosig(PyObject *self, PyObject *args);
 static PyObject *getlogsigsize(PyObject *self, PyObject *args);
 static PyObject *getsigsize(PyObject *self, PyObject *args);
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
 static PyObject *pyrecombine(PyObject *self, PyObject *args, PyObject *keywds);
 #endif
 PyObject *showsigkeys(PyObject *self, PyObject *args);
@@ -119,7 +119,7 @@ PyDoc_STRVAR(sigkeys_doc,
 " string containing the keys associated the entries in"
 " the signature returned by stream2sig"
 );
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
 PyDoc_STRVAR(recombine_doc,
 "recombine(ensemble, selector=(0,1,2,...no_points-1),"
 " weights = (1,1,..,1), degree = 1) ensemble is a numpy"
@@ -157,7 +157,7 @@ static PyMethodDef _C_tosigMethods[] = {
         {"sigdim", getsigsize, METH_VARARGS, sigdim_doc},
         {"logsigkeys",showlogsigkeys, METH_VARARGS, logsigkeys_doc},
         {"sigkeys",showsigkeys, METH_VARARGS, sigkeys_doc},
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
         {"recombine", (PyCFunction) pyrecombine, METH_VARARGS | METH_KEYWORDS, recombine_doc},
 #endif
         {NULL, NULL, 0, NULL}        /* Sentinel */
@@ -166,7 +166,7 @@ static PyMethodDef _C_tosigMethods[] = {
 
 static struct PyModuleDef moduledef = {
         PyModuleDef_HEAD_INIT,
-        "tosig",     /* m_name */
+        "_tosig",     /* m_name */
         "This is the tosig module from ESIG",  /* m_doc */
         -1,                  /* m_size */
         _C_tosigMethods,    /* m_methods */
@@ -178,7 +178,7 @@ static struct PyModuleDef moduledef = {
 
 // Module init function for Python 3.x only.
 PyMODINIT_FUNC
-PyInit_tosig(void){
+PyInit__tosig(void){
 
     PyObject *m;
 
@@ -192,7 +192,6 @@ PyInit_tosig(void){
 
     return m;
 }
-
 
 
 
@@ -293,8 +292,7 @@ static PyObject* getlogsigsize(PyObject* self, PyObject* args)
     Py_ssize_t depth, width, ans;
 
     /* Parse tuple */
-    if (!PyArg_ParseTuple(args, "nn",
-                          &width, &depth))  return NULL;
+    if (!PyArg_ParseTuple(args, "nn", &width, &depth))  return NULL;
 
     ans = GetLogSigSize((size_t)width, (size_t)depth);
 
@@ -329,7 +327,7 @@ static PyObject* getsigsize(PyObject* self, PyObject* args)
     return Py_BuildValue("n", ans);
 }
 
-#ifndef ESIG_NO_RECOMBINE
+#ifdef ESIG_WITH_RECOMBINE
 /* ==== Reduces the support of a probability measure on vectors to the minimal support size with the same
  * expectation/ moments <= degree=========================
 	Returns two the new probability measure via two NEW scalar NumPy arrays of same length indices (Py_ssize_t) and weights (double)
@@ -376,18 +374,29 @@ pyrecombine(PyObject* self, PyObject* args, PyObject* keywds)
     size_t* KeptLocations;
 
     // usage def recombine(array1, *args, degree=1)
-    static char* kwlist[] = { "ensemble", "selector", "weights", "degree" , NULL };
-    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O!|O!O!n:recombine", kwlist, &PyArray_Type, &data, &PyArray_Type, &src_locations, &PyArray_Type, &src_weights, &CubatureDegree))
+    static const char* kwlist[] = { "ensemble", "selector", "weights", "degree" , NULL };
+    if (!PyArg_ParseTupleAndKeywords(args, keywds, "O!|O!O!n:recombine", const_cast<char**>(kwlist), &PyArray_Type, &data, &PyArray_Type, &src_locations, &PyArray_Type, &src_weights, &CubatureDegree))
         return out;
 // DATA VALIDATION
     //
-    if (data == NULL
-        || (PyArray_NDIM(data) != 2 || PyArray_DIM(data, 0) == 0 || PyArray_DIM(data, 1) == 0) // present but badly formed
-        || (src_locations != NULL && (PyArray_NDIM(src_locations) != 1 || PyArray_DIM(src_locations, 0) == 0)) // present but badly formed
-        || (src_weights != NULL && (PyArray_NDIM(src_weights) != 1 || PyArray_DIM(src_weights, 0) == 0)) // present but badly formed
-        ||((src_weights != NULL && src_locations != NULL) && !PyArray_SAMESHAPE(src_weights, src_locations) )// present well formed but of different length
-        || CubatureDegree < 1
-            ) return NULL;
+    if (data == nullptr) {
+        return nullptr;
+    } else if (PyArray_NDIM(data) != 2 || PyArray_DIM(data, 0) == 0 || PyArray_DIM(data, 1) == 0) { // present but badly formed
+        PyErr_SetString(PyExc_ValueError, "data is badly formed");
+        return nullptr;
+    } else if (src_locations != nullptr && ((PyArray_NDIM(src_locations) != 1 || PyArray_DIM(src_locations, 0) == 0))) {// present but badly formed
+        PyErr_SetString(PyExc_ValueError, "source locations badly formed");
+        return nullptr;
+    } else if (src_weights != nullptr && (PyArray_NDIM(src_weights) != 1 || PyArray_DIM(src_weights, 0) == 0)) {// present but badly formed
+        PyErr_SetString(PyExc_ValueError, "source weights badly formed");
+        return nullptr;
+    } else if ((src_weights != nullptr && src_locations != nullptr) && !PyArray_SAMESHAPE(src_weights, src_locations)) {// present well formed but of different length
+        PyErr_SetString(PyExc_ValueError, "source weights and source locations have different shapes");
+        return nullptr;
+    } else if (CubatureDegree < 1) {
+        PyErr_SetString(PyExc_ValueError, "invalid cubature degree");
+        return nullptr;
+    }
     stCubatureDegree = CubatureDegree; //(convert from signed to unsigned)
 // create default locations (ALL) if not specified
     if (src_locations == NULL) {
