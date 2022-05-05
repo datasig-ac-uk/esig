@@ -154,6 +154,9 @@ setup(
     name='esig',
     version=VERSION,
 
+
+
+
     author='Terry Lyons',
     author_email='software@lyonstech.net',
     url='http://esig.readthedocs.io/en/latest/',
