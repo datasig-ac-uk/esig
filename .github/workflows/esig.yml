@@ -188,6 +188,7 @@ jobs:
       - name: Cache outputs
         uses: actions/upload-artifact@v2
         with:
+          name: wheels
           path: ./wheelhouse/*.whl
 
 
@@ -215,8 +216,8 @@ jobs:
       - name: Retrieve wheels
         uses: actions/download-artifact@v3
         with:
-          name: dist
-          path: ./wheelhouse/*.whl
+          name: wheels
+          path: dist
 
 #      - name: Create GitHub release
 #        run: |
