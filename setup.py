@@ -112,6 +112,12 @@ from setuptools import find_packages
 #     eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
 
+import io
+
+with io.open("src/esig/VERSION") as fp:
+    VERSION = fp.read()
+
+
 CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
 if not platform.system() == "Linux":
     vcpkg = Path("build", "vcpkg")
@@ -146,7 +152,10 @@ def filter_cmake_manifests(cmake_manifest):
 
 setup(
     name='esig',
-    # version=configuration.esig_version,
+    version=VERSION,
+
+
+
 
     author='Terry Lyons',
     author_email='software@lyonstech.net',
@@ -190,4 +199,3 @@ setup(
     #     'build_ext': BuildExtensionCommand,
     # }
 )
-
