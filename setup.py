@@ -114,9 +114,11 @@ from setuptools import find_packages
 
 import io
 
-with io.open("src/esig/VERSION") as fp:
+with io.open("src/esig/VERSION", "rt") as fp:
     VERSION = fp.read()
 
+with io.open("README.md", "rt") as fp:
+    DESCRIPTION = fp.read()
 
 CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
 if not platform.system() == "Linux":
@@ -154,9 +156,6 @@ setup(
     name='esig',
     version=VERSION,
 
-
-
-
     author='Terry Lyons',
     author_email='software@lyonstech.net',
     url='http://esig.readthedocs.io/en/latest/',
@@ -165,8 +164,8 @@ setup(
     keywords='data streams rough paths signatures',
 
     description="This package provides \"rough path\" tools for analysing vector time series.",
-    # long_description=configuration.long_description,
-    # long_description_content_type="text/markdown",
+    long_description=DESCRIPTION,
+    long_description_content_type="text/markdown",
 
     include_package_data=True,
     package_dir={"": "src"},
