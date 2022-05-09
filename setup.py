@@ -114,6 +114,7 @@ extras_require = {
 
 import io
 
+
 with io.open("src/esig/VERSION", "rt") as fp:
     VERSION = fp.read()
 
@@ -122,6 +123,7 @@ with io.open("README.md", "rt") as fp:
 
 with io.open("CHANGELOG", "rt") as fp:
     DESCRIPTION += fp.read()
+
 
 
 CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
