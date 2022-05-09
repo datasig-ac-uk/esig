@@ -91,7 +91,7 @@ namespace {
             increments.reserve(numRows-1);
             if (numRows > 0) {
                 npy_intp rowId = 0;
-                auto previous = row_to_lie<Width, Depth>(real_stream, rowId++);
+                auto previous = row_to_lie<Width, Depth>(stream, rowId++);
 
                 for (; rowId < numRows; ++rowId) {
                     auto next(row_to_lie<Width, Depth>(stream, rowId));
