@@ -74,8 +74,14 @@ namespace {
    */
 	template <unsigned Width, unsigned Depth>
 	lie_type<Width, Depth> GetLogSignature(PyArrayObject *stream)
-	{
-        auto* real_stream = PyArray_GETCONTIGUOUS(stream);
+    {
+        auto* real_stream = reinterpret_cast<PyArrayObject*>(
+            PyArray_FromAny(
+                reinterpret_cast<PyObject*>(stream),
+                PyArray_DescrFromType(NPY_DOUBLE), 2, 2,
+                NPY_ARRAY_C_CONTIGUOUS | NPY_ARRAY_ALIGNED,
+                nullptr)
+            );
         npy_intp numRows = PyArray_DIM(real_stream, 0);
 
         try {
