@@ -48,11 +48,13 @@ namespace {
 	template <unsigned Width, unsigned Depth>
 	lie_type<Width, Depth> row_to_lie(PyArrayObject *stream, npy_intp rowId)
 	{
-        auto *begin = reinterpret_cast<const double *>(PyArray_GETPTR2(stream, rowId, 0));
-        auto *end = reinterpret_cast<const double *>(PyArray_GETPTR2(stream, rowId + 1, 0));
-        lie_type<Width, Depth> ans(begin, end);
-//		for (alg::LET i = 1; i <= static_cast<alg::LET>(Width); ++i)
-//		  ans += lie_type<Width, Depth>(i, *((S*) PyArray_GETPTR2(stream,rowId,(npy_intp) i-1)) );
+//        auto *begin = reinterpret_cast<const double *>(PyArray_GETPTR2(stream, rowId, 0));
+//        auto *end = reinterpret_cast<const double *>(PyArray_GETPTR2(stream, rowId + 1, 0));
+//        lie_type<Width, Depth> ans(begin, end);
+        lie_type<Width, Depth> ans;
+		for (alg::LET i = 1; i <= static_cast<alg::LET>(Width); ++i) {
+            ans.add_scal_prod(i, *reinterpret_cast<const S *>(PyArray_GETPTR2(stream, rowId, static_cast<npy_intp>(i - 1))));
+        }
 		return ans;
 	}
   
@@ -75,14 +77,14 @@ namespace {
 	template <unsigned Width, unsigned Depth>
 	lie_type<Width, Depth> GetLogSignature(PyArrayObject *stream)
     {
-        auto* real_stream = reinterpret_cast<PyArrayObject*>(
-            PyArray_FromAny(
-                reinterpret_cast<PyObject*>(stream),
-                PyArray_DescrFromType(NPY_DOUBLE), 2, 2,
-                NPY_ARRAY_C_CONTIGUOUS | NPY_ARRAY_ALIGNED,
-                nullptr)
-            );
-        npy_intp numRows = PyArray_DIM(real_stream, 0);
+//        auto* real_stream = reinterpret_cast<PyArrayObject*>(
+//            PyArray_FromAny(
+//                reinterpret_cast<PyObject*>(stream),
+//                PyArray_DescrFromType(NPY_DOUBLE), 2, 2,
+//                NPY_ARRAY_C_CONTIGUOUS | NPY_ARRAY_ALIGNED,
+//                nullptr)
+//            );
+        npy_intp numRows = PyArray_DIM(stream, 0);
 
         try {
             std::vector<lie_type<Width, Depth>> increments;
@@ -92,7 +94,7 @@ namespace {
                 auto previous = row_to_lie<Width, Depth>(real_stream, rowId++);
 
                 for (; rowId < numRows; ++rowId) {
-                    auto next(row_to_lie<Width, Depth>(real_stream, rowId));
+                    auto next(row_to_lie<Width, Depth>(stream, rowId));
                     increments.push_back(next - previous);
                     previous = next;
                 }
@@ -100,7 +102,7 @@ namespace {
             cbh_type<Width, Depth> cbh;
             return (!increments.empty()) ? cbh.full(increments.begin(), increments.end()) : lie_type<Width, Depth>();
         } catch (...) {
-            Py_DECREF(real_stream);
+//            Py_DECREF(real_stream);
             throw;
         }
 	}
