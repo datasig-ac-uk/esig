@@ -1,3 +1,7 @@
+0.9.8.1 Hotfix
+    - Fixed problem caused by reading data in from F-contiugous array
+    - Fixed issue with readme on PyPI.
+
 0.9.8
     - Added support for Python3.10.
     - Updated build system to use cibuildwheel in Github actions.
@@ -28,5 +32,6 @@
 
 0.7.4
     - Fixed message displayed for Python versions below 3.8 when importing esig
+
 0.7.3
     - Added recombine function
