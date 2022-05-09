@@ -7,6 +7,8 @@ from . import auxiliaryfunct as ax
 from . import esigtests as rado
 from . import recombinetests as recombine
 
+from numpy.testing import assert_array_equal
+
 
 # Tree-like equivalence of paths and equivalence class signature invariance. Non-generic paths used since pruning is generically unnecessary.
 
@@ -158,3 +160,16 @@ class TestRecombine(TestCase):
     @unittest.skipIf(esig.NO_RECOMBINE, "Recombine not installed")
     def test_recombine(self):
         self.assertEqual(recombine.test(), 0)
+
+
+class TestEsigFunctions(TestCase):
+
+    def test_sig_from_transpose_data(self):
+        # https://github.com/datasig-ac-uk/esig/issues/124
+        two_dim_stream1 = np.array([[0.11212,1.1212], [0.11, 0.22]])
+        sig1 = esig.stream2sig(two_dim_stream1, 2)
+
+        two_dim_stream2 = np.transpose(np.array([[0.11212,0.11], [1.1212,0.22]]))
+        sig2 = esig.stream2sig(two_dim_stream2, 2)
+
+        assert_array_equal(sig1, sig2)
