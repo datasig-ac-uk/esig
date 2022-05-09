@@ -32,5 +32,6 @@
 
 0.7.4
     - Fixed message displayed for Python versions below 3.8 when importing esig
+
 0.7.3
     - Added recombine function
