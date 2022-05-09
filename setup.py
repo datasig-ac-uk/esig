@@ -97,9 +97,9 @@ from setuptools import find_packages
 # 	"esig": ["VERSION", "ERROR_MESSAGE"]
 # }
 #
-# extras_require = {
-#     "iisignature": ["iisignature"],
-# }
+extras_require = {
+     "iisignature": ["iisignature"],
+}
 
 # eager_resources = []
 #
@@ -180,7 +180,7 @@ setup(
 
     cmake_args=CMAKE_SETTINGS,
     install_requires=['numpy>=1.7'],
-    # extras_require=extras_require,
+    extras_require=extras_require,
 
     classifiers=[
         'Development Status :: 4 - Beta',
