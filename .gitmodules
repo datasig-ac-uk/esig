@@ -1,5 +1,5 @@
-[submodule "libalgebra"]
-	path = libalgebra
+[submodule "external/libalgebra"]
+	path = external/libalgebra
 	url = git@github.com:terrylyons/libalgebra.git
 	branch = develop
 [submodule "build/vcpkg"]
