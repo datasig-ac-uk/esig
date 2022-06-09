@@ -6,7 +6,7 @@
 #define ESIG_SRC_COMMON_SRC_PY_COMMON_PY_COMMON_H_
 
 #include <pybind11/pybind11.h>
-
+#include "py_recombine.h"
 
 namespace esig {
 
