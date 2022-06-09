@@ -9,6 +9,7 @@ project(esig_common VERSION 1.0.0)
 
 include(GNUInstallDirs)
 include(GenerateExportHeader)
+find_package(Python 3 REQUIRED COMPONENTS Development Interpreter)
 find_package(pybind11 REQUIRED)
 
 
@@ -29,7 +30,7 @@ set_target_properties(esig_common PROPERTIES
 
 target_sources(esig_common
         PRIVATE
-        src/py_common/py_common.cpp
+            src/py_common/py_common.cpp
             src/intervals.cpp
             src/segmentation.h
             src/segmentation.cpp
@@ -37,14 +38,20 @@ target_sources(esig_common
             src/dyadic_interval.cpp
             src/to_dyadic_intervals.cpp
             src/real_interval.cpp
-            src/tosig.h
-            src/tosig.cpp
             src/py_common/py_common.h
             src/py_common/py_real_interval.cpp
             src/py_common/py_intervals.cpp
             src/py_common/py_intervals.h
             src/py_common/py_dyadic.cpp
             src/py_common/py_dyadic_interval.cpp
+            src/py_common/py_recombine.h
+            src/py_common/py_recombine.cpp
+            src/recombine/_recombine.h
+            src/recombine/_recombine.cpp
+            src/recombine/TestVec/RdToPowers2.cpp
+            src/recombine/TestVec/RdToPowers.h
+            src/recombine/TestVec/EvaluateAllMonomials.h
+            src/recombine/TestVec/RdToPowers2.h
         PUBLIC
             include/esig/implementation_types.h
             include/esig/intervals.h

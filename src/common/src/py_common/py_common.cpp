@@ -4,11 +4,10 @@
 
 #include <pybind11/pybind11.h>
 
-#include "esig/config.h"
-#include "esig/implementation_types.h"
+#include <esig/config.h>
+#include <esig/implementation_types.h>
 
 #include "../segmentation.h"
-#include "../tosig.h"
 #include "py_common.h"
 
 namespace py = pybind11;

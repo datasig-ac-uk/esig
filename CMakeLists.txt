@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(src/esig)
+project(esig VERSION 1.0.0)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -44,7 +44,7 @@ if (NOT EXISTS "${Boost_SYSTEM_LIBRARY_RELEASE}")
     message(FATAL_ERROR "Boost system library not found")
 endif ()
 
-
+set(PYBIND11_FINDPYTHON ON)
 if (SKBUILD)
     message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
     set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
@@ -73,7 +73,7 @@ message(STATUS "Python root: ${Python_ROOT_DIR}")
 find_package(Python 3 REQUIRED
         COMPONENTS
         Interpreter
-        Development.Module
+        Development
         NumPy
         )
 
@@ -83,8 +83,6 @@ message(STATUS "Python directory: ${Python_INCLUDE_DIRS}")
 message(STATUS "Numpy version: ${Python_NumPy_VERSION}")
 message(STATUS "Numpy includes: ${Python_NumPy_INCLUDE_DIRS}")
 
-message(STATUS "Generating switch.h")
-execute_process(COMMAND ${Python_EXECUTABLE} "${CMAKE_CURRENT_SOURCE_DIR}/tools/switch_generator.py" "${CMAKE_CURRENT_SOURCE_DIR}/src")
 
 
 #find_package(recombine CONFIG QUIET))
@@ -101,68 +99,32 @@ else ()
 endif ()
 
 set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
-if (EXISTS "${CMAKE_CURRENT_LIST_DIR}/build/recombine/")
+if (EXISTS "external/recombine/")
     message(STATUS "Recombine found")
-    add_subdirectory(build/recombine)
+    add_subdirectory(external/recombine)
 
     #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
     if(NOT APPLE)
-        set_target_properties(recombine PROPERTIES
-            NO_SONAME ON
-            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
+#        set_target_properties(src/common/src/recombine PROPERTIES
+#            NO_SONAME ON
+#            LIBRARY_OUTPUT_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR})
     endif()
 else ()
     message(STATUS "Recombine not found")
     #target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
 endif ()
 
-Python_add_library(tosig MODULE WITH_SOABI)
-target_link_libraries(tosig PRIVATE Python::NumPy)
 
 
-target_sources(tosig PRIVATE
-        src/Cpp_ToSig.cpp
-        src/stdafx.h
-        src/switch.h
-        src/ToSig.cpp
-        src/ToSig.h
-        src/tosig_module.cpp)
 
 
-if(MSVC)
-    target_compile_options(tosig PRIVATE /bigobj)
-elseif(APPLE)
-#    set_target_properties(tosig PROPERTIES INSTALL_RPATH @loader_path)
-endif()
-
-target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boost::dynamic_linking)
-if (TARGET recombine)
-    target_link_libraries(tosig PRIVATE recombine)
-    target_include_directories(tosig PRIVATE ${CMAKE_SOURCE_DIR}/recombine)
-    target_sources(tosig PRIVATE recombine/_recombine.cpp recombine/TestVec/RdToPowers2.cpp)
-    target_compile_definitions(tosig PRIVATE ESIG_WITH_RECOMBINE)
-endif()
 #add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/libalgebra")
 
-set_target_properties(tosig PROPERTIES
-        LIBRARY_OUTPUT_NAME _tosig
-        )
 
 
-add_subdirectory(libalgebra)
-target_link_libraries(tosig PRIVATE Libalgebra::Libalgebra)
+# Add dependencies
+add_subdirectory(external/libalgebra)
 
-install(TARGETS tosig
-        LIBRARY DESTINATION src/esig
-        PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
-        )
-#install(FILES ${CMAKE_CURRENT_LIST_DIR}/esig/*.py DESTINATION ${CMAKE_INSTALL_PREFIX}/esig)
 
-#install(FILES
-#        "${CMAKE_CURRENT_LIST_DIR}/esig/__init__.py"
-#        "${CMAKE_CURRENT_LIST_DIR}/esig/backends.py"
-#        "${CMAKE_CURRENT_LIST_DIR}/esig/tosig.py"
-#        "${CMAKE_CURRENT_LIST_DIR}/esig/VERSION"
-#        DESTINATION esig
-#        )
-#install(DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/esig/tests" DESTINATION esig)
+# Add the actual source folders
+add_subdirectory(src)
