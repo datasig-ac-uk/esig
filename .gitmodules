@@ -1,3 +1,7 @@
 [submodule "build/vcpkg"]
 	path = build/vcpkg
 	url = https://github.com/Microsoft/vcpkg
+[submodule "external/libalgebra"]
+	path = external/libalgebra
+	url = git@github.com:terrylyons/libalgebra.git
+	branch = develop
