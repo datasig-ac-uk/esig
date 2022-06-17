@@ -4,6 +4,7 @@ requires = [
     "wheel",
     "scikit-build",
     "cmake",
+    "pybind11",
     "ninja; platform_system!='Windows'",
     "oldest-supported-numpy"
 ]

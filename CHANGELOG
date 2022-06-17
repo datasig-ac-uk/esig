@@ -3,7 +3,7 @@
     - Added path class representing an abstract path object
 
 0.9.8.1 Hotfix
-    - Fixed problem caused by reading data in from F-contigous array
+    - Fixed problem caused by reading data in from F-contiguous array
     - Fixed issue with readme on PyPI.
 
 0.9.8

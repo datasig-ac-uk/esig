@@ -8,6 +8,8 @@ warnings.warn("Importing functions from \"esig.tosig\" is deprecated and will be
 
 
 from esig.common import recombine
+from esig.algebra import get_context
+from esig.paths import Path, LieIncrementPath
 
 
 def stream2sig(stream, signature_degree):

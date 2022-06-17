@@ -9,28 +9,33 @@ project(esig_common VERSION 1.0.0)
 
 include(GNUInstallDirs)
 include(GenerateExportHeader)
-find_package(Python 3 REQUIRED COMPONENTS Development Interpreter)
-find_package(pybind11 REQUIRED)
 
 
 
-pybind11_add_module(esig_common SHARED)
+add_library(esig_common SHARED)
 #add_library(esig_common SHARED )
 #pybind11_extension(esig_common)
 #target_link_libraries(esig_common PUBLIC
 #        pybind11::module
 #        )
 
+
+set(esig_common_HEADERS
+        "include/esig/implementation_types.h"
+        "include/esig/intervals.h"
+        )
+
 generate_export_header(esig_common
         BASE_NAME esig
         EXPORT_FILE_NAME "include/esig/esig_export.h")
 
+
 set_target_properties(esig_common PROPERTIES
-        LIBRARY_OUTPUT_NAME common)
+        PUBLIC_HEADER "${esig_common_HEADERS}"
+        )
 
 target_sources(esig_common
         PRIVATE
-            src/py_common/py_common.cpp
             src/intervals.cpp
             src/segmentation.h
             src/segmentation.cpp
@@ -38,35 +43,54 @@ target_sources(esig_common
             src/dyadic_interval.cpp
             src/to_dyadic_intervals.cpp
             src/real_interval.cpp
-            src/py_common/py_common.h
-            src/py_common/py_real_interval.cpp
-            src/py_common/py_intervals.cpp
-            src/py_common/py_intervals.h
-            src/py_common/py_dyadic.cpp
-            src/py_common/py_dyadic_interval.cpp
-            src/py_common/py_recombine.h
-            src/py_common/py_recombine.cpp
-            src/recombine/_recombine.h
-            src/recombine/_recombine.cpp
-            src/recombine/TestVec/RdToPowers2.cpp
-            src/recombine/TestVec/RdToPowers.h
-            src/recombine/TestVec/EvaluateAllMonomials.h
-            src/recombine/TestVec/RdToPowers2.h
-        PUBLIC
-            include/esig/implementation_types.h
-            include/esig/intervals.h
+            ${esig_common_HEADERS}
         )
+
+
+target_link_libraries(esig_common)
 
 configure_file("src/config.h.in" "include/esig/config.h" NO_SOURCE_PERMISSIONS @ONLY)
 
 target_include_directories(esig_common PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/recombine>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
         )
 
 
-install(TARGETS esig_common DESTINATION esig)
+pybind11_add_module(py_esig_common MODULE WITH_SOABI)
+set_target_properties(py_esig_common PROPERTIES LIBRARY_OUTPUT_NAME common)
+
+
+target_include_directories(py_esig_common PUBLIC
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/recombine>"
+        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
+        )
+
+target_link_libraries(py_esig_common PRIVATE esig_common)
+
+target_sources(py_esig_common PRIVATE
+        src/py_common/py_common.h
+        src/py_common/py_common.cpp
+        src/py_common/py_real_interval.cpp
+        src/py_common/py_intervals.cpp
+        src/py_common/py_intervals.h
+        src/py_common/py_dyadic.cpp
+        src/py_common/py_dyadic_interval.cpp
+        src/py_common/py_recombine.h
+        src/py_common/py_recombine.cpp
+        src/recombine/_recombine.h
+        src/recombine/_recombine.cpp
+        src/recombine/TestVec/RdToPowers2.cpp
+        src/recombine/TestVec/RdToPowers.h
+        src/recombine/TestVec/EvaluateAllMonomials.h
+        src/recombine/TestVec/RdToPowers2.h
+        )
+
+install(TARGETS esig_common py_esig_common DESTINATION esig)
 install(FILES
         __init__.py
         tosig.py

@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(esig VERSION 1.0.0)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
@@ -49,7 +49,10 @@ if (SKBUILD)
     message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
     set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
     set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}")
-#    set(Python_LIBRARY "${PYTHON_LIBRARY}")
+    set(Python_LIBRARY "${PYTHON_LIBRARY}")
+    message(STATUS "Python executable: ${Python_EXECUTABLE}")
+    message(STATUS "Python include_dir: ${Python_INCLUDE_DIR}")
+    message(STATUS "Python library: ${Python_LIBRARY}")
 #    cmake_path(REMOVE_FILENAME PYTHON_EXECUTABLE OUTPUT_VARIABLE PYTHON_EXE)
 #    cmake_path(APPEND PYTHON_EXE "../")
 #    cmake_path(NORMAL_PATH PYTHON_EXE)
@@ -59,6 +62,11 @@ if (SKBUILD)
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
 
+    execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
+            OUTPUT_VARIABLE _tmp_dir
+            OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT)
+    list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
+    unset(_tmp_dir)
 
 else()
     # Look for Virtual environments first
@@ -70,12 +78,13 @@ else()
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
-find_package(Python 3 REQUIRED
+find_package(Python REQUIRED
         COMPONENTS
         Interpreter
-        Development
+        Development.Module
         NumPy
         )
+find_package(pybind11 CONFIG REQUIRED)
 
 message(STATUS "Found Python: ${Python_VERSION}")
 message(STATUS "Python executable: ${Python_EXECUTABLE}")
@@ -101,7 +110,7 @@ endif ()
 set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
 if (EXISTS "external/recombine/")
     message(STATUS "Recombine found")
-    add_subdirectory(external/recombine)
+#    add_subdirectory(external/recombine)
 
     #    target_compile_definitions(tosig PRIVATE ESIG_NO_RECOMBINE)
     if(NOT APPLE)
@@ -123,8 +132,14 @@ endif ()
 
 
 # Add dependencies
-add_subdirectory(external/libalgebra)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/recombine)
 
 
 # Add the actual source folders
 add_subdirectory(src)
+
+
+
+add_custom_target(esig)
+add_dependencies(esig esig_common py_esig_common esig_algebra py_esig_algebra esig_paths py_esig_paths)

@@ -1,7 +1,9 @@
 cmake_minimum_required(VERSION 3.16)
 
 
-find_package(GTest CONFIG REQUIRED)
+find_package(GTest CONFIG)
+if (TARGET GTest::gtest)
+
 include(GoogleTest)
 
 add_executable(esig_algebra_tests )
@@ -91,3 +93,7 @@ gtest_discover_tests(esig_algebra_tests)
 gtest_discover_tests(esig_algebra_test_tensor)
 gtest_discover_tests(esig_algebra_test_lie)
 gtest_discover_tests(esig_algebra_test_lie_basis)
+
+
+
+endif()

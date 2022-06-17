@@ -2,11 +2,7 @@ cmake_minimum_required(VERSION 3.16)
 
 #project(esig_libalgebra_context VERSION 0.1)
 
-include(GNUInstallDirs)
-include(GenerateExportHeader)
-
 find_package(Boost REQUIRED)
-find_package(Python REQUIRED COMPONENTS Interpreter)
 
 if(DEFINED ESIG_LA_CONFIG)
     cmake_path(HAS_PARENT ESIG_LA_CONFIG has_parent)
