@@ -30,5 +30,6 @@ before-all = "source $ONEAPI_SCRIPT"
 #repair-wheel-command = ""
 
 [tool.cibuildwheel.linux]
+archs=["x86_64"]
 before-all = "bash build/install-deps-linux.sh"
 repair-wheel-command = ""
