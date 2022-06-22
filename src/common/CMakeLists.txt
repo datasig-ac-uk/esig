@@ -70,7 +70,7 @@ target_include_directories(py_esig_common PUBLIC
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
         )
 
-target_link_libraries(py_esig_common PRIVATE esig_common)
+target_link_libraries(py_esig_common PRIVATE esig_common recombine::recombine)
 
 target_sources(py_esig_common PRIVATE
         src/py_common/py_common.h

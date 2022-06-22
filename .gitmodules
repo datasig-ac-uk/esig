@@ -5,3 +5,8 @@
 	path = external/libalgebra
 	url = git@github.com:terrylyons/libalgebra.git
 	branch = develop
+[submodule "external/recombine"]
+	path = external/recombine
+	url = https://github.com/terrylyons/recombine.git
+[submodule "external/recobine"]
+	branch = cleanup
