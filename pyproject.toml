@@ -30,3 +30,4 @@ before-all = "source $ONEAPI_SCRIPT"
 
 [tool.cibuildwheel.linux]
 before-all = "bash build/install-deps-linux.sh"
+repair-wheel-command = ""
