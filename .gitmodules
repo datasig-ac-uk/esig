@@ -8,5 +8,4 @@
 [submodule "external/recombine"]
 	path = external/recombine
 	url = https://github.com/terrylyons/recombine.git
-[submodule "external/recobine"]
-	branch = cleanup
+    branch = cleanup
