@@ -47,15 +47,16 @@ jobs:
         uses: actions/checkout@v2
         with:
           submodules: true
-
-      - name: Checkout recombine
-        id: clone_recombine
-        uses: actions/checkout@v3
-        with:
-          repository: terrylyons/recombine
-          ref: use-findblas
           token: ${{ secrets.recombine_login }}
-          path: build/recombine
+
+#      - name: Checkout recombine
+#        id: clone_recombine
+#        uses: actions/checkout@v3
+#        with:
+#          repository: terrylyons/recombine
+#          ref: use-findblas
+#          token: ${{ secrets.recombine_login }}
+#          path: build/recombine
 
 # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md
       - name: Setup submodule vcpkg
