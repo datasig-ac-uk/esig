@@ -46,13 +46,14 @@ if (NOT EXISTS "${Boost_SYSTEM_LIBRARY_RELEASE}")
 endif ()
 
 set(PYBIND11_FINDPYTHON ON)
-if (SKBUILD)
+find_package(Python 3 COMPONENTS Interpreter Development.Module NumPy)
+if (NOT PYTHON_FOUND AND SKBUILD)
 #    set(Python_FIND_ABI "ANY" "ANY" "ANY")
 
     message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
-#    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
-#    set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}")
-#    set(Python_LIBRARY "${PYTHON_LIBRARY}")
+    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
+    set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}")
+    set(Python_LIBRARY "${PYTHON_LIBRARY}")
     message(STATUS "Python executable: ${Python_EXECUTABLE}")
     message(STATUS "Python include_dir: ${Python_INCLUDE_DIR}")
     message(STATUS "Python library: ${Python_LIBRARY}")
@@ -75,23 +76,31 @@ if (SKBUILD)
     list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
     unset(_tmp_dir)
 
-else()
+    find_package(Python REQUIRED
+        COMPONENTS
+        Interpreter
+        Development
+        NumPy
+        )
+
+elseif(NOT PYTHON_FOUND)
     # Look for Virtual environments first
     set(Python_FIND_VIRTUALENV FIRST)
     if (EXISTS ${CMAKE_SOURCE_DIR}/venv)
         set(Python_ROOT_DIR "${CMAKE_SOURCE_DIR}/venv")
     endif()
 
+    find_package(Python REQUIRED
+            COMPONENTS
+            Interpreter
+            Development
+            NumPy
+            )
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
 #set(CMAKE_FIND_DEBUG_MODE ON)
-find_package(Python REQUIRED
-        COMPONENTS
-        Interpreter
-        Development
 
-        )
 #set(CMAKE_FIND_DEBUG_MODE OFF)
 find_package(pybind11 CONFIG REQUIRED)
 
