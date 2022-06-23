@@ -85,14 +85,14 @@ else()
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
-set(CMAKE_FIND_DEBUG_MODE ON)
+#set(CMAKE_FIND_DEBUG_MODE ON)
 find_package(Python REQUIRED
         COMPONENTS
         Interpreter
         Development
 
         )
-set(CMAKE_FIND_DEBUG_MODE OFF)
+#set(CMAKE_FIND_DEBUG_MODE OFF)
 find_package(pybind11 CONFIG REQUIRED)
 
 message(STATUS "Found Python: ${Python_VERSION}")
