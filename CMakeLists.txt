@@ -69,12 +69,7 @@ if (NOT PYTHON_FOUND AND SKBUILD)
     cmake_path(GET _py_bin_dir PARENT_PATH Python_ROOT_DIR)
     unset(_py_bin_dir)
 
-    execute_process(COMMAND "${PYTHON_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
-            OUTPUT_VARIABLE _tmp_dir
-            OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT)
-    message(STATUS "Pybind11 cmake dir: ${_tmp_dir}")
-    list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
-    unset(_tmp_dir)
+
 
     find_package(Python REQUIRED
         COMPONENTS
@@ -100,6 +95,13 @@ endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
 #set(CMAKE_FIND_DEBUG_MODE ON)
+
+execute_process(COMMAND "${Python_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
+        OUTPUT_VARIABLE _tmp_dir
+        OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT)
+message(STATUS "Pybind11 cmake dir: ${_tmp_dir}")
+list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
+unset(_tmp_dir)
 
 #set(CMAKE_FIND_DEBUG_MODE OFF)
 find_package(pybind11 CONFIG REQUIRED)
