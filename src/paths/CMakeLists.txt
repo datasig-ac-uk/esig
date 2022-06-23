@@ -84,17 +84,16 @@ target_link_libraries(py_esig_paths PRIVATE esig_paths)
 
 install(TARGETS esig_paths py_esig_paths
         LIBRARY DESTINATION esig
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         )
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/esig_paths_export.h
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/include/esig/paths/esig_paths_export.h
              "${CMAKE_CURRENT_LIST_DIR}/include/esig/paths/python_interface.h"
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/esig)
-install(FILES
-        __init__.py
-        cloud.py
-        DESTINATION esig/paths_module
-        )
-install(FILES paths.py DESTINATION esig)
+
 
 enable_testing()
 add_subdirectory(tests)

@@ -116,7 +116,8 @@ target_sources(py_esig_algebra PRIVATE
         )
 
 install(TARGETS esig_algebra py_esig_algebra
-        LIBRARY DESTINATION esig
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         )
 
@@ -125,6 +126,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/include/esig/algebra/esig_algebra_exp
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/esig/algebra)
 
 
-
-enable_testing()
-add_subdirectory(tests)
+if(ESIG_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()

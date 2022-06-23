@@ -90,12 +90,13 @@ target_sources(py_esig_common PRIVATE
         src/recombine/TestVec/RdToPowers2.h
         )
 
-install(TARGETS esig_common py_esig_common DESTINATION esig)
-install(FILES
-        __init__.py
-        tosig.py
-        DESTINATION esig
-        )
+install(TARGETS esig_common py_esig_common
+        RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
+        ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
+        INCLUDES DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}"
+        PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
+
 install(FILES
         ${CMAKE_CURRENT_BINARY_DIR}/include/esig/config.h
         ${CMAKE_CURRENT_BINARY_DIR}/include/esig/esig_export.h

@@ -28,6 +28,9 @@ except AttributeError:
 from esig.backends import get_backend, set_backend, list_backends
 from esig.tosig import recombine, NO_RECOMBINE
 
+from . import common
+from . import algebra
+from . import paths
 
 __all__ = [
     "get_version",

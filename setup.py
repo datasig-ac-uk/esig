@@ -12,7 +12,7 @@ extras_require = {
 }
 
 with io.open("src/esig/VERSION", "rt") as fp:
-    VERSION = fp.read()
+    VERSION = fp.read().strip()
 
 with io.open("README.md", "rt") as fp:
     DESCRIPTION = fp.read()
@@ -81,7 +81,7 @@ setup(
     cmake_process_manifest_hook=filter_cmake_manifests,
 
     cmake_args=CMAKE_SETTINGS,
-    cmake_install_target="esig",
+    # cmake_install_target="esig",
     install_requires=['numpy>=1.7'],
     extras_require=extras_require,
 

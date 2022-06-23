@@ -14,6 +14,7 @@ set(CMAKE_INSTALL_BINDIR "src/esig" )
 set(CMAKE_INSTALL_INCLUDEDIR "src/esig/include" )
 set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
+option(ESIG_BUILD_TESTS FALSE "Build C++ tests")
 
 if(APPLE)
 #    set(CMAKE_SKIP_BUILD_RPATH OFF)
@@ -46,10 +47,12 @@ endif ()
 
 set(PYBIND11_FINDPYTHON ON)
 if (SKBUILD)
+#    set(Python_FIND_ABI "ANY" "ANY" "ANY")
+
     message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
-    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
-    set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}")
-    set(Python_LIBRARY "${PYTHON_LIBRARY}")
+#    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
+#    set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}")
+#    set(Python_LIBRARY "${PYTHON_LIBRARY}")
     message(STATUS "Python executable: ${Python_EXECUTABLE}")
     message(STATUS "Python include_dir: ${Python_INCLUDE_DIR}")
     message(STATUS "Python library: ${Python_LIBRARY}")
@@ -82,12 +85,14 @@ else()
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
+set(CMAKE_FIND_DEBUG_MODE ON)
 find_package(Python REQUIRED
         COMPONENTS
         Interpreter
-        Development.Module
-        NumPy
+        Development
+
         )
+set(CMAKE_FIND_DEBUG_MODE OFF)
 find_package(pybind11 CONFIG REQUIRED)
 
 message(STATUS "Found Python: ${Python_VERSION}")
@@ -129,5 +134,5 @@ add_subdirectory(src)
 
 
 
-add_custom_target(esig)
-add_dependencies(esig esig_common py_esig_common esig_algebra py_esig_algebra esig_paths py_esig_paths)
+add_custom_target(esig
+        DEPENDS esig_common py_esig_common esig_algebra py_esig_algebra esig_paths py_esig_paths)
