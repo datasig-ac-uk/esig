@@ -14,7 +14,7 @@ set(CMAKE_INSTALL_BINDIR "src/esig" )
 set(CMAKE_INSTALL_INCLUDEDIR "src/esig/include" )
 set(RECOMBINE_INSTALL_DEPENDENTS ON)
 
-option(ESIG_BUILD_TESTS FALSE "Build C++ tests")
+option(ESIG_BUILD_TESTS "Build C++ tests" FALSE)
 
 if(APPLE)
 #    set(CMAKE_SKIP_BUILD_RPATH OFF)
@@ -137,6 +137,7 @@ set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
 
 # Add dependencies
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra)
+set(RECOMBINE_NO_SONAME ON CACHE BOOL "Do not add soname to recombine dll")
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/recombine)
 
 
