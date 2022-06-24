@@ -43,6 +43,10 @@ PYBIND11_MODULE(algebra, m)
             .value("SPReal", coefficient_type::sp_real)
             .export_values();
 
+    init_py_coefficients(m);
+    init_tensor_key_iterator(m);
+    init_lie_key_iterator(m);
+
     py::class_<context, std::shared_ptr<context>> py_ctx(m, "Context");
     py_ctx.doc() = "Helper class for performing computations";
 
@@ -51,13 +55,17 @@ PYBIND11_MODULE(algebra, m)
     py_ctx.def("lie_size", &context::lie_size, "degree"_a);
     py_ctx.def("tensor_size", &context::tensor_size, "degree"_a);
     py_ctx.def("cbh", &context::cbh, "lies"_a, "vec_type"_a);
+    py_ctx.def("iterate_tensor_keys", [](const context& ctx) {
+              return esig::algebra::py_tensor_key_iterator(&ctx);
+          });
+    py_ctx.def("iterator_lie_keys", [](const context& ctx) {
+              return esig::algebra::py_lie_key_iterator(&ctx);
+          });
 
     m.def("get_context", &get_context, "width"_a, "depth"_a, "ctype"_a, "preferences"_a);
 
 
-    init_py_coefficients(m);
-    init_tensor_key_iterator(m);
-    init_lie_key_iterator(m);
+
 
     init_free_tensor(m);
     init_py_lie(m);

@@ -56,7 +56,7 @@ struct buffer_constructor_helper
     }
 
     esig::algebra::allocating_data_buffer
-    to_buffer(esig::algebra::context& ctx)
+    to_buffer(const esig::algebra::context& ctx)
     {
         esig::algebra::allocating_data_buffer result(ctx.pair_alloc(), tmp_buffer.size());
         std::uninitialized_copy(
@@ -96,7 +96,7 @@ path construct_path_impl(const py::args& args, const py::kwargs& kwargs)
         for (auto item : arg) {
             auto idx = item[py::int_(0)].cast<param_t>();
             auto data = item[py::int_(1)];
-            if (py::isinstance<py::iterable>(data)) {
+            if (py::isinstance<py::tuple>(data)) {
                 helper(data);
                 index.emplace_back(idx, 1);
             } else if (py::isinstance<py::iterable>(data)) {
