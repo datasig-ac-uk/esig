@@ -32,4 +32,4 @@ before-all = "source $ONEAPI_SCRIPT"
 [tool.cibuildwheel.linux]
 archs=["x86_64"]
 before-all = "bash build/install-deps-linux.sh"
-#repair-wheel-command = ""
+repair-wheel-command = "auditwheel show {wheel} && auditwheel repair -w {dest_dir} {wheel}"
