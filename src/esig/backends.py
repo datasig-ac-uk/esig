@@ -7,12 +7,9 @@ import threading
 
 import numpy
 
-# try:
-from . import _tosig as tosig
-# except ImportError:
-#    # Error occurs during build sequence, since tosig does not exist
-    # tosig = None
-
+import esig.algebra
+from esig.algebra import get_context
+from esig.paths import Path, LieIncrementPath
 
 try:
     import iisignature
@@ -96,13 +93,13 @@ class BackendBase(abc.ABC):
         """
         Get the number of elements in the log signature
         """
-        return tosig.logsigdim(dimension, depth)
+        return get_context(dimension, depth, esig.algebra.DPReal).lie_size(depth)
 
     def sig_dim(self, dimension, depth):
         """
         Get the number of elements in the signature
         """
-        return tosig.sigdim(dimension, depth)
+        return get_context(dimension, depth, esig.algebra.DPReal).tensor_size(depth)
 
     @abc.abstractmethod
     def log_sig_keys(self, dimension, depth):
@@ -127,17 +124,20 @@ class LibalgebraBackend(BackendBase):
         return "LibalgebraBackend"
 
     def compute_signature(self, stream, depth):
-        return tosig.stream2sig(stream, depth)
+        path = Path(stream, depth=depth, type=LieIncrementPath)
+        return numpy.array(path.signature(0.0, stream.shape[0]+1, 0.1))
 
     def compute_log_signature(self, stream, depth):
-        return tosig.stream2logsig(stream, depth)
+        path = Path(stream, depth=depth, type=LieIncrementPath)
+        return numpy.array(path.log_signature(0.0, stream.shape[0]+1, 0.1))
 
     def log_sig_keys(self, dimension, depth):
-        return tosig.logsigkeys(dimension, depth)
-    
-    def sig_keys(self, dimension, depth):
-        return tosig.sigkeys(dimension, depth)
+        ctx = get_context(dimension, depth, esig.algebra.DPReal)
+        return " " + " ".join(ctx.iterator_lie_keys())
 
+    def sig_keys(self, dimension, depth):
+        ctx = get_context(dimension, depth, esig.algebra.DPReal)
+        return " " + " ".join(ctx.iterate_tensor_keys())
 
 BACKENDS["libalgebra"] = LibalgebraBackend
 
@@ -173,7 +173,8 @@ if iisignature:
             return iisignature.basis(dimension, depth)
         
         def sig_keys(self, dimension, depth):
-            return tosig.sigkeys(dimension, depth)
+            ctx = get_context(dimension, depth, esig.algebra.DPReal)
+            return " " + " ".join(ctx.iterate_tensor_keys())
 
 
 

@@ -26,11 +26,12 @@ except AttributeError:
     pass
 
 from esig.backends import get_backend, set_backend, list_backends
-from esig.tosig import recombine, NO_RECOMBINE
 
 from . import common
 from . import algebra
 from . import paths
+
+from esig.common import recombine
 
 __all__ = [
     "get_version",
@@ -67,6 +68,7 @@ def get_version():
     f.close()
 
     return '.'.join(version_string)
+
 
 def is_library_loaded():
     """
