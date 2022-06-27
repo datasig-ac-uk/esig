@@ -1,6 +1,7 @@
 import io
 import os
 import platform
+import fnmatch
 
 
 from skbuild import setup
@@ -47,6 +48,8 @@ def filter_cmake_manifests(cmake_manifest):
         elif item.endswith(".cpp"):
             return False
         elif item.endswith(".h"):
+            return False
+        elif item == "librecombine.so" or fnmatch.fnmatch(item, "librecombine.so.*.*"):
             return False
         return True
 

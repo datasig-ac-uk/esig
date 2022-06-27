@@ -21,10 +21,10 @@ if(APPLE)
     set(CMAKE_BUILD_WITH_INSTALL_RPATH ON)
     set(CMAKE_MACOSX_RPATH ON)
     set(CMAKE_INSTALL_RPATH_USE_LINK_PATH TRUE)
-    set(CMAKE_INSTALL_RPATH @loader_path)
-    set(CMAKE_INSTALL_NAME_DIR @rpath)
+    set(CMAKE_INSTALL_RPATH "@loader_path")
+    set(CMAKE_INSTALL_NAME_DIR "@rpath")
 else()
-    set(CMAKE_INSTALL_RPATH $ORIGIN)
+    set(CMAKE_INSTALL_RPATH "$ORIGIN")
 endif()
 
 
@@ -138,8 +138,6 @@ set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
 # Add dependencies
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/recombine)
-
-set_target_properties(recombine PROPERTIES NO_SONAME ON)
 
 # Add the actual source folders
 add_subdirectory(src)
