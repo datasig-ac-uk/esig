@@ -189,15 +189,7 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
     klass.def("__neq__", [](const free_tensor& lhs, const free_tensor& rhs) { return lhs != rhs; });
 
     klass.def("__array__", [](const free_tensor& self) {
-        py::dtype dtype;
-        switch (self.coeff_type()) {
-            case coefficient_type::dp_real:
-                dtype = dtype("d");
-                break;
-            case coefficient_type::sp_real:
-                dtype = dtype("f");
-                break;
-        }
+        py::dtype dtype = dtype_from(self.coeff_type());
 
         if (self.storage_type() == vector_type::dense) {
             auto it = self.iterate_dense_components().next();

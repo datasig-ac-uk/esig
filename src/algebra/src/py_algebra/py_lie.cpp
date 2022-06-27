@@ -86,7 +86,7 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
     klass.def("__neq__", [](const lie& lhs, const lie& rhs) { return lhs != rhs; });
 
     klass.def("__array__", [](const lie& arg) {
-        py::dtype dtype;
+        py::dtype dtype = esig::algebra::dtype_from(arg.coeff_type());
         switch (arg.coeff_type()) {
             case coefficient_type::dp_real:
                 dtype = dtype("d");

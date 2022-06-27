@@ -6,6 +6,7 @@
 #define ESIG_ALGEBRA_PYTHON_INTERFACE_H_
 
 #include <pybind11/pybind11.h>
+#include <pybind11/numpy.h>
 #include <esig/implementation_types.h>
 #include <esig/algebra/esig_algebra_export.h>
 #include <esig/algebra/coefficients.h>
@@ -16,6 +17,8 @@
 namespace esig {
 namespace algebra {
 
+ESIG_ALGEBRA_EXPORT
+pybind11::dtype dtype_from(coefficient_type ctype);
 
 class ESIG_ALGEBRA_EXPORT py_tensor_key
 {

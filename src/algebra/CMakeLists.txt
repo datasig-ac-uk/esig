@@ -114,6 +114,7 @@ target_sources(py_esig_algebra PRIVATE
         src/py_algebra/py_lie_key_iterator.h
         src/py_algebra/py_lie_key_iterator.cpp
         include/esig/algebra/python_interface.h
+        src/py_algebra/dtype_from.cpp
         )
 
 install(TARGETS esig_algebra py_esig_algebra
