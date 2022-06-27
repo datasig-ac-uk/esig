@@ -20,8 +20,8 @@ add_library(esig_algebra SHARED)
 #        )
 
 target_link_libraries(esig_algebra PUBLIC esig_common)
-set_target_properties(esig_algebra PROPERTIES
-        INSTALL_RPATH $ORIGIN)
+#set_target_properties(esig_algebra PROPERTIES
+#        INSTALL_RPATH $ORIGIN)
 
 generate_export_header(esig_algebra
         EXPORT_FILE_NAME "include/esig/algebra/esig_algebra_export.h")

@@ -31,9 +31,9 @@ target_link_libraries(esig_paths
             Boost::boost
         )
 
-set_target_properties(esig_paths PROPERTIES
-        INSTALL_RPATH $ORIGIN
-        )
+#set_target_properties(esig_paths PROPERTIES
+#        INSTALL_RPATH $ORIGIN
+#        )
 
 target_include_directories(esig_paths PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>

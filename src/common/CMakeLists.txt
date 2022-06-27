@@ -62,7 +62,7 @@ target_include_directories(esig_common PUBLIC
 pybind11_add_module(py_esig_common MODULE WITH_SOABI)
 set_target_properties(py_esig_common PROPERTIES
         LIBRARY_OUTPUT_NAME common
-        INSTALL_RPATH $ORIGIN
+#        INSTALL_RPATH $ORIGIN
         )
 
 
