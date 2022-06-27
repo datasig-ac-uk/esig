@@ -98,7 +98,9 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
 
         if (arg.storage_type() == vector_type::dense) {
             auto it = arg.iterate_dense_components().next();
-            assert(it);
+            if (!it) {
+                throw std::runtime_error("dense data should be valid");
+            }
             const auto *ptr = it.begin();
             return py::array(dtype, {arg.size()}, {}, ptr);
         }
