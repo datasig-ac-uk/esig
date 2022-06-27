@@ -21,7 +21,9 @@ def stream2sig(stream, signature_degree):
     series up to given signature degree.
     """
     path = Path(stream, depth=signature_degree, type=LieIncrementPath)
-    return np.array(path.signature(0.0, stream.shape[0]+1, 0.1))
+    sig = path.signature(0.0, stream.shape[0]+1, 0.1)
+    print(sig)
+    return np.array(sig)
 
 
 def stream2logsig(stream, signature_degree):
