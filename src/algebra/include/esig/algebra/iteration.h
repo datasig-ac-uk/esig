@@ -7,7 +7,7 @@
 
 #include <esig/implementation_types.h>
 #include <esig/algebra/esig_algebra_export.h>
-
+#include <esig/algebra/algebra_traits.h>
 #include <esig/algebra/coefficients.h>
 
 #include <memory>
@@ -43,9 +43,6 @@ struct ESIG_ALGEBRA_EXPORT algebra_iterator_interface
 
 };
 
-
-
-
 class ESIG_ALGEBRA_EXPORT algebra_iterator
 {
    std::shared_ptr<algebra_iterator_interface> p_impl;
@@ -79,6 +76,52 @@ public:
     bool operator==(const algebra_iterator& other) const;
     bool operator!=(const algebra_iterator& other) const;
 };
+
+
+
+class ESIG_ALGEBRA_EXPORT dense_data_access_item
+{
+    key_type m_start_key;
+    const void* m_begin;
+    const void* m_end;
+public:
+    dense_data_access_item(key_type start_key, const void* begin, const void* end);
+
+    inline operator bool() const noexcept
+    { return m_begin == nullptr; }
+
+    inline const void* begin() const noexcept
+    { return m_begin; }
+    inline const void* end() const noexcept
+    { return m_end; }
+    inline key_type first_key() const noexcept
+    { return m_start_key; }
+};
+
+struct ESIG_ALGEBRA_EXPORT dense_data_access_interface
+{
+    virtual ~dense_data_access_interface() = default;
+
+    /// Advance and return the next access item; begin should be nullptr to
+    /// stop iteration
+    virtual dense_data_access_item next() = 0;
+};
+
+class ESIG_ALGEBRA_EXPORT dense_data_access_iterator
+{
+    std::unique_ptr<dense_data_access_interface> p_impl;
+public:
+
+    dense_data_access_iterator(dense_data_access_iterator&& other) noexcept = default;
+
+    template <typename Impl>
+    explicit dense_data_access_iterator(Impl&& impl);
+
+    inline dense_data_access_item next()
+    { return p_impl->next(); }
+
+};
+
 
 namespace dtl {
 
@@ -201,8 +244,46 @@ coefficient algebra_iterator_implementation<Iter>::value() const noexcept
 {
     return iterator_helper<Iter>::value(m_current);
 }
+
+template <typename Algebra>
+class dense_data_access_implementation : public dense_data_access_interface
+{
+    key_type m_current_key;
+    const Algebra& m_alg;
+
+    using scalar_type = typename algebra_info<Algebra>::scalar_type;
+
+    key_type advance_key(const void* begin, const void* end)
+    {
+        const auto* b = reinterpret_cast<const scalar_type*>(begin);
+        const auto* e = reinterpret_cast<const scalar_type*>(end);
+        auto key = m_current_key;
+        m_current_key += static_cast<key_type>(e - b);
+        return key;
+    }
+
+public:
+
+    dense_data_access_implementation(const Algebra& alg, key_type start) : m_alg(alg), m_current_key(start)
+    {}
+
+    dense_data_access_item next() override {
+        auto ptrs = dense_data_access<Algebra>::starting_at(m_alg, m_current_key);
+        auto key = advance_key(ptrs.first, ptrs.second);
+        return dense_data_access_item(key, ptrs.first, ptrs.second);
+    }
+};
+
+
+
+
 } // namespace dtl
 
+template<typename Impl>
+dense_data_access_iterator::dense_data_access_iterator(Impl&& impl)
+    : p_impl(std::unique_ptr<dense_data_access_interface>(new Impl(std::forward<Impl>(impl))))
+{
+}
 
 } // namespace algebra
 } // namespace esig

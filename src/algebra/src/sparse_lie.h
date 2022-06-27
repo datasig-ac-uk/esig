@@ -140,6 +140,11 @@ public:
         return m_data.end();
     }
 
+    const_iterator lower_bound(key_type k) const noexcept
+    {
+        return m_data.lower_bound(k);
+    }
+
 private:
     template<typename F>
     sparse_lie binary_operator_impl(const sparse_lie &other, F fn) const
@@ -444,6 +449,32 @@ struct algebra_info<sparse_lie<S>>
 
 };
 
+namespace dtl {
+
+template<typename S>
+class dense_data_access_implementation<sparse_lie<S>>
+    : public dense_data_access_interface
+{
+    typename sparse_lie<S>::const_iterator m_current, m_end;
+public:
+
+    dense_data_access_implementation(const sparse_lie<S>& alg, key_type start)
+        : m_current(alg.lower_bound(start)), m_end(alg.end())
+    {}
+
+
+    dense_data_access_item next() override {
+        if (m_current != m_end) {
+            auto key = m_current->first;
+            const auto* p = &m_current->second;
+            ++m_current;
+            return {key, p, p + 1};
+        }
+        return {0, nullptr, nullptr};
+    }
+};
+
+}
 
 template<typename Scalar>
 const Scalar sparse_lie<Scalar>::zero(0);

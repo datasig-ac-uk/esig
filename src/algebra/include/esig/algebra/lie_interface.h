@@ -44,6 +44,9 @@ public:
     virtual coefficient get(key_type key) const = 0;
     virtual coefficient get_mut(key_type key) = 0;
 
+    // Dense element access
+    virtual dense_data_access_iterator iterate_dense_components() const = 0;
+
     // Arithmetic wrapping
     virtual lie uminus() const = 0;
     virtual lie add(const lie_interface &other) const = 0;
@@ -110,6 +113,8 @@ public:
     coefficient get(key_type key) const override;
     coefficient get_mut(key_type key) override;
 
+    dense_data_access_iterator iterate_dense_components() const override;
+
     lie uminus() const override;
     lie add(const lie_interface &other) const override;
     lie sub(const lie_interface &other) const override;
@@ -164,6 +169,8 @@ public:
 
     lie &operator=(const lie &) = default;
     lie &operator=(lie &&) noexcept = default;
+
+    dense_data_access_iterator iterate_dense_components() const;
 
     lie_interface &operator*() noexcept;
     const lie_interface &operator*() const noexcept;
@@ -459,7 +466,10 @@ coefficient lie_implementation<Impl>::get_mut(key_type key)
     using trait = coefficient_type_trait<ref_t>;
     return trait::make(m_data[key]);
 }
-
+template<typename Impl>
+dense_data_access_iterator lie_implementation<Impl>::iterate_dense_components() const {
+    return dense_data_access_iterator(dtl::dense_data_access_implementation<Impl>(m_data, 1));
+}
 
 }// namespace dtl
 

@@ -5,7 +5,7 @@
 #include "py_lie.h"
 #include <sstream>
 #include "py_iterator.h"
-
+#include <pybind11/numpy.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -84,6 +84,26 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
 
     klass.def("__eq__", [](const lie& lhs, const lie& rhs) { return lhs == rhs; });
     klass.def("__neq__", [](const lie& lhs, const lie& rhs) { return lhs != rhs; });
+
+    klass.def("__array__", [](const lie& arg) {
+        py::dtype dtype;
+        switch (arg.coeff_type()) {
+            case coefficient_type::dp_real:
+                dtype = dtype("d");
+                break;
+            case coefficient_type::sp_real:
+                dtype = dtype("f");
+                break;
+        }
+
+        if (arg.storage_type() == vector_type::dense) {
+            auto it = arg.iterate_dense_components().next();
+            assert(it);
+            const auto *ptr = it.begin();
+            return py::array(dtype, {arg.size()}, {}, ptr);
+        }
+        return py::array(dtype);
+    });
 
 
 }

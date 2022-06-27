@@ -491,7 +491,35 @@ key_type algebra_info<dense_lie<S>>::convert_key(esig::key_type key) noexcept
     return key;
 }
 
+namespace dtl {
 
+template <typename S>
+class dense_data_access_implementation<dense_lie<S>>
+    : public dense_data_access_interface
+{
+    const S* m_begin, *m_end;
+    key_type m_start_key;
+public:
+
+    dense_data_access_implementation(const dense_lie<S>& alg, key_type start)
+    {
+        assert(start >= 1);
+        const auto& data = alg.data();
+        assert(start <= data.size());
+        m_begin = data.data() + start - 1;
+        m_end = data.data() + data.size();
+    }
+
+    dense_data_access_item next() override {
+        const S* begin = m_begin, *end = m_end;
+        m_begin = nullptr;
+        m_end = nullptr;
+        return dense_data_access_item(m_start_key, begin, end);
+    }
+};
+
+
+} // namespace dtl
 
 
 extern template class dense_lie<double>;

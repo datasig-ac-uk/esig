@@ -40,6 +40,8 @@ public:
     virtual coefficient get(key_type key) const = 0;
     virtual coefficient get_mut(key_type key) = 0;
 
+    virtual dense_data_access_iterator iterate_dense_components() const = 0;
+
     // Iteration
     virtual algebra_iterator begin() const = 0;
     virtual algebra_iterator end() const = 0;
@@ -119,6 +121,8 @@ public:
     coefficient get(key_type key) const override;
     coefficient get_mut(key_type key) override;
 
+    dense_data_access_iterator iterate_dense_components() const override;
+
     algebra_iterator begin() const override;
     algebra_iterator end() const override;
 
@@ -179,6 +183,8 @@ public:
 
     const free_tensor_interface& operator*() const noexcept;
     free_tensor_interface& operator*() noexcept;
+
+    dense_data_access_iterator iterate_dense_components() const noexcept;
 
     dimn_t size() const;
     deg_t degree() const;
@@ -518,7 +524,10 @@ algebra_iterator free_tensor_implementation<Impl>::end() const
 {
     return algebra_iterator(m_data.end());
 }
-
+template<typename Impl>
+dense_data_access_iterator free_tensor_implementation<Impl>::iterate_dense_components() const {
+    return dense_data_access_iterator(dtl::dense_data_access_implementation<Impl>(m_data, 0));
+}
 
 } // namespace dtl
 

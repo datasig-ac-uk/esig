@@ -142,6 +142,11 @@ public:
         return m_data.end();
     }
 
+    const_iterator lower_bound(key_type k) const noexcept
+    {
+        return m_data.lower_bound(k);
+    }
+
 private:
 
     template <typename F>
@@ -492,6 +497,32 @@ struct algebra_info<sparse_tensor<S>>
     { return key; }
 };
 
+namespace dtl {
+
+template <typename S>
+class dense_data_access_implementation<sparse_tensor<S>>
+    : public dense_data_access_interface
+{
+    typename sparse_tensor<S>::const_iterator m_current, m_end;
+
+public:
+
+    dense_data_access_implementation(const sparse_tensor<S>& alg, key_type start)
+        : m_current(alg.lower_bound(start)), m_end(alg.end())
+    {}
+
+    dense_data_access_item next() override {
+        if (m_current != m_end) {
+            auto key = m_current->first;
+            const auto* p = &m_current->second;
+            ++m_current;
+            return {key, p, p+1};
+        }
+        return {0, nullptr, nullptr};
+    }
+};
+
+} // namespace dtl
 
 extern template class sparse_tensor<double>;
 extern template class sparse_tensor<float>;

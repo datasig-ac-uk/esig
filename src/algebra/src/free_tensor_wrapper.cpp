@@ -182,6 +182,9 @@ algebra_iterator free_tensor::end() const
 {
     return p_impl->end();
 }
+dense_data_access_iterator free_tensor::iterate_dense_components() const noexcept {
+    return p_impl->iterate_dense_components();
+}
 
 }
 

@@ -81,6 +81,16 @@ struct algebra_base_access
     }
 };
 
+template <typename Algebra>
+struct dense_data_access
+{
+    // Should be defined in specialisations.
+    std::pair<const void*, const void*> starting_at(const Algebra& alg, key_type k)
+    {
+        return {nullptr, nullptr};
+    }
+};
+
 
 
 } // namespace algebra

@@ -152,7 +152,9 @@ std::ostream &lie::print(std::ostream &os) const
     p_impl->print(os);
     return os;
 }
-
+dense_data_access_iterator lie::iterate_dense_components() const {
+    return p_impl->iterate_dense_components();
+}
 
 coefficient lie::operator[](key_type key) const
 {

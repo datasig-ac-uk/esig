@@ -83,6 +83,7 @@ target_sources(esig_algebra
             src/rowed_data_buffer.cpp
             src/vector_construction_data.cpp
             src/stream_out_helpers.cpp
+            src/dense_data_access_iterator.cpp
             ${esig_algebra_HEADERS}
         )
 
