@@ -201,7 +201,9 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
 
         if (self.storage_type() == vector_type::dense) {
             auto it = self.iterate_dense_components().next();
-            assert(it);
+            if (!it) {
+                throw std::runtime_error("dense data should be valid");
+            }
             const auto* ptr = it.begin();
             return py::array(dtype, {self.size()}, {}, ptr);
         }
