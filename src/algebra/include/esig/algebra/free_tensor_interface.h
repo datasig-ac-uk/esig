@@ -526,7 +526,9 @@ algebra_iterator free_tensor_implementation<Impl>::end() const
 }
 template<typename Impl>
 dense_data_access_iterator free_tensor_implementation<Impl>::iterate_dense_components() const {
-    return dense_data_access_iterator(dtl::dense_data_access_implementation<Impl>(m_data, 0));
+    return dense_data_access_iterator(
+        dtl::dense_data_access_implementation<Impl>(m_data, 0)
+            );
 }
 
 } // namespace dtl
