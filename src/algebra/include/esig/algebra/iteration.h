@@ -246,33 +246,36 @@ coefficient algebra_iterator_implementation<Iter>::value() const noexcept
 }
 
 template <typename Algebra>
-class dense_data_access_implementation : public dense_data_access_interface
-{
-    key_type m_current_key;
-    const Algebra& m_alg;
+class dense_data_access_implementation;
 
-    using scalar_type = typename algebra_info<Algebra>::scalar_type;
-
-    key_type advance_key(const void* begin, const void* end)
-    {
-        const auto* b = reinterpret_cast<const scalar_type*>(begin);
-        const auto* e = reinterpret_cast<const scalar_type*>(end);
-        auto key = m_current_key;
-        m_current_key += static_cast<key_type>(e - b);
-        return key;
-    }
-
-public:
-
-    dense_data_access_implementation(const Algebra& alg, key_type start) : m_alg(alg), m_current_key(start)
-    {}
-
-    dense_data_access_item next() override {
-        auto ptrs = dense_data_access<Algebra>::starting_at(m_alg, m_current_key);
-        auto key = advance_key(ptrs.first, ptrs.second);
-        return dense_data_access_item(key, ptrs.first, ptrs.second);
-    }
-};
+//template <typename Algebra>
+//class dense_data_access_implementation : public dense_data_access_interface
+//{
+//    key_type m_current_key;
+//    const Algebra& m_alg;
+//
+//    using scalar_type = typename algebra_info<Algebra>::scalar_type;
+//
+//    key_type advance_key(const void* begin, const void* end)
+//    {
+//        const auto* b = reinterpret_cast<const scalar_type*>(begin);
+//        const auto* e = reinterpret_cast<const scalar_type*>(end);
+//        auto key = m_current_key;
+//        m_current_key += static_cast<key_type>(e - b);
+//        return key;
+//    }
+//
+//public:
+//
+//    dense_data_access_implementation(const Algebra& alg, key_type start) : m_alg(alg), m_current_key(start)
+//    {}
+//
+//    dense_data_access_item next() override {
+//        auto ptrs = dense_data_access<Algebra>::starting_at(m_alg, m_current_key);
+//        auto key = advance_key(ptrs.first, ptrs.second);
+//        return dense_data_access_item(key, ptrs.first, ptrs.second);
+//    }
+//};
 
 
 
