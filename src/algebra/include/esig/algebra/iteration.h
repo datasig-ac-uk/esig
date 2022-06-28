@@ -88,7 +88,7 @@ public:
     dense_data_access_item(key_type start_key, const void* begin, const void* end);
 
     inline operator bool() const noexcept
-    { return m_begin == nullptr; }
+    { return m_begin != nullptr; }
 
     inline const void* begin() const noexcept
     { return m_begin; }
