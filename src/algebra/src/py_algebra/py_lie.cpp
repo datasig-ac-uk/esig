@@ -87,14 +87,6 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
 
     klass.def("__array__", [](const lie& arg) {
         py::dtype dtype = esig::algebra::dtype_from(arg.coeff_type());
-        switch (arg.coeff_type()) {
-            case coefficient_type::dp_real:
-                dtype = dtype("d");
-                break;
-            case coefficient_type::sp_real:
-                dtype = dtype("f");
-                break;
-        }
 
         if (arg.storage_type() == vector_type::dense) {
             auto it = arg.iterate_dense_components().next();
