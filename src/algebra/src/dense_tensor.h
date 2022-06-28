@@ -678,6 +678,7 @@ public:
         assert(start < data.size());
         m_begin = data.data() + start;
         m_end = data.data() + data.size();
+        std::cerr << "dense_data_access_impl" << m_begin << " " << m_end << '\n';
     }
 
     dense_data_access_item next() override {
