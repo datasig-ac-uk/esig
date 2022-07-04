@@ -39,7 +39,6 @@ algebra::lie path_interface::log_signature(const dyadic_interval &domain, path_i
 }
 algebra::lie path_interface::log_signature(const interval &domain, path_interface::compute_depth_t resolution, const algebra::context &ctx) const
 {
-    std::cerr << "logsig on " << domain << '\n';
 
     // TODO: Replace with proper invocations
     return log_signature(domain, ctx);
@@ -52,7 +51,6 @@ std::shared_ptr<algebra::context> path::get_default_context() const
 }
 algebra::lie path::log_signature(const interval &domain, path::accuracy_t accuracy) const
 {
-    std::cout << "log signature in path\n";
     auto ctx = get_default_context();
     auto resolution = p_impl->compute_depth(accuracy);
     return p_impl->log_signature(domain, resolution, *ctx);

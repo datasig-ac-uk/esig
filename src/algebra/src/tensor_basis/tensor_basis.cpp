@@ -33,7 +33,7 @@ std::shared_ptr<std::vector<dimn_t>> tensor_powers_map::get(deg_t width, deg_t d
     if (!found) {
         found.reset(new std::vector<dimn_t> {dimn_t(1)});
     }
-    if (found->size() < depth) {
+    if (found->size() <= depth) {
         dimn_t dwidth (width);
         found->reserve(depth+1);
         for (auto i=found->size(); i<=depth; ++i) {

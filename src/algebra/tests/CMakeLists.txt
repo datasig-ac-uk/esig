@@ -23,6 +23,7 @@ target_sources(esig_algebra_tests PRIVATE
             test_lie_interface.cpp
             test_tensor_interface.cpp
             mock_context.h
+            test_maps.cpp
             test_context.cpp
         )
 

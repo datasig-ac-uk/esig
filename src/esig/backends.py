@@ -124,20 +124,20 @@ class LibalgebraBackend(BackendBase):
         return "LibalgebraBackend"
 
     def compute_signature(self, stream, depth):
-        path = Path(stream, depth=depth, type=LieIncrementPath)
+        path = Path(numpy.diff(stream, axis=0), depth=depth, type=LieIncrementPath)
         return numpy.array(path.signature(0.0, stream.shape[0]+1, 0.1))
 
     def compute_log_signature(self, stream, depth):
-        path = Path(stream, depth=depth, type=LieIncrementPath)
+        path = Path(numpy.diff(stream, axis=0), depth=depth, type=LieIncrementPath)
         return numpy.array(path.log_signature(0.0, stream.shape[0]+1, 0.1))
 
     def log_sig_keys(self, dimension, depth):
         ctx = get_context(dimension, depth, esig.algebra.DPReal)
-        return " " + " ".join(ctx.iterator_lie_keys())
+        return " " + " ".join(map(lambda k: str(k).strip("()"), ctx.iterator_lie_keys()))
 
     def sig_keys(self, dimension, depth):
         ctx = get_context(dimension, depth, esig.algebra.DPReal)
-        return " " + " ".join(ctx.iterate_tensor_keys())
+        return " " + " ".join(map(str, ctx.iterate_tensor_keys()))
 
 BACKENDS["libalgebra"] = LibalgebraBackend
 

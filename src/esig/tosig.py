@@ -65,7 +65,7 @@ def logsigkeys(signal_dimension, signature_degree):
     log signature returned by stream2logsig
     """
     ctx = get_context(signal_dimension, signature_degree, esig.algebra.DPReal)
-    return " " + " ".join(map(str, ctx.iterator_lie_keys()))
+    return " " + " ".join(map(lambda k: str(k).strip("()"), ctx.iterator_lie_keys()))
 
 
 def sigkeys(signal_dimension, signature_degree):

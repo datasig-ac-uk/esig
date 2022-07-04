@@ -29,6 +29,5 @@ esig::paths::dyadic_caching_layer::log_signature(
 {
     std::lock_guard<std::recursive_mutex> access(m_compute_lock);
 
-    std::cout << "Log signature interface\n";
     return ctx.zero_lie(algebra::vector_type::sparse);
 }

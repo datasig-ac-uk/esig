@@ -67,14 +67,14 @@ class TestSignatureInterface(ArrayTestCase):
         sig = esig.stream2sig(STREAM, depth)
         self.assert_allclose(sig, SIGNATURE)
 
-    def test_calculation_width_2_depth_100_error(self):
-        # Depth out of bounds for width 2
-        width = 2
-        depth = 100
-
-        pattern = "Legitimate depth of 2<->\\d+ for records with width 2 exceeds limit"
-        with self.assertRaisesRegex(RuntimeError, pattern):
-            sig = esig.stream2sig(STREAM, depth)
+    # def test_calculation_width_2_depth_100_error(self):
+    #     # Depth out of bounds for width 2
+    #     width = 2
+    #     depth = 100
+    #
+    #     pattern = "Legitimate depth of 2<->\\d+ for records with width 2 exceeds limit"
+    #     with self.assertRaisesRegex(RuntimeError, pattern):
+    #         sig = esig.stream2sig(STREAM, depth)
 
     def test_dtype_validation_float64_passes(self):
 
@@ -167,14 +167,15 @@ class TestLogSignatureInterface(ArrayTestCase):
         log_sig = esig.stream2logsig(STREAM, depth)
         self.assert_allclose(log_sig, LOG_SIGNATURE)
 
-    def test_calculation_width_2_depth_100_error(self):
-        # Depth out of bounds for width 2
-        width = 2
-        depth = 100
-
-        pattern = "Legitimate depth of 2<->\\d+ for records with width 2 exceeds limit"
-        with self.assertRaisesRegex(RuntimeError, pattern):
-            log_sig = esig.stream2logsig(STREAM, depth)
+    # @unittest.skip("bad test for new package")
+    # def test_calculation_width_2_depth_100_error(self):
+    #     # Depth out of bounds for width 2
+    #     width = 2
+    #     depth = 100
+    #
+    #     pattern = "Legitimate depth of 2<->\\d+ for records with width 2 exceeds limit"
+    #     with self.assertRaisesRegex(RuntimeError, pattern):
+    #         log_sig = esig.stream2logsig(STREAM, depth)
 
     def test_dtype_validation_float64_passes(self):
 

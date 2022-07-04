@@ -78,10 +78,8 @@ def compare_reverse_test(l,a,dims,degs):
     if out[0] != 2:
         raise ValueError
     for row in out[1:]:
-        if row >= -0.00001 and row <= 0.00001:
-            pass
-        else:
-            raise ValueError
+        assert row >= -0.00001 and row <= 0.00001, "%s out of expected error range" % row
+
     return 1
 
 
@@ -188,11 +186,11 @@ def shuffle_test (l,a,dims,degs):
 
         # shuffle product - multiplication product into 'solutions' variable
         solution = shuffle_product-mutant_parent_multiplication
-        if solution >= -0.00001 and solution <= 0.00001:
-            pass
-        else:
-            raise ValueError
+        assert solution >= -0.00001 and solution <= 0.00001, "%s out of expected error range" % solution
+
     return 1
+
+
 
 
 
@@ -243,8 +241,6 @@ def reparametrizing_test(l,a,dims,degs,reparam_factor):
 
     solutions = [x1 - x2 for (x1, x2) in tmp]
     for solution in solutions:
-        if solution >= -0.00001 and solution <= 0.00001:
-            pass
-        else:
-            raise ValueError
+        assert solution >= -0.00001 and solution <= 0.00001, "%s out of expected error range" % solution
+
     return 1

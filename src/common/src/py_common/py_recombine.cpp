@@ -107,7 +107,7 @@ py::tuple py_recombine(const py::array_t<double>& data,
                 nullptr);
 
     std::ptrdiff_t no_kept_locations = no_dimension_to_cubature;
-    py::array_t<std::size_t> kept_locations(py::array::ShapeContainer {no_kept_locations});
+    py::array_t<std::ptrdiff_t> kept_locations(py::array::ShapeContainer {no_kept_locations});
     py::array_t<double> new_weights(py::array::ShapeContainer {no_kept_locations});
 
     {
@@ -126,7 +126,7 @@ py::tuple py_recombine(const py::array_t<double>& data,
                     &no_kept_locations,
                     locations_map.data(),
                     src_wghts.mutable_data(),
-                    kept_locations.mutable_data(),
+                    reinterpret_cast<std::size_t*>(kept_locations.mutable_data()),
                     new_weights.mutable_data()
             );
         kept_locations.resize(py::array::ShapeContainer {no_kept_locations});

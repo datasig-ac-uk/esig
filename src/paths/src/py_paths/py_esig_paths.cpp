@@ -177,9 +177,7 @@ PYBIND11_MODULE(_paths, m) {
     auto param_lsig = [](const paths::path &self,
                          param_t a, param_t b,
                          accuracy_t acc) -> esig::algebra::lie {
-        std::cerr << "param lsig " << a  << ' ' << b << ' ' << acc << '\n';
         real_interval domain(a, b);
-        std::cerr << "real interval " << domain << '\n';
         return self.log_signature(domain, acc);
     };
     path_class.def("log_signature",
@@ -203,7 +201,6 @@ PYBIND11_MODULE(_paths, m) {
                         param_t a, param_t b,
                         accuracy_t acc) -> esig::algebra::free_tensor {
         auto sig = self.signature(real_interval(a, b), acc);
-        py::print(sig);
         return sig;
     };
     path_class.def("signature",
