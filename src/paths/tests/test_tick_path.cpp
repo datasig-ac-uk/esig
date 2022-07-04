@@ -21,7 +21,7 @@ protected:
     esig::paths::path path;
 
     TickLatticePathFixture()
-        : ctx(esig::algebra::get_context(width, depth, ctype)),
+        : ctx(esig::algebra::get_context(width, depth, ctype, {})),
           path(lattice_path())
     {}
 

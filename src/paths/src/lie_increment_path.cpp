@@ -26,6 +26,7 @@ lie_increment_path::lie_increment_path(
 algebra::lie lie_increment_path::log_signature(const esig::interval &domain, const esig::algebra::context &ctx) const
 {
     const auto& md = metadata();
+    std::cout << "Log signature in implementation\n";
 
     esig::algebra::signature_data data (
             md.ctype,

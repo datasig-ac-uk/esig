@@ -191,6 +191,8 @@ public:
     algebra_iterator begin() const;
     algebra_iterator end() const;
 
+
+
     // Arithmetic operations
     lie uminus() const;
     lie add(const lie &other) const;
@@ -230,8 +232,6 @@ struct lie_base_access {
     {
         auto *ptr = algebra_base_access::get(wrapper);
         assert(ptr != nullptr);
-        std::cerr << typeid(Impl).name() << '\n'
-                  << typeid(*ptr).name() << '\n';
         return dynamic_cast<const dtl::lie_implementation<Impl> &>(*ptr).m_data;
     }
 
@@ -240,8 +240,6 @@ struct lie_base_access {
     {
         auto *ptr = algebra_base_access::get(wrapper);
         assert(ptr != nullptr);
-        std::cerr << typeid(Impl).name() << '\n'
-                  << typeid(*ptr).name() << '\n';
         return dynamic_cast<dtl::lie_implementation<Impl> &>(*ptr).m_data;
     }
 };

@@ -87,7 +87,7 @@ path construct_path_impl(const py::args& args, const py::kwargs& kwargs)
             kwargs["result_vec_type"].cast<vector_type>()
     };
 
-    auto ctx = esig::algebra::get_context(md.width, md.depth, CType);
+    auto ctx = esig::algebra::get_context(md.width, md.depth, CType, {});
 
     buffer_constructor_helper<CType> helper;
     std::vector<std::pair<param_t, dimn_t>> index;

@@ -126,8 +126,8 @@ public:
     bool is_val() const noexcept override;
     scalar_t as_scalar() const override;
 
-    explicit operator const T&() const noexcept;
-    explicit operator T&() noexcept;
+    explicit operator const T&() const noexcept { return m_data; }
+    explicit operator T&() noexcept { return m_data; }
 
     void assign(coefficient other) override;
 
@@ -430,16 +430,6 @@ template<typename T>
 bool coefficient_implementation<T>::is_const() const noexcept
 {
     return std::is_const<T>::value;
-}
-template<typename T>
-coefficient_implementation<T>::operator const T &() const noexcept
-{
-    return m_data;
-}
-template<typename T>
-coefficient_implementation<T>::operator T &() noexcept
-{
-    return m_data;
 }
 template<typename T>
 bool coefficient_implementation<T>::is_val() const noexcept

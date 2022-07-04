@@ -155,9 +155,9 @@ class TestESIG(TestCase):
     def test_reparametrizing(self):
         self.assertEqual(rado.reparametrizing_test(10,[-1,0,1],2,3,3),1)
 
+
 class TestRecombine(TestCase):
 
-    @unittest.skipIf(esig.NO_RECOMBINE, "Recombine not installed")
     def test_recombine(self):
         self.assertEqual(recombine.test(), 0)
 

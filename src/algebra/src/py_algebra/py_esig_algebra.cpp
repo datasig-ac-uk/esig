@@ -10,6 +10,7 @@
 #include "py_coefficients.h"
 #include "py_lie_key_iterator.h"
 #include "py_tensor_key_iterator.h"
+#include "py_keys.h"
 
 #include <pybind11/numpy.h>
 #include <pybind11/stl.h>
@@ -32,6 +33,8 @@ PYBIND11_MODULE(algebra, m)
     py::options options;
     options.disable_function_signatures();
 
+//    auto common_mod = py::module_::import("esig.common");
+
     m.doc() = ALGEBRA_MOD_DOC;
 
     py::enum_<vector_type>(m, "VectorType")
@@ -44,6 +47,8 @@ PYBIND11_MODULE(algebra, m)
             .export_values();
 
     init_py_coefficients(m);
+    init_py_lie_key(m);
+    init_py_tensor_key(m);
     init_tensor_key_iterator(m);
     init_lie_key_iterator(m);
 
@@ -62,7 +67,12 @@ PYBIND11_MODULE(algebra, m)
               return esig::algebra::py_lie_key_iterator(&ctx);
           });
 
-    m.def("get_context", &get_context, "width"_a, "depth"_a, "ctype"_a, "preferences"_a);
+    m.def("get_context",
+          &get_context,
+          "width"_a,
+          "depth"_a,
+          "ctype"_a,
+          "preferences"_a=std::vector<std::string>());
 
 
 

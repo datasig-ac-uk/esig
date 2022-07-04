@@ -4,7 +4,10 @@
 
 #include "py_free_tensor.h"
 #include "esig/algebra/python_interface.h"
+#include "py_keys.h"
 
+namespace py = pybind11;
+using namespace pybind11::literals;
 
 namespace esig {
 namespace algebra {
@@ -52,3 +55,11 @@ bool py_tensor_key::less(const py_tensor_key &other) const noexcept
 
 } // namespace algebra
 } // namespace esig
+
+void esig::algebra::init_py_tensor_key(pybind11::module_ &m)
+{
+    using esig::algebra::py_tensor_key;
+    py::class_<py_tensor_key> klass(m, "TensorKey");
+
+    klass.def("__str__", &py_tensor_key::to_string);
+}

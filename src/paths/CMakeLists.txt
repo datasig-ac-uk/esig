@@ -26,6 +26,7 @@ generate_export_header(esig_paths
 
 target_link_libraries(esig_paths
         PUBLIC
+            esig_common
             esig_algebra
         PRIVATE
             Boost::boost

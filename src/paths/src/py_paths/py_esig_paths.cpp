@@ -155,12 +155,16 @@ PYBIND11_MODULE(_paths, m) {
     py::options options;
     options.disable_function_signatures();
 
+//    py::module_ common_mod = py::module_::import("esig.common");
+//    py::module_ algebra_mod = py::module_::import("esig.algebra");
+
     py::class_<paths::path> path_class(m, "Path", PATH_DOC);
 
     path_class.def(py::init(&paths::py_path_constructor));
 
     auto interval_lsig =
-            [](const paths::path &self, const interval &domain, accuracy_t acc) {
+            [](const paths::path &self, const interval &domain, accuracy_t acc) -> esig::algebra::lie
+    {
                 return self.log_signature(domain, acc);
     };
     path_class.def("log_signature",
@@ -172,29 +176,32 @@ PYBIND11_MODULE(_paths, m) {
 
     auto param_lsig = [](const paths::path &self,
                          param_t a, param_t b,
-                         accuracy_t acc) {
-        return self.log_signature(real_interval(a, b), acc);
+                         accuracy_t acc) -> esig::algebra::lie {
+        std::cerr << "param lsig " << a  << ' ' << b << ' ' << acc << '\n';
+        real_interval domain(a, b);
+        std::cerr << "real interval " << domain << '\n';
+        return self.log_signature(domain, acc);
     };
     path_class.def("log_signature",
-                   param_lsig,
+                   std::move(param_lsig),
                    "lower"_a,
                    "upper"_a,
                    "accuracy"_a);
 
     auto interval_sig = [](const paths::path& self,
                            interval& domain,
-                           accuracy_t acc){
+                           accuracy_t acc) -> esig::algebra::free_tensor {
         return self.signature(domain, acc);
     };
     path_class.def("signature",
-                   interval_sig,
+                   std::move(interval_sig),
                    "interval"_a,
                    "accuracy"_a,
                    SIG_DOC);
 
     auto param_sig = [](const paths::path& self,
                         param_t a, param_t b,
-                        accuracy_t acc) {
+                        accuracy_t acc) -> esig::algebra::free_tensor {
         auto sig = self.signature(real_interval(a, b), acc);
         py::print(sig);
         return sig;
@@ -208,7 +215,7 @@ PYBIND11_MODULE(_paths, m) {
     auto interval_sigder = [](const paths::path& self,
                               interval& domain,
                               const algebra::lie & perturbation,
-                              accuracy_t acc) {
+                              accuracy_t acc) -> esig::algebra::free_tensor {
         return self.signature_derivative(domain, perturbation, acc);
     };
     path_class.def("signature_derivative",
@@ -222,7 +229,7 @@ PYBIND11_MODULE(_paths, m) {
     auto param_sigder = [](const paths::path& self,
                       param_t a, param_t b,
                       const algebra::lie & perturbation,
-                      accuracy_t acc) {
+                      accuracy_t acc) -> esig::algebra::free_tensor {
         real_interval domain(a, b);
         return self.signature_derivative(domain, perturbation, acc);
     };
@@ -235,7 +242,8 @@ PYBIND11_MODULE(_paths, m) {
 
     auto interval_list_sigder = [](const paths::path& self,
                                    typename paths::path::perturbation_list_t perturbation_list,
-                                   accuracy_t acc) {
+                                   accuracy_t acc) -> esig::algebra::free_tensor
+    {
         return self.signature_derivative(perturbation_list, acc);
     };
     path_class.def("signature_derivative",
@@ -246,7 +254,8 @@ PYBIND11_MODULE(_paths, m) {
     auto param_list_sigder = [](const paths::path& self,
                                 std::vector<std::tuple<param_t, param_t, algebra::lie>> perturbation_list,
                                 accuracy_t acc
-                                ) {
+                                ) -> esig::algebra::free_tensor
+    {
         typename paths::path::perturbation_list_t perturbs;
         perturbs.reserve(perturbation_list.size());
         for (auto t : perturbation_list) {

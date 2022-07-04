@@ -122,7 +122,7 @@ path construct_path_impl(const py::args& args, const py::kwargs& kwargs)
     }
 
     auto depth = kwargs["depth"].cast<deg_t>();
-    auto ctx = esig::algebra::get_context(width, depth, CType);
+    auto ctx = esig::algebra::get_context(width, depth, CType, {});
 
 
     esig::real_interval domain;

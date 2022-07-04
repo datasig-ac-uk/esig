@@ -45,8 +45,7 @@ void init_tensor_key_iterator(pybind11::module_ &m)
     klass.def(py::init([](const py_tensor_key& start_key, const py_tensor_key& end_key) {
         return py_tensor_key_iterator(start_key.get_context(), static_cast<key_type>(start_key), static_cast<key_type>(end_key));
     }), "start_key"_a, "end_key"_a);
-
-
+    klass.def("__iter__", [](py_tensor_key_iterator& self) { return self; });
     klass.def("__next__", &py_tensor_key_iterator::next);
 }
 

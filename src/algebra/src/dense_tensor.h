@@ -457,7 +457,7 @@ private:
                         }
                     }
                 }
-                assert(out_ptr == lhs_ptr_begin + lhs.m_basis->start_of_degree(out_deg+1));
+//                assert(out_ptr == lhs_ptr_begin + lhs.m_basis->start_of_degree(out_deg+1));
                 assign = false;
             }
 

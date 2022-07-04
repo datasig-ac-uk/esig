@@ -66,7 +66,7 @@ struct ESIG_ALGEBRA_EXPORT data_iterator {
 
 
 template<typename ToLie>
-struct ESIG_ALGEBRA_EXPORT increment_iterable {
+struct increment_iterable {
 
     struct iterator {
         using value_type = decltype(std::declval<ToLie>()(nullptr, nullptr));
@@ -356,6 +356,9 @@ increment_iterable<ToLie>::iterator::iterator(
 template<typename ToLie>
 typename increment_iterable<ToLie>::iterator::reference increment_iterable<ToLie>::iterator::operator*() const
 {
+    if (m_ptr == nullptr) {
+        throw std::runtime_error("Increment iterator cannot be null");
+    }
     if (m_vtype == vector_type::dense) {
         return m_to_lie(m_ptr->dense_begin(), m_ptr->dense_end());
     } else if (m_vtype == vector_type::sparse) {
@@ -367,6 +370,7 @@ typename increment_iterable<ToLie>::iterator::reference increment_iterable<ToLie
 template<typename ToLie>
 typename increment_iterable<ToLie>::iterator &increment_iterable<ToLie>::iterator::operator++()
 {
+    if (m_ptr == nullptr) throw std::runtime_error("advancing invalid iterable");
     m_ptr->advance();
     return *this;
 }

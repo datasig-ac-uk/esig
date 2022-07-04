@@ -22,7 +22,6 @@ def stream2sig(stream, signature_degree):
     """
     path = Path(stream, depth=signature_degree, type=LieIncrementPath)
     sig = path.signature(0.0, stream.shape[0]+1, 0.1)
-    print(sig)
     return np.array(sig)
 
 
@@ -35,7 +34,9 @@ def stream2logsig(stream, signature_degree):
     vector series up to given log signature degree
     """
     path = Path(stream, depth=signature_degree, type=LieIncrementPath)
-    return np.array(path.log_signature(0.0, stream.shape[0]+1, 0.1))
+    m = stream.shape[0] + 1
+    lsig = path.log_signature(0.0, float(m), 0.1)
+    return np.array(lsig)
 
 
 def sigdim(signal_dimension, signature_degree):
@@ -64,7 +65,7 @@ def logsigkeys(signal_dimension, signature_degree):
     log signature returned by stream2logsig
     """
     ctx = get_context(signal_dimension, signature_degree, esig.algebra.DPReal)
-    return " " + " ".join(ctx.iterator_lie_keys())
+    return " " + " ".join(map(str, ctx.iterator_lie_keys()))
 
 
 def sigkeys(signal_dimension, signature_degree):
@@ -75,4 +76,4 @@ def sigkeys(signal_dimension, signature_degree):
     the signature returned by stream2sig
     """
     ctx = get_context(signal_dimension, signature_degree, esig.algebra.DPReal)
-    return " " + " ".join(ctx.iterate_tensor_keys())
+    return " " + " ".join(map(str, ctx.iterate_tensor_keys()))

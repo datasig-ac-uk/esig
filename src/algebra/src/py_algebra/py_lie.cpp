@@ -77,7 +77,7 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
 
     klass.def("__repr__", [](const lie& self) {
                 std::stringstream ss;
-                ss << "FreeTensor(width=" << self.width() << ", depth=" << self.depth();
+                ss << "Lie(width=" << self.width() << ", depth=" << self.depth();
                 ss << ", ctype=" << static_cast<int>(self.coeff_type()) << ')';
                 return ss.str();
             });

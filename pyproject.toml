@@ -17,7 +17,7 @@ build-verbosity = 1
 
 test-requires = ["pytest", "numpy"]
 test-command = [
-    "pytest {project}/tests"
+    "pytest --capture=no {project}/tests"
     ]
 #test-command=""
 
@@ -33,3 +33,4 @@ before-all = "source $ONEAPI_SCRIPT"
 archs=["x86_64"]
 before-all = "bash build/install-deps-linux.sh"
 repair-wheel-command = "auditwheel repair -w {dest_dir} {wheel}"
+environment = { PYTHONUNBUFFERED="" }

@@ -45,6 +45,7 @@ template<typename Func, typename Binop>
 const typename hall_extension<Func, Binop>::out_type&
 hall_extension<Func, Binop>::operator()(const hall_extension::key_type &key) const
 {
+    assert(key != 0);
     std::lock_guard<std::recursive_mutex> access(m_lock);
 
     auto found = m_cache.find(key);

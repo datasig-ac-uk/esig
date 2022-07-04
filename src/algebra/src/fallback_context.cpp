@@ -66,6 +66,7 @@ lie_type<CType, VType> tensor_to_lie_impl(const fallback_context& ctx, const fte
     lie_type<CType, VType> result(ctx.get_lie_basis());
     auto iter = arg.iterate_kv();
     while (iter.advance()) {
+        assert(iter.key() < ctx.tensor_size(ctx.depth()));
         for (auto p : ctx.bracketing(iter.key())) {
             result[p.first] += iter.value()*static_cast<typename ftensor_type<CType, VType>::scalar_type>(p.second);
         }
@@ -470,6 +471,7 @@ ESIG_MAKE_SWITCH(m_ctype, arg.storage_type())
 const std::vector<std::pair<key_type, int>>&
 fallback_context::bracketing(const key_type &key) const
 {
+    assert(key < tensor_size(depth()));
     std::lock_guard<std::recursive_mutex> access(m_bracketing_lock);
     auto& found = m_bracketing_cache[key];
     if (found) {

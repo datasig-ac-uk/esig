@@ -3,7 +3,10 @@
 //
 
 #include <esig/algebra/python_interface.h>
+#include "py_keys.h"
 
+namespace py = pybind11;
+using namespace pybind11::literals;
 
 namespace esig {
 namespace algebra {
@@ -61,3 +64,12 @@ lie py_lie_key::to_lie(const coefficient& c) const
 
 } // namespace algebra
 } // namespace esig
+
+void esig::algebra::init_py_lie_key(pybind11::module_& m)
+{
+    using esig::algebra::py_lie_key;
+    py::class_<py_lie_key> klass(m, "LieKey");
+
+    klass.def("__str__", &py_lie_key::to_string);
+
+}

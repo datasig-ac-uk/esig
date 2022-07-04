@@ -18,7 +18,7 @@ protected:
     std::shared_ptr<esig::algebra::context> ctx;
 
     LieIncrementPathTestsFixture()
-        : ctx(esig::algebra::get_context(width, depth, esig::algebra::coefficient_type::sp_real))
+        : ctx(esig::algebra::get_context(width, depth, esig::algebra::coefficient_type::sp_real, {}))
     {}
 
 private:

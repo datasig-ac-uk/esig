@@ -68,7 +68,7 @@ void init_lie_key_iterator(pybind11::module_ &m)
 //    }), "start_key"_a, py::kw_only(), "width"_a, "depth"_a, "ctype"_a=coefficient_type::dp_real);
 
 
-
+    klass.def("__iter__", [](py_lie_key_iterator& self) { return self; });
     klass.def("__next__", &py_lie_key_iterator::next);
 
 
