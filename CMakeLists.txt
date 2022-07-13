@@ -47,7 +47,7 @@ endif ()
 
 if (SKBUILD)
     message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
-    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
+#    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
 #    set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}")
 #    set(Python_LIBRARY "${PYTHON_LIBRARY}")
 #    cmake_path(REMOVE_FILENAME PYTHON_EXECUTABLE OUTPUT_VARIABLE PYTHON_EXE)
