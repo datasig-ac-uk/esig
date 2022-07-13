@@ -114,6 +114,10 @@ public:
     {
         return m_data;
     }
+    void clear() noexcept
+    {
+        m_data.clear();
+    }
     const void *start_of_degree(deg_t deg) const
     {
         return m_data.data() + m_basis->start_of_degree(deg);
@@ -281,6 +285,24 @@ public:
         return *this;
     }
 
+    dense_lie& add_scal_prod(key_type key, Scalar scal)
+    {
+        assert(key < m_basis->size(m_basis->depth()));
+        if (key >= m_data.size()) {
+            m_data.resize(m_basis->size(m_basis->degree(key)));
+        }
+        m_data[key-1] += scal;
+        return *this;
+    }
+    dense_lie& sub_scal_prod(key_type key, Scalar scal)
+    {
+        assert(key <= m_basis->size(m_basis->depth()));
+        if (key > m_data.size()) {
+            m_data.resize(m_basis->size(m_basis->degree(key)));
+        }
+        m_data[key-1] -= scal;
+        return *this;
+    }
 
 
 

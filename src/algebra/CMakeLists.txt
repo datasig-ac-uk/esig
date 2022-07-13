@@ -8,7 +8,7 @@ project(esig_algebra VERSION 0.1)
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 
-add_library(esig_algebra SHARED src/fallback_maps_internal.h)
+add_library(esig_algebra SHARED)
 # Use add_library because it works better with the IDE
 #add_library(esig_algebra SHARED)
 #pybind11_extension(esig_algebra)
@@ -61,6 +61,7 @@ target_sources(esig_algebra
             src/tensor_basis/tensor_basis.cpp
             src/fallback_context.h
             src/fallback_context.cpp
+            src/fallback_maps.h
             src/free_tensor_wrapper.cpp
             src/context.cpp
             src/dense_lie.h
@@ -84,6 +85,8 @@ target_sources(esig_algebra
             src/vector_construction_data.cpp
             src/stream_out_helpers.cpp
             src/dense_data_access_iterator.cpp
+            src/fallback_maps.cpp
+            src/detail/converting_lie_iterator_adaptor.h
             ${esig_algebra_HEADERS}
         )
 

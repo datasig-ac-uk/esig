@@ -291,6 +291,17 @@ public:
         return *this;
     }
 
+    dense_tensor& add_scal_prod(key_type key, Scalar scal)
+    {
+        assert(key < m_basis->size(m_basis->depth()));
+        if (key >= m_data.size()) {
+            m_data.resize(m_basis->size(m_basis->degree(key)));
+        }
+        m_data[key] += scal;
+        return *this;
+    }
+
+
     dense_tensor &operator*=(Scalar other)
     {
         for (auto& val : m_data) {

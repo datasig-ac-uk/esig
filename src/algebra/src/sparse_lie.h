@@ -117,6 +117,10 @@ public:
         return dtl::get_coeff_type(zero);
     }
 
+    void clear() noexcept
+    {
+        m_data.clear();
+    }
     const Scalar &operator[](const key_type &key) const
     {
         auto found = m_data.find(key);
@@ -291,6 +295,18 @@ public:
     sparse_lie &sub_scal_div(const sparse_lie &other, Scalar scal)
     {
         inplace_binary_operation_impl(other, [=](const Scalar &a, const Scalar &b) { return a - b / scal; });
+        return *this;
+    }
+
+
+    sparse_lie& add_scal_prod(key_type key, Scalar scal)
+    {
+        operator[](key) += scal;
+        return *this;
+    }
+    sparse_lie& sub_scal_prod(key_type key, Scalar scal)
+    {
+        operator[](key) -= scal;
         return *this;
     }
 

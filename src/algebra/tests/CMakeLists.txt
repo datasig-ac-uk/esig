@@ -23,7 +23,6 @@ target_sources(esig_algebra_tests PRIVATE
             test_lie_interface.cpp
             test_tensor_interface.cpp
             mock_context.h
-            test_maps.cpp
             test_context.cpp
         )
 
@@ -88,12 +87,32 @@ target_include_directories(esig_algebra_test_lie_basis PRIVATE
         ../include
         ${CMAKE_CURRENT_BINARY_DIR}/../include)
 
+add_executable(esig_algebra_fallback_tests)
 
+target_link_libraries(esig_algebra_fallback_tests PRIVATE
+        GTest::gtest_main
+        esig_common
+        esig_algebra
+        Libalgebra::Libalgebra
+        )
+
+target_include_directories(esig_algebra_fallback_tests PRIVATE
+        ../src
+        ../src/lie_basis
+        ../src/tensor_basis
+        ${CMAKE_CURRENT_BINARY_DIR}/../include
+        )
+
+target_sources(esig_algebra_fallback_tests PRIVATE
+        test_maps.cpp
+
+        )
 
 gtest_discover_tests(esig_algebra_tests)
 gtest_discover_tests(esig_algebra_test_tensor)
 gtest_discover_tests(esig_algebra_test_lie)
 gtest_discover_tests(esig_algebra_test_lie_basis)
+gtest_discover_tests(esig_algebra_fallback_tests)
 
 
 

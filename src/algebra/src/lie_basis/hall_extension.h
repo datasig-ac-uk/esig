@@ -22,7 +22,7 @@ class hall_extension
 {
 public:
     using key_type = typename hall_set::key_type;
-    using out_type = decltype(std::declval < Func>()(std::declval < key_type>()));
+    using out_type = decltype(std::declval < Func>()(std::declval <let_t>()));
 private:
     std::shared_ptr<hall_set> m_hall_set;
     Func m_func;

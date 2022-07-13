@@ -291,6 +291,11 @@ public:
         return *this;
     }
 
+    sparse_tensor& add_scal_prod(key_type key, Scalar scal)
+    {
+        operator[](key) += scal;
+        return *this;
+    }
 
 
 private:
