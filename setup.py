@@ -126,7 +126,7 @@ with io.open("CHANGELOG", "rt") as fp:
 
 
 
-CMAKE_SETTINGS = ["-v", "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
+CMAKE_SETTINGS = ["-debug-find", "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
 if not platform.system() == "Linux":
     vcpkg = Path("build", "vcpkg")
     if vcpkg.exists():
