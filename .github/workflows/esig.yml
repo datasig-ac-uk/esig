@@ -183,6 +183,7 @@ jobs:
       - name: Build wheels
         uses: pypa/cibuildwheel@v2.3.1
         env:
+          VERBOSE: 1
           BOOST_ROOT: ${{ env.boost_root }}
 
       - name: Cache outputs
