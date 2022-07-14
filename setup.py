@@ -126,7 +126,10 @@ with io.open("CHANGELOG", "rt") as fp:
     DESCRIPTION += fp.read()
 
 
-CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
+CMAKE_SETTINGS = [
+    "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON",
+    "-DCMAKE_EXECUTE_PROCESS_COMMAND_ECHO:BOOL=ON"
+]
 if platform.system() == "Windows":
     vcpkg = Path("build", "vcpkg")
     if vcpkg.exists():

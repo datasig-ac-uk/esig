@@ -59,7 +59,25 @@ if (SKBUILD)
 
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
+    set(CMAKE_FIND_DEBUG_MODE ON)
     find_package(Python COMPONENTS Interpreter Development.Module NumPy)
+    set(CMAKE_FIND_DEBUG_MODE OFF)
+
+    execute_process(COMMAND ${Python_EXECUTABLE} --version
+            RESULT_VARIABLE result
+            OUTPUT_VARIABLE out
+            ERROR_VARIABLE err)
+    if (result)
+        message(AUTHOR_WARNING "result: ${result}")
+        message(AUTHOR_WARNING "${err}")
+    else()
+        message(STATUS "Python reported version: ${out}")
+    endif()
+
+    unset(result)
+    unset(out)
+    unset(err)
+
 
     message(STATUS "python found: ${Python_FOUND}")
     message(STATUS "interpreter found: ${Python_Interpreter_FOUND}")
