@@ -44,8 +44,9 @@ if (NOT EXISTS "${Boost_SYSTEM_LIBRARY_RELEASE}")
     message(FATAL_ERROR "Boost system library not found")
 endif ()
 
-
 if (SKBUILD)
+    set(Python_FIND_STRATEGY LOCATION)
+    set(Python_FIND_UNVERSIONED_NAMES FIRST)
     message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
 #    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}" CACHE INTERNAL "")
 #    set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}" CACHE INTERNAL "")
@@ -59,7 +60,6 @@ if (SKBUILD)
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
 
-    set(Python_FIND_FRAMEWORK NEVER)
 
 else()
     # Look for Virtual environments first
