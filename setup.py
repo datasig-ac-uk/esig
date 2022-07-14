@@ -127,7 +127,7 @@ with io.open("CHANGELOG", "rt") as fp:
 
 
 CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
-if not platform.system() == "Linux":
+if platform.system() == "Windows":
     vcpkg = Path("build", "vcpkg")
     if vcpkg.exists():
         CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
