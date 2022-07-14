@@ -3,7 +3,7 @@ requires = [
     "setuptools>=42",
     "wheel",
     "scikit-build",
-    "cmake==3.21",
+    "cmake",
     "ninja; platform_system!='Windows'",
     "oldest-supported-numpy"
 ]
