@@ -59,7 +59,12 @@ if (SKBUILD)
 
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
+    find_package(Python COMPONENTS Interpreter Development.Module NumPy)
 
+    message(STATUS "python found: ${Python_FOUND}")
+    message(STATUS "interpreter found: ${Python_Interpreter_FOUND}")
+    message(STATUS "module found: ${Python_Development.Module_FOUND}")
+    message(STATUS "NumPy found: ${Python_NumPy_FOUND}")
 
 else()
     # Look for Virtual environments first
