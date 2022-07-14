@@ -55,7 +55,6 @@ if (SKBUILD)
 #    cmake_path(NORMAL_PATH PYTHON_EXE)
 #    set(Python_ROOT_DIR "${PYTHON_EXE}")
 #    unset(PYTHON_EXE)
-    set(Python_LIBRARIES "${Python_LIBRARY}")
 
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
@@ -71,7 +70,7 @@ else()
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
-find_package(Python 3 REQUIRED
+find_package(Python REQUIRED
         COMPONENTS
         Interpreter
         Development.Module
