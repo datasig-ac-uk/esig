@@ -121,9 +121,9 @@ with io.open("src/esig/VERSION", "rt") as fp:
 with io.open("README.md", "rt") as fp:
     DESCRIPTION = fp.read()
 
+
 with io.open("CHANGELOG", "rt") as fp:
     DESCRIPTION += fp.read()
-
 
 
 CMAKE_SETTINGS = ["--debug-find", "--debug-output", "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]

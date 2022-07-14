@@ -55,6 +55,7 @@ if (SKBUILD)
 #    cmake_path(NORMAL_PATH PYTHON_EXE)
 #    set(Python_ROOT_DIR "${PYTHON_EXE}")
 #    unset(PYTHON_EXE)
+    set(Python_LIBRARIES "${Python_LIBRARY}")
 
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
