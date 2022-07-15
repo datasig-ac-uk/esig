@@ -125,6 +125,9 @@ with io.open("README.md", "rt") as fp:
 with io.open("CHANGELOG", "rt") as fp:
     DESCRIPTION += fp.read()
 
+import sysconfig
+assert os.path.exists(sysconfig.get_path("include"))
+
 
 CMAKE_SETTINGS = [
     "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON",
