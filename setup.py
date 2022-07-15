@@ -126,7 +126,12 @@ with io.open("CHANGELOG", "rt") as fp:
     DESCRIPTION += fp.read()
 
 import sysconfig
-assert os.path.exists(sysconfig.get_path("include"))
+if os.path.exists(sysconfig.get_path("include")):
+    print("include dir exists")
+else:
+    print("INCLUDE DIR NOT EXISTS")
+    import sys
+    sys.exit(1)
 
 
 CMAKE_SETTINGS = [
