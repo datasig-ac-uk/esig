@@ -60,8 +60,18 @@ if (SKBUILD)
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
     set(CMAKE_FIND_DEBUG_MODE ON)
-    find_package(Python COMPONENTS Interpreter Development.Module NumPy)
+    find_package(Python COMPONENTS Interpreter )
+    find_package(Python COMPONENTS Development.Module)
+    find_package(Python COMPONENTS NumPy)
     set(CMAKE_FIND_DEBUG_MODE OFF)
+
+
+    message(STATUS "VARIABLES")
+    get_cmake_property(_var_names VARIABLES)
+    foreach (_name ${_var_names})
+        message(STATUS "${_name} = ${${_name}}")
+    endforeach()
+    message(STATUS "End variables")
 
     execute_process(COMMAND ${Python_EXECUTABLE} --version
             RESULT_VARIABLE result
