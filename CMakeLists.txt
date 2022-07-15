@@ -143,7 +143,7 @@ target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boo
 if (TARGET recombine)
     target_link_libraries(tosig PRIVATE recombine)
     target_include_directories(tosig PRIVATE ${CMAKE_SOURCE_DIR}/recombine)
-    target_sources(tosig PRIVATE recombine/_recombine.cpp recombine/TestVec/RdToPowers2.cpp)
+    target_sources(tosig PRIVATE recombine/_recombine.cpp )
     target_compile_definitions(tosig PRIVATE ESIG_WITH_RECOMBINE)
 endif()
 #add_subdirectory("${CMAKE_CURRENT_LIST_DIR}/libalgebra")
