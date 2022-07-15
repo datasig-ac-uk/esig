@@ -60,48 +60,9 @@ if (SKBUILD)
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
 
-    if(NOT IS_ABSOLUTE "${Python_INCLUDE_DIR}")
-        message(STATUS "Include dir not absolute")
-        cmake_path(ABSOLUTE_PATH Python_INCLUDE_DIR)
-    endif()
     unset(Python_LIBRARY CACHE)
     unset(PYTHON_LIBRARY CACHE)
     unset(Python3_LIBRARY CACHE)
-
-    set(CMAKE_FIND_DEBUG_MODE ON)
-    find_package(Python 3 COMPONENTS Interpreter Development.Module NumPy)
-    set(CMAKE_FIND_DEBUG_MODE OFF)
-    if (NOT _Python_INCLUDE_DIR)
-        message(FATAL_ERROR "_Python_INCLUDE_DIR must be set?!?!?!\n ${_Python_INCLUDE_DIR}")
-    endif ()
-
-    message(STATUS "VARIABLES")
-    get_cmake_property(_var_names VARIABLES)
-    foreach (_name ${_var_names})
-        message(STATUS "${_name} = ${${_name}}")
-    endforeach()
-    message(STATUS "End variables")
-
-    execute_process(COMMAND ${Python_EXECUTABLE} --version
-            RESULT_VARIABLE result
-            OUTPUT_VARIABLE out
-            ERROR_VARIABLE err)
-    if (result)
-        message(AUTHOR_WARNING "result: ${result}")
-        message(AUTHOR_WARNING "${err}")
-    else()
-        message(STATUS "Python reported version: ${out}")
-    endif()
-
-    unset(result)
-    unset(out)
-    unset(err)
-
-
-    message(STATUS "python found: ${Python_FOUND}")
-    message(STATUS "interpreter found: ${Python_Interpreter_FOUND}")
-    message(STATUS "module found: ${Python_Development.Module_FOUND}")
-    message(STATUS "NumPy found: ${Python_NumPy_FOUND}")
 
 else()
     # Look for Virtual environments first
