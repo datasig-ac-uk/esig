@@ -61,7 +61,7 @@ if (SKBUILD)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
     if (NOT "${Python_INCLUDE_DIR}")
         message(STATUS "Missing Python include dir ${Python_INCLUDE_DIR}")
-        execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "import sysconfig; print(sysconfig.get_path('include')))"
+        execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "import sysconfig; print(sysconfig.get_path('include'))"
                 RESULT_VARIABLE result
                 OUTPUT_VARIABLE out
                 ERROR_VARIABLE err)
