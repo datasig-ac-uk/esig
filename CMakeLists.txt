@@ -60,6 +60,10 @@ if (SKBUILD)
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
 
+    if(NOT IS_ABSOLUTE "${Python_INCLUDE_DIR}")
+        message(STATUS "Include dir not absolute")
+        cmake_path(ABSOLUTE_PATH Python_INCLUDE_DIR)
+    endif()
 
 
     set(CMAKE_FIND_DEBUG_MODE ON)

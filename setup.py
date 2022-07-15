@@ -128,7 +128,7 @@ with io.open("CHANGELOG", "rt") as fp:
 
 CMAKE_SETTINGS = [
     "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON",
-    "-DCMAKE_EXECUTE_PROCESS_COMMAND_ECHO:BOOL=STDERR"
+    "--trace-expand"
 ]
 if platform.system() == "Windows":
     vcpkg = Path("build", "vcpkg")
