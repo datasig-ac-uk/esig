@@ -64,7 +64,9 @@ if (SKBUILD)
         message(STATUS "Include dir not absolute")
         cmake_path(ABSOLUTE_PATH Python_INCLUDE_DIR)
     endif()
-
+    unset(Python_LIBRARY)
+    unset(PYTHON_LIBRARY)
+    unset(Python3_LIBRARY)
 
     set(CMAKE_FIND_DEBUG_MODE ON)
     find_package(Python 3 COMPONENTS Interpreter Development.Module NumPy)
