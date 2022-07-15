@@ -59,10 +59,12 @@ if (SKBUILD)
 
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
+    if (NOT ${Python_INCLUDE_DIR})
+        message(STATUS "Missing Python include dir ${Python_INCLUDE_DIR}")
+    endif()
+
     set(CMAKE_FIND_DEBUG_MODE ON)
-    find_package(Python 3 COMPONENTS Interpreter )
-    find_package(Python 3 COMPONENTS Development.Module)
-    find_package(Python 3 COMPONENTS NumPy)
+    find_package(Python 3 COMPONENTS Interpreter Development.Module NumPy)
     set(CMAKE_FIND_DEBUG_MODE OFF)
 
 
