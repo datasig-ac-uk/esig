@@ -59,23 +59,15 @@ if (SKBUILD)
 
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
-    if (NOT EXISTS "${Python_INCLUDE_DIR}")
-        message(STATUS "Missing Python include dir ${Python_INCLUDE_DIR}")
-        execute_process(COMMAND "${Python_EXECUTABLE}" "-c" "import sysconfig; print(sysconfig.get_path('include'))"
-                RESULT_VARIABLE result
-                OUTPUT_VARIABLE out
-                ERROR_VARIABLE err)
-        if (result)
-            message(STATUS "Python call failed: ${err}")
-        else()
-            message(STATUS "Python include dir: ${out}")
-        endif()
-    endif()
+
+
 
     set(CMAKE_FIND_DEBUG_MODE ON)
     find_package(Python 3 COMPONENTS Interpreter Development.Module NumPy)
     set(CMAKE_FIND_DEBUG_MODE OFF)
-
+    if (NOT _Python_INCLUDE_DIR)
+        message(FATAL_ERROR "_Python_INCLUDE_DIR must be set?!?!?!\n ${_Python_INCLUDE_DIR}")
+    endif ()
 
     message(STATUS "VARIABLES")
     get_cmake_property(_var_names VARIABLES)
