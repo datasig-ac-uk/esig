@@ -60,9 +60,9 @@ if (SKBUILD)
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
     set(CMAKE_FIND_DEBUG_MODE ON)
-    find_package(Python COMPONENTS Interpreter )
-    find_package(Python COMPONENTS Development.Module)
-    find_package(Python COMPONENTS NumPy)
+    find_package(Python 3 COMPONENTS Interpreter )
+    find_package(Python 3 COMPONENTS Development.Module)
+    find_package(Python 3 COMPONENTS NumPy)
     set(CMAKE_FIND_DEBUG_MODE OFF)
 
 
@@ -104,7 +104,7 @@ else()
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
-find_package(Python REQUIRED
+find_package(Python 3 REQUIRED
         COMPONENTS
         Interpreter
         Development.Module
