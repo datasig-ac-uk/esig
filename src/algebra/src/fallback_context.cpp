@@ -55,26 +55,14 @@ Vector<Scalar> construct_vector(
 }
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 } // namespace
 
-
+std::shared_ptr<tensor_basis> esig::algebra::fallback_context::tbasis() const noexcept {
+    return m_tensor_basis;
+}
+std::shared_ptr<lie_basis> esig::algebra::fallback_context::lbasis() const noexcept {
+    return m_lie_basis;
+}
 
 static register_maker_helper<fallback_context_maker> fb_context_maker;
 

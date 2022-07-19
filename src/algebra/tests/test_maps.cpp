@@ -2,6 +2,7 @@
 // Created by sam on 04/07/22.
 //
 
+
 #include <esig/implementation_types.h>
 #include <libalgebra/libalgebra.h>
 #include <libalgebra/vectors/vectors.h>
@@ -134,11 +135,15 @@ TEST_F(DenseMapsTests, TestBracketing) {
     key_type k = 0;
     for (auto tkey : tbasis.iterate_keys_from(typename la_tensor::KEY(alg::LET(1)))) {
         ++k;
+        std::cout << "k " << k << " tkey " << tkey << '\n';
 
         la_lie expected = la_maps.rbraketing(tkey);
+        std::cout << "expected " << expected << '\n';
         la_lie result;
         for (auto r : maps.rbracket(k)) {
+            std::cout << r.first << ' ' << r.second << '\n';
             result.add_scal_prod(r.first, scal_t(r.second));
+            std::cout << "result " << result << '\n';
         }
 
         EXPECT_EQ(result, expected);

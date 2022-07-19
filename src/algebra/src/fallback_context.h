@@ -119,6 +119,9 @@ public:
     const algebra_basis &borrow_tbasis() const noexcept override;
     const algebra_basis &borrow_lbasis() const noexcept override;
 
+    std::shared_ptr<tensor_basis> tbasis() const noexcept;
+    std::shared_ptr<lie_basis> lbasis() const noexcept;
+
     std::shared_ptr<context> get_alike(deg_t new_depth) const override;
     std::shared_ptr<context> get_alike(coefficient_type new_coeff) const override;
     std::shared_ptr<context> get_alike(deg_t new_depth, coefficient_type new_coeff) const override;
@@ -272,7 +275,6 @@ ftensor_type<CType, VType> fallback_context::sig_derivative_impl(const std::vect
 
     return result;
 }
-
 
 }// namespace algebra
 }// namespace esig

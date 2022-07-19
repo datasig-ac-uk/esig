@@ -87,7 +87,7 @@ target_include_directories(esig_algebra_test_lie_basis PRIVATE
         ../include
         ${CMAKE_CURRENT_BINARY_DIR}/../include)
 
-add_executable(esig_algebra_fallback_tests)
+add_executable(esig_algebra_fallback_tests test_tensor_basis.cpp)
 
 target_link_libraries(esig_algebra_fallback_tests PRIVATE
         GTest::gtest_main

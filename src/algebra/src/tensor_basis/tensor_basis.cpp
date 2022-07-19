@@ -97,6 +97,11 @@ bool tensor_basis::letter(const key_type &key) const noexcept
 }
 dimn_t tensor_basis::size(int deg) const noexcept
 {
+    if (deg < 0) {
+        deg = static_cast<int>(m_depth);
+    } else if (deg == 0) {
+        return 1;
+    }
     dimn_t sz = 0;
     for (int i=0; i<=deg; ++i) {
         sz += m_powers->operator[](i);
@@ -106,20 +111,26 @@ dimn_t tensor_basis::size(int deg) const noexcept
 dimn_t tensor_basis::start_of_degree(deg_t deg) const noexcept
 {
     if (deg == 0) return 0;
+    if (deg == 1) return 1;
+    if (deg == 2) return 1 + m_width;
     return size(static_cast<int>(deg)-1);
 }
 key_type tensor_basis::lparent(const key_type &key) const noexcept
 {
     if (key <= m_width) return key;
-    auto pow = m_powers->operator[](degree(key) - 1);
-    auto tmp = 1 + (key - 1) % pow;
-    return (key - tmp) / pow;
+    auto deg = degree(key);
+    auto sod = start_of_degree(deg);
+    auto adjusted = key - sod;
+    auto pow = m_powers->operator[](deg-1);
+    return 1 + (adjusted / pow);
 }
 key_type tensor_basis::rparent(const key_type &key) const noexcept
 {
     if (key <= m_width) return 0;
-    auto pow = m_powers->operator[](degree(key) - 1);
-    return key % pow;
+    auto deg = degree(key);
+    auto adjusted = key - start_of_degree(deg);
+    auto pow = m_powers->operator[](deg - 1);
+    return (adjusted % pow) + start_of_degree(deg-1);
 }
 
 let_t tensor_basis::first_letter(const key_type &key) const noexcept
