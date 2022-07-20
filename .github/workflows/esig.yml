@@ -217,7 +217,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: sdist
-          path: ./*.tar.gz
+          path: dist/*.tar.gz
 
 #      - name: Create GitHub release
 #        run: |
