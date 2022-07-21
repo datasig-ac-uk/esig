@@ -114,6 +114,7 @@ extras_require = {
 
 import io
 
+
 PATH = os.path.dirname(os.path.abspath(__file__))
 
 with io.open(os.path.join(PATH, "src", "esig", "VERSION"), "rt") as fp:
@@ -125,6 +126,7 @@ with io.open(os.path.join(PATH, "README.md"), "rt") as fp:
 
 with io.open(os.path.join(PATH, "CHANGELOG"), "rt") as fp:
     DESCRIPTION += "\n\n\n##Changelog\n" + fp.read()
+
 
 
 CMAKE_SETTINGS = [
