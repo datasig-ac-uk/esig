@@ -115,19 +115,24 @@ extras_require = {
 import io
 
 
-with io.open("src/esig/VERSION", "rt") as fp:
+PATH = os.path.dirname(os.path.abspath(__file__))
+
+with io.open(os.path.join(PATH, "src", "esig", "VERSION"), "rt") as fp:
     VERSION = fp.read()
 
-with io.open("README.md", "rt") as fp:
+with io.open(os.path.join(PATH, "README.md"), "rt") as fp:
     DESCRIPTION = fp.read()
 
-with io.open("CHANGELOG", "rt") as fp:
-    DESCRIPTION += fp.read()
+
+with io.open(os.path.join(PATH, "CHANGELOG"), "rt") as fp:
+    DESCRIPTION += "\n\n\n##Changelog\n" + fp.read()
 
 
 
-CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
-if not platform.system() == "Linux":
+CMAKE_SETTINGS = [
+    "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON",
+]
+if platform.system() == "Windows":
     vcpkg = Path("build", "vcpkg")
     if vcpkg.exists():
         CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
