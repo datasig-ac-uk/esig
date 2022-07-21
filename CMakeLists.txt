@@ -46,17 +46,13 @@ if (NOT EXISTS "${Boost_SYSTEM_LIBRARY_RELEASE}")
 endif ()
 
 set(PYBIND11_FINDPYTHON ON)
-find_package(Python 3 COMPONENTS Interpreter Development.Module NumPy)
 if (NOT PYTHON_FOUND AND SKBUILD)
 #    set(Python_FIND_ABI "ANY" "ANY" "ANY")
 
     message(STATUS "skbuild environment: ${PYTHON_EXECUTABLE}")
-    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}")
-    set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}")
-    set(Python_LIBRARY "${PYTHON_LIBRARY}")
-    message(STATUS "Python executable: ${Python_EXECUTABLE}")
-    message(STATUS "Python include_dir: ${Python_INCLUDE_DIR}")
-    message(STATUS "Python library: ${Python_LIBRARY}")
+#    set(Python_EXECUTABLE "${PYTHON_EXECUTABLE}" CACHE INTERNAL "")
+#    set(Python_INCLUDE_DIR "${PYTHON_INCLUDE_DIR}" CACHE INTERNAL "")
+#    set(Python_LIBRARY "${PYTHON_LIBRARY}" CACHE INTERNAL "")
 #    cmake_path(REMOVE_FILENAME PYTHON_EXECUTABLE OUTPUT_VARIABLE PYTHON_EXE)
 #    cmake_path(APPEND PYTHON_EXE "../")
 #    cmake_path(NORMAL_PATH PYTHON_EXE)
@@ -65,46 +61,27 @@ if (NOT PYTHON_FOUND AND SKBUILD)
 
 #    set(Python_FIND_STRATEGY LOCATION)
 #    set(Python_FIND_UNVERSIONED_NAMES FIRST)
-    cmake_path(GET PYTHON_EXECUTABLE PARENT_PATH _py_bin_dir)
-    cmake_path(GET _py_bin_dir PARENT_PATH Python_ROOT_DIR)
-    unset(_py_bin_dir)
 
+    unset(Python_LIBRARY CACHE)
+    unset(PYTHON_LIBRARY CACHE)
+    unset(Python3_LIBRARY CACHE)
 
-
-    find_package(Python REQUIRED
-        COMPONENTS
-        Interpreter
-        Development
-        NumPy
-        )
-
-elseif(NOT PYTHON_FOUND)
+else()
     # Look for Virtual environments first
     set(Python_FIND_VIRTUALENV FIRST)
     if (EXISTS ${CMAKE_SOURCE_DIR}/venv)
         set(Python_ROOT_DIR "${CMAKE_SOURCE_DIR}/venv")
     endif()
 
-    find_package(Python REQUIRED
-            COMPONENTS
-            Interpreter
-            Development
-            NumPy
-            )
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
-#set(CMAKE_FIND_DEBUG_MODE ON)
-
-execute_process(COMMAND "${Python_EXECUTABLE}" -c "import pybind11; print(pybind11.get_cmake_dir())"
-        OUTPUT_VARIABLE _tmp_dir
-        OUTPUT_STRIP_TRAILING_WHITESPACE COMMAND_ECHO STDOUT)
-message(STATUS "Pybind11 cmake dir: ${_tmp_dir}")
-list(APPEND CMAKE_PREFIX_PATH "${_tmp_dir}")
-unset(_tmp_dir)
-
-#set(CMAKE_FIND_DEBUG_MODE OFF)
-find_package(pybind11 CONFIG REQUIRED)
+find_package(Python 3 REQUIRED
+        COMPONENTS
+        Interpreter
+        Development.Module
+        NumPy
+        )
 
 message(STATUS "Found Python: ${Python_VERSION}")
 message(STATUS "Python executable: ${Python_EXECUTABLE}")

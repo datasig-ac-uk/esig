@@ -2,6 +2,10 @@
     - Added fully featured free tensor and Lie classes.
     - Added path class representing an abstract path object
 
+0.9.8.2 Hotfix 2
+    - Fixed the range of configurations available.
+    - Fixed MANIFEST.in, now reflects the updated project structure.
+
 0.9.8.1 Hotfix
     - Fixed problem caused by reading data in from F-contiguous array
     - Fixed issue with readme on PyPI.

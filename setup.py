@@ -12,19 +12,34 @@ extras_require = {
      "iisignature": ["iisignature"],
 }
 
-with io.open("src/esig/VERSION", "rt") as fp:
-    VERSION = fp.read().strip()
+# eager_resources = []
+#
+# if not configuration.no_recombine and configuration.platform == helpers.PLATFORM.WINDOWS:
+#     package_data["esig"] += [
+#         os.path.join("libiomp5md.dll"),
+#         os.path.join("recombine.dll")
+#     ]
+#     # not sure why this is needed, and if it is, why package_data also needs to mention them
+#     eager_resources += ["libiomp5md.dll", "recombine.dll"]
 
-with io.open("README.md", "rt") as fp:
+PATH = os.path.dirname(os.path.abspath(__file__))
+
+with io.open(os.path.join(PATH, "src", "esig", "VERSION"), "rt") as fp:
+    VERSION = fp.read()
+
+with io.open(os.path.join(PATH, "README.md"), "rt") as fp:
     DESCRIPTION = fp.read()
 
-with io.open("CHANGELOG", "rt") as fp:
-    DESCRIPTION += "\n\nCHANGELOG\n" + fp.read()
+
+with io.open(os.path.join(PATH, "CHANGELOG"), "rt") as fp:
+    DESCRIPTION += "\n\n\n##Changelog\n" + fp.read()
 
 
 
-CMAKE_SETTINGS = ["-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON"]
-if not platform.system() == "Linux":
+CMAKE_SETTINGS = [
+    "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON",
+]
+if platform.system() == "Windows":
     vcpkg = Path("build", "vcpkg")
     if vcpkg.exists():
         CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
