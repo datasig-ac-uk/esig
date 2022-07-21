@@ -1,15 +1,16 @@
 // private headers
 #include "_recombine.h"
 #include <recombine/recombine.h>
-#include "TestVec/RdToPowers.h" // CMultiDimensionalBufferHelper
-#include "TestVec/EvaluateAllMonomials.h" //EvaluateAllMonomials::F
+//#include "TestVec/RdToPowers.h" // CMultiDimensionalBufferHelper
+//#include "TestVec/EvaluateAllMonomials.h" //EvaluateAllMonomials::F
 #include <vector>
 
 void _recombineC(size_t stCubatureDegree, ptrdiff_t dimension, ptrdiff_t no_locations, ptrdiff_t* pno_kept_locations, const void** ppLocationBuffer, double* pdWeightBuffer, size_t* KeptLocations, double* NewWeights)
 {
 	ptrdiff_t& no_kept_locations = *pno_kept_locations;
 	// the required max size of the out buffer needs to be known in advance by the calling routine
-	size_t iNoDimensionsToCubature = EvaluateAllMonomials::F(dimension, stCubatureDegree);
+
+	size_t iNoDimensionsToCubature = RdToPowersCubatureDimension(dimension, stCubatureDegree);
 	if (0 == no_locations)
 	{
 		no_kept_locations = iNoDimensionsToCubature;

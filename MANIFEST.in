@@ -1,0 +1,7 @@
+recursive-include src *.cpp *.h *.c
+include src/esig/VERSION
+include tools/switch_generator.py
+include recombine/_recombine.cpp recombine/_recombine.h
+include CMakeLists.txt
+recursive-include libalgebra *.h CMakeLists.txt *.cmake *.cmake.in README.md
+prune vcpkg
