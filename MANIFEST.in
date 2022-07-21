@@ -1,5 +1,6 @@
 recursive-include src *.cpp *.h *.c
 include src/esig/VERSION
+include CHANGELOG
 include tools/switch_generator.py
 include recombine/_recombine.cpp recombine/_recombine.h
 include CMakeLists.txt
