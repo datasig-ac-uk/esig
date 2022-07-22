@@ -210,6 +210,9 @@ public:
             accuracy_t accuracy,
             const algebra::context &ctx) const;
 
+    algebra::lie log_signature(accuracy_t accuracy) const;
+    algebra::lie log_signature(accuracy_t accuracy, const algebra::context& ctx) const;
+
     algebra::free_tensor signature(
             const interval &domain,
             accuracy_t accuracy) const;
@@ -217,6 +220,9 @@ public:
             const interval &domain,
             accuracy_t accuracy,
             const algebra::context &ctx) const;
+
+    algebra::free_tensor signature(accuracy_t accuracy) const;
+    algebra::free_tensor signature(accuracy_t accuracy, const algebra::context& ctx) const;
 
     algebra::free_tensor
     signature_derivative(const interval &domain,

@@ -60,6 +60,16 @@ algebra::lie path::log_signature(const interval &domain, path::accuracy_t accura
     auto resolution = p_impl->compute_depth(accuracy);
     return p_impl->log_signature(domain, resolution, ctx);
 }
+
+algebra::lie path::log_signature(accuracy_t accuracy) const {
+    return path::log_signature(accuracy, *get_default_context());
+}
+algebra::lie path::log_signature(accuracy_t accuracy, const algebra::context &ctx) const {
+    auto resolution = p_impl->compute_depth(accuracy);
+    auto domain = p_impl->metadata().effective_domain;
+    return p_impl->log_signature(domain, resolution, ctx);
+}
+
 algebra::free_tensor path::signature(const interval &domain, path::accuracy_t accuracy) const
 {
     auto ctx = get_default_context();
@@ -71,6 +81,15 @@ algebra::free_tensor path::signature(const interval &domain, path::accuracy_t ac
     auto resolution = p_impl->compute_depth(accuracy);
     return p_impl->signature(domain, resolution, ctx);
 }
+algebra::free_tensor path::signature(accuracy_t accuracy) const {
+    return path::signature(accuracy, *get_default_context());
+}
+algebra::free_tensor path::signature(accuracy_t accuracy, const algebra::context &ctx) const {
+    auto resolution = p_impl->compute_depth(accuracy);
+    auto domain = p_impl->metadata().effective_domain;
+    return p_impl->signature(domain, resolution, ctx);
+}
+
 algebra::free_tensor path::signature_derivative(const interval &domain, const algebra::lie &perturbation, path::accuracy_t accuracy) const
 {
     auto ctx = get_default_context();
