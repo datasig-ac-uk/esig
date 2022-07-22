@@ -11,6 +11,16 @@ from esig.common import recombine
 from esig.algebra import get_context
 from esig.paths import Stream, LieIncrementPath
 
+__all__ = [
+    "recombine",
+    "stream2sig",
+    "stream2logsig",
+    "sigdim",
+    "logsigdim",
+    "sigkeys",
+    "logsigkeys"
+]
+
 
 def stream2sig(stream, signature_degree):
     """
