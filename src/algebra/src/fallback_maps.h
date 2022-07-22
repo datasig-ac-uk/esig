@@ -161,8 +161,14 @@ maps::cbh(InputIt begin, InputIt end) const {
     using scal_t = typename lie_t::scalar_type;
     using tensor_t = dtl::matching_tensor<lie_t>;
 
-    tensor_t tmp(p_tensor_basis, scal_t(1));
-    for (auto it = begin; it != end; ++it) {
+    if (begin == end) {
+        return lie_t(p_lie_basis);
+    }
+
+    InputIt it = begin;
+    auto tmp = exp(lie_to_tensor<lie_t, tensor_t>(*it));
+    ++it;
+    for (; it != end; ++it) {
         tmp.fmexp_inplace(lie_to_tensor<lie_t, tensor_t>(*it));
     }
     return tensor_to_lie<lie_t, tensor_t>(log(tmp));
