@@ -9,7 +9,7 @@ import numpy
 
 import esig.algebra
 from esig.algebra import get_context
-from esig.paths import Path, LieIncrementPath
+from esig.paths import Stream, LieIncrementPath
 
 try:
     import iisignature
@@ -124,11 +124,11 @@ class LibalgebraBackend(BackendBase):
         return "LibalgebraBackend"
 
     def compute_signature(self, stream, depth):
-        path = Path(numpy.diff(stream, axis=0), depth=depth, type=LieIncrementPath)
+        path = Stream(numpy.diff(stream, axis=0), depth=depth, type=LieIncrementPath)
         return numpy.array(path.signature(0.0, stream.shape[0]+1, 0.1))
 
     def compute_log_signature(self, stream, depth):
-        path = Path(numpy.diff(stream, axis=0), depth=depth, type=LieIncrementPath)
+        path = Stream(numpy.diff(stream, axis=0), depth=depth, type=LieIncrementPath)
         return numpy.array(path.log_signature(0.0, stream.shape[0]+1, 0.1))
 
     def log_sig_keys(self, dimension, depth):
