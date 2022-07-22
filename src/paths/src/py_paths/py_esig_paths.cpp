@@ -158,7 +158,7 @@ PYBIND11_MODULE(_paths, m) {
 //    py::module_ common_mod = py::module_::import("esig.common");
 //    py::module_ algebra_mod = py::module_::import("esig.algebra");
 
-    py::class_<paths::path> path_class(m, "Path", PATH_DOC);
+    py::class_<paths::path> path_class(m, "Stream", PATH_DOC);
 
     path_class.def(py::init(&paths::py_path_constructor));
 
@@ -185,6 +185,11 @@ PYBIND11_MODULE(_paths, m) {
                    "lower"_a,
                    "upper"_a,
                    "accuracy"_a);
+    auto free_lsig = [](const paths::path& self, accuracy_t accuracy) {
+        return self.log_signature(accuracy);
+    };
+    path_class.def("log_signature", std::move(free_lsig), "accuracy"_a);
+
 
     auto interval_sig = [](const paths::path& self,
                            interval& domain,
@@ -208,6 +213,12 @@ PYBIND11_MODULE(_paths, m) {
                    "lower"_a,
                    "upper"_a,
                    "accuracy"_a);
+
+    auto free_sig = [](const paths::path& self, accuracy_t accuracy) {
+        return self.signature(accuracy);
+    };
+    path_class.def("signature", std::move(free_sig), "accuracy"_a);
+
 
     auto interval_sigder = [](const paths::path& self,
                               interval& domain,
