@@ -295,7 +295,9 @@ public:
     {
         assert(key < m_basis->size(m_basis->depth()));
         if (key >= m_data.size()) {
-            m_data.resize(m_basis->size(m_basis->degree(key)));
+            auto deg = m_basis->degree(key);
+            m_data.resize(m_basis->size(deg));
+            m_degree = deg;
         }
         m_data[key] += scal;
         return *this;
@@ -422,6 +424,11 @@ private:
             deg_t max_depth
             ) noexcept
     {
+
+        if (rhs.m_data.empty()) {
+            return;
+        }
+
         const auto &powers = dynamic_cast<const tensor_basis &>(*lhs.m_basis).powers();
 
         auto old_lhs_deg = lhs.m_degree;
@@ -442,7 +449,7 @@ private:
 
 
         for (int out_deg = static_cast<int>(max_depth); out_deg > 0; --out_deg) {
-            int lhs_max_deg = std::min(out_deg - offset, static_cast<int>(lhs.m_degree));
+            int lhs_max_deg = std::min(out_deg - offset, static_cast<int>(old_lhs_deg));
             int lhs_min_deg = std::max(0, out_deg - static_cast<int>(rhs.m_degree));
             bool assign = true;
 
@@ -568,12 +575,11 @@ public:
 
         x.m_data[0] = Scalar(0);
 
-        for (deg_t d=0; d < max_depth; ++d) {
-            auto D = max_depth - d;
-            if ((D & 1) == 0) {
-                result.m_data[0] -= Scalar(1) / D;
+        for (deg_t d=max_depth; d >= 1; --d) {
+            if ((d & 1) == 0) {
+                result.m_data[0] -= Scalar(1) / d;
             } else {
-                result.m_data[0] += Scalar(1) / D;
+                result.m_data[0] += Scalar(1) / d;
             }
             result *= x;
         }
@@ -597,8 +603,8 @@ public:
 
         x.m_data[0] = Scalar(0);
 
-        for (deg_t d=0; d < max_depth; ++d) {
-            mul_scal_div(x, Scalar(max_depth-d), d+1);
+        for (deg_t d=max_depth; d >= 1; --d) {
+            mul_scal_div(x, Scalar(d), max_depth - d + 1);
             *this += self;
         }
 
