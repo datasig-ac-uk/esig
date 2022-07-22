@@ -10,7 +10,7 @@ include(GenerateExportHeader)
 
 
 
-add_library(esig_paths SHARED)
+add_library(esig_paths SHARED )
 
 #add_library(esig_paths SHARED )
 #pybind11_extension(esig_paths)
@@ -51,6 +51,8 @@ target_sources(esig_paths
             src/lie_increment_path.cpp
             src/dynamically_generated_path.h
             src/dynamically_generated_path.cpp
+            src/piecewise_lie_path.h
+            src/piecewise_lie_path.cpp
             src/dyadic_caching_layer.cpp
             src/tick_path.h
             src/tick_path.cpp
