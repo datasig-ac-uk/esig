@@ -115,6 +115,18 @@ TEST_P(TensorFixture, TestTensorSubtractionDenseData) {
 //
 //}
 
+TEST_P(TensorFixture, TestFMExpInplace) {
+    auto tensor_size = ctx->tensor_size(ctx->depth());
+    auto d1 = random_dense_data(tensor_size);
+    auto d2 = random_dense_data(tensor_size);
+
+    auto l1 = make_tensor_dense_data(d1);
+    const auto l2 = make_tensor_dense_data(d2);
+
+    const auto result = l1.fmexp()
+
+}
+
 
 INSTANTIATE_TEST_CASE_P(TensorTests, TensorFixture,
                         ::testing::Combine(

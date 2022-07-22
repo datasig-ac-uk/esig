@@ -19,8 +19,8 @@
 #include <gtest/gtest.h>
 
 using namespace esig;
-constexpr deg_t WIDTH = 5;
-constexpr deg_t DEPTH = 5;
+constexpr deg_t WIDTH = 3;
+constexpr deg_t DEPTH = 2;
 
 
 class MapsTests : public ::testing::Test
@@ -135,23 +135,68 @@ TEST_F(DenseMapsTests, TestBracketing) {
     key_type k = 0;
     for (auto tkey : tbasis.iterate_keys_from(typename la_tensor::KEY(alg::LET(1)))) {
         ++k;
-        std::cout << "k " << k << " tkey " << tkey << '\n';
 
         la_lie expected = la_maps.rbraketing(tkey);
-        std::cout << "expected " << expected << '\n';
         la_lie result;
         for (auto r : maps.rbracket(k)) {
-            std::cout << r.first << ' ' << r.second << '\n';
             result.add_scal_prod(r.first, scal_t(r.second));
-            std::cout << "result " << result << '\n';
         }
 
         EXPECT_EQ(result, expected);
     }
+}
+
+bool operator==(const std::vector<std::pair<key_type, int>>& l, const std::vector<std::pair<key_type, int>>& r) noexcept
+{
+    auto lit = l.begin();
+    auto rit = r.begin();
+    for (; lit != l.end(), rit != r.end(); ++lit, ++rit) {
+        if (lit->first != rit->first || lit->second != rit->second) {
+            return false;
+        }
+    }
+    return lit == l.end() && rit == r.end();
+}
 
 
+TEST_F(DenseMapsTests, TestExpandLkey) {
+    using vlie_t = std::vector<std::pair<key_type, int>>;
+    std::vector<vlie_t> results;
+    auto lsize = lie_basis->size(-1);
+    results.reserve(lsize+1);
+    results.push_back({{0, 0}});
+
+
+    auto tkey_mul = [this](key_type k1, key_type k2) {
+        auto deg = tensor_basis->degree(k2);
+        auto pow = tensor_basis->powers()[deg];
+        return k1*pow + k2;
+    };
+
+    auto commutator = [this, tkey_mul](const vlie_t& lhs, const vlie_t& rhs) {
+        std::map<key_type, int> tmp;
+        for (const auto& litem : lhs) {
+            for (const auto& ritem : rhs) {
+                tmp[tkey_mul(litem.first, ritem.first)] += litem.second*ritem.second;
+                tmp[tkey_mul(ritem.first, litem.first)] -= ritem.second*litem.second;
+            }
+        }
+        return vlie_t(tmp.begin(), tmp.end());
+    };
+
+    for (key_type k=1; k <= WIDTH; ++k) {
+        results.push_back({{k, 1}});
+        ASSERT_EQ(results.back(), maps.expand(k));
+    }
+
+    for (key_type k=WIDTH+1; k <= lsize; ++k) {
+        results.push_back(commutator(results[lie_basis->lparent(k)], results[lie_basis->rparent(k)]));
+        ASSERT_EQ(results.back(), maps.expand(k));
+    }
 
 }
+
+
 
 
 

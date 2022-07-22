@@ -364,3 +364,17 @@ TEST_F(DenseTensorTests, TestFMExp)
 
     ASSERT_TRUE(TensorsEqual(t1, et1));
 }
+
+TEST_F(DenseTensorTests, TestFMExpVsExp) {
+    auto rd1 = random_data();
+    auto rd2 = random_data();
+    rd2[0] = scal_t(0);
+
+    tensor t1(basis, rd1.data(), rd1.data() + rd1.size());
+    tensor t2(basis, rd2.data(), rd2.data() + rd2.size());
+
+    auto et1 = t1 * exp(t2);
+    t1.fmexp_inplace(t2);
+
+    ASSERT_EQ(t1, et1);
+}
