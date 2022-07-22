@@ -32,7 +32,7 @@ with io.open(os.path.join(PATH, "README.md"), "rt") as fp:
 
 
 with io.open(os.path.join(PATH, "CHANGELOG"), "rt") as fp:
-    DESCRIPTION += "\n\n\n##Changelog\n" + fp.read()
+    DESCRIPTION += "\n\n\n## Changelog\n" + fp.read()
 
 
 
