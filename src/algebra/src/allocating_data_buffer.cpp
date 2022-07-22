@@ -15,8 +15,8 @@ allocating_data_buffer::allocating_data_buffer(const allocating_data_buffer &oth
     auto begin = other.data_begin;
     auto end = other.data_end;
     m_size = static_cast<size_type>(end - begin) / m_alloc->item_size();
-    assert(begin != nullptr && end != nullptr && begin != end);
-    assert(m_size > 0);
+//    assert(begin != nullptr && end != nullptr && begin != end);
+//    assert(m_size > 0);
     data_begin = m_alloc->allocate(m_size);
     if (data_begin != nullptr) {
         data_end = data_begin + static_cast<size_type>(end - begin);
@@ -34,8 +34,9 @@ allocating_data_buffer::allocating_data_buffer(allocating_data_buffer &&other) n
 allocating_data_buffer::allocating_data_buffer(allocating_data_buffer::allocator_type alloc, data_buffer::size_type n)
     : data_buffer(nullptr, nullptr, false), m_alloc(std::move(alloc)), m_size(n)
 {
-    assert(m_size > 0);
-    data_begin = m_alloc->allocate(n);
+    if (m_size > 0) {
+        data_begin = m_alloc->allocate(n);
+    }
     if (data_begin) {
         data_end = data_begin + n*m_alloc->item_size();
     }
@@ -44,8 +45,8 @@ allocating_data_buffer::allocating_data_buffer(allocating_data_buffer::allocator
     : data_buffer(nullptr, nullptr, false), m_alloc(std::move(alloc))
 {
     m_size = static_cast<size_type>(end - begin) / m_alloc->item_size();
-    assert(begin != nullptr && end != nullptr && begin != end);
-    assert(m_size > 0);
+//    assert(begin != nullptr && end != nullptr && begin != end);
+//    assert(m_size > 0);
     data_begin = m_alloc->allocate(m_size);
     if (data_begin != nullptr) {
         data_end = data_begin + static_cast<size_type>(end - begin);
