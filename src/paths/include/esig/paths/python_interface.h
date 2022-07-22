@@ -17,8 +17,11 @@ namespace paths {
 
 using path_constructor = std::function<path(const pybind11::args &, const pybind11::kwargs &)>;
 
-
+ESIG_PATHS_EXPORT
 void register_pypath_constructor(const pybind11::type &tp, path_constructor &&ctor);
+
+ESIG_PATHS_EXPORT
+path_metadata process_kwargs_to_metadata(const pybind11::kwargs& kwargs);
 
 
 }// namespace paths

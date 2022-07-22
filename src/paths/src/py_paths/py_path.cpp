@@ -9,7 +9,7 @@
 #include "py_lie_increment_path.h"
 #include "py_tick_path.h"
 #include "py_path.h"
-
+#include "py_piecewise_lie_path.h"
 
 #include <mutex>
 
@@ -92,6 +92,7 @@ void esig::paths::init_python_path_interface(pybind11::module_ &m)
     init_lie_increment_path(m);
     init_py_function_path(m);
     init_tick_path(m);
+    init_piecewise_lie_path(m);
 }
 
 
