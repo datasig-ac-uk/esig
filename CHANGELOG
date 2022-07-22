@@ -1,45 +1,45 @@
 1.0.0
-    - Added fully featured free tensor and Lie classes.
-    - Added path class representing an abstract path object
+  - Added fully featured free tensor and Lie classes.
+  - Added path class representing an abstract path object
 
 0.9.8.3 Hotfix 2
-    - Fixed the range of configurations available.
-    - Fixed MANIFEST.in, now reflects the updated project structure.
+  - Fixed the range of configurations available.
+  - Fixed MANIFEST.in, now reflects the updated project structure.
 
 0.9.8.1 Hotfix
-    - Fixed problem caused by reading data in from F-contiguous array
-    - Fixed issue with readme on PyPI.
+  - Fixed problem caused by reading data in from F-contiguous array
+  - Fixed issue with readme on PyPI.
 
 0.9.8
-    - Added support for Python3.10.
-    - Updated build system to use cibuildwheel in Github actions.
-    - Updated libalgebra to benefit from improvements to performance
-    - Deprecated tosig submodule. The functions formerly from this module are available
-      via the top-level esig module. The tosig module will be removed in version 1.0.
-    - Removed builds on 32-bit Linux for Python 3.8+. There is no Numpy wheels on this
-      architecture for these versions of Python.
+  - Added support for Python3.10.
+  - Updated build system to use cibuildwheel in Github actions.
+  - Updated libalgebra to benefit from improvements to performance
+  - Deprecated tosig submodule. The functions formerly from this module are available
+    via the top-level esig module. The tosig module will be removed in version 1.0.
+  - Removed builds on 32-bit Linux for Python 3.8+. There is no Numpy wheels on this
+    architecture for these versions of Python.
 
 0.9.0
-    - Switched Linux support to manylinux2010
-    - Support for 32-bit platforms
+  - Switched Linux support to manylinux2010
+  - Support for 32-bit platforms
 
 0.8.2
-    - Added builds for Python3.9
-    - Updated README
+  - Added builds for Python3.9
+  - Updated README
 
 0.8.1
-    - Minor fixes to build routine
+  - Minor fixes to build routine
 
 0.8.0
-    - Added Python interface in the package root to computation backends
-    - Added iisignature backend to allow computation of signatures using the iisignature package
-    - Added support for computing depth 1 signatures and logsignatures
-    - Added new unit tests.
-    - Made some changes to the build script
-    - Added Python 3.9 build target
+  - Added Python interface in the package root to computation backends
+  - Added iisignature backend to allow computation of signatures using the iisignature package
+  - Added support for computing depth 1 signatures and logsignatures
+  - Added new unit tests.
+  - Made some changes to the build script
+  - Added Python 3.9 build target
 
 0.7.4
-    - Fixed message displayed for Python versions below 3.8 when importing esig
+  - Fixed message displayed for Python versions below 3.8 when importing esig
 
 0.7.3
-    - Added recombine function
+  - Added recombine function
