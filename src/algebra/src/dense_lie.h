@@ -287,8 +287,7 @@ public:
 
     dense_lie& add_scal_prod(key_type key, Scalar scal)
     {
-        auto max = m_basis->size(m_basis->depth());
-        assert(key < max);
+        assert(key <= m_basis->size(m_basis->depth()));
         if (key >= m_data.size()) {
             m_data.resize(m_basis->size(m_basis->degree(key)));
         }
