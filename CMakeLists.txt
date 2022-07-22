@@ -89,7 +89,7 @@ message(STATUS "Python directory: ${Python_INCLUDE_DIRS}")
 message(STATUS "Numpy version: ${Python_NumPy_VERSION}")
 message(STATUS "Numpy includes: ${Python_NumPy_INCLUDE_DIRS}")
 
-
+find_package(pybind11 CONFIG REQUIRED)
 
 #find_package(recombine CONFIG QUIET))
 
@@ -123,5 +123,10 @@ add_subdirectory(src)
 
 
 
-add_custom_target(esig
-        DEPENDS esig_common py_esig_common esig_algebra py_esig_algebra esig_paths py_esig_paths)
+add_custom_target(esig DEPENDS
+        esig_common
+        py_esig_common
+        esig_algebra
+        py_esig_algebra
+        esig_paths
+        py_esig_paths)
