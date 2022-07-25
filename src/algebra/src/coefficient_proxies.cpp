@@ -54,6 +54,8 @@ coefficient::coefficient(param_t arg, coefficient_type ctype)
 coefficient::coefficient(long n, long d, coefficient_type ctype)
 {
 }
+coefficient::coefficient(long long int n, long long int d, coefficient_type ctype) {
+}
 coefficient::coefficient(std::shared_ptr<coefficient_interface> &&arg)
     : p_impl(std::move(arg))
 {

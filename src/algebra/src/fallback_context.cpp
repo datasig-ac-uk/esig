@@ -46,7 +46,6 @@ Vector<Scalar> construct_vector(
         auto ptr = reinterpret_cast<const std::pair<key_type, Scalar>*>(data.begin());
         auto end = reinterpret_cast<const std::pair<key_type, Scalar>*>(data.end());
         for (; ptr != end; ++ptr) {
-
             result[ptr->first] = ptr->second;
         }
 

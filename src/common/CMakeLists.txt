@@ -62,12 +62,14 @@ target_include_directories(esig_common PUBLIC
 pybind11_add_module(py_esig_common MODULE WITH_SOABI)
 set_target_properties(py_esig_common PROPERTIES
         LIBRARY_OUTPUT_NAME common
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../esig"
 #        INSTALL_RPATH $ORIGIN
         )
 
 
 
 target_include_directories(py_esig_common PUBLIC
+
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/recombine>"

@@ -200,6 +200,7 @@ public:
     template<typename Impl>
     explicit path(Impl &&p);
 
+    const path_metadata& metadata() const noexcept;
 
     algebra::lie log_signature(
             const interval &domain,

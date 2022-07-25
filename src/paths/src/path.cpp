@@ -143,7 +143,9 @@ const path_interface &path_base_access::get(const path &p) noexcept
     return *p.p_impl;
 }
 
-
+const path_metadata& path::metadata() const noexcept {
+    return p_impl->metadata();
+}
 
 }// namespace paths
 }// namespace esig

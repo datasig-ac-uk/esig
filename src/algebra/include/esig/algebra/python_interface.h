@@ -66,6 +66,20 @@ public:
 
 };
 
+struct py_vector_construction_helper
+{
+    std::shared_ptr<context> ctx = nullptr;
+    deg_t width = 0;
+    deg_t depth = 0;
+    coefficient_type ctype = coefficient_type::dp_real;
+    vector_type vtype = vector_type::dense;
+    bool ctype_requested;
+    bool vtype_requested;
+};
+
+ESIG_ALGEBRA_EXPORT
+py_vector_construction_helper kwargs_to_construction_data(const pybind11::kwargs& kwargs);
+
 
 //namespace dtl {
 //

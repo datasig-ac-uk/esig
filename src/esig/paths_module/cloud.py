@@ -3,9 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-from esig.common import interval, real_interval
+from esig.common import Interval, RealInterval
 from esig.algebra import get_context, Lie, FreeTensor
-from esig._paths import path
+from esig._paths import Stream, LieIncrementPath
 
 
 class StreamCloud:
@@ -20,7 +20,7 @@ class StreamCloud:
             assert data.ndim == 3
             self.width = width or data.shape[1]
             self.num_streams = data.shape[2]
-            self.streams = [path(data[:, :, i], depth=self.default_depth, width=width, **path_kwargs)
+            self.streams = [Stream(data[:, :, i], depth=self.default_depth, width=width, type=LieIncrementPath, **path_kwargs)
                             for i in range(self.num_streams)]
 
         else:
@@ -28,9 +28,9 @@ class StreamCloud:
 
     @classmethod
     def _get_interval(cls, itvl, upper):
-        if not isinstance(itvl, interval):
+        if not isinstance(itvl, Interval):
             assert upper is not None
-            itvl = real_interval(lower=itvl, upper=upper)
+            itvl = RealInterval(lower=itvl, upper=upper)
         return itvl
 
     def signature(self, interval, upper=None, *, depth=None, njobs=None):
@@ -60,7 +60,7 @@ class StreamCloud:
     def mean_signature(self, interval, upper=None, *, depth=None):
         depth = depth or self.default_depth
         interval = self._get_interval(interval, upper)
-        zero_tensor = tensor(width=self.width, depth=depth)
+        zero_tensor = FreeTensor(width=self.width, depth=depth)
 
         if self.num_streams == 0:
             return zero_tensor
@@ -71,7 +71,7 @@ class StreamCloud:
     def mean_log_signature(self, interval, upper=None, *, depth=None):
         depth = depth or self.default_depth
         interval = self._get_interval(interval, upper)
-        zero_lie = lie(width=self.width, depth=depth)
+        zero_lie = Lie(width=self.width, depth=depth)
 
         if self.num_streams == 0:
             return zero_lie

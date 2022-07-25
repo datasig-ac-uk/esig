@@ -63,6 +63,7 @@ target_sources(esig_paths
 pybind11_add_module(py_esig_paths MODULE WITH_SOABI)
 set_target_properties(py_esig_paths PROPERTIES
         LIBRARY_OUTPUT_NAME _paths
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../esig"
         )
 
 target_sources(py_esig_paths PRIVATE

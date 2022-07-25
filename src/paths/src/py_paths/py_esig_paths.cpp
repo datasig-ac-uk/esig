@@ -162,6 +162,9 @@ PYBIND11_MODULE(_paths, m) {
 
     path_class.def(py::init(&paths::py_path_constructor));
 
+    path_class.def_property_readonly("width", [](const paths::path& self) { return self.metadata().width; });
+
+
     auto interval_lsig =
             [](const paths::path &self, const interval &domain, accuracy_t acc) -> esig::algebra::lie
     {

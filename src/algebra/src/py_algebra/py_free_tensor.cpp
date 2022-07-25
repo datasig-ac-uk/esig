@@ -65,47 +65,102 @@ constexpr B log(I arg, B base) noexcept
     return (arg < static_cast<I>(base)) ? 0 : (1 + log(arg/static_cast<I>(base), base));
 }
 
+namespace {
 
-esig::algebra::free_tensor ft_from_buffer(const py::buffer& buf,
-                                          const esig::algebra::context& ctx,
-                                          const py::object& ovtype
-                                          )
+template <coefficient_type CType>
+void convert_buffer(std::vector<char>& buffer, const py::buffer_info& info)
 {
+    using scalar_type = esig::algebra::type_of_coeff<CType>;
+    buffer.resize(sizeof(scalar_type)*info.size);
+    auto* out = reinterpret_cast<scalar_type*>(buffer.data());
+    const auto* ptr = reinterpret_cast<const char*>(info.ptr);
 
-    auto info = buf.request();
-
-    if (info.ndim != 1) {
-        throw std::invalid_argument("data has invalid shape");
+    for (dimn_t i=0; i<info.size; ++i)  {
+        if (info.format[0] == 'f') {
+            out[i] = scalar_type(*reinterpret_cast<const float*>(ptr + i*info.itemsize));
+        } else if (info.format[0] == 'd') {
+            out[i] = scalar_type(*reinterpret_cast<const double*>(ptr + i*info.itemsize));
+        }
     }
+}
 
-    if (ctx.tensor_size(-1) < info.size) {
-        throw std::invalid_argument("data depth exceeds maximum depth");
-    }
 
-    coefficient_type ctype;
-    if (info.format == "f") {
-        ctype = coefficient_type::sp_real;
-    } else if (info.format == "d") {
-        ctype = coefficient_type::dp_real;
+void convert_buffer(std::vector<char>& buffer, const py::buffer_info& info, coefficient_type ctype)
+{
+#define ESIG_SWITCH_FN(CTYPE) convert_buffer<CTYPE>(buffer, info)
+    ESIG_MAKE_CTYPE_SWITCH(ctype)
+#undef ESIG_SWITCH_FN
+}
+
+}
+
+
+esig::algebra::free_tensor ft_from_buffer(const py::object& buf, const py::kwargs& kwargs)
+{
+    auto helper = esig::algebra::kwargs_to_construction_data(kwargs);
+    const auto ctx = helper.ctx;
+
+    const char* begin_ptr = nullptr, *end_ptr = nullptr;
+
+    coefficient_type ctype = helper.ctype;
+    dimn_t itemsize = 1;
+    std::vector<char> buffer;
+
+    if (!buf.is_none()) {
+        auto info = buf.cast<py::buffer>().request();
+
+        if (info.ndim != 1) {
+            throw std::invalid_argument("data has invalid shape");
+        }
+
+        if (helper.ctx && helper.ctx->tensor_size(-1) < info.size) {
+            throw std::invalid_argument("data depth exceeds maximum depth");
+        }
+
+        coefficient_type input_ctype;
+        if (info.format == "f") {
+            input_ctype = coefficient_type::sp_real;
+        } else if (info.format == "d") {
+            input_ctype = coefficient_type::dp_real;
+        } else {
+            throw py::type_error("Unsupported data type");
+        }
+
+        begin_ptr = reinterpret_cast<const char *>(info.ptr);
+        end_ptr = reinterpret_cast<const char *>(info.ptr) + info.size * info.itemsize;
+
+        itemsize = info.itemsize;
+        if (input_ctype != ctype) {
+            if (helper.ctype_requested) {
+               convert_buffer(buffer, info, helper.ctype);
+               begin_ptr = buffer.data();
+               end_ptr = begin_ptr + buffer.size();
+            } else {
+                helper.ctype = input_ctype;
+            }
+        }
+
+        if (!helper.ctx) {
+            // There isn't a lot we can do here. Any attempt to find
+            // both width and depth is doomed to fail, so let's assume
+            // the size of the buffer is 1 + W.
+            helper.width = info.size - 1;
+            helper.depth = 1;
+            helper.ctx = esig::algebra::get_context(helper.width, helper.depth, helper.ctype);
+        }
     } else {
-        throw std::invalid_argument("unexpected data type");
-    }
-
-    vector_type vtype;
-    if (ovtype.is_none()) {
-        vtype = vector_type::dense;
-    } else {
-        vtype = ovtype.cast<vector_type>();
+        if (!helper.ctx) {
+            throw py::value_error("cannot construct free tensor without "
+                                  "data or width/depth/coefficient types");
+        }
     }
 
     esig::algebra::vector_construction_data data(
-            reinterpret_cast<const char*>(info.ptr),
-            reinterpret_cast<const char*>(info.ptr) + info.size*info.itemsize,
-            ctype, vtype, esig::algebra::input_data_type::value_array,
-            info.itemsize
-            );
-
-    return ctx.construct_tensor(data);
+        begin_ptr, end_ptr,
+        helper.ctype, helper.vtype, esig::algebra::input_data_type::value_array,
+        itemsize
+    );
+    return helper.ctx->construct_tensor(data);
 }
 
 void init_free_tensor_iterator(py::module& m)
@@ -123,10 +178,10 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
 
     pybind11::class_<free_tensor> klass(m, "FreeTensor", FREE_TENSOR_DOC);
 
-    klass.def(py::init(&ft_from_buffer), "data"_a, "context"_a, "vector_type"_a=py::none());
+    klass.def(py::init(&ft_from_buffer), "data"_a=py::none());
 
     klass.def_property_readonly("width", &free_tensor::width);
-    klass.def_property_readonly("depth", &free_tensor::depth);
+    klass.def_property_readonly("max_degree", &free_tensor::depth);
     klass.def_property_readonly("dtype", &free_tensor::coeff_type);
     klass.def_property_readonly("storage_type", &free_tensor::storage_type);
 
@@ -151,11 +206,43 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
     klass.def("__rmul__", [](const free_tensor& self, const coefficient& other) { return self.smul(other); },
             py::is_operator());
 
+    klass.def("__mul__", [](const free_tensor& self, scalar_t arg) {
+             return self.smul(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__rmul__", [](const free_tensor& self, scalar_t arg) {
+             return self.smul(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__mul__", [](const free_tensor& self, long long arg) {
+             return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+    klass.def("__rmul__", [](const free_tensor& self, long long arg) {
+             return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+    klass.def("__truediv__", [](const free_tensor& self, scalar_t arg) {
+             return self.sdiv(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__truediv__", [](const free_tensor& self, long long arg) {
+             return self.sdiv(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+
     klass.def("__iadd__", &free_tensor::add_inplace, py::is_operator());
     klass.def("__isub__", &free_tensor::sub_inplace, py::is_operator());
     klass.def("__imul__", &free_tensor::smul_inplace, py::is_operator());
     klass.def("__itruediv__", &free_tensor::sdiv_inplace, py::is_operator());
     klass.def("__imul__", &free_tensor::mul_inplace, py::is_operator());
+
+    klass.def("__imul__", [](free_tensor& self, scalar_t arg) {
+             return self.smul_inplace(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__imul__", [](free_tensor& self, long long arg) {
+             return self.smul_inplace(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+    klass.def("__itruediv__", [](free_tensor& self, scalar_t arg) {
+             return self.sdiv_inplace(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__itruediv__", [](free_tensor& self, long long arg) {
+             return self.sdiv_inplace(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
 
     klass.def("add_scal_mul", &free_tensor::add_scal_mul, "other"_a, "scalar"_a);
     klass.def("sub_scal_mul", &free_tensor::sub_scal_mul, "other"_a, "scalar"_a);

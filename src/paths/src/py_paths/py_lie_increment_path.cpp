@@ -139,7 +139,10 @@ path construct_path_impl(const py::args& args, const py::kwargs& kwargs)
     std::vector<param_t> indices;
 
     if (kwargs.contains("indices")) {
-        indices = kwargs["indices"].cast<std::vector<param_t>>();
+        const auto pyindices = kwargs["indices"].cast<py::array_t<param_t, py::array::forcecast>>();
+
+        const param_t* ptr = pyindices.data();
+        indices = std::vector<param_t>(ptr, ptr+pyindices.size());
         if (indices.size() != helper.length()) {
             throw py::value_error("indices length must match length of paths");
         }

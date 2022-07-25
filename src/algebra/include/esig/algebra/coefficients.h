@@ -182,6 +182,7 @@ public:
     explicit coefficient(param_t arg);
     coefficient(param_t arg, coefficient_type ctype);
     coefficient(long n, long d, coefficient_type ctype);
+    coefficient(long long n, long long d, coefficient_type ctype);
 
     template<typename C>
     explicit coefficient(C arg);

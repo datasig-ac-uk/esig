@@ -92,7 +92,10 @@ target_sources(esig_algebra
 
 pybind11_add_module(py_esig_algebra MODULE WITH_SOABI)
 
-set_target_properties(py_esig_algebra PROPERTIES LIBRARY_OUTPUT_NAME algebra)
+set_target_properties(py_esig_algebra PROPERTIES
+        LIBRARY_OUTPUT_NAME algebra
+        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../esig")
+
 
 target_include_directories(py_esig_algebra PRIVATE
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
@@ -116,6 +119,7 @@ target_sources(py_esig_algebra PRIVATE
         src/py_algebra/py_tensor_key_iterator.cpp
         src/py_algebra/py_lie_key_iterator.h
         src/py_algebra/py_lie_key_iterator.cpp
+        src/py_algebra/kwargs_parser.cpp
         include/esig/algebra/python_interface.h
         src/py_algebra/dtype_from.cpp
         src/py_algebra/py_keys.h
