@@ -5,6 +5,7 @@
 
 
 #include <cassert>
+#include <utility>
 
 namespace esig {
 namespace algebra {
@@ -37,7 +38,7 @@ allocating_data_buffer::allocating_data_buffer(allocating_data_buffer::allocator
     if (m_size > 0) {
         data_begin = m_alloc->allocate(n);
     }
-    if (data_begin) {
+    if (data_begin != nullptr) {
         data_end = data_begin + n*m_alloc->item_size();
     }
 }
@@ -55,7 +56,7 @@ allocating_data_buffer::allocating_data_buffer(allocating_data_buffer::allocator
 }
 allocating_data_buffer::~allocating_data_buffer()
 {
-    if (data_begin) {
+    if (data_begin != nullptr) {
         m_alloc->deallocate(data_begin, m_size);
     }
     data_begin = nullptr;
@@ -65,6 +66,24 @@ allocating_data_buffer::~allocating_data_buffer()
 typename data_buffer::size_type allocating_data_buffer::item_size() const noexcept
 {
     return m_alloc->item_size();
+}
+
+void allocating_data_buffer::set_allocator_and_alloc(std::shared_ptr<data_allocator> &&alloc, dimn_t size) {
+    if (m_alloc && data_begin != nullptr) {
+        m_alloc->deallocate(data_begin, m_size);
+    }
+    m_alloc = std::move(alloc);
+    m_size = size;
+    data_begin = m_alloc->allocate(m_size);
+    if (data_begin != nullptr) {
+        data_end = data_begin + m_size*m_alloc->item_size();
+    }
+}
+
+void allocating_data_buffer::swap(allocating_data_buffer &other) noexcept {
+    std::swap(m_alloc, other.m_alloc);
+    std::swap(m_size, other.m_size);
+    data_buffer::swap(other);
 }
 
 }// namespace algebra

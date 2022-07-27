@@ -12,34 +12,39 @@ using esig::dimn_t;
 
 
 
-void copy_key_from_pybuffer(std::vector<char>& buffer, const py::buffer_info& info)
+void copy_key_from_pybuffer(esig::algebra::allocating_data_buffer& buffer, const py::buffer_info& info)
 {
-    buffer.resize(info.size*sizeof(key_type));
     using esig::algebra::copy_convert;
 
     switch (info.format[0]) {
         case 'b':
         case 'B':
-            copy_convert<key_type, unsigned char>(buffer.data(), info.ptr, info.size);
+            buffer.set_allocator_and_alloc(esig::algebra::allocator_for<char>(), info.size);
+            copy_convert<key_type, char>(buffer.begin(), info.ptr, info.size);
             break;
         case 'h':
         case 'H':
-            copy_convert<key_type, unsigned short>(buffer.data(), info.ptr, info.size);
+            buffer.set_allocator_and_alloc(esig::algebra::allocator_for<short>(), info.size);
+            copy_convert<key_type, short>(buffer.begin(), info.ptr, info.size);
             break;
         case 'i':
         case 'I':
-            copy_convert<key_type, unsigned int>(buffer.data(), info.ptr, info.size);
+            buffer.set_allocator_and_alloc(esig::algebra::allocator_for<int>(), info.size);
+            copy_convert<key_type, int>(buffer.begin(), info.ptr, info.size);
             break;
         case 'l':
         case 'k':
-            copy_convert<key_type, unsigned long>(buffer.data(), info.ptr, info.size);
+            buffer.set_allocator_and_alloc(esig::algebra::allocator_for<long>(), info.size);
+            copy_convert<key_type, long>(buffer.begin(), info.ptr, info.size);
             break;
         case 'L':
         case 'K':
-            copy_convert<key_type, unsigned long long>(buffer.data(), info.ptr, info.size);
+            buffer.set_allocator_and_alloc(esig::algebra::allocator_for<long long>(), info.size);
+            copy_convert<key_type, long long>(buffer.begin(), info.ptr, info.size);
             break;
         case 'n':
-            copy_convert<key_type, py::ssize_t>(buffer.data(), info.ptr, info.size);
+            buffer.set_allocator_and_alloc(esig::algebra::allocator_for<py::ssize_t>(), info.size);
+            copy_convert<key_type, py::ssize_t>(buffer.begin(), info.ptr, info.size);
             break;
         default:
             throw py::type_error("invalid key conversion type");
@@ -85,15 +90,15 @@ esig::algebra::kwargs_to_construction_data(const pybind11::kwargs &kwargs)
     if (kwargs.contains("keys")) {
         const auto& arg = kwargs["keys"];
         if (py::isinstance<key_type>(arg)) {
-            helper.buffer.resize(sizeof(key_type));
-            *reinterpret_cast<key_type*>(helper.buffer.data()) = arg.cast<key_type>();
+            helper.buffer.set_allocator_and_alloc(esig::algebra::allocator_for<key_type>(), 1);
+            *reinterpret_cast<key_type*>(helper.buffer.begin()) = arg.cast<key_type>();
         } else if (py::isinstance<py::buffer>(arg)) {
             auto key_info = arg.cast<py::buffer>().request();
-            helper.buffer.resize(key_info.size*sizeof(key_type));
+            helper.buffer.set_allocator_and_alloc(allocator_for<key_type>(), key_info.size);
             copy_key_from_pybuffer(helper.buffer, key_info);
         }
+        helper.input_vec_type = esig::algebra::input_data_type::key_value_array;
     }
 
-
-
+    return helper;
 }

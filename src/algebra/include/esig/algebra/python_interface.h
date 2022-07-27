@@ -69,13 +69,16 @@ public:
 struct py_vector_construction_helper
 {
     /// Buffer used if conversion is needed
-    std::vector<char> buffer;
+    allocating_data_buffer buffer;
     /// Context if provided by user
     std::shared_ptr<context> ctx = nullptr;
     /// Pointers to beginning and end of data
     const char* begin_ptr;
     const char* end_ptr;
+    /// Number of elements
     dimn_t count = 0;
+    /// Item size
+    dimn_t itemsize = 0;
     /// Width and depth
     deg_t width = 0;
     deg_t depth = 0;
@@ -94,8 +97,6 @@ ESIG_ALGEBRA_EXPORT
 py_vector_construction_helper kwargs_to_construction_data(const pybind11::kwargs& kwargs);
 
 
-ESIG_ALGEBRA_EXPORT
-void convert_buffer(std::vector<char>& buffer, const pybind11::buffer_info& info, coefficient_type ctype);
 
 
 

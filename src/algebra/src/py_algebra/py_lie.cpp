@@ -19,12 +19,28 @@ static const char* LIE_DOC = R"eadoc(Element of the free Lie algebra.
 
 namespace {
 
-esig::algebra::lie lie_from_buffer(const py::object& buf, const py::kwargs& kwargs)
+esig::algebra::lie lie_from_buffer(const py::object& arg, const py::kwargs& kwargs)
 {
+    auto helper = esig::algebra::get_construction_data(arg, kwargs);
 
+    if (!helper.ctx) {
+        if (helper.count == 0) {
+            throw py::value_error("cannot construct empty lie without width/depth or context arguments");
+        }
 
+        helper.width = helper.count;
+        helper.ctx = esig::algebra::get_context(helper.width, helper.depth, helper.ctype);
+    }
 
-
+    esig::algebra::vector_construction_data data(
+        helper.begin_ptr,
+        helper.end_ptr,
+        helper.ctype,
+        helper.vtype,
+        helper.input_vec_type,
+        helper.itemsize
+    );
+    return helper.ctx->construct_lie(data);
 }
 
 }
@@ -42,6 +58,7 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
 {
     init_py_lie_iterator(m);
     pybind11::class_<lie> klass(m, "Lie", LIE_DOC);
+    klass.def(py::init(&lie_from_buffer), "data"_a);
 
     klass.def_property_readonly("width", &lie::width);
     klass.def_property_readonly("depth", &lie::depth);
@@ -68,11 +85,43 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
     klass.def("__rmul__", [](const lie& self, const coefficient& other) { return self.smul(other); },
             py::is_operator());
 
+    klass.def("__mul__", [](const lie& self, scalar_t arg) {
+        return self.smul(coefficient(arg));
+    }, py::is_operator());
+    klass.def("__mul__", [](const lie& self, long long arg) {
+        return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+    }, py::is_operator());
+    klass.def("__rmul__", [](const lie& self, scalar_t arg) {
+         return self.smul(coefficient(arg));
+    }, py::is_operator());
+    klass.def("__rmul__", [](const lie& self, long long arg) {
+      return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+    }, py::is_operator());
+    klass.def("__truediv__", [](const lie& self, scalar_t arg) {
+             return self.sdiv(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__truediv__", [](const lie& self, scalar_t arg) {
+             return self.sdiv(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+
     klass.def("__iadd__", &lie::add_inplace, py::is_operator());
     klass.def("__isub__", &lie::sub_inplace, py::is_operator());
     klass.def("__imul__", &lie::smul_inplace, py::is_operator());
     klass.def("__itruediv__", &lie::sdiv_inplace, py::is_operator());
     klass.def("__imul__", &lie::mul_inplace, py::is_operator());
+
+    klass.def("__imul__", [](lie& self, scalar_t arg) {
+             return self.smul_inplace(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__imul__", [](lie& self, long long arg) {
+             return self.smul_inplace(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+    klass.def("__itruediv__", [](lie& self, scalar_t arg) {
+             return self.sdiv_inplace(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__itruediv__", [](lie& self, long long arg) {
+             return self.sdiv_inplace(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
 
     klass.def("add_scal_mul", &lie::add_scal_mul, "other"_a, "scalar"_a);
     klass.def("sub_scal_mul", &lie::sub_scal_mul, "other"_a, "scalar"_a);

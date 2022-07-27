@@ -7,6 +7,7 @@
 #include <esig/algebra/context.h>
 #include "py_coefficients.h"
 #include "py_iterator.h"
+#include "convert_buffer.h"
 
 #include <pybind11/numpy.h>
 
@@ -67,71 +68,31 @@ constexpr B log(I arg, B base) noexcept
 
 
 
-esig::algebra::free_tensor ft_from_buffer(const py::object& buf, const py::kwargs& kwargs)
+esig::algebra::free_tensor ft_from_buffer(const py::object& arg, const py::kwargs& kwargs)
 {
-    auto helper = esig::algebra::kwargs_to_construction_data(kwargs);
-    const auto ctx = helper.ctx;
 
-    const char* begin_ptr = nullptr, *end_ptr = nullptr;
+    auto helper = esig::algebra::get_construction_data(arg, kwargs);
 
-    coefficient_type ctype = helper.ctype;
-    dimn_t itemsize = 1;
-    std::vector<char> buffer;
 
-    if (!buf.is_none()) {
-        auto info = buf.cast<py::buffer>().request();
-
-        if (info.ndim != 1) {
-            throw std::invalid_argument("data has invalid shape");
+    if (!helper.ctx) {
+        // There isn't a lot we can do here. Any attempt to find
+        // both width and depth is doomed to fail, so let's assume
+        // the size of the buffer is 1 + W.
+        if (helper.count == 0) {
+            throw py::value_error("Cannot construct empty tensor without width/depth or context arguments");
         }
 
-        if (helper.ctx && helper.ctx->tensor_size(-1) < info.size) {
-            throw std::invalid_argument("data depth exceeds maximum depth");
-        }
-
-        coefficient_type input_ctype;
-        if (info.format == "f") {
-            input_ctype = coefficient_type::sp_real;
-        } else if (info.format == "d") {
-            input_ctype = coefficient_type::dp_real;
-        } else {
-            throw py::type_error("Unsupported data type");
-        }
-
-
-
-        begin_ptr = reinterpret_cast<const char *>(info.ptr);
-        end_ptr = reinterpret_cast<const char *>(info.ptr) + info.size * info.itemsize;
-
-        if (input_ctype != ctype) {
-            if (helper.ctype_requested) {
-               convert_buffer(buffer, info, helper.ctype);
-               begin_ptr = buffer.data();
-               end_ptr = begin_ptr + buffer.size();
-            } else {
-                helper.ctype = input_ctype;
-            }
-        }
-
-        if (!helper.ctx) {
-            // There isn't a lot we can do here. Any attempt to find
-            // both width and depth is doomed to fail, so let's assume
-            // the size of the buffer is 1 + W.
-            helper.width = info.size - 1;
-            helper.depth = 1;
-            helper.ctx = esig::algebra::get_context(helper.width, helper.depth, helper.ctype);
-        }
-    } else {
-        if (!helper.ctx) {
-            throw py::value_error("cannot construct free tensor without "
-                                  "data or width/depth/coefficient types");
-        }
+        helper.width = helper.count - 1;
+        helper.ctx = esig::algebra::get_context(helper.width, helper.depth, helper.ctype);
     }
 
     esig::algebra::vector_construction_data data(
-        begin_ptr, end_ptr,
-        helper.ctype, helper.vtype, esig::algebra::input_data_type::value_array,
-        itemsize
+        helper.begin_ptr,
+        helper.end_ptr,
+        helper.ctype,
+        helper.vtype,
+        helper.input_vec_type,
+        helper.itemsize
     );
     return helper.ctx->construct_tensor(data);
 }

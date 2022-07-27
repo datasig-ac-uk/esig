@@ -264,9 +264,9 @@ std::shared_ptr<data_allocator> allocator_for_key_coeff(coefficient_type ctype);
 class ESIG_ALGEBRA_EXPORT data_buffer
 {
 protected:
-    char* data_begin;
-    char* data_end;
-    bool is_const;
+    char* data_begin = nullptr;
+    char* data_end = nullptr;
+    bool is_const = false;
 public:
     using size_type = dimn_t;
     using pointer = char*;
@@ -274,6 +274,9 @@ public:
 
     data_buffer(char* begin, char* end, bool constant);
     data_buffer(const char*, const char*);
+
+    void swap(data_buffer& other) noexcept;
+
     pointer begin() noexcept;
     pointer end() noexcept;
     const_pointer begin() const noexcept;
@@ -293,6 +296,13 @@ public:
     using typename data_buffer::size_type;
     using typename data_buffer::pointer;
     using typename data_buffer::const_pointer;
+
+    allocating_data_buffer()
+        : data_buffer(nullptr, nullptr, false), m_alloc(nullptr), m_size(0)
+    {}
+    void swap(allocating_data_buffer& other) noexcept;
+
+    void set_allocator_and_alloc(std::shared_ptr<data_allocator>&& alloc, dimn_t size);
 
     allocating_data_buffer(const allocating_data_buffer& other);
     allocating_data_buffer(allocating_data_buffer&& other) noexcept;

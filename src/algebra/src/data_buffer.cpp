@@ -44,6 +44,11 @@ data_buffer::size_type data_buffer::size() const noexcept
 {
     return static_cast<size_type>(data_end - data_begin);
 }
+void data_buffer::swap(data_buffer &other) noexcept {
+    std::swap(data_begin, other.data_begin);
+    std::swap(data_end, other.data_end);
+    std::swap(is_const, other.is_const);
+}
 
 }// namespace algebra
 }// namespace esig
