@@ -10,9 +10,25 @@
 namespace py = pybind11;
 using namespace pybind11::literals;
 
+using esig::algebra::coefficient_type;
+
 
 static const char* LIE_DOC = R"eadoc(Element of the free Lie algebra.
 )eadoc";
+
+
+namespace {
+
+esig::algebra::lie lie_from_buffer(const py::object& buf, const py::kwargs& kwargs)
+{
+
+
+
+
+}
+
+}
+
 
 void init_py_lie_iterator(py::module_& m)
 {

@@ -65,34 +65,6 @@ constexpr B log(I arg, B base) noexcept
     return (arg < static_cast<I>(base)) ? 0 : (1 + log(arg/static_cast<I>(base), base));
 }
 
-namespace {
-
-template <coefficient_type CType>
-void convert_buffer(std::vector<char>& buffer, const py::buffer_info& info)
-{
-    using scalar_type = esig::algebra::type_of_coeff<CType>;
-    buffer.resize(sizeof(scalar_type)*info.size);
-    auto* out = reinterpret_cast<scalar_type*>(buffer.data());
-    const auto* ptr = reinterpret_cast<const char*>(info.ptr);
-
-    for (dimn_t i=0; i<info.size; ++i)  {
-        if (info.format[0] == 'f') {
-            out[i] = scalar_type(*reinterpret_cast<const float*>(ptr + i*info.itemsize));
-        } else if (info.format[0] == 'd') {
-            out[i] = scalar_type(*reinterpret_cast<const double*>(ptr + i*info.itemsize));
-        }
-    }
-}
-
-
-void convert_buffer(std::vector<char>& buffer, const py::buffer_info& info, coefficient_type ctype)
-{
-#define ESIG_SWITCH_FN(CTYPE) convert_buffer<CTYPE>(buffer, info)
-    ESIG_MAKE_CTYPE_SWITCH(ctype)
-#undef ESIG_SWITCH_FN
-}
-
-}
 
 
 esig::algebra::free_tensor ft_from_buffer(const py::object& buf, const py::kwargs& kwargs)
@@ -126,10 +98,11 @@ esig::algebra::free_tensor ft_from_buffer(const py::object& buf, const py::kwarg
             throw py::type_error("Unsupported data type");
         }
 
+
+
         begin_ptr = reinterpret_cast<const char *>(info.ptr);
         end_ptr = reinterpret_cast<const char *>(info.ptr) + info.size * info.itemsize;
 
-        itemsize = info.itemsize;
         if (input_ctype != ctype) {
             if (helper.ctype_requested) {
                convert_buffer(buffer, info, helper.ctype);

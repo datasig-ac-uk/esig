@@ -123,6 +123,7 @@ target_sources(py_esig_algebra PRIVATE
         include/esig/algebra/python_interface.h
         src/py_algebra/dtype_from.cpp
         src/py_algebra/py_keys.h
+        src/py_algebra/convert_buffer.cpp
         )
 
 install(TARGETS esig_algebra py_esig_algebra

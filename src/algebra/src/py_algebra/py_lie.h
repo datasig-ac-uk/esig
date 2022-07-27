@@ -9,6 +9,7 @@
 #include <esig/algebra/lie_interface.h>
 #include <esig/algebra/python_interface.h>
 
+
 namespace esig {
 namespace algebra {
 

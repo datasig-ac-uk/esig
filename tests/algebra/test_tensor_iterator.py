@@ -23,8 +23,8 @@ def TensorKey_iter(width, depth):
     return itr
 
 
-def test_FreeTensor_iterator(width, depth, FreeTensor_size, TensorKey_iter):
-    data = np.arange(1.0, float(FreeTensor_size+1))
+def test_FreeTensor_iterator(width, depth, tensor_size, TensorKey_iter):
+    data = np.arange(1.0, float(tensor_size+1))
     tens = FreeTensor(data, width=width, depth=depth)
 
     result = list(tens)

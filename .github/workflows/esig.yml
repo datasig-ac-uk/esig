@@ -5,7 +5,7 @@ on:
     branches:
       - release
       - develop
-      - version1.0.0-paths
+#      - version1.0.0-paths
     paths-ignore:
       - 'examples/**'
       - 'doc/**'

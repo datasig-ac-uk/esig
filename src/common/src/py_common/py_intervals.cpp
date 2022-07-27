@@ -2,10 +2,10 @@
 // Created by user on 04/05/22.
 //
 
-
-#include "py_common.h"
 #include "py_intervals.h"
+#include "py_common.h"
 #include <esig/intervals.h>
+#include <sstream>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -42,6 +42,7 @@ void esig::init_intervals(py::module_& m)
     klass.def("excluded_end", &interval::excluded_end);
     klass.def("__eq__", [](const interval& lhs, const interval& rhs) { return lhs == rhs; });
     klass.def("__neq__", [](const interval& lhs, const interval& rhs) { return lhs != rhs; });
+    klass.def("intersects_with", &interval::intersects_with, "other"_a);
 
     klass.def("contains",
               static_cast<bool (interval::*)(param_t) const noexcept>(&interval::contains),
@@ -49,6 +50,27 @@ void esig::init_intervals(py::module_& m)
     klass.def("contains",
               static_cast<bool (interval::*)(const interval&) const noexcept>(&interval::contains),
               "arg"_a);
+
+    klass.def("__repr__", [](const interval& arg) {
+        std::stringstream ss;
+        ss << "Interval(inf="
+           << std::to_string(arg.inf())
+           << ", sup="
+           << std::to_string(arg.sup())
+           << ", type=";
+        if (arg.get_type() == interval_type::clopen) {
+            ss << "clopen";
+        } else {
+            ss << "opencl";
+        }
+        ss << ')';
+        return ss.str();
+    });
+    klass.def("__str__", [](const interval& arg) {
+        std::stringstream ss;
+        ss << arg;
+        return ss.str();
+    });
 
     // init specific realizations of intervals.
     esig::init_real_intervals(m);

@@ -68,17 +68,43 @@ public:
 
 struct py_vector_construction_helper
 {
+    /// Buffer used if conversion is needed
+    std::vector<char> buffer;
+    /// Context if provided by user
     std::shared_ptr<context> ctx = nullptr;
+    /// Pointers to beginning and end of data
+    const char* begin_ptr;
+    const char* end_ptr;
+    dimn_t count = 0;
+    /// Width and depth
     deg_t width = 0;
     deg_t depth = 0;
+    /// Coefficient type
     coefficient_type ctype = coefficient_type::dp_real;
+    /// Vector type to be requested
     vector_type vtype = vector_type::dense;
-    bool ctype_requested;
-    bool vtype_requested;
+    /// flags for saying if the user explicitly requested ctype and vtype
+    bool ctype_requested = false;
+    bool vtype_requested = false;
+    /// Data type provided
+    input_data_type input_vec_type = input_data_type::value_array;
 };
 
 ESIG_ALGEBRA_EXPORT
 py_vector_construction_helper kwargs_to_construction_data(const pybind11::kwargs& kwargs);
+
+
+ESIG_ALGEBRA_EXPORT
+void convert_buffer(std::vector<char>& buffer, const pybind11::buffer_info& info, coefficient_type ctype);
+
+
+
+
+
+ESIG_ALGEBRA_EXPORT
+py_vector_construction_helper
+get_construction_data(const pybind11::object& arg,
+                      const pybind11::kwargs& kwargs);
 
 
 //namespace dtl {

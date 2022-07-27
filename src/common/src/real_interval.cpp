@@ -16,6 +16,7 @@ real_interval::real_interval() : m_inf(0.0), m_sup(1.0)
 }
 real_interval::real_interval(param_t inf, param_t sup) : m_inf(inf), m_sup(sup)
 {
+    assert(inf <= sup);
 }
 real_interval::real_interval(param_t inf, param_t sup, interval_type itype)
         : interval(itype), m_inf(inf), m_sup(sup)

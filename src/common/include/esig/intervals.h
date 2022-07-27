@@ -51,6 +51,7 @@ public:
     virtual bool contains(param_t arg) const noexcept;
     virtual bool is_associated(const interval& arg) const noexcept;
     virtual bool contains(const interval& arg) const noexcept;
+    virtual bool intersects_with(const interval& arg) const noexcept;
 
 };
 

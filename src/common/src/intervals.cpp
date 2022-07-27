@@ -24,7 +24,7 @@ interval_type interval::get_type() const noexcept
 }
 bool interval::operator==(const interval &rhs) const
 {
-    return m_interval_type == rhs.m_interval_type;
+    return m_interval_type == rhs.m_interval_type && inf() == rhs.inf() && sup() == rhs.sup();
 }
 bool interval::operator!=(const interval &rhs) const
 {
@@ -75,6 +75,21 @@ param_t interval::excluded_end() const
         return inf();
     }
 }
+bool interval::intersects_with(const interval &arg) const noexcept {
+    param_t lhs_inf = inf(), lhs_sup = sup(), rhs_inf = arg.inf(), rhs_sup = arg.sup();
 
+    if ((lhs_inf <= rhs_inf && lhs_sup > rhs_inf) || (rhs_inf <= lhs_inf && rhs_sup > lhs_inf)) {
+        // [l--[r---l)--r) || [r--[l--r)--l)
+        return true;
+    } else if (rhs_inf == lhs_sup) {
+        // (l--l][r--r)
+        return m_interval_type == interval_type::opencl && arg.m_interval_type == interval_type::clopen;
+    } else if (lhs_inf == rhs_sup) {
+        // (r--r][l---l)
+        return m_interval_type == interval_type::clopen && arg.m_interval_type == interval_type::opencl;
+    } else {
+        return false;
+    }
+}
 
 } // namespace esig
