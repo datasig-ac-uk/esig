@@ -12,6 +12,7 @@
 namespace esig {
 using deg_t = unsigned;
 using dimn_t = std::size_t;
+using idimn_t = std::ptrdiff_t;
 using let_t = unsigned;
 using key_type = std::size_t;
 

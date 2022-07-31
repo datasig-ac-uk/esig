@@ -79,6 +79,8 @@ target_sources(py_esig_paths PRIVATE
         src/py_paths/py_piecewise_lie_path.cpp
         src/py_paths/py_piecewise_lie_path.h
         src/py_paths/kwargs_to_metadata.cpp
+        src/py_paths/python_arguments.cpp
+        src/py_paths/python_arguments.h
         )
 
 target_include_directories(py_esig_paths PRIVATE

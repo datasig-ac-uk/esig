@@ -26,6 +26,8 @@ rowed_data_buffer::range_type rowed_data_buffer::operator[](data_buffer::size_ty
     assert(offset_begin < offset_end && offset_end <= size());
     return {begin() + offset_begin, begin() + offset_end};
 }
+rowed_data_buffer::rowed_data_buffer() : allocating_data_buffer(), row_size(0)
+{}
 
 }// namespace algebra
 }// namespace esig

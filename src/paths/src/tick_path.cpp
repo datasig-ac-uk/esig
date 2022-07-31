@@ -41,7 +41,7 @@ algebra::lie tick_path::log_signature(const interval &domain, const algebra::con
 
     algebra::signature_data data {
             md.ctype,
-            md.input_vec_type,
+            md.result_vec_type,
             tick_increment_iterator {
                     m_index.lower_bound(domain.inf()),
                     m_index.lower_bound(domain.sup()),

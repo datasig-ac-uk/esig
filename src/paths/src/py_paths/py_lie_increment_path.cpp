@@ -3,7 +3,8 @@
 //
 
 #include "py_lie_increment_path.h"
-#include "esig/paths/python_interface.h"
+#include <esig/paths/python_interface.h>
+#include "python_arguments.h"
 #include "pybind11/numpy.h"
 
 #include <cassert>
@@ -127,14 +128,9 @@ path construct_path_impl(const py::args& args, const py::kwargs& kwargs)
 
     esig::real_interval domain;
 
-    esig::paths::path_metadata md {
-        static_cast<deg_t>(width),
-        depth,
-        domain,
-        CType,
-        vector_type::dense,
-        vector_type::dense
-    };
+    esig::paths::additional_args additional;
+
+    auto md = esig::paths::parse_kwargs_to_metadata(kwargs, additional);
 
     std::vector<param_t> indices;
 
@@ -164,31 +160,127 @@ path construct_path_impl(const py::args& args, const py::kwargs& kwargs)
 }
 
 
+std::vector<param_t> process_indices(const py::handle& indices)
+{
+    std::vector<param_t> buffer;
+
+    if (py::isinstance<py::buffer>(indices)) {
+        auto info = indices.cast<py::buffer>().request();
+
+        if (info.ndim != 1) {
+            throw py::value_error("expected one dimensional array of floating points numbers");
+        }
+
+        switch (info.format[0]) {
+            case 'f': {
+                buffer.reserve(info.size);
+                const auto *ptr = reinterpret_cast<const float *>(info.ptr);
+                for (dimn_t i = 0; i < info.size; ++i) {
+                    buffer.emplace_back(ptr[i]);
+                }
+                break;
+            }
+            case 'd': {
+                const auto *ptr = reinterpret_cast<const double *>(info.ptr);
+                buffer.assign(ptr, ptr + info.size);
+                break;
+            }
+            default:
+                throw py::type_error("expected array of floats or doubles");
+        }
+    } else if (py::isinstance<py::iterable>(indices)) {
+        buffer.reserve(len_hint(indices));
+
+        for (const auto& item : indices) {
+            buffer.emplace_back(item.cast<param_t>());
+        }
+    } else {
+        throw py::type_error("expected array or iterable of numbers");
+    }
+
+    return buffer;
+}
+
+
+
+void copy_py_buffer_to_data_buffer_helper(esig::algebra::data_buffer& buffer, const py::buffer_info& info, coefficient_type ctype)
+{
+#define ESIG_SWITCH_FN(CTYPE) esig::paths::copy_py_buffer_to_data_buffer<CTYPE>(buffer.begin(), info);
+    ESIG_MAKE_CTYPE_SWITCH(ctype)
+#undef ESIG_SWITCH_FN
+}
+
+
+
 } // namespace
+
+
 
 
 
 esig::paths::path esig::paths::construct_lie_increment_path(const pybind11::args &args, const pybind11::kwargs &kwargs)
 {
-    coefficient_type ctype = coefficient_type::dp_real;
 
     if (args.empty()) {
         throw py::value_error("At least one argument must be provided");
     }
-
-    auto format = args[0].cast<py::buffer>().request().format;
-    if (format == "f") {
-        ctype = coefficient_type::sp_real;
-    } else if (format == "d") {
-        ctype = coefficient_type::dp_real;
+    if (args.size() != 1) {
+        throw py::value_error("expected a single argument containing path data");
     }
 
-    if (kwargs.contains("coeff_type")) {
-        ctype = kwargs["coeff_type"].cast<coefficient_type>();
+    additional_args parse_args;
+    esig::algebra::rowed_data_buffer data_buffer;
+    std::vector<param_t> indices_buffer;
+    path_metadata md;
+
+    if (kwargs.contains("indices")) {
+        indices_buffer = process_indices(kwargs["indices"]);
+        auto minmax = std::minmax_element(indices_buffer.begin(), indices_buffer.end());
+        parse_args.domain = real_interval {*minmax.first, *minmax.second};
     }
 
+    if (py::isinstance<py::buffer>(args[0])) {
+        const auto info = args[0].cast<py::buffer>().request();
 
-#define ESIG_SWITCH_FN(CTYPE) construct_path_impl<CTYPE>(args, kwargs)
-    ESIG_MAKE_CTYPE_SWITCH(ctype)
-#undef ESIG_SWITCH_FN
+        coefficient_type input_ctype;
+        switch (info.format[0]) {
+            case 'f':
+                parse_args.ctype = coefficient_type::sp_real;
+                input_ctype = coefficient_type::sp_real;
+                break;
+            case 'd':
+                parse_args.ctype = coefficient_type::dp_real;
+                input_ctype = coefficient_type::dp_real;
+                break;
+            default:
+                throw py::type_error("unsupported data type");
+        }
+
+        if (info.ndim != 2) {
+            throw py::value_error("data must be 2 dimensional");
+        }
+
+        auto n_samples = info.shape[0];
+        parse_args.width = deg_t(info.shape[1]);
+        if (indices_buffer.empty()) {
+            indices_buffer.reserve(n_samples);
+            for (dimn_t i=0; i<n_samples; ++i) {
+                indices_buffer.emplace_back(i);
+            }
+            parse_args.domain = real_interval {param_t(0), param_t(n_samples+1)};
+        } else {
+            if (indices_buffer.size() != n_samples) {
+                throw py::value_error("mismatch in number of samples vs number of indices");
+            }
+        }
+
+        md = esig::paths::parse_kwargs_to_metadata(kwargs, parse_args);
+
+        auto alloc = esig::algebra::allocator_for_coeff(md.ctype);
+        data_buffer = algebra::rowed_data_buffer(alloc, md.width, n_samples);
+        copy_py_buffer_to_data_buffer_helper(data_buffer, info, md.ctype);
+
+    }
+
+    return path(lie_increment_path(std::move(data_buffer), indices_buffer, md));
 }

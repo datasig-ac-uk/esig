@@ -36,6 +36,7 @@
 
 #include <boost/container/map.hpp>
 
+#include <memory>
 #include <mutex>
 #include <utility>
 
@@ -52,13 +53,14 @@ namespace paths {
  * in the path; and the storage model for the free tensor signatures and Lie log-
  * signatures.
  */
-struct ESIG_PATHS_EXPORT path_metadata {
+struct path_metadata {
     deg_t width;
     deg_t depth;
     real_interval effective_domain;
+    std::shared_ptr<algebra::context> ctx;
 
     algebra::coefficient_type ctype;
-    algebra::vector_type input_vec_type;
+    algebra::input_data_type data_type;
     algebra::vector_type result_vec_type;
 };
 

@@ -86,5 +86,25 @@ void allocating_data_buffer::swap(allocating_data_buffer &other) noexcept {
     data_buffer::swap(other);
 }
 
+allocating_data_buffer &allocating_data_buffer::operator=(const allocating_data_buffer &other) {
+    this->allocating_data_buffer::~allocating_data_buffer();
+    m_alloc = other.m_alloc;
+    m_size = other.m_size;
+
+    data_begin = m_alloc->allocate(m_size);
+    if (data_begin != nullptr) {
+        data_end = data_begin + m_size;
+        std::uninitialized_copy(other.data_begin, other.data_end, data_begin);
+    }
+    return *this;
+}
+allocating_data_buffer &allocating_data_buffer::operator=(allocating_data_buffer &&other) noexcept {
+    this->allocating_data_buffer::~allocating_data_buffer();
+    m_alloc = std::move(other.m_alloc);
+    m_size = other.m_size;
+    data_buffer::operator=(std::move(other));
+    return *this;
+}
+
 }// namespace algebra
 }// namespace esig

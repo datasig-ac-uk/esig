@@ -100,7 +100,7 @@ algebra::free_tensor path::signature_derivative(const interval &domain, const al
     };
     return ctx->sig_derivative({info},
                                metadata.result_vec_type,
-                               metadata.input_vec_type
+                               metadata.result_vec_type
                                );
 }
 algebra::free_tensor path::signature_derivative(const interval &domain, const algebra::lie &perturbation, path::accuracy_t accuracy, const algebra::context &ctx) const
@@ -112,7 +112,7 @@ algebra::free_tensor path::signature_derivative(const interval &domain, const al
     };
     return ctx.sig_derivative({info},
                               metadata.result_vec_type,
-                              metadata.input_vec_type
+                              metadata.result_vec_type
                               );
 }
 algebra::free_tensor path::signature_derivative(const path::perturbation_list_t &perturbations, path::accuracy_t accuracy) const
@@ -135,7 +135,7 @@ algebra::free_tensor path::signature_derivative(const path::perturbation_list_t 
 
     return ctx.sig_derivative(info,
                               metadata.result_vec_type,
-                              metadata.input_vec_type
+                              metadata.result_vec_type
                               );
 }
 const path_interface &path_base_access::get(const path &p) noexcept

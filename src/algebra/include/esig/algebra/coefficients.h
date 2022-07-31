@@ -311,22 +311,26 @@ public:
     allocating_data_buffer(allocator_type alloc, const char* begin, const char* end);
     ~allocating_data_buffer();
 
+    allocating_data_buffer& operator=(const allocating_data_buffer& other);
+    allocating_data_buffer& operator=(allocating_data_buffer&& other) noexcept;
+
     typename data_buffer::size_type item_size() const noexcept;
 };
 
 
 class ESIG_ALGEBRA_EXPORT rowed_data_buffer : public allocating_data_buffer
 {
-    size_type row_size;
+    size_type row_size = 0;
     using allocator_type = typename allocating_data_buffer::allocator_type;
 
 public:
     using range_type = std::pair<const char *, const char *>;
-
+    rowed_data_buffer();
     rowed_data_buffer(allocator_type alloc, size_type row_size, size_type nrows);
     rowed_data_buffer(allocator_type alloc, size_type row_size, const char *, const char *);
 
     range_type operator[](size_type rowid) const noexcept;
+
 };
 
 
