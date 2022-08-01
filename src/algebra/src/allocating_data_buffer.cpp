@@ -18,15 +18,21 @@ allocating_data_buffer::allocating_data_buffer(const allocating_data_buffer &oth
     m_size = static_cast<size_type>(end - begin) / m_alloc->item_size();
 //    assert(begin != nullptr && end != nullptr && begin != end);
 //    assert(m_size > 0);
-    data_begin = m_alloc->allocate(m_size);
-    if (data_begin != nullptr) {
-        data_end = data_begin + static_cast<size_type>(end - begin);
-        std::uninitialized_copy(begin, end, data_begin);
+    if (m_size > 0) {
+        data_begin = m_alloc->allocate(m_size);
+        if (data_begin != nullptr) {
+            data_end = data_begin + static_cast<size_type>(end - begin);
+            std::uninitialized_copy(begin, end, data_begin);
+        } else {
+            throw std::runtime_error("unable to allocate");
+        }
     }
+
 }
 
 allocating_data_buffer::allocating_data_buffer(allocating_data_buffer &&other) noexcept
-    : data_buffer(other.data_begin, other.data_end, false), m_alloc(std::move(other.m_alloc)), m_size(other.m_size)
+    : data_buffer(other.data_begin, other.data_end, other.is_const),
+      m_alloc(std::move(other.m_alloc)), m_size(other.m_size)
 {
     other.data_begin = nullptr;
     other.data_end = nullptr;
@@ -57,6 +63,7 @@ allocating_data_buffer::allocating_data_buffer(allocating_data_buffer::allocator
 allocating_data_buffer::~allocating_data_buffer()
 {
     if (data_begin != nullptr) {
+        assert(m_size*m_alloc->item_size() == size());
         m_alloc->deallocate(data_begin, m_size);
     }
     data_begin = nullptr;

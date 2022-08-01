@@ -22,13 +22,7 @@ private:
 
 public:
 
-    py_dense_function_path(
-            func_type&& fn,
-            deg_t width,
-            deg_t depth,
-            real_interval domain,
-            algebra::coefficient_type ctype
-            );
+    py_dense_function_path(path_metadata md, func_type&& fn);
 
     algebra::allocating_data_buffer eval(const interval &domain) const override;
 };
@@ -41,11 +35,8 @@ class py_sparse_function_path : public dynamically_constructed_path
 public:
 
     py_sparse_function_path(
-            func_type&& fn,
-            deg_t width,
-            deg_t depth,
-            real_interval domain,
-            algebra::coefficient_type ctype
+            path_metadata md,
+            func_type&& fn
             );
     algebra::allocating_data_buffer eval(const interval& domain) const override;
 };

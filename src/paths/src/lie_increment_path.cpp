@@ -15,8 +15,10 @@ lie_increment_path::lie_increment_path(
         algebra::rowed_data_buffer&& buffer,
         const std::vector<param_t>& indices,
         esig::paths::path_metadata metadata)
-    : dyadic_caching_layer(std::move(metadata)), m_buffer(std::move(buffer)), m_data()
+    : dyadic_caching_layer(std::move(metadata)), m_buffer(buffer), m_data()
 {
+    assert(indices.empty() || buffer.begin() != nullptr);
+    assert(indices.empty() || m_buffer.begin() != nullptr);
     for (dimn_t i=0; i<indices.size(); ++i) {
         m_data[indices[i]] = m_buffer[i];
     }

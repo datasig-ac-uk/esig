@@ -229,7 +229,7 @@ esig::paths::path esig::paths::construct_lie_increment_path(const pybind11::args
     }
 
     additional_args parse_args;
-    esig::algebra::rowed_data_buffer data_buffer;
+//    esig::algebra::rowed_data_buffer data_buffer;
     std::vector<param_t> indices_buffer;
     path_metadata md;
 
@@ -260,6 +260,9 @@ esig::paths::path esig::paths::construct_lie_increment_path(const pybind11::args
             throw py::value_error("data must be 2 dimensional");
         }
 
+
+        py::print(args, kwargs);
+
         auto n_samples = info.shape[0];
         parse_args.width = deg_t(info.shape[1]);
         if (indices_buffer.empty()) {
@@ -277,10 +280,19 @@ esig::paths::path esig::paths::construct_lie_increment_path(const pybind11::args
         md = esig::paths::parse_kwargs_to_metadata(kwargs, parse_args);
 
         auto alloc = esig::algebra::allocator_for_coeff(md.ctype);
-        data_buffer = algebra::rowed_data_buffer(alloc, md.width, n_samples);
-        copy_py_buffer_to_data_buffer_helper(data_buffer, info, md.ctype);
+        algebra::rowed_data_buffer path_data(alloc, md.width, n_samples);
+        assert(path_data.size() == info.size*alloc->item_size());
+        copy_py_buffer_to_data_buffer_helper(path_data, info, md.ctype);
 
+        assert(path_data.nitems() == indices_buffer.size()*md.width);
+
+        assert(indices_buffer.empty() || path_data.begin() != nullptr);
+
+        return path(lie_increment_path(std::move(path_data), indices_buffer, md));
+    } else {
+        throw py::type_error("not currently supported");
     }
 
-    return path(lie_increment_path(std::move(data_buffer), indices_buffer, md));
+
+//    return path(lie_increment_path(std::move(data_buffer), indices_buffer, md));
 }

@@ -4,6 +4,7 @@
 
 #include "py_tick_path.h"
 #include <esig/paths/python_interface.h>
+#include "python_arguments.h"
 #include <pybind11/pytypes.h>
 
 using esig::paths::path;
@@ -74,9 +75,7 @@ struct buffer_constructor_helper
 template <coefficient_type CType>
 path construct_path_impl(const py::args& args, const py::kwargs& kwargs)
 {
-    if (args.empty()) {
-        throw std::invalid_argument("At least one argument must be provided");
-    }
+
 
     esig::paths::path_metadata md {
             kwargs["width"].cast<deg_t>(),
@@ -117,13 +116,110 @@ path construct_path_impl(const py::args& args, const py::kwargs& kwargs)
     );
 }
 
+dimn_t get_number_of_elts(py::object &arg) {
+    if (py::isinstance<py::float_>(arg)) {
+        return 1;
+    }
+    if (py::isinstance<py::buffer>(arg)) {
+        auto info = arg.cast<py::buffer>().request();
+        return info.size;
+    }
+    if (py::isinstance<py::sequence>(arg)) {
+        return py::len(arg);
+    }
+    if (py::isinstance<py::iterable>(arg)) {
+        arg = py::list(arg);
+        return py::len(arg);
+    }
+    try {
+        arg = py::float_(arg);
+        return 1;
+    } catch (...) {
+        throw py::value_error("expected float, array, sequence, or iterable");
+    }
+}
+
+
+template <coefficient_type CType>
+void process_tick_data_impl(esig::algebra::data_buffer& buffer,
+                            const esig::paths::path_metadata& md,
+                            std::vector<std::pair<py::object, dimn_t>>&& data)
+{
+    using scalar_type = esig::algebra::type_of_coeff<CType>;
+    auto* ptr = buffer.begin();
+    for (auto& item : data) {
+        if (item.second == 1) {
+            esig::paths::copy_pyobject_to_memory<scalar_type>(ptr, item.first);
+            ptr += sizeof(scalar_type);
+        } else if (py::isinstance<py::buffer>(item.first)) {
+            auto info = item.first.cast<py::buffer>().request();
+            esig::paths::copy_py_buffer_to_data_buffer<CType>(ptr, info);
+            ptr += info.size*sizeof(scalar_type);
+        } else if (py::isinstance<py::sequence>(item.first)) {
+            // Iterator types should have been converted to lists
+            for (auto obj : item.first.cast<py::sequence>()) {
+                esig::paths::copy_pyobject_to_memory<scalar_type>(ptr, obj);
+                ptr += sizeof(scalar_type);
+            }
+        } else {
+            throw py::value_error("could not convert object to scalar type");
+        }
+    }
+}
+
+
+void process_tick_data(esig::algebra::data_buffer& buffer,
+                       const esig::paths::path_metadata& md,
+                       std::vector<std::pair<py::object, dimn_t>>&& data)
+{
+#define ESIG_SWITCH_FN(CTYPE) process_tick_data_impl<CTYPE>(buffer, md, std::move(data))
+    ESIG_MAKE_CTYPE_SWITCH(md.ctype)
+#undef ESIG_SWITCH_FN
+}
 
 } // namespace
 
 
+
 path esig::paths::construct_tick_path(const pybind11::args& args, const pybind11::kwargs &kwargs)
 {
-#define ESIG_SWITCH_FN(CTYPE) construct_path_impl<CTYPE>(args, kwargs)
-    ESIG_MAKE_CTYPE_SWITCH(kwargs["coeff_type"].cast<coefficient_type>())
-#undef ESIG_SWITCH_FN
+    if (args.empty()) {
+        throw std::invalid_argument("At least one argument must be provided");
+    }
+
+    esig::paths::additional_args additional;
+    auto md = esig::paths::parse_kwargs_to_metadata(kwargs, additional);
+
+    std::vector<std::pair<py::object, dimn_t>> data;
+    std::vector<std::pair<param_t, dimn_t>> index_data;
+
+    dimn_t count = 0;
+    auto process_tuple = [&count, &data, &index_data] (py::object arg) {
+        auto pair = arg.cast<std::pair<param_t, py::object>>();
+        index_data.emplace_back(pair.first, count);
+        auto num = get_number_of_elts(pair.second);
+        count += num;
+        data.emplace_back(pair.second, num);
+    };
+
+    for (auto arg : args) {
+        if (py::isinstance<py::tuple>(arg)) {
+            process_tuple(arg.cast<py::object>());
+        } else if (py::isinstance<py::iterable>(arg)) {
+            auto len = len_hint(arg);
+
+            index_data.reserve(index_data.size() + len);
+            data.reserve(data.size() + len);
+            for (auto in_seq : arg) {
+                process_tuple(arg.cast<py::object>());
+            }
+        } else {
+            throw py::type_error("Expected tuple or iterable of tuples");
+        }
+    }
+
+    algebra::allocating_data_buffer buffer(md.ctx->coefficient_alloc(), count);
+    process_tick_data(buffer, md, std::move(data));
+
+    return path(tick_path(std::move(md), std::move(index_data), std::move(buffer)));
 }

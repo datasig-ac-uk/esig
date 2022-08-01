@@ -275,7 +275,12 @@ public:
     data_buffer(char* begin, char* end, bool constant);
     data_buffer(const char*, const char*);
 
+    data_buffer& operator=(const data_buffer& other) noexcept;
+    data_buffer& operator=(data_buffer&& other) noexcept;
+
     void swap(data_buffer& other) noexcept;
+
+
 
     pointer begin() noexcept;
     pointer end() noexcept;
@@ -301,6 +306,8 @@ public:
         : data_buffer(nullptr, nullptr, false), m_alloc(nullptr), m_size(0)
     {}
     void swap(allocating_data_buffer& other) noexcept;
+
+    dimn_t nitems() const noexcept { return m_size; }
 
     void set_allocator_and_alloc(std::shared_ptr<data_allocator>&& alloc, dimn_t size);
 
@@ -328,6 +335,8 @@ public:
     rowed_data_buffer();
     rowed_data_buffer(allocator_type alloc, size_type row_size, size_type nrows);
     rowed_data_buffer(allocator_type alloc, size_type row_size, const char *, const char *);
+
+    dimn_t ncols() const noexcept { return row_size; }
 
     range_type operator[](size_type rowid) const noexcept;
 

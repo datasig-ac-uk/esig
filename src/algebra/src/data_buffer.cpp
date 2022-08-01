@@ -50,5 +50,22 @@ void data_buffer::swap(data_buffer &other) noexcept {
     std::swap(is_const, other.is_const);
 }
 
+data_buffer &data_buffer::operator=(const data_buffer &other) noexcept {
+    data_begin = other.data_begin;
+    data_end = other.data_end;
+    is_const = other.is_const;
+    return *this;
+}
+data_buffer &data_buffer::operator=(data_buffer &&other) noexcept {
+    data_begin = other.data_begin;
+    data_end = other.data_end;
+    is_const = other.is_const;
+
+    // set to nullptr to avoid problems
+    other.data_begin = nullptr;
+    other.data_end = nullptr;
+    return *this;
+}
+
 }// namespace algebra
 }// namespace esig

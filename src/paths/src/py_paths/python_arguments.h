@@ -125,8 +125,11 @@ void copy_array(const void* src, char* dst, const idimn_t ndim, const idimn_t* s
 }
 
 
-
-
+template <typename T>
+void copy_pyobject_to_memory(char* ptr, const pybind11::handle& object)
+{
+    ::new ((void *)ptr) T(object.cast<T>());
+}
 
 
 
