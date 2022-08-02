@@ -82,8 +82,9 @@ TEST_F(LieIncrementPathTestsFixture, TestLogSignatureSingleIncrement)
             width,
             depth,
             esig::real_interval(0.0, 1.0),
+            esig::algebra::get_context(width, depth, esig::algebra::coefficient_type::sp_real),
             esig::algebra::coefficient_type::sp_real,
-            esig::algebra::vector_type::dense,
+            esig::algebra::input_data_type::value_array,
             esig::algebra::vector_type::dense
     };
 
@@ -111,8 +112,9 @@ TEST_F(LieIncrementPathTestsFixture, TestLogSignatureTwoIncrementsDepth1)
             width,
             depth,
             esig::real_interval(0.0, 2.0),
+            esig::algebra::get_context(width, depth, esig::algebra::coefficient_type::sp_real),
             esig::algebra::coefficient_type::sp_real,
-            esig::algebra::vector_type::dense,
+            esig::algebra::input_data_type::value_array,
             esig::algebra::vector_type::dense
     };
 

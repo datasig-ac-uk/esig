@@ -46,8 +46,7 @@ algebra::lie path_interface::log_signature(const interval &domain, path_interfac
 
 std::shared_ptr<algebra::context> path::get_default_context() const
 {
-    auto metadata = p_impl->metadata();
-    return algebra::get_context(metadata.width, metadata.depth, metadata.ctype, {});
+    return p_impl->metadata().ctx;
 }
 algebra::lie path::log_signature(const interval &domain, path::accuracy_t accuracy) const
 {

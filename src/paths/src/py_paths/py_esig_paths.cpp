@@ -7,6 +7,7 @@
 #include "py_lie_increment_path.h"
 #include "py_function_path.h"
 
+#include <pybind11/stl.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -163,10 +164,10 @@ PYBIND11_MODULE(_paths, m) {
     path_class.def(py::init(&paths::py_path_constructor));
 
     path_class.def_property_readonly("width", [](const paths::path& self) { return self.metadata().width; });
-
+    path_class.def_property_readonly("depth", [](const paths::path& self) { return self.metadata().depth; });
 
     auto interval_lsig =
-            [](const paths::path &self, const interval &domain, accuracy_t acc) -> esig::algebra::lie
+            [](const paths::path &self, const interval &domain, accuracy_t acc, const py::kwargs&) -> esig::algebra::lie
     {
                 return self.log_signature(domain, acc);
     };
@@ -179,7 +180,7 @@ PYBIND11_MODULE(_paths, m) {
 
     auto param_lsig = [](const paths::path &self,
                          param_t a, param_t b,
-                         accuracy_t acc) -> esig::algebra::lie {
+                         accuracy_t acc, const py::kwargs&) -> esig::algebra::lie {
         real_interval domain(a, b);
         return self.log_signature(domain, acc);
     };
@@ -188,7 +189,7 @@ PYBIND11_MODULE(_paths, m) {
                    "lower"_a,
                    "upper"_a,
                    "accuracy"_a);
-    auto free_lsig = [](const paths::path& self, accuracy_t accuracy) {
+    auto free_lsig = [](const paths::path& self, accuracy_t accuracy, const py::kwargs&) {
         return self.log_signature(accuracy);
     };
     path_class.def("log_signature", std::move(free_lsig), "accuracy"_a);
@@ -196,7 +197,7 @@ PYBIND11_MODULE(_paths, m) {
 
     auto interval_sig = [](const paths::path& self,
                            interval& domain,
-                           accuracy_t acc) -> esig::algebra::free_tensor {
+                           accuracy_t acc, const py::kwargs&) -> esig::algebra::free_tensor {
         return self.signature(domain, acc);
     };
     path_class.def("signature",
@@ -207,7 +208,7 @@ PYBIND11_MODULE(_paths, m) {
 
     auto param_sig = [](const paths::path& self,
                         param_t a, param_t b,
-                        accuracy_t acc) -> esig::algebra::free_tensor {
+                        accuracy_t acc, const py::kwargs&) -> esig::algebra::free_tensor {
         auto sig = self.signature(real_interval(a, b), acc);
         return sig;
     };
@@ -217,7 +218,7 @@ PYBIND11_MODULE(_paths, m) {
                    "upper"_a,
                    "accuracy"_a);
 
-    auto free_sig = [](const paths::path& self, accuracy_t accuracy) {
+    auto free_sig = [](const paths::path& self, accuracy_t accuracy, const py::kwargs&) {
         return self.signature(accuracy);
     };
     path_class.def("signature", std::move(free_sig), "accuracy"_a);
@@ -226,7 +227,7 @@ PYBIND11_MODULE(_paths, m) {
     auto interval_sigder = [](const paths::path& self,
                               interval& domain,
                               const algebra::lie & perturbation,
-                              accuracy_t acc) -> esig::algebra::free_tensor {
+                              accuracy_t acc, const py::kwargs&) -> esig::algebra::free_tensor {
         return self.signature_derivative(domain, perturbation, acc);
     };
     path_class.def("signature_derivative",
@@ -240,7 +241,7 @@ PYBIND11_MODULE(_paths, m) {
     auto param_sigder = [](const paths::path& self,
                       param_t a, param_t b,
                       const algebra::lie & perturbation,
-                      accuracy_t acc) -> esig::algebra::free_tensor {
+                      accuracy_t acc, const py::kwargs&) -> esig::algebra::free_tensor {
         real_interval domain(a, b);
         return self.signature_derivative(domain, perturbation, acc);
     };
@@ -253,7 +254,7 @@ PYBIND11_MODULE(_paths, m) {
 
     auto interval_list_sigder = [](const paths::path& self,
                                    typename paths::path::perturbation_list_t perturbation_list,
-                                   accuracy_t acc) -> esig::algebra::free_tensor
+                                   accuracy_t acc, const py::kwargs&) -> esig::algebra::free_tensor
     {
         return self.signature_derivative(perturbation_list, acc);
     };
@@ -264,7 +265,7 @@ PYBIND11_MODULE(_paths, m) {
 
     auto param_list_sigder = [](const paths::path& self,
                                 std::vector<std::tuple<param_t, param_t, algebra::lie>> perturbation_list,
-                                accuracy_t acc
+                                accuracy_t acc, const py::kwargs&
                                 ) -> esig::algebra::free_tensor
     {
         typename paths::path::perturbation_list_t perturbs;

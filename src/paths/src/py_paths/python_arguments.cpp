@@ -24,23 +24,23 @@ esig::paths::path_metadata esig::paths::parse_kwargs_to_metadata(const pybind11:
         // If the context is not set we need to get the width/depth/ctype
         // from the arguments or from the additional info provided.
 
-        if (kwargs.contains("width")) {
+        if (kwargs.contains("width") && !kwargs["width"].is_none()) {
             md.width = kwargs["width"].cast<deg_t>();
         } else {
             // requested args takes precedence over derived args
             md.width = args.width;
         }
-        if (kwargs.contains("depth")) {
+        if (kwargs.contains("depth") && !kwargs["depth"].is_none()) {
             md.depth = kwargs["depth"].cast<deg_t>();
         } else if (args.depth != 0){
             // requested args takes precedence over derived args
             md.depth = args.depth;
         } else {
-            md.depth = 1;
+            md.depth = 2;
         }
         // Either ctype or dtype are acceptable aliases for the coefficient
         // type
-        if (kwargs.contains("ctype")) {
+        if (kwargs.contains("ctype") && !kwargs["ctype"].is_none()) {
             md.ctype = kwargs["ctype"].cast<algebra::coefficient_type>();
         } else if (kwargs.contains("dtype")) {
             md.ctype = kwargs["dtype"].cast<algebra::coefficient_type>();

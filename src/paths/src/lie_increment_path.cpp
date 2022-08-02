@@ -28,6 +28,11 @@ lie_increment_path::lie_increment_path(
 algebra::lie lie_increment_path::log_signature(const esig::interval &domain, const esig::algebra::context &ctx) const
 {
     const auto& md = metadata();
+    if (empty(domain)) {
+        return ctx.zero_lie(md.result_vec_type);
+    }
+
+
 
     esig::algebra::signature_data data (
             md.ctype,
@@ -37,6 +42,9 @@ algebra::lie lie_increment_path::log_signature(const esig::interval &domain, con
                     m_data.lower_bound(domain.sup())
                     )
             );
+
+    assert(ctx.width() == md.width);
+    assert(ctx.depth() == md.depth);
 
     return ctx.log_signature(std::move(data));
 }

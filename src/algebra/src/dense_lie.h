@@ -65,25 +65,48 @@ public:
     dense_lie(std::shared_ptr<lie_basis> basis, deg_t degree, std::initializer_list<Scalar> args)
             : m_basis(std::move(basis)), m_degree(degree), m_data(args)
     {
-        m_data.resize(m_basis->size(static_cast<int>(m_degree)));
+        resize(m_basis->size(static_cast<int>(m_degree)));
     }
 
 
     dense_lie(std::shared_ptr<lie_basis> basis, deg_t degree, std::vector<Scalar>&& data)
             : m_basis(std::move(basis)), m_degree(degree), m_data(std::move(data))
     {
-        m_data.resize(m_basis->size(static_cast<int>(m_degree)));
+        resize(m_basis->size(static_cast<int>(m_degree)));
     }
 
     dense_lie(std::shared_ptr<lie_basis> basis, const Scalar* begin, const Scalar* end)
             : m_basis(std::move(basis)), m_degree(0), m_data(begin, end)
     {
         if (!m_data.empty()) {
-            m_degree = m_basis->degree(m_data.size());
-            m_data.resize(m_basis->size(static_cast<int>(m_degree)));
+            resize(m_data.size());
         }
     }
 
+
+protected:
+
+    void resize(dimn_t new_dimension) {
+        assert (new_dimension >= m_data.size());
+        if (new_dimension == 0) {
+            return;
+        }
+        if (new_dimension <= width()) {
+            m_degree = 1;
+            m_data.resize(width());
+        } else {
+            auto deg = m_basis->degree(new_dimension);
+            auto adjusted = m_basis->size(static_cast<int>(deg));
+            if (adjusted < new_dimension) {
+                m_degree = deg + 1;
+                adjusted = m_basis->size(static_cast<int>(m_degree));
+            } else {
+                m_degree = deg;
+            }
+            assert(m_degree <= depth());
+            m_data.resize(adjusted);
+        }
+    }
 
 public:
     dimn_t size() const 
@@ -130,7 +153,7 @@ public:
     Scalar& operator[](const key_type& key)
     {
         if (key > m_data.size()) {
-            m_data.resize(m_basis->size(m_basis->degree(key)));
+            resize(m_basis->size(m_basis->degree(key)));
         }
         return m_data[key-1];
     }
@@ -227,7 +250,7 @@ private:
 
 
         if (new_size > m_data.size()) {
-            m_data.resize(new_size);
+            resize(new_size);
         }
 
         auto mid = std::min(size(), other.size());
@@ -289,7 +312,7 @@ public:
     {
         assert(key <= m_basis->size(m_basis->depth()));
         if (key >= m_data.size()) {
-            m_data.resize(m_basis->size(m_basis->degree(key)));
+            resize(m_basis->size(m_basis->degree(key)));
         }
         m_data[key-1] += scal;
         return *this;
@@ -298,7 +321,7 @@ public:
     {
         assert(key <= m_basis->size(m_basis->depth()));
         if (key > m_data.size()) {
-            m_data.resize(m_basis->size(m_basis->degree(key)));
+            resize(m_basis->size(m_basis->degree(key)));
         }
         m_data[key-1] -= scal;
         return *this;

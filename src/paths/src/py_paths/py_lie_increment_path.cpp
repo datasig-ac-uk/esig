@@ -235,8 +235,10 @@ esig::paths::path esig::paths::construct_lie_increment_path(const pybind11::args
 
     if (kwargs.contains("indices")) {
         indices_buffer = process_indices(kwargs["indices"]);
-        auto minmax = std::minmax_element(indices_buffer.begin(), indices_buffer.end());
-        parse_args.domain = real_interval {*minmax.first, *minmax.second};
+        if (!indices_buffer.empty()) {
+            auto minmax = std::minmax_element(indices_buffer.begin(), indices_buffer.end());
+            parse_args.domain = real_interval {*minmax.first, *minmax.second};
+        }
     }
 
     if (py::isinstance<py::buffer>(args[0])) {
@@ -256,14 +258,13 @@ esig::paths::path esig::paths::construct_lie_increment_path(const pybind11::args
                 throw py::type_error("unsupported data type");
         }
 
-        if (info.ndim != 2) {
+        if (info.size > 0 && info.ndim != 2) {
             throw py::value_error("data must be 2 dimensional");
         }
 
 
-        py::print(args, kwargs);
 
-        auto n_samples = info.shape[0];
+        auto n_samples = info.size > 0 ? info.shape[0] : 0;
         parse_args.width = deg_t(info.shape[1]);
         if (indices_buffer.empty()) {
             indices_buffer.reserve(n_samples);

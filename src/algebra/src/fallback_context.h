@@ -252,7 +252,9 @@ ftensor_type<CType, VType> fallback_context::single_sig_derivative(
     const lie_type<CType, VType> &perturb
     ) const
 {
-    return sig * lie_to_tensor_impl<CType, VType>(derive_series_compute(incr, perturb));
+    auto derive_ser = lie_to_tensor_impl<CType, VType>(derive_series_compute(incr, perturb));
+
+    return sig * derive_ser;
 }
 
 template<coefficient_type CType, vector_type VType>

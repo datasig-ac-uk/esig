@@ -63,9 +63,10 @@ private:
         esig::paths::path_metadata md {
                 width,
                 depth,
-                esig::real_interval(0., 6.),
+                esig::real_interval(0., 6.0),
+                esig::algebra::get_context(width, depth, ctype),
                 ctype,
-                esig::algebra::vector_type::sparse,
+                esig::algebra::input_data_type::value_array,
                 esig::algebra::vector_type::sparse
         };
 

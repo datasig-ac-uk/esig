@@ -79,9 +79,7 @@ public:
             : m_basis(std::move(basis)), m_degree(0), m_data(begin, end)
     {
         if (!m_data.empty()) {
-            auto sz = m_data.size() - 1;
-            m_degree = m_basis->degree(sz);
-            m_data.resize(m_basis->size(static_cast<int>(m_degree)));
+            resize(m_data.size());
         }
     }
 
@@ -89,6 +87,24 @@ public:
     dense_tensor(std::shared_ptr<tensor_basis> basis, Scalar val)
             : m_basis(std::move(basis)), m_degree(0), m_data{val}
     {}
+
+protected:
+
+    void resize(dimn_t new_size)
+    {
+        assert(new_size >= m_data.size());
+        auto deg = m_basis->degree(static_cast<key_type>(new_size-1));
+        auto adjusted = m_basis->size(static_cast<int>(deg));
+        if (adjusted < new_size) {
+            m_degree = deg + 1;
+        } else {
+            m_degree = deg;
+        }
+
+        assert(m_degree <= depth());
+        m_data.resize(m_basis->size(static_cast<int>(m_degree)));
+        assert(m_data.size() == m_basis->size(static_cast<int>(m_degree)));
+    }
 
 public:
     dimn_t size() const 
@@ -144,9 +160,7 @@ public:
     Scalar& operator[](const key_type& key)
     {
         if (key >= m_data.size()) {
-            auto deg = m_basis->degree(key);
-            m_data.resize(m_basis->size(static_cast<int>(deg)));
-            m_degree = deg;
+            resize(static_cast<dimn_t>(key));
         }
         return m_data[key];
     }
@@ -243,7 +257,7 @@ private:
 
 
         if (new_size > m_data.size()) {
-            m_data.resize(new_size);
+            resize(new_size);
         }
 
         auto mid = std::min(size(), other.size());
@@ -295,9 +309,7 @@ public:
     {
         assert(key < m_basis->size(m_basis->depth()));
         if (key >= m_data.size()) {
-            auto deg = m_basis->degree(key);
-            m_data.resize(m_basis->size(deg));
-            m_degree = deg;
+            resize(static_cast<dimn_t>(key));
         }
         m_data[key] += scal;
         return *this;
@@ -409,7 +421,9 @@ public:
         dense_tensor tmp(m_basis, out_deg);
         tmp.m_data.resize(m_basis->size(out_deg));
 
-        mul_impl(tmp, *this, other, [](const Scalar &s) { return s; }, out_deg);
+        if (!m_data.empty() && !other.m_data.empty()) {
+            mul_impl(tmp, *this, other, [](const Scalar &s) { return s; }, out_deg);
+        }
         return tmp;
     }
 
@@ -433,8 +447,7 @@ private:
 
         auto old_lhs_deg = lhs.m_degree;
         if (lhs.m_degree < max_depth) {
-            lhs.m_data.resize(lhs.m_basis->size(max_depth));
-            lhs.m_degree = max_depth;
+            lhs.resize(lhs.m_basis->size(static_cast<int>(max_depth)));
         }
 
         int offset = (rhs.m_data[0] == Scalar(0)) ? 1 : 0;

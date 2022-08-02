@@ -198,13 +198,18 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
         self.print(ss);
         return ss.str();
     });
-
     klass.def("__repr__", [](const free_tensor& self) {
-                std::stringstream ss;
-                ss << "FreeTensor(width=" << self.width() << ", depth=" << self.depth();
-                ss << ", ctype=" << static_cast<int>(self.coeff_type()) << ')';
-                return ss.str();
-            });
+        std::stringstream ss;
+        self.print(ss);
+        return ss.str();
+    });
+
+//    klass.def("__repr__", [](const free_tensor& self) {
+//                std::stringstream ss;
+//                ss << "FreeTensor(width=" << self.width() << ", depth=" << self.depth();
+//                ss << ", ctype=" << static_cast<int>(self.coeff_type()) << ')';
+//                return ss.str();
+//            });
 
     klass.def("__eq__", [](const free_tensor& lhs, const free_tensor& rhs) { return lhs == rhs; });
     klass.def("__neq__", [](const free_tensor& lhs, const free_tensor& rhs) { return lhs != rhs; });

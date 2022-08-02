@@ -123,7 +123,7 @@ TEST_P(TensorFixture, TestFMExpInplace) {
     auto l1 = make_tensor_dense_data(d1);
     const auto l2 = make_tensor_dense_data(d2);
 
-    const auto result = l1.fmexp()
+    const auto result = l1.fmexp(l2);
 
 }
 
