@@ -93,18 +93,32 @@ protected:
     void resize(dimn_t new_size)
     {
         assert(new_size >= m_data.size());
+        if (new_size == 0) {
+            return;
+        }
         auto deg = m_basis->degree(static_cast<key_type>(new_size-1));
         auto adjusted = m_basis->size(static_cast<int>(deg));
         if (adjusted < new_size) {
             m_degree = deg + 1;
+            adjusted = m_basis->size(static_cast<int>(m_degree));
         } else {
             m_degree = deg;
         }
-
+        assert(adjusted >= new_size);
         assert(m_degree <= depth());
-        m_data.resize(m_basis->size(static_cast<int>(m_degree)));
+        m_data.resize(adjusted);
         assert(m_data.size() == m_basis->size(static_cast<int>(m_degree)));
     }
+
+    void resize_for_key(key_type key)
+    {
+        auto deg = m_basis->degree(key);
+        if (deg > m_degree) {
+            m_degree = deg;
+        }
+        m_data.resize(m_basis->size(static_cast<int>(m_degree)));
+    }
+
 
 public:
     dimn_t size() const 
@@ -160,7 +174,7 @@ public:
     Scalar& operator[](const key_type& key)
     {
         if (key >= m_data.size()) {
-            resize(static_cast<dimn_t>(key));
+            resize_for_key(static_cast<dimn_t>(key));
         }
         return m_data[key];
     }
@@ -309,7 +323,7 @@ public:
     {
         assert(key < m_basis->size(m_basis->depth()));
         if (key >= m_data.size()) {
-            resize(static_cast<dimn_t>(key));
+            resize_for_key(key);
         }
         m_data[key] += scal;
         return *this;
