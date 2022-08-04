@@ -246,17 +246,25 @@ private:
     {
 
         auto out_deg = std::min(m_basis->depth(), std::max(m_degree, other.m_degree));
-        auto new_size = m_basis->start_of_degree(out_deg);
+        auto new_size = m_basis->size(static_cast<int>(out_deg));
 
 
         if (new_size > m_data.size()) {
             resize(new_size);
         }
 
+        assert(size() >= other.size());
         auto mid = std::min(size(), other.size());
+
         for (auto i = 0; i < mid; ++i) {
             fn(m_data[i], other.m_data[i]);
         }
+
+        // If other happened to be smaller, fill in the gaps now
+        for (auto i=other.size(); i<size(); ++i) {
+            fn(m_data[i], Scalar(0));
+        }
+
     }
 
 public:
