@@ -96,9 +96,11 @@ class lie_implementation : public lie_interface
     const context *p_ctx;
     friend class ::esig::algebra::lie_base_access;
 
+    using impl_type = Impl;
     using scalar_type = typename algebra_info<Impl>::scalar_type;
 
 public:
+
     explicit lie_implementation(Impl &&impl, const context *ctx);
 
     dimn_t size() const override;
@@ -166,6 +168,8 @@ public:
 
     template<typename Impl, typename... Args>
     static lie from_args(Args &&...args);
+
+    explicit operator bool() const noexcept { return static_cast<bool>(p_impl); }
 
     lie &operator=(const lie &) = default;
     lie &operator=(lie &&) noexcept = default;
@@ -242,6 +246,20 @@ struct lie_base_access {
         assert(ptr != nullptr);
         return dynamic_cast<dtl::lie_implementation<Impl> &>(*ptr).m_data;
     }
+
+    template <typename Wrapper>
+    static typename Wrapper::impl_type& get(Wrapper& arg)
+    {
+        return arg.m_data;
+    }
+
+    template <typename Wrapper>
+    static const typename Wrapper::impl_type& get(const Wrapper& arg)
+    {
+        return arg.m_data;
+    }
+
+
 };
 
 
