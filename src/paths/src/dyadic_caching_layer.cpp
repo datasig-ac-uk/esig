@@ -48,6 +48,13 @@ esig::paths::dyadic_caching_layer::log_signature(
     auto lhs = log_signature(lhs_itvl, resolution, ctx);
     auto rhs = log_signature(rhs_itvl, resolution, ctx);
 
+    if (lhs.size() == 0) {
+        return rhs;
+    }
+    if (rhs.size() == 0) {
+        return lhs;
+    }
+
     return ctx.cbh({lhs, rhs}, metadata().result_vec_type);
 }
 
@@ -71,6 +78,7 @@ esig::paths::dyadic_caching_layer::log_signature(
     lies.reserve(dyadic_dissection.size());
     for (const auto& itvl : dyadic_dissection) {
         auto lsig = log_signature(itvl, resolution, ctx);
+        std::cout << itvl << ' ' << lsig << '\n';
         lies.push_back(lsig);
     }
 
