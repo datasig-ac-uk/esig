@@ -149,6 +149,9 @@ public:
 
     algebra::lie
     log_signature(const dyadic_interval &domain, compute_depth_t resolution, const algebra::context &ctx) const override;
+
+    algebra::lie
+    log_signature(const interval& domain, compute_depth_t resolution, const algebra::context& ctx) const override;
 };
 
 /**
