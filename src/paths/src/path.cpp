@@ -26,7 +26,7 @@ path_interface::compute_depth(path_interface::accuracy_t accuracy) const noexcep
 }
 bool path_interface::empty(const interval &domain) const
 {
-    return true;
+    return domain.inf() == domain.sup();
 }
 algebra::free_tensor
 path_interface::signature(const interval &domain, path_interface::compute_depth_t resolution, const algebra::context &ctx) const
