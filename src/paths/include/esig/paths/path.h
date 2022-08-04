@@ -84,7 +84,7 @@ class ESIG_PATHS_EXPORT path_interface
 
 public:
     using accuracy_t = param_t;
-    using compute_depth_t = unsigned;
+    using compute_depth_t = int;
 
     explicit path_interface(path_metadata metadata);
 
