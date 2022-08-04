@@ -94,7 +94,7 @@ def test_path_creation_odd_data(data):
 
 def test_tick_path_signature_calc_accuracy():
     data = np.array([[1.0, 2.5]])
-    p = path(data, width=2, depth=2, indices=[0.7])
+    p = path(data, width=2, depth=2, indices=np.array([0.7]))
 
     r1 = p.signature(0.0, 0.8, 0.5)
     expected1 = FreeTensor(np.array([1.0]), width=2, depth=2)
