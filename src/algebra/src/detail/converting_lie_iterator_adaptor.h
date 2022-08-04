@@ -20,6 +20,7 @@ class converting_reference_wrapper
     const lie_interface* m_interface;
     OutLie tmp;
     bool converted;
+    using wrapper = dtl::lie_implementation<OutLie>;
 
     void convert()
     {
@@ -40,8 +41,8 @@ public:
 
     operator const OutLie&()
     {
-        if (typeid(m_interface) == typeid(OutLie)) {
-            return dynamic_cast<const OutLie&>(*m_interface);
+        if (typeid(*m_interface) == typeid(wrapper)) {
+            return lie_base_access::get(dynamic_cast<const wrapper&>(*m_interface));
         } else {
             if (!converted) {
                 convert();
@@ -52,8 +53,8 @@ public:
 
     operator const OutLie*()
     {
-        if (typeid(m_interface) == typeid(OutLie)) {
-            return static_cast<const OutLie*>(m_interface);
+        if (typeid(*m_interface) == typeid(wrapper)) {
+            return &lie_base_access::get(dynamic_cast<const wrapper&>(*m_interface));
         } else {
             if (!converted) {
                 convert();
