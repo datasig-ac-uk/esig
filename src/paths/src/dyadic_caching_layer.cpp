@@ -78,7 +78,6 @@ esig::paths::dyadic_caching_layer::log_signature(
     lies.reserve(dyadic_dissection.size());
     for (const auto& itvl : dyadic_dissection) {
         auto lsig = log_signature(itvl, resolution, ctx);
-        std::cout << itvl << ' ' << lsig << '\n';
         lies.push_back(lsig);
     }
 
