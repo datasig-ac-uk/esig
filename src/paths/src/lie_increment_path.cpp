@@ -44,7 +44,7 @@ algebra::lie lie_increment_path::log_signature(const esig::interval &domain, con
             );
 
     assert(ctx.width() == md.width);
-    assert(ctx.depth() == md.depth);
+//    assert(ctx.depth() == md.depth);
 
     return ctx.log_signature(std::move(data));
 }
