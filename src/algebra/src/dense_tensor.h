@@ -454,6 +454,8 @@ private:
     {
 
         if (rhs.m_data.empty()) {
+            lhs.m_data.clear();
+            lhs.m_degree = 0;
             return;
         }
 
@@ -588,10 +590,16 @@ public:
         dense_tensor result(arg.m_basis, max_depth);
         result.m_data.resize(arg.m_basis->size(max_depth));
         result.m_data[0] = Scalar(1);
+
+        if (arg.size() == 0) {
+            return result;
+        }
+
         for (deg_t d=max_depth; d >= 1; --d) {
             result.mul_scal_div(arg, Scalar(d));
             result.m_data[0] += Scalar(1);
         }
+        assert(result.m_data[0] == Scalar(1));
         return result;
     }
     friend dense_tensor log(const dense_tensor& arg)
