@@ -618,6 +618,10 @@ public:
     }
     dense_tensor &fmexp_inplace(const dense_tensor &arg)
     {
+        if (arg.m_data.empty()) {
+            return *this;
+        }
+
         check_compatible(*arg.m_basis);
         const auto max_depth = m_basis->depth();
 
