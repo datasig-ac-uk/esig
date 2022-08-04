@@ -599,7 +599,6 @@ public:
             result.mul_scal_div(arg, Scalar(d));
             result.m_data[0] += Scalar(1);
         }
-        assert(result.m_data[0] == Scalar(1));
         return result;
     }
     friend dense_tensor log(const dense_tensor& arg)
