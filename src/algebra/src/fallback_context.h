@@ -231,12 +231,12 @@ Lie fallback_context::ad_x_n(deg_t d, const Lie &x, const Lie &y) const
 template<typename Lie>
 Lie fallback_context::derive_series_compute(const Lie &incr, const Lie &pert) const
 {
-    Lie result(get_lie_basis());
+    Lie result(pert);
 
     typename Lie::scalar_type factor(1);
     for (deg_t d = 1; d <= m_depth; ++d) {
-        factor /= static_cast<typename Lie::scalar_type>(d + 1);
-        if (d & 1) {
+        factor *= static_cast<typename Lie::scalar_type>(d + 1);
+        if (d % 2 == 0) {
             result.add_scal_div(ad_x_n(d, incr, pert), factor);
         } else {
             result.sub_scal_div(ad_x_n(d, incr, pert), factor);
