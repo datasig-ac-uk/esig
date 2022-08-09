@@ -17,6 +17,26 @@ static const char* LKEY_ITERATOR_DOC = R"eadoc(Iterator over range of Hall set m
 )eadoc";
 
 
+py_lie_key to_py_lie_key(key_type k, const algebra_basis& lbasis)
+{
+    if (lbasis.letter(k)) {
+        return py_lie_key(lbasis.width(), k);
+    }
+
+    auto lparent = lbasis.lparent(k);
+    auto rparent = lbasis.rparent(k);
+
+    if (lbasis.letter(lparent) && lbasis.letter(rparent)) {
+        return py_lie_key(lbasis.width(), lparent, rparent);
+    }
+    if (lbasis.letter(lparent)) {
+        return py_lie_key(lbasis.width(), lparent, to_py_lie_key(rparent, lbasis));
+    }
+    return py_lie_key(lbasis.width(),
+                      to_py_lie_key(lbasis.lparent(k), lbasis),
+                      to_py_lie_key(lbasis.rparent(k), lbasis));
+}
+
 
 py_lie_key_iterator::py_lie_key_iterator(const context *ctx, key_type current, key_type end)
     : p_ctx(ctx), m_current(current), m_end(end)
@@ -37,7 +57,7 @@ py_lie_key py_lie_key_iterator::next()
     }
     auto current = m_current;
     ++m_current;
-    return py_lie_key(p_ctx, current);
+    return to_py_lie_key(current, p_ctx->borrow_lbasis());
 }
 
 
@@ -47,16 +67,16 @@ py_lie_key py_lie_key_iterator::next()
 void init_lie_key_iterator(pybind11::module_ &m)
 {
     py::class_<py_lie_key_iterator> klass(m, "LieKeyIterator", LKEY_ITERATOR_DOC);
-//    klass.def(py::init<const context*>(), "context"_a);
-//    klass.def(py::init<const context*, key_type>(), "context"_a, "start_key"_a);
-//    klass.def(py::init<const context*, key_type, key_type>(), "context"_a, "start_key"_a, "end_key"_a);
+    klass.def(py::init<const context*>(), "context"_a);
+    klass.def(py::init<const context*, key_type>(), "context"_a, "start_key"_a);
+    klass.def(py::init<const context*, key_type, key_type>(), "context"_a, "start_key"_a, "end_key"_a);
 
-    klass.def(py::init([](const py_lie_key& start_key) {
-             return py_lie_key_iterator(start_key.get_context(), static_cast<key_type>(start_key));
-         }), "start_key"_a);
-    klass.def(py::init([](const py_lie_key& start_key, const py_lie_key& end_key) {
-             return py_lie_key_iterator(start_key.get_context(), static_cast<key_type>(start_key), static_cast<key_type>(end_key));
-         }), "start_key"_a, "end_key"_a);
+//    klass.def(py::init([](const py_lie_key& start_key) {
+//             return py_lie_key_iterator(start_key.get_context(), static_cast<key_type>(start_key));
+//         }), "start_key"_a);
+//    klass.def(py::init([](const py_lie_key& start_key, const py_lie_key& end_key) {
+//             return py_lie_key_iterator(start_key.get_context(), static_cast<key_type>(start_key), static_cast<key_type>(end_key));
+//         }), "start_key"_a, "end_key"_a);
 
 //    klass.def(py::init([](deg_t width, deg_t depth, coefficient_type ctype) {
 //             auto ctx = get_context(width, depth, ctype);

@@ -61,7 +61,7 @@ PYBIND11_MODULE(algebra, m)
     py_ctx.def("tensor_size", &context::tensor_size, "degree"_a);
     py_ctx.def("cbh_impl", &context::cbh, "lies"_a, "vec_type"_a);
     py_ctx.def("iterate_tensor_keys", [](const context& ctx) {
-              return esig::algebra::py_tensor_key_iterator(&ctx);
+              return esig::algebra::py_tensor_key_iterator(ctx.width(), ctx.depth());
           });
     py_ctx.def("iterator_lie_keys", [](const context& ctx) {
               return esig::algebra::py_lie_key_iterator(&ctx);

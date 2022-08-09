@@ -16,11 +16,11 @@ class py_tensor_key_iterator
 {
     key_type m_current;
     key_type m_end;
-    const context* p_ctx;
+    deg_t m_width, m_depth;
 
 public:
 
-    py_tensor_key_iterator(const context* ctx, key_type current=0, key_type end=std::numeric_limits<key_type>::max());
+    py_tensor_key_iterator(deg_t width, deg_t depth, key_type current=0, key_type end=std::numeric_limits<key_type>::max());
 
     py_tensor_key next();
 

@@ -5,6 +5,7 @@
 #include "py_tensor_key_iterator.h"
 
 #include <pybind11/pybind11.h>
+#include <cmath>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
@@ -15,11 +16,23 @@ namespace algebra {
 static const char* TKEY_ITERATOR_DOC = R"eadoc(Iterator over tensor words.
 )eadoc";
 
-
-py_tensor_key_iterator::py_tensor_key_iterator(const context *ctx, key_type current, key_type end)
-    : p_ctx(ctx), m_current(current), m_end(end)
+constexpr dimn_t power(dimn_t base, deg_t exponent) noexcept
 {
-    auto max_size = p_ctx->tensor_size(p_ctx->depth());
+    return (exponent == 0) ? 1
+            : (exponent == 1) ? base
+            : power(base, exponent/2)*power(base, exponent/2);
+}
+constexpr dimn_t log(dimn_t arg, dimn_t base) noexcept
+{
+    return (arg < base) ? 0 : 1 + log(arg / base, base);
+}
+
+
+py_tensor_key_iterator::py_tensor_key_iterator(deg_t width, deg_t depth, key_type current, key_type end)
+    : m_current(current), m_end(end), m_width(width), m_depth(depth)
+{
+    assert(width != 0 && width != 1);
+    auto max_size = (power(dimn_t(width), depth+1) - 1)/(dimn_t(width) - 1);
     if (m_end > max_size) {
         m_end = max_size;
     }
@@ -31,7 +44,7 @@ py_tensor_key py_tensor_key_iterator::next()
     }
     auto current = m_current;
     ++m_current;
-    return py_tensor_key(p_ctx, current);
+    return py_tensor_key(current, m_width, m_depth);
 }
 
 
@@ -40,10 +53,10 @@ void init_tensor_key_iterator(pybind11::module_ &m)
     py::class_<py_tensor_key_iterator> klass(m, "TensorKeyIterator", TKEY_ITERATOR_DOC);
 
     klass.def(py::init([](const py_tensor_key& start_key) {
-        return py_tensor_key_iterator(start_key.get_context(), static_cast<key_type>(start_key));
+        return py_tensor_key_iterator(start_key.width(), start_key.depth(), static_cast<key_type>(start_key));
     }), "start_key"_a);
     klass.def(py::init([](const py_tensor_key& start_key, const py_tensor_key& end_key) {
-        return py_tensor_key_iterator(start_key.get_context(), static_cast<key_type>(start_key), static_cast<key_type>(end_key));
+        return py_tensor_key_iterator(start_key.width(), start_key.depth(), static_cast<key_type>(start_key), static_cast<key_type>(end_key));
     }), "start_key"_a, "end_key"_a);
     klass.def("__iter__", [](py_tensor_key_iterator& self) { return self; });
     klass.def("__next__", &py_tensor_key_iterator::next);

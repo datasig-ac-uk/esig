@@ -12,6 +12,8 @@
 #include <esig/algebra/coefficients.h>
 #include <esig/algebra/context.h>
 
+#include <boost/container/small_vector.hpp>
+
 #include <string>
 
 namespace esig {
@@ -23,17 +25,21 @@ pybind11::dtype dtype_from(coefficient_type ctype);
 class ESIG_ALGEBRA_EXPORT py_tensor_key
 {
     key_type m_key;
-    const context* m_ctx;
+    deg_t m_width;
+    deg_t m_depth;
 
 public:
-    explicit py_tensor_key(const context* ctx, key_type key = 0);
+    explicit py_tensor_key(key_type key, deg_t width, deg_t depth);
 
     explicit operator key_type() const noexcept;
-    const context* get_context() const noexcept;
 
     std::string to_string() const;
     py_tensor_key lparent() const;
     py_tensor_key rparent() const;
+    bool is_letter() const;
+
+    deg_t width() const;
+    deg_t depth() const;
 
     deg_t degree() const;
 
@@ -41,18 +47,71 @@ public:
     bool less(const py_tensor_key &other) const noexcept;
 };
 
-class ESIG_ALGEBRA_EXPORT py_lie_key
+
+class ESIG_ALGEBRA_EXPORT py_lie_letter
 {
-    key_type m_key;
-    const context* m_ctx;
+    dimn_t m_data = 0;
+
+    constexpr explicit py_lie_letter(dimn_t raw) : m_data(raw)
+    {}
 
 public:
 
-    explicit py_lie_key(const context* ctx, key_type key=1);
+    py_lie_letter() = default;
 
-    explicit operator key_type() const noexcept;
-    const context* get_context() const noexcept;
+    static constexpr py_lie_letter from_letter(let_t letter) {
+        return py_lie_letter(1 + (dimn_t(letter) << 1));
+    }
 
+    static constexpr py_lie_letter from_offset(dimn_t offset) {
+        return py_lie_letter(offset << 1);
+    }
+
+    constexpr bool is_offset() const noexcept
+    {
+        return (m_data & 1) == 0;
+    }
+
+    explicit operator let_t () const noexcept
+    {
+        return esig::let_t(m_data >> 1);
+    }
+
+    explicit constexpr operator dimn_t() const noexcept
+    {
+        return m_data >> 1;
+    }
+
+    inline friend std::ostream& operator<<(std::ostream& os, const py_lie_letter& let)
+    {
+        return os << let.m_data;
+    }
+
+};
+
+
+class ESIG_ALGEBRA_EXPORT py_lie_key
+{
+public:
+    using container_type = boost::container::small_vector<py_lie_letter, 2>;
+
+private:
+
+    container_type m_data;
+    deg_t m_width;
+
+
+public:
+
+    explicit py_lie_key(deg_t width);
+    explicit py_lie_key(deg_t width, let_t letter);
+    explicit py_lie_key(deg_t width, const boost::container::small_vector_base<py_lie_letter>& data);
+    explicit py_lie_key(deg_t width, let_t left, let_t right);
+    explicit py_lie_key(deg_t width, let_t left, const py_lie_key& right);
+    explicit py_lie_key(deg_t width, const py_lie_key& left, const py_lie_key& right);
+
+    bool is_letter() const noexcept;
+    let_t as_letter() const;
     std::string to_string() const;
     py_lie_key lparent() const;
     py_lie_key rparent() const;
@@ -60,9 +119,7 @@ public:
     deg_t degree() const;
 
     bool equals(const py_lie_key& other) const noexcept;
-    bool less(const py_lie_key& other) const noexcept;
 
-    lie to_lie(const coefficient& c) const;
 
 };
 

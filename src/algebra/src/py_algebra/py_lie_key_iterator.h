@@ -19,7 +19,7 @@ class py_lie_key_iterator
 
 public:
 
-    py_lie_key_iterator(const context* ctx, key_type current=1, key_type end=std::numeric_limits<key_type>::max());
+    explicit py_lie_key_iterator(const context* ctx, key_type current=1, key_type end=std::numeric_limits<key_type>::max());
     py_lie_key next();
 
 };

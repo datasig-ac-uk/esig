@@ -20,9 +20,10 @@ std::pair<py_lie_key, coefficient> py_lie_iterator::next()
     if (m_it == m_end) {
         throw py::stop_iteration();
     }
-    std::pair<py_lie_key, coefficient> rv{py_lie_key(m_it.get_context(), m_it->key()), m_it->value()};
-    ++m_it;
-    return rv;
+//    std::pair<py_lie_key, coefficient> rv{py_lie_key(m_it.get_context(), m_it->key()), m_it->value()};
+//    ++m_it;
+//    return rv;
+    throw py::stop_iteration();
 }
 
 
