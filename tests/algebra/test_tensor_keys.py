@@ -77,6 +77,7 @@ def test_TensorKey_from_index(width, depth, tensor_size):
     assert key == TensorKey([width]*depth, width=width, depth=depth)
 
 
+@pytest.mark.skip("not implemented")
 def test_TensorKey_rmul_makes_tensor(width, depth, tensor_size):
     tens = 1.0 * TensorKey([1]*depth, width=width, depth=depth)
 
