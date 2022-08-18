@@ -42,6 +42,7 @@ public:
     deg_t depth() const;
 
     deg_t degree() const;
+    std::vector<let_t> to_letters() const;
 
     bool equals(const py_tensor_key &other) const noexcept;
     bool less(const py_tensor_key &other) const noexcept;

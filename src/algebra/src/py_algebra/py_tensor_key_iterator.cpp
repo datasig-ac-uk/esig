@@ -16,11 +16,20 @@ namespace algebra {
 static const char* TKEY_ITERATOR_DOC = R"eadoc(Iterator over tensor words.
 )eadoc";
 
-constexpr dimn_t power(dimn_t base, deg_t exponent) noexcept
-{
-    return (exponent == 0) ? 1
-            : (exponent == 1) ? base
-            : power(base, exponent/2)*power(base, exponent/2);
+namespace {
+
+template<typename I, typename E>
+constexpr I power(I arg, E exponent) noexcept {
+    if (exponent == 0) {
+        return I(1);
+    }
+    if (exponent == 1) {
+        return arg;
+    }
+    auto recurse = power(arg, exponent / 2);
+    return recurse * recurse * (exponent & 1 == 1 ? arg : I(1));
+}
+
 }
 constexpr dimn_t log(dimn_t arg, dimn_t base) noexcept
 {
