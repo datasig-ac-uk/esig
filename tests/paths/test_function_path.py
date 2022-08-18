@@ -17,8 +17,8 @@ def path(*args, **kwargs):
 def test_function_path_signature_calc_accuracy():
     def func(t):
         if t >= 0.5:
-            return t - 0.5, t - 0.5
-        return 0.0, 0.0
+            return np.array([t - 0.5, t - 0.5])
+        return np.array([0.0, 0.0])
 
     p = path(func, width=2, depth=2)
 
@@ -66,8 +66,8 @@ def test_fpath_known_signature_calc(width, depth, solution_signature):
 def deriv_function_path():
     def func(t):
         if t > 0.0:
-            return 0.2, 0.4, 0.6
-        return 0.0, 0.0, 0.0
+            return np.array([0.2, 0.4, 0.6])
+        return np.array([0.0, 0.0, 0.0])
 
     return func
 

@@ -22,6 +22,7 @@ def TensorKey_iter(width, depth):
 
     return itr
 
+
 @pytest.mark.xfail
 def test_FreeTensor_iterator(width, depth, tensor_size, TensorKey_iter):
     data = np.arange(1.0, float(tensor_size+1))

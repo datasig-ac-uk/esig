@@ -36,7 +36,7 @@ def test_tensor_size(width, depth):
     assert ctx.tensor_size(1) == 1 + width
 
 
-@pytest.mark.xfail
+@pytest.mark.skip("not yet implemented")
 def test_make_tensor_unit(width, depth):
     ctx = get_context(width, depth)
 
@@ -49,7 +49,7 @@ def test_make_tensor_unit(width, depth):
     assert t.degree() == 0
 
 
-@pytest.mark.xfail
+@pytest.mark.skip("not yet implemented")
 def test_make_zero_lie(width, depth):
     ctx = get_context(width, depth)
     l = ctx.zero_lie()
@@ -60,7 +60,8 @@ def test_make_zero_lie(width, depth):
     assert l.size() == 0
     assert l.degree() == 0
 
-@pytest.mark.xfail
+
+@pytest.mark.skip("not yet implemented")
 def test_lie_to_tensor(width, depth):
     l = Lie(np.array(range(1, width+1), dtype=np.float64), width=width, depth=depth)
     ctx = get_context(width, depth)
@@ -72,7 +73,7 @@ def test_lie_to_tensor(width, depth):
                                   depth=depth)
 
 
-@pytest.mark.xfail
+@pytest.mark.skip("not yet implemented")
 def test_tensor_to_lie(width, depth):
     t = FreeTensor(np.array(range(width+1), dtype=np.float64), width=width, depth=depth)
     ctx = get_context(width, depth)

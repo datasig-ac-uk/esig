@@ -15,7 +15,7 @@ namespace paths {
 class py_dense_function_path : public dynamically_constructed_path
 {
 public:
-    using func_type = std::function<pybind11::buffer(real_interval)>;
+    using func_type = std::function<pybind11::buffer(param_t)>;
 private:
     func_type m_func;
     std::shared_ptr<algebra::data_allocator> m_alloc;
@@ -29,7 +29,7 @@ public:
 
 class py_sparse_function_path : public dynamically_constructed_path
 {
-    using func_type = std::function<pybind11::dict(real_interval)>;
+    using func_type = std::function<pybind11::dict(param_t)>;
     func_type m_func;
     std::shared_ptr<algebra::data_allocator> m_alloc;
 public:

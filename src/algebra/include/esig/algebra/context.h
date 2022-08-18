@@ -361,7 +361,8 @@ typename increment_iterable<ToLie>::iterator::reference increment_iterable<ToLie
     }
     if (m_vtype == vector_type::dense) {
         return m_to_lie(m_ptr->dense_begin(), m_ptr->dense_end());
-    } else if (m_vtype == vector_type::sparse) {
+    }
+    if (m_vtype == vector_type::sparse) {
         return m_to_lie(m_ptr);
     }
     throw std::runtime_error("Unrecognised vector_type");
@@ -370,7 +371,9 @@ typename increment_iterable<ToLie>::iterator::reference increment_iterable<ToLie
 template<typename ToLie>
 typename increment_iterable<ToLie>::iterator &increment_iterable<ToLie>::iterator::operator++()
 {
-    if (m_ptr == nullptr) throw std::runtime_error("advancing invalid iterable");
+    if (m_ptr == nullptr) {
+        throw std::runtime_error("advancing invalid iterable");
+    }
     m_ptr->advance();
     return *this;
 }
