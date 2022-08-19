@@ -18,7 +18,7 @@ algebra::lie piecewise_lie_path::compute_lie_piece(const piecewise_lie_path::lie
 }
 
 piecewise_lie_path::piecewise_lie_path(std::vector<lie_piece> data, path_metadata metadata)
-    : dyadic_caching_layer(std::move(metadata)), m_data()
+    : path_interface(std::move(metadata)), m_data()
 {
     // first sort so we know the inf of each interval are in order
     auto sort_fun = [](const lie_piece& a, const lie_piece& b) {

@@ -10,7 +10,7 @@ include(GenerateExportHeader)
 
 
 
-add_library(esig_paths SHARED )
+add_library(esig_paths SHARED src/concatenation_path.cpp src/concatenation_path.h src/concatenate.cpp)
 
 #add_library(esig_paths SHARED )
 #pybind11_extension(esig_paths)
@@ -81,6 +81,7 @@ target_sources(py_esig_paths PRIVATE
         src/py_paths/kwargs_to_metadata.cpp
         src/py_paths/python_arguments.cpp
         src/py_paths/python_arguments.h
+        src/py_paths/kwargs_to_context.cpp
         )
 
 target_include_directories(py_esig_paths PRIVATE

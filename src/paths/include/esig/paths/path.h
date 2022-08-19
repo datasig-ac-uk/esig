@@ -250,6 +250,8 @@ public:
 
 
 
+ESIG_PATHS_EXPORT
+path concatenate(std::vector<path> paths);
 
 
 
@@ -257,6 +259,7 @@ public:
 struct ESIG_PATHS_EXPORT path_base_access
 {
     static const path_interface& get(const path& p) noexcept;
+    static std::unique_ptr<const path_interface> take(path&& p) noexcept;
 };
 
 // Implementation of the templated constructor of paths

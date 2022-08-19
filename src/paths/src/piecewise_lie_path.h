@@ -16,7 +16,7 @@
 namespace esig {
 namespace paths {
 
-class piecewise_lie_path : public dyadic_caching_layer
+class piecewise_lie_path : public path_interface
 {
     using lie_piece = std::pair<real_interval, algebra::lie>;
 
@@ -28,7 +28,7 @@ public:
 
     piecewise_lie_path(std::vector<lie_piece> data, path_metadata metadata);
 
-    using dyadic_caching_layer::log_signature;
+    using path_interface::log_signature;
     bool empty(const interval& domain) const override;
     algebra::lie log_signature(const interval &domain, const algebra::context &ctx) const override;
 };

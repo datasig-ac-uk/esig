@@ -164,7 +164,6 @@ def test_tpath_known_signature_calc(width, depth, t_values, known_path_data, sol
     assert_array_almost_equal(p.signature(0.0, 3.125, 0.0), expected)
 
 
-@pytest.mark.xfail
 def test_tpath_known_signature_calc_with_context(width, depth, t_values, known_path_data,
                                         solution_signature):
     p = path(known_path_data, indices=t_values, width=width)

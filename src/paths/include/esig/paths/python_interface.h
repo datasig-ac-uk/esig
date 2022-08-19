@@ -24,6 +24,9 @@ ESIG_PATHS_EXPORT
 path_metadata process_kwargs_to_metadata(const pybind11::kwargs& kwargs);
 
 
+
+
+
 }// namespace paths
 }// namespace esig
 

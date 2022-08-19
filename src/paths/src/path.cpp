@@ -146,5 +146,9 @@ const path_metadata& path::metadata() const noexcept {
     return p_impl->metadata();
 }
 
+std::unique_ptr<const path_interface> path_base_access::take(path &&p) noexcept {
+    return std::move(p.p_impl);
+}
+
 }// namespace paths
 }// namespace esig
