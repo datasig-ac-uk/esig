@@ -14,7 +14,7 @@ paths::path paths::concatenate(std::vector<paths::path> paths)
     std::vector<std::unique_ptr<const paths::path_interface>> data;
     data.reserve(paths.size());
 
-    for (auto p : paths) {
+    for (auto& p : paths) {
         data.emplace_back(paths::path_base_access::take(std::move(p)));
     }
 

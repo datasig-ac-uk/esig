@@ -54,7 +54,6 @@ protected:
     using la_lie = alg::lie<coeff_t, WIDTH, DEPTH, alg::vectors::dense_vector>;
     using la_tensor = alg::free_tensor<coeff_t, WIDTH, DEPTH, alg::vectors::dense_vector>;
 
-    algebra::fallback_context ctx;
     std::shared_ptr<algebra::lie_basis> lie_basis;
     std::shared_ptr<algebra::tensor_basis> tensor_basis;
 
@@ -67,9 +66,8 @@ protected:
     esig::algebra::maps maps;
 
 
-    DenseMapsTests() : ctx(WIDTH, DEPTH, algebra::coefficient_type::dp_real),
-                       lie_basis(ctx.get_lie_basis()),
-                       tensor_basis(ctx.get_tensor_basis()),
+    DenseMapsTests() : lie_basis(new algebra::lie_basis(WIDTH, DEPTH)),
+                       tensor_basis(new algebra::tensor_basis(WIDTH, DEPTH)),
                        lie_1(lie_basis),
                        lie_2(lie_basis),
                        tensor_1(tensor_basis),

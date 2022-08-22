@@ -26,8 +26,9 @@ vector_type signature_data::vtype() const
     return m_vector_type;
 }
 
-
-
+bool context::check_compatible(const context &other) const noexcept {
+    return other.width() == width();
+}
 
 free_tensor context::zero_tensor(vector_type vtype) const
 {

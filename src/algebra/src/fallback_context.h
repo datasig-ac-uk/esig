@@ -16,7 +16,6 @@
 #include "detail/converting_lie_iterator_adaptor.h"
 #include <memory>
 #include <unordered_map>
-#include <bits/shared_ptr.h>
 
 
 namespace esig {
@@ -64,31 +63,42 @@ private:
 
 
 
+std::shared_ptr<context> get_fallback_context(deg_t width, deg_t depth, coefficient_type ctype);
 
+
+
+template <coefficient_type CType>
 class fallback_context
     : public context
 {
     deg_t m_width;
     deg_t m_depth;
-    coefficient_type m_ctype;
     std::shared_ptr<tensor_basis> m_tensor_basis;
     std::shared_ptr<lie_basis> m_lie_basis;
 
     std::shared_ptr<data_allocator> m_coeff_alloc;
     std::shared_ptr<data_allocator> m_pair_alloc;
 
+    using scalar_type = type_of_coeff<CType>;
+
     maps m_maps;
 
-    template <coefficient_type CType, vector_type VType>
+    template < vector_type VType>
+    lie_type<CType, VType> tensor_to_lie_impl(const free_tensor& arg) const;
+
+    template <vector_type VType>
     lie_type<CType, VType> tensor_to_lie_impl(const ftensor_type<CType, VType>& arg) const;
 
-    template <coefficient_type CType, vector_type VType>
+    template < vector_type VType>
+    ftensor_type<CType, VType> lie_to_tensor_impl(const lie& arg) const;
+
+    template <vector_type VType>
     ftensor_type<CType, VType> lie_to_tensor_impl(const lie_type<CType, VType>& arg) const;
 
-    template <coefficient_type CType, vector_type VType>
+    template < vector_type VType>
     lie_type<CType, VType> cbh_impl(const std::vector<lie>& lies) const;
 
-    template<coefficient_type CType, vector_type VType>
+    template< vector_type VType>
     ftensor_type<CType, VType> compute_signature(signature_data data) const;
 
     template<typename Lie>
@@ -97,19 +107,23 @@ class fallback_context
     template<typename Lie>
     Lie derive_series_compute(const Lie &incr, const Lie &pert) const;
 
-    template<coefficient_type CType, vector_type VType>
+    template< vector_type VType>
     ftensor_type<CType, VType> single_sig_derivative(
         const lie_type<CType, VType> &incr,
         const ftensor_type<CType, VType> &sig,
         const lie_type<CType, VType> &perturb
         ) const;
 
-    template<coefficient_type CType, vector_type VType>
+    template< vector_type VType>
     ftensor_type<CType, VType>
     sig_derivative_impl(const std::vector<derivative_compute_info> &info) const;
+
+    template<typename VectorInner, typename VectorWrapper, typename Basis>
+    VectorWrapper convert_impl(const VectorWrapper &arg, Basis basis) const;
+
 public:
 
-    fallback_context(deg_t width, deg_t depth, coefficient_type ctype);
+    fallback_context(deg_t width, deg_t depth);
 
 
     deg_t width() const noexcept override;
@@ -129,6 +143,9 @@ public:
 
     std::shared_ptr<data_allocator> coefficient_alloc() const override;
     std::shared_ptr<data_allocator> pair_alloc() const override;
+
+    free_tensor convert(const free_tensor &arg) const override;
+    lie convert(const lie &arg) const override;
 
     free_tensor zero_tensor(vector_type vtype) const override;
     lie zero_lie(vector_type vtype) const override;
@@ -186,40 +203,63 @@ struct vector_selector<coefficient_type::dp_real, vector_type::dense> {
 };
 } // namespace dtl
 
-template<coefficient_type CType, vector_type VType>
-lie_type<CType, VType> fallback_context::cbh_impl(const std::vector<lie> &lies) const {
+template <coefficient_type CType>
+template< vector_type VType>
+lie_type<CType, VType> fallback_context<CType>::cbh_impl(const std::vector<lie> &lies) const {
     using lie_t = lie_type<CType, VType>;
-    dtl::converting_lie_iterator_adaptor<lie_t> begin(m_lie_basis, lies.begin()), end(m_lie_basis, lies.end());
+    dtl::converting_lie_iterator_adaptor<lie_t> begin(m_lie_basis, lies.begin());
+    dtl::converting_lie_iterator_adaptor<lie_t> end(m_lie_basis, lies.end());
     return m_maps.cbh(begin, end);
 }
 
-template<coefficient_type CType, vector_type VType>
-ftensor_type<CType, VType> fallback_context::lie_to_tensor_impl(const lie_type<CType, VType> &arg) const
+template <coefficient_type CType>
+template<vector_type VType>
+ftensor_type<CType, VType> fallback_context<CType>::lie_to_tensor_impl(const lie &arg) const
 {
+    const auto& inner = lie_base_access::get<lie_type<CType, VType>>(arg);
+    return lie_to_tensor_impl<VType>(inner);
+}
+template<coefficient_type CType>
+template<vector_type VType>
+ftensor_type<CType, VType> fallback_context<CType>::lie_to_tensor_impl(const lie_type<CType, VType> &arg) const {
     return m_maps.template lie_to_tensor<lie_type<CType, VType>, ftensor_type<CType, VType>>(arg);
 }
-
-template<coefficient_type CType, vector_type VType>
-lie_type<CType, VType> fallback_context::tensor_to_lie_impl(const ftensor_type<CType, VType> &arg) const
+template <coefficient_type CType>
+template<vector_type VType>
+lie_type<CType, VType> fallback_context<CType>::tensor_to_lie_impl(const free_tensor &arg) const
 {
-     return m_maps.template tensor_to_lie<lie_type<CType, VType>, ftensor_type<CType, VType>>(arg);
+//    try {
+        const auto& inner = free_tensor_base_access::get<ftensor_type<CType, VType>>(arg);
+        return tensor_to_lie_impl<VType>(inner);
+//    } catch (std::bad_cast&) {
+//
+//    }
+}
+template <coefficient_type CType>
+template <vector_type VType>
+lie_type<CType, VType> fallback_context<CType>::tensor_to_lie_impl(const ftensor_type<CType, VType>& arg) const
+{
+    return m_maps.template tensor_to_lie<lie_type<CType, VType>, ftensor_type<CType, VType>>(arg);
 }
 
-template<coefficient_type CType, vector_type VType>
-ftensor_type<CType, VType> fallback_context::compute_signature(signature_data data) const {
+
+template <coefficient_type CType>
+template<vector_type VType>
+ftensor_type<CType, VType> fallback_context<CType>::compute_signature(signature_data data) const {
     //TODO: In the future, use a method on signature_data to get the
     // correct depth for the increments.
     to_lie_helper<lie_type<CType, VType>> helper(get_lie_basis(), 1);
     ftensor_type<CType, VType> result(get_tensor_basis(), typename ftensor_type<CType, VType>::scalar_type(1));
     for (auto incr : data.template iter_increments(helper)) {
-        result.fmexp_inplace(lie_to_tensor_impl<CType, VType>(incr));
+        result.fmexp_inplace(lie_to_tensor_impl<VType>(incr));
     }
 
     return result;
 }
 
+template <coefficient_type CType>
 template<typename Lie>
-Lie fallback_context::ad_x_n(deg_t d, const Lie &x, const Lie &y) const
+Lie fallback_context<CType>::ad_x_n(deg_t d, const Lie &x, const Lie &y) const
 {
     auto tmp = x * y;// [x, y]
     while (--d) {
@@ -228,8 +268,9 @@ Lie fallback_context::ad_x_n(deg_t d, const Lie &x, const Lie &y) const
     return tmp;
 }
 
+template <coefficient_type CType>
 template<typename Lie>
-Lie fallback_context::derive_series_compute(const Lie &incr, const Lie &pert) const
+Lie fallback_context<CType>::derive_series_compute(const Lie &incr, const Lie &pert) const
 {
     Lie result(pert);
 
@@ -245,20 +286,22 @@ Lie fallback_context::derive_series_compute(const Lie &incr, const Lie &pert) co
     return result;
 }
 
-template<coefficient_type CType, vector_type VType>
-ftensor_type<CType, VType> fallback_context::single_sig_derivative(
+template <coefficient_type CType>
+template<vector_type VType>
+ftensor_type<CType, VType> fallback_context<CType>::single_sig_derivative(
     const lie_type<CType, VType> &incr,
     const ftensor_type<CType, VType> &sig,
     const lie_type<CType, VType> &perturb
     ) const
 {
-    auto derive_ser = lie_to_tensor_impl<CType, VType>(derive_series_compute(incr, perturb));
+    auto derive_ser = lie_to_tensor_impl<VType>(derive_series_compute(incr, perturb));
 
     return sig * derive_ser;
 }
 
-template<coefficient_type CType, vector_type VType>
-ftensor_type<CType, VType> fallback_context::sig_derivative_impl(const std::vector<derivative_compute_info> &info) const
+template <coefficient_type CType>
+template<vector_type VType>
+ftensor_type<CType, VType> fallback_context<CType>::sig_derivative_impl(const std::vector<derivative_compute_info> &info) const
 {
     if (info.empty()) {
         return ftensor_type<CType, VType>(get_tensor_basis());
@@ -269,13 +312,225 @@ ftensor_type<CType, VType> fallback_context::sig_derivative_impl(const std::vect
     for (const auto &data : info) {
         const auto &perturb = lie_base_access::get<lie_type<CType, VType>>(data.perturbation);
         const auto &incr = lie_base_access::get<lie_type<CType, VType>>(data.logsig_of_interval);
-        auto sig = exp(lie_to_tensor_impl<CType, VType>(incr));
+        auto sig = exp(lie_to_tensor_impl<VType>(incr));
 
         result *= sig;
-        result += single_sig_derivative<CType, VType>(incr, sig, perturb);
+        result += single_sig_derivative<VType>(incr, sig, perturb);
     }
 
     return result;
+}
+
+template<coefficient_type CType>
+template<typename VectorInner, typename VectorWrapper, typename Basis>
+VectorWrapper fallback_context<CType>::convert_impl(const VectorWrapper &arg, Basis basis) const {
+    const auto &base = *algebra_base_access::get(arg);
+    if (typeid(base) == typeid(VectorInner)) {
+        return arg;
+    }
+
+    VectorInner result(basis);
+
+    for (const auto& it : base) {
+        result.add_scal_prod(it.key(), coefficient_cast<scalar_type>(it.value()));
+    }
+
+    return VectorWrapper(std::move(result), this);
+}
+
+template<coefficient_type CType>
+fallback_context<CType>::fallback_context(deg_t width, deg_t depth)
+    : m_width(width), m_depth(depth),
+      m_tensor_basis(new tensor_basis(width, depth)),
+      m_lie_basis(new lie_basis(width, depth)),
+      m_coeff_alloc(allocator_for_coeff(CType)),
+      m_pair_alloc(allocator_for_key_coeff(CType)),
+      m_maps(m_tensor_basis, m_lie_basis)
+{}
+
+
+
+namespace dtl {
+
+template <typename Scalar, template<typename> class Vector, typename Basis>
+Vector<Scalar> construct_vector(
+        std::shared_ptr<Basis> basis,
+        esig::algebra::vector_construction_data data)
+{
+    if (data.input_type() == esig::algebra::input_data_type::value_array) {
+        return {std::move(basis), reinterpret_cast<const Scalar *>(data.begin()), reinterpret_cast<const Scalar*>(data.end())};
+    } else {
+        // fill me in
+        Vector<Scalar> result(std::move(basis));
+        assert(data.item_size() == sizeof(std::pair<key_type, Scalar>));
+
+        auto ptr = reinterpret_cast<const std::pair<key_type, Scalar>*>(data.begin());
+        auto end = reinterpret_cast<const std::pair<key_type, Scalar>*>(data.end());
+        for (; ptr != end; ++ptr) {
+            result[ptr->first] = ptr->second;
+        }
+
+        return result;
+    }
+}
+
+
+} // namespace dtl
+
+
+
+template<coefficient_type CType>
+free_tensor fallback_context<CType>::zero_tensor(vector_type vtype) const {
+    return context::zero_tensor(vtype);
+}
+template<coefficient_type CType>
+lie fallback_context<CType>::zero_lie(vector_type vtype) const {
+    return context::zero_lie(vtype);
+}
+template<coefficient_type CType>
+deg_t fallback_context<CType>::width() const noexcept {
+    return m_width;
+}
+template<coefficient_type CType>
+deg_t fallback_context<CType>::depth() const noexcept {
+    return m_depth;
+}
+template<coefficient_type CType>
+coefficient_type fallback_context<CType>::ctype() const noexcept {
+    return coefficient_type::dp_real;
+}
+template<coefficient_type CType>
+const algebra_basis &fallback_context<CType>::borrow_tbasis() const noexcept {
+    return *m_tensor_basis;
+}
+template<coefficient_type CType>
+const algebra_basis &fallback_context<CType>::borrow_lbasis() const noexcept {
+    return *m_lie_basis;
+}
+template<coefficient_type CType>
+std::shared_ptr<tensor_basis> fallback_context<CType>::tbasis() const noexcept {
+    return m_tensor_basis;
+}
+template<coefficient_type CType>
+std::shared_ptr<lie_basis> fallback_context<CType>::lbasis() const noexcept {
+    return m_lie_basis;
+
+}
+
+template<coefficient_type CType>
+std::shared_ptr<context> fallback_context<CType>::get_alike(deg_t new_depth) const {
+    return get_fallback_context(m_width, new_depth, CType);
+}
+template<coefficient_type CType>
+std::shared_ptr<context> fallback_context<CType>::get_alike(coefficient_type new_coeff) const {
+    return get_fallback_context(m_width, m_depth, new_coeff);
+}
+template<coefficient_type CType>
+std::shared_ptr<context> fallback_context<CType>::get_alike(deg_t new_depth, coefficient_type new_coeff) const {
+    return get_fallback_context(m_width, new_depth, new_coeff);
+}
+template<coefficient_type CType>
+std::shared_ptr<context> fallback_context<CType>::get_alike(deg_t new_width, deg_t new_depth, coefficient_type new_coeff) const {
+    return get_fallback_context(new_width, new_depth, new_coeff);
+}
+template<coefficient_type CType>
+std::shared_ptr<data_allocator> fallback_context<CType>::coefficient_alloc() const {
+    return m_coeff_alloc;
+}
+template<coefficient_type CType>
+std::shared_ptr<data_allocator> fallback_context<CType>::pair_alloc() const {
+    return m_pair_alloc;
+}
+template<coefficient_type CType>
+free_tensor fallback_context<CType>::convert(const free_tensor &arg) const {
+#define ESIG_SWITCH_FN(VTYPE) convert_impl<ftensor_type<CType, (VTYPE)>>(arg, m_tensor_basis)
+    ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
+#undef ESIG_SWITCH_FN
+}
+template<coefficient_type CType>
+lie fallback_context<CType>::convert(const lie &arg) const {
+#define ESIG_SWITCH_FN(VTYPE) convert_impl<lie_type<CType, (VTYPE)>>(arg, m_lie_basis)
+    ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
+#undef ESIG_SWITCH_FN
+}
+
+template<coefficient_type CType>
+lie fallback_context<CType>::cbh(const std::vector<lie> &lies, vector_type vtype) const {
+#define ESIG_SWITCH_FN(VTYPE) lie(cbh_impl<VTYPE>(lies), this)
+    ESIG_MAKE_VTYPE_SWITCH(vtype)
+#undef ESIG_SWITCH_FN
+}
+template<coefficient_type CType>
+free_tensor fallback_context<CType>::sig_derivative(const std::vector<derivative_compute_info> &info, vector_type vtype, vector_type type) const {
+#define ESIG_SWITCH_FN(VTYPE) free_tensor(sig_derivative_impl<VTYPE>(info), this)
+    ESIG_MAKE_VTYPE_SWITCH(vtype)
+#undef ESIG_SWITCH_FN
+}
+template<coefficient_type CType>
+dimn_t fallback_context<CType>::lie_size(deg_t d) const noexcept {
+    return m_lie_basis->size(static_cast<int>(d));
+}
+template<coefficient_type CType>
+dimn_t fallback_context<CType>::tensor_size(deg_t d) const noexcept {
+    return m_tensor_basis->size(static_cast<int>(d));
+}
+template<coefficient_type CType>
+std::shared_ptr<tensor_basis> fallback_context<CType>::get_tensor_basis() const noexcept {
+    return m_tensor_basis;
+}
+template<coefficient_type CType>
+std::shared_ptr<lie_basis> fallback_context<CType>::get_lie_basis() const noexcept {
+    return m_lie_basis;
+}
+template<coefficient_type CType>
+free_tensor fallback_context<CType>::construct_tensor(const vector_construction_data &data) const {
+    switch (data.vtype()) {
+        case vector_type::dense:
+            return free_tensor(dtl::construct_vector<scalar_type, dense_tensor>(m_tensor_basis, data), this);
+        case vector_type::sparse:
+            return free_tensor(dtl::construct_vector<scalar_type, sparse_tensor>(m_tensor_basis, data), this);
+    }
+    throw std::invalid_argument("invalid vector type");
+}
+template<coefficient_type CType>
+lie fallback_context<CType>::construct_lie(const vector_construction_data &data) const {
+    switch (data.vtype()) {
+        case vector_type::dense:
+            return lie(dtl::construct_vector<scalar_type, dense_lie>(m_lie_basis, data), this);
+        case vector_type::sparse:
+            return lie(dtl::construct_vector<scalar_type, sparse_lie>(m_lie_basis, data), this);
+    }
+    throw std::invalid_argument("invalid vector type");
+}
+template<coefficient_type CType>
+free_tensor fallback_context<CType>::lie_to_tensor(const lie &arg) const {
+#define ESIG_SWITCH_FN(VTYPE) free_tensor(lie_to_tensor_impl<(VTYPE)>(arg), this)
+    ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
+#undef ESIG_SWITCH_FN
+}
+
+
+template<coefficient_type CType>
+lie fallback_context<CType>::tensor_to_lie(const free_tensor &arg) const {
+#define ESIG_SWITCH_FN(VTYPE) lie(tensor_to_lie_impl<(VTYPE)>(arg), this)
+    ESIG_MAKE_VTYPE_SWITCH(arg.storage_type());
+#undef ESIG_SWITCH_FN
+}
+template<coefficient_type CType>
+free_tensor fallback_context<CType>::to_signature(const lie &log_sig) const {
+    return lie_to_tensor(log_sig).exp();
+}
+template<coefficient_type CType>
+free_tensor fallback_context<CType>::signature(signature_data data) const {
+#define ESIG_SWITCH_FN(VTYPE) free_tensor(exp(log(compute_signature<(VTYPE)>(std::move(data)))), this);
+    ESIG_MAKE_VTYPE_SWITCH(data.vtype())
+#undef ESIG_SWITCH_FN
+}
+template<coefficient_type CType>
+lie fallback_context<CType>::log_signature(signature_data data) const {
+#define ESIG_SWITCH_FN(VTYPE) lie(tensor_to_lie_impl<(VTYPE)>(log(compute_signature<(VTYPE)>(std::move(data)))), this)
+    ESIG_MAKE_VTYPE_SWITCH(data.vtype())
+#undef ESIG_SWITCH_FN
 }
 
 }// namespace algebra

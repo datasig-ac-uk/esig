@@ -19,7 +19,12 @@ add_library(esig_algebra SHARED)
 #        Python::Module
 #        )
 
-target_link_libraries(esig_algebra PUBLIC esig_common)
+target_link_libraries(esig_algebra
+        PUBLIC
+            esig_common
+        PRIVATE
+            Boost::boost
+        )
 #set_target_properties(esig_algebra PROPERTIES
 #        INSTALL_RPATH $ORIGIN)
 

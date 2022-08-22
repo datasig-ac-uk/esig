@@ -19,12 +19,12 @@
 #include <vector>
 
 
-#define ESIG_MAKE_VTYPE_SWITCH(CTYPE, VTYPE)                   \
+#define ESIG_MAKE_VTYPE_SWITCH(VTYPE)                          \
     switch (VTYPE) {                                           \
         case vector_type::dense:                               \
-            return ESIG_SWITCH_FN(CTYPE, vector_type::dense);  \
+            return ESIG_SWITCH_FN(vector_type::dense);         \
         case vector_type::sparse:                              \
-            return ESIG_SWITCH_FN(CTYPE, vector_type::sparse); \
+            return ESIG_SWITCH_FN(vector_type::sparse);        \
     }                                                          \
     throw std::invalid_argument("invalid vector type");
 
@@ -37,12 +37,23 @@
     }                                                         \
     throw std::invalid_argument("invalid coefficient_type");
 
+#define ESIG_MAKE_VTYPE_SWITCH_INNER(CTYPE, VTYPE)            \
+    switch(CTYPE) {                                           \
+        case vector_type::dense:                              \
+            return ESIG_SWITCH_FN(CTYPE, vector_type::dense); \
+        case vector_type::sparse:                             \
+            return ESIG_SWITCH_FN(CTYPE, vector_type::sparse);\
+    }                                                         \
+    throw std::invalid_argument("invalid vector type");
+
+
+
 #define ESIG_MAKE_SWITCH(CTYPE, VTYPE)                               \
     switch (CTYPE) {                                                 \
         case coefficient_type::dp_real:                              \
-            ESIG_MAKE_VTYPE_SWITCH(coefficient_type::dp_real, VTYPE) \
+            ESIG_MAKE_VTYPE_SWITCH_INNER(coefficient_type::dp_real, VTYPE) \
         case coefficient_type::sp_real:                              \
-            ESIG_MAKE_VTYPE_SWITCH(coefficient_type::sp_real, VTYPE) \
+            ESIG_MAKE_VTYPE_SWITCH_INNER(coefficient_type::sp_real, VTYPE) \
     }                                                                \
     throw std::invalid_argument("invalid coefficient_type");
 
@@ -240,6 +251,10 @@ public:
     virtual dimn_t lie_size(deg_t d) const noexcept = 0;
     virtual dimn_t tensor_size(deg_t d) const noexcept = 0;
 
+    virtual bool check_compatible(const context& other) const noexcept;
+
+    virtual free_tensor convert(const free_tensor& arg) const = 0;
+    virtual lie convert(const lie& arg) const = 0;
 
     //TODO: needs more thought
 
