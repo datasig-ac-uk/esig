@@ -23,80 +23,64 @@ namespace esig {
 namespace algebra {
 
 template <typename Scalar>
-class dense_tensor
-{
+class dense_tensor {
     std::vector<Scalar> m_data;
     std::shared_ptr<tensor_basis> m_basis;
     deg_t m_degree;
 
-
-    void check_compatible(const tensor_basis &other_basis) const
-    {
+    void check_compatible(const tensor_basis &other_basis) const {
         if (m_basis->width() != other_basis.width()) {
             throw std::invalid_argument("mismatched width");
         }
     }
 
-    void swap(dense_tensor &other) noexcept
-    {
+    void swap(dense_tensor &other) noexcept {
         std::swap(m_data, other.m_data);
         std::swap(m_basis, other.m_basis);
         std::swap(m_degree, other.m_degree);
     }
 
-
 public:
-
     using scalar_type = Scalar;
     using basis_type = tensor_basis;
     static constexpr vector_type vtype = vector_type::dense;
 
     explicit dense_tensor(deg_t width, deg_t depth)
-        : m_basis(new tensor_basis(width, depth)), m_degree(0), m_data()
-    {}
+        : m_basis(new tensor_basis(width, depth)), m_degree(0), m_data() {}
 
-    explicit dense_tensor(std::shared_ptr<tensor_basis>  basis)
-            : m_basis(std::move(basis)), m_degree(0), m_data()
-    {}
+    explicit dense_tensor(std::shared_ptr<tensor_basis> basis)
+        : m_basis(std::move(basis)), m_degree(0), m_data() {}
 
     dense_tensor(std::shared_ptr<tensor_basis> basis, deg_t degree)
-            : m_basis(std::move(basis)), m_degree(degree), m_data()
-    {}
+        : m_basis(std::move(basis)), m_degree(degree), m_data() {}
 
     dense_tensor(std::shared_ptr<tensor_basis> basis, deg_t degree, std::initializer_list<Scalar> args)
-            : m_basis(std::move(basis)), m_degree(degree), m_data(args)
-    {
+        : m_basis(std::move(basis)), m_degree(degree), m_data(args) {
         m_data.resize(m_basis->size(static_cast<int>(m_degree)));
     }
 
-    dense_tensor(std::shared_ptr<tensor_basis> basis, deg_t degree, std::vector<Scalar>&& data)
-            : m_basis(std::move(basis)), m_degree(degree), m_data(std::move(data))
-    {
+    dense_tensor(std::shared_ptr<tensor_basis> basis, deg_t degree, std::vector<Scalar> &&data)
+        : m_basis(std::move(basis)), m_degree(degree), m_data(std::move(data)) {
         m_data.resize(m_basis->size(static_cast<int>(m_degree)));
     }
 
-    dense_tensor(std::shared_ptr<tensor_basis> basis, const Scalar* begin, const Scalar* end)
-            : m_basis(std::move(basis)), m_degree(0), m_data(begin, end)
-    {
+    dense_tensor(std::shared_ptr<tensor_basis> basis, const Scalar *begin, const Scalar *end)
+        : m_basis(std::move(basis)), m_degree(0), m_data(begin, end) {
         if (!m_data.empty()) {
             resize(m_data.size());
         }
     }
 
-
     dense_tensor(std::shared_ptr<tensor_basis> basis, Scalar val)
-            : m_basis(std::move(basis)), m_degree(0), m_data{val}
-    {}
+        : m_basis(std::move(basis)), m_degree(0), m_data{val} {}
 
 protected:
-
-    void resize(dimn_t new_size)
-    {
+    void resize(dimn_t new_size) {
         assert(new_size >= m_data.size());
         if (new_size == 0) {
             return;
         }
-        auto deg = m_basis->degree(static_cast<key_type>(new_size-1));
+        auto deg = m_basis->degree(static_cast<key_type>(new_size - 1));
         auto adjusted = m_basis->size(static_cast<int>(deg));
         if (adjusted < new_size) {
             m_degree = deg + 1;
@@ -110,55 +94,86 @@ protected:
         assert(m_data.size() == m_basis->size(static_cast<int>(m_degree)));
     }
 
-    void resize_for_key(key_type key)
-    {
-        auto deg = m_basis->degree(key);
-        if (deg > m_degree) {
-            m_degree = deg;
+    void resize_for_key(key_type key) {
+        if (key >= m_data.size()) {
+            auto deg = m_basis->degree(key);
+            if (deg > m_degree) {
+                m_degree = deg;
+            }
+            m_data.resize(m_basis->size(static_cast<int>(m_degree)));
         }
-        m_data.resize(m_basis->size(static_cast<int>(m_degree)));
     }
-
 
 public:
-    dimn_t size() const 
-    {
+    dimn_t size() const {
         return m_data.size();
     }
-    deg_t degree() const 
-    {
+    deg_t degree() const {
         return m_degree;
     }
-    deg_t width() const 
-    {
+    deg_t width() const {
         return m_basis->width();
     }
-    deg_t depth() const 
-    {
+    deg_t depth() const {
         return m_basis->depth();
     }
-    vector_type storage_type() const noexcept 
-    {
+    vector_type storage_type() const noexcept {
         return vector_type::dense;
     }
-    coefficient_type coeff_type() const noexcept 
-    {
+    coefficient_type coeff_type() const noexcept {
         return dtl::get_coeff_type(Scalar(0));
     }
-    const void *start_of_degree(deg_t deg) const
-    {
+    const void *start_of_degree(deg_t deg) const {
         return m_data.data() + m_basis->start_of_degree(deg);
     }
-    const void *end_of_degree(deg_t deg) const 
-    {
+    const void *end_of_degree(deg_t deg) const {
         return m_data.data() + m_basis->size(static_cast<int>(deg));
     }
 
-    Scalar* start_of_degree(deg_t deg)
-    {
+    Scalar *start_of_degree(deg_t deg) {
         return m_data.data() + m_basis->start_of_degree(deg);
     }
 
+    void assign(const std::vector<Scalar> &data) {
+        m_data = data;
+    }
+
+    template<typename InputIt>
+    std::enable_if_t<
+        std::is_constructible<
+            Scalar,
+            typename std::iterator_traits<InputIt>::value_type>::value>
+    assign(InputIt begin, InputIt end)
+    {
+        auto dist = std::distance(begin, end);
+        auto max_size = m_basis->size(-1);
+        m_data.clear();
+        m_data.reserve(std::min(dimn_t(dist), max_size));
+        for (auto it = begin; it != end && m_data.size() <= max_size; ++it) {
+            m_data.emplace_back(*it);
+        }
+    }
+    template <typename InputIt, typename Traits=std::iterator_traits<InputIt>>
+    std::enable_if_t<
+        std::is_same<
+            std::remove_cv_t<typename Traits::value_type::first_type>,
+            key_type
+        >::value &&
+        std::is_constructible<
+            Scalar,
+            typename Traits::value_type::second_type
+        >::value>
+    assign(InputIt begin, InputIt end)
+    {
+        auto max_size = m_basis->size(-1);
+        m_data.clear();
+        for (auto it = begin; it != end; ++it) {
+            if (it->first < max_size) {
+                resize_for_key(it->first);
+                m_data[it->first] = Scalar(it->second);
+            }
+        }
+    }
 
 
     const std::vector<Scalar>& data() const
@@ -703,6 +718,7 @@ template<typename S>
 struct algebra_info<dense_tensor<S>>
 {
     using scalar_type = S;
+    using rational_type = S;
 
     static constexpr coefficient_type ctype() noexcept
     { return dtl::get_coeff_type(S(0)); }

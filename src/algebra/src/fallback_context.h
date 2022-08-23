@@ -118,7 +118,7 @@ class fallback_context
     ftensor_type<CType, VType>
     sig_derivative_impl(const std::vector<derivative_compute_info> &info) const;
 
-    template<typename VectorInner, typename VectorWrapper, typename Basis>
+    template<typename VectorImpl, template <typename> class VectorImplWrapper, typename VectorWrapper, typename Basis>
     VectorWrapper convert_impl(const VectorWrapper &arg, Basis basis) const;
 
 public:
@@ -144,8 +144,8 @@ public:
     std::shared_ptr<data_allocator> coefficient_alloc() const override;
     std::shared_ptr<data_allocator> pair_alloc() const override;
 
-    free_tensor convert(const free_tensor &arg) const override;
-    lie convert(const lie &arg) const override;
+    free_tensor convert(const free_tensor &arg, vector_type new_vec_type) const override;
+    lie convert(const lie &arg, vector_type new_vec_type) const override;
 
     free_tensor zero_tensor(vector_type vtype) const override;
     lie zero_lie(vector_type vtype) const override;
@@ -322,19 +322,42 @@ ftensor_type<CType, VType> fallback_context<CType>::sig_derivative_impl(const st
 }
 
 template<coefficient_type CType>
-template<typename VectorInner, typename VectorWrapper, typename Basis>
+template<typename VectorImpl, template <typename> class VectorImplWrapper, typename VectorWrapper, typename Basis>
 VectorWrapper fallback_context<CType>::convert_impl(const VectorWrapper &arg, Basis basis) const {
-    const auto &base = *algebra_base_access::get(arg);
-    if (typeid(base) == typeid(VectorInner)) {
-        return arg;
+    const auto *base = algebra_base_access::get(arg);
+    VectorImpl result(basis);
+
+    if (base != nullptr) {
+        if (arg.width() != m_width) {
+            throw std::invalid_argument("vector width does not match");
+        }
+
+        if (typeid(*base) == typeid(VectorImplWrapper<VectorImpl>)) {
+            /*
+             * If the base is already of the same type as result then we can use assign/data
+             * defined on the fallback vector types.
+             */
+            using access = algebra_implementation_access<VectorImplWrapper, VectorImpl>;
+            const auto& impl = access::get(dynamic_cast<const VectorImplWrapper<VectorImpl> &>(*base));
+            if (impl.coeff_type() == CType) {
+                result.assign(impl.data());
+            } else {
+                const auto& data = impl.data();
+                result.assign(data.begin(), data.end());
+            }
+
+        } else {
+            /*
+             * Would it be better to have some more sophisticated mechanism for copying data
+             * across when it is possible. Using the vector iterator is really not a good idea
+             * because every iteration involves a heap allocation. Think on this more.
+             */
+            for (const auto &it : *base) {
+                result.add_scal_prod(it.key(), coefficient_cast<scalar_type>(it.value()));
+            }
+        }
+
     }
-
-    VectorInner result(basis);
-
-    for (const auto& it : base) {
-        result.add_scal_prod(it.key(), coefficient_cast<scalar_type>(it.value()));
-    }
-
     return VectorWrapper(std::move(result), this);
 }
 
@@ -442,15 +465,15 @@ std::shared_ptr<data_allocator> fallback_context<CType>::pair_alloc() const {
     return m_pair_alloc;
 }
 template<coefficient_type CType>
-free_tensor fallback_context<CType>::convert(const free_tensor &arg) const {
-#define ESIG_SWITCH_FN(VTYPE) convert_impl<ftensor_type<CType, (VTYPE)>>(arg, m_tensor_basis)
-    ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
+free_tensor fallback_context<CType>::convert(const free_tensor &arg, vector_type new_vec_type) const {
+#define ESIG_SWITCH_FN(VTYPE) convert_impl<ftensor_type<CType, (VTYPE)>, dtl::free_tensor_implementation>(arg, m_tensor_basis)
+    ESIG_MAKE_VTYPE_SWITCH(new_vec_type)
 #undef ESIG_SWITCH_FN
 }
 template<coefficient_type CType>
-lie fallback_context<CType>::convert(const lie &arg) const {
-#define ESIG_SWITCH_FN(VTYPE) convert_impl<lie_type<CType, (VTYPE)>>(arg, m_lie_basis)
-    ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
+lie fallback_context<CType>::convert(const lie &arg, vector_type new_vec_type) const {
+#define ESIG_SWITCH_FN(VTYPE) convert_impl<lie_type<CType, (VTYPE)>, dtl::lie_implementation>(arg, m_lie_basis)
+    ESIG_MAKE_VTYPE_SWITCH(new_vec_type)
 #undef ESIG_SWITCH_FN
 }
 

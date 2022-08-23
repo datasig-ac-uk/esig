@@ -28,6 +28,7 @@ template <typename Algebra>
 struct algebra_info
 {
     using scalar_type = typename Algebra::scalar_type;
+    using rational_type = scalar_type;
 
     static constexpr coefficient_type ctype() noexcept;
     static constexpr vector_type vtype() noexcept;
@@ -80,6 +81,26 @@ struct algebra_base_access
         return wrap.p_impl.get();
     }
 };
+
+template <template <typename> class Wrapper, typename Implementation>
+struct algebra_implementation_access
+{
+
+    static const Implementation& get(const Wrapper<Implementation>& arg)
+    {
+        return arg.m_data;
+    }
+
+    static Implementation& get(Wrapper<Implementation>& arg)
+    {
+        return arg.m_data;
+    }
+
+
+};
+
+
+
 
 template <typename Algebra>
 struct dense_data_access

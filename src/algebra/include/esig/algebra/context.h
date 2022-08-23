@@ -19,6 +19,7 @@
 #include <vector>
 
 
+
 #define ESIG_MAKE_VTYPE_SWITCH(VTYPE)                          \
     switch (VTYPE) {                                           \
         case vector_type::dense:                               \
@@ -253,8 +254,8 @@ public:
 
     virtual bool check_compatible(const context& other) const noexcept;
 
-    virtual free_tensor convert(const free_tensor& arg) const = 0;
-    virtual lie convert(const lie& arg) const = 0;
+    virtual free_tensor convert(const free_tensor& arg, vector_type new_vec_type) const = 0;
+    virtual lie convert(const lie& arg, vector_type new_vec_type) const = 0;
 
     //TODO: needs more thought
 

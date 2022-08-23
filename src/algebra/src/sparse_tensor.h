@@ -118,6 +118,51 @@ public:
         return dtl::get_coeff_type(Scalar(0));
     }
 
+    void assign(const map_type& arg)
+    {
+        m_data = arg;
+    }
+
+    template<typename InputIt>
+    std::enable_if_t<
+        std::is_constructible<
+            Scalar,
+            typename std::iterator_traits<InputIt>::value_type>::value>
+    assign(InputIt begin, InputIt end)
+    {
+        m_data.clear();
+        auto max_size = m_basis->size(-1);
+        key_type key = 0;
+        for (auto it = begin; it != end && key < max_size; ++it, ++key) {
+            m_data[key] = Scalar(*it);
+        }
+    }
+    template <typename InputIt, typename Traits=std::iterator_traits<InputIt>>
+    std::enable_if_t<
+        std::is_same<
+            std::remove_cv_t<typename Traits::value_type::first_type>,
+            key_type
+        >::value &&
+            std::is_constructible<
+                Scalar,
+                typename Traits::value_type::second_type
+            >::value>
+    assign(InputIt begin, InputIt end)
+    {
+        auto max_size = m_basis->size(-1);
+        m_data.clear();
+        for (auto it = begin; it != end; ++it) {
+            if (it->first < max_size) {
+                m_data[it->first] = Scalar(it->second);
+            }
+        }
+    }
+
+    const map_type& data() const noexcept
+    {
+        return m_data;
+    }
+
     const Scalar& operator[](const key_type& key) const
     {
         auto found = m_data.find(key);
@@ -489,6 +534,7 @@ template <typename S>
 struct algebra_info<sparse_tensor<S>>
 {
     using scalar_type = S;
+    using rational_type = S;
 
     static constexpr coefficient_type ctype() noexcept
     { return dtl::get_coeff_type(S(0)); }

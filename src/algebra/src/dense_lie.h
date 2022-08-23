@@ -108,6 +108,17 @@ protected:
         }
     }
 
+
+    void resize_for_key(key_type key) {
+        if (key > m_data.size()) {
+            auto deg = m_basis->degree(key);
+            if (deg > m_degree) {
+                m_degree = deg;
+            }
+            m_data.resize(m_basis->size(static_cast<int>(m_degree)));
+        }
+    }
+
 public:
     dimn_t size() const 
     {
@@ -133,6 +144,49 @@ public:
     {
         return dtl::get_coeff_type(Scalar(0));
     }
+
+    void assign(const std::vector<Scalar>& arg)
+    {
+        m_data = arg;
+    }
+    template<typename InputIt>
+    std::enable_if_t<
+        std::is_constructible<
+            Scalar,
+            typename std::iterator_traits<InputIt>::value_type>::value>
+    assign(InputIt begin, InputIt end)
+    {
+        auto max_size = m_basis->size(-1);
+        auto dist = std::distance(begin, end);
+        m_data.clear();
+        m_data.reserve(std::min(dimn_t(dist), max_size));
+        for (auto it = begin; it != end && m_data.size() <= max_size; ++it) {
+            m_data.emplace_back(*it);
+        }
+    }
+    template <typename InputIt, typename Traits=std::iterator_traits<InputIt>>
+    std::enable_if_t<
+        std::is_same<
+            std::remove_cv_t<typename Traits::value_type::first_type>,
+            key_type
+        >::value &&
+        std::is_constructible<
+            Scalar,
+            typename Traits::value_type::second_type
+        >::value>
+    assign(InputIt begin, InputIt end)
+    {
+        auto max_valid = m_basis->size(-1);
+        m_data.clear();
+        for (auto it = begin; it != end; ++it) {
+            if (it->first <= max_valid) {
+                resize_for_key(it->first);
+                m_data[it->first - 1] = Scalar(it->second);
+            }
+        }
+    }
+
+
     const std::vector<Scalar> &data() const noexcept
     {
         return m_data;
@@ -508,6 +562,7 @@ template <typename S>
 struct algebra_info<dense_lie<S>>
 {
     using scalar_type = S;
+    using rational_type = S;
 
     static constexpr coefficient_type ctype() noexcept;
     static constexpr vector_type vtype() noexcept;

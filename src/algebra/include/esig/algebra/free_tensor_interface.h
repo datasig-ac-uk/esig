@@ -24,7 +24,6 @@ class context;
 
 struct ESIG_ALGEBRA_EXPORT free_tensor_interface
 {
-
 public:
 
     virtual ~free_tensor_interface() = default;
@@ -102,6 +101,7 @@ class free_tensor_implementation : public free_tensor_interface
     Impl m_data;
     context_p p_ctx;
     friend class ::esig::algebra::free_tensor_base_access;
+    friend class ::esig::algebra::algebra_implementation_access<free_tensor_implementation, Impl>;
 
     using scalar_type = typename algebra_info<Impl>::scalar_type;
 

@@ -18,5 +18,5 @@ paths::path paths::concatenate(std::vector<paths::path> paths)
         data.emplace_back(paths::path_base_access::take(std::move(p)));
     }
 
-
+    return paths::path();
 }
