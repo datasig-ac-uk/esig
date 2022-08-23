@@ -92,7 +92,7 @@ public:
     using algebra_t = typename Interface::algebra_t;
 
     template <typename I>
-    using wrapper_template = ::esig::algebra::dtl::algebra_implementation<algebra_t, I>;
+    using wrapper_template = dtl::algebra_implementation<algebra_t, I>;
 
     friend class algebra_implementation_access<wrapper_template, Impl>;
 
@@ -231,35 +231,43 @@ algebra_base<Interface>::algebra_base(Impl &&arg, const context *ctx) :
 
 template<typename Algebra>
 void algebra_interface<Algebra>::add_scal_mul(const algebra_interface &rhs, const coefficient &coeff) {
-    this->add_inplace(rhs.smul(coeff));
+    auto tmp = rhs.right_smul(coeff);
+    this->add_inplace(*tmp);
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::sub_scal_mul(const algebra_interface &rhs, const coefficient &coeff) {
-    this->sub_inplace(rhs.smul(coeff));
+    auto tmp = rhs.right_smul(coeff);
+    this->sub_inplace(*tmp);
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::add_scal_div(const algebra_interface &rhs, const coefficient &coeff) {
-    this->add_inplace(rhs.sdiv(coeff));
+    auto tmp = rhs.sdiv(coeff);
+    this->add_inplace(*tmp);
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::sub_scal_div(const algebra_interface &rhs, const coefficient &coeff) {
-    this->sub_inplace(rhs.sdiv(coeff));
+    auto tmp = rhs.sdiv(coeff);
+    this->sub_inplace(*tmp);
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::add_mul(const algebra_interface &lhs, const algebra_interface &rhs) {
-    this->add_inplace(lhs.mul(rhs));
+    auto tmp = lhs.mul(rhs);
+    this->add_inplace(*tmp);
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::sub_mul(const algebra_interface &lhs, const algebra_interface &rhs) {
-    this->sub_inplace(lhs.mul(rhs));
+    auto tmp = lhs.mul(rhs);
+    this->sub_inplace(*tmp);
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::mul_smul(const algebra_interface &rhs, const coefficient &coeff) {
-    this->mul_inplace(rhs.smul(coeff));
+    auto tmp = rhs.right_smul(coeff);
+    this->mul_inplace(*tmp);
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::mul_sdiv(const algebra_interface &rhs, const coefficient &coeff) {
-    this->mul_inplace(rhs.sdiv(coeff));
+    auto tmp = rhs.sdiv(coeff);
+    this->mul_inplace(*tmp);
 }
 
 
@@ -332,31 +340,31 @@ algebra_iterator algebra_implementation<Interface, Impl>::end() const {
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::uminus() const {
-    return Algebra(-m_data, p_ctx);
+    return algebra_t(-m_data, p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::add(const Interface &other) const {
-    return Algebra(m_data + cast(other), p_ctx);
+    return algebra_t(m_data + cast(other), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::sub(const Interface &other) const {
-    return Algebra(m_data - cast(other), p_ctx);
+    return algebra_t(m_data - cast(other), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::left_smul(const coefficient &other) const {
-    return Algebra(m_data*coefficient_cast<scalar_type>(other), p_ctx);
+    return algebra_t(m_data*coefficient_cast<scalar_type>(other), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::right_smul(const coefficient &other) const {
-    return Algebra(m_data*coefficient_cast<scalar_type>(other), p_ctx);
+    return algebra_t(m_data*coefficient_cast<scalar_type>(other), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::sdiv(const coefficient &other) const {
-    return Algebra(m_data/coefficient_cast<rational_type>(other), p_ctx);
+    return algebra_t(m_data/coefficient_cast<rational_type>(other), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::mul(const Interface &other) const {
-    return Algebra(m_data*cast(other), p_ctx);
+    return algebra_t(m_data*cast(other), p_ctx);
 }
 template<typename Interface, typename Impl>
 void algebra_implementation<Interface, Impl>::add_inplace(const Interface &other) {
