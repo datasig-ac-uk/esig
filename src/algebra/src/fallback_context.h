@@ -337,8 +337,8 @@ VectorWrapper fallback_context<CType>::convert_impl(const VectorWrapper &arg, Ba
              * If the base is already of the same type as result then we can use assign/data
              * defined on the fallback vector types.
              */
-            using access = algebra_implementation_access<VectorImplWrapper, VectorImpl>;
-            const auto& impl = access::get(dynamic_cast<const VectorImplWrapper<VectorImpl> &>(*base));
+            using access = algebra_implementation_access;
+            const auto& impl = access::get<VectorImplWrapper, VectorImpl>(dynamic_cast<const VectorImplWrapper<VectorImpl> &>(*base));
             if (impl.coeff_type() == CType) {
                 result.assign(impl.data());
             } else {

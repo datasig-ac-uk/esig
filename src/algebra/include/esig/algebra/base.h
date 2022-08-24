@@ -40,20 +40,24 @@ struct algebra_interface
     virtual algebra_iterator begin() const = 0;
     virtual algebra_iterator end() const = 0;
 
+    virtual dense_data_access_iterator iterate_dense_components() const = 0;
+
     // Arithmetic
     virtual Algebra uminus() const = 0;
     virtual Algebra add(const algebra_interface& other) const = 0;
     virtual Algebra sub(const algebra_interface& other) const = 0;
-    virtual Algebra left_smul(const coefficient& other) const = 0;
-    virtual Algebra right_smul(const coefficient& other) const = 0;
+    virtual Algebra smul(const coefficient& other) const = 0;
+//    virtual Algebra left_smul(const coefficient& other) const = 0;
+//    virtual Algebra right_smul(const coefficient& other) const = 0;
     virtual Algebra sdiv(const coefficient& other) const = 0;
     virtual Algebra mul(const algebra_interface& other) const = 0;
 
     // Inplace Arithmetic
     virtual void add_inplace(const algebra_interface& other) = 0;
     virtual void sub_inplace(const algebra_interface& other) = 0;
-    virtual void left_smul_inplace(const coefficient& other) = 0;
-    virtual void right_smul_inplace(const coefficient& other) = 0;
+    virtual void smul_inplace(const coefficient& other) = 0;
+//    virtual void left_smul_inplace(const coefficient& other) = 0;
+//    virtual void right_smul_inplace(const coefficient& other) = 0;
     virtual void sdiv_inplace(const coefficient& other) = 0;
     virtual void mul_inplace(const algebra_interface& other) = 0;
 
@@ -91,10 +95,7 @@ public:
     using interface_t = Interface;
     using algebra_t = typename Interface::algebra_t;
 
-    template <typename I>
-    using wrapper_template = dtl::algebra_implementation<algebra_t, I>;
-
-    friend class algebra_implementation_access<wrapper_template, Impl>;
+    friend class esig::algebra::algebra_implementation_access;
 
 public:
     using scalar_type = typename algebra_info<Impl>::scalar_type;
@@ -120,17 +121,20 @@ public:
     coefficient get_mut(key_type key) override;
     algebra_iterator begin() const override;
     algebra_iterator end() const override;
+    dense_data_access_iterator iterate_dense_components() const override;
     algebra_t uminus() const override;
     algebra_t add(const interface_t &other) const override;
     algebra_t sub(const interface_t &other) const override;
-    algebra_t left_smul(const coefficient &other) const override;
-    algebra_t right_smul(const coefficient &other) const override;
+    algebra_t smul(const coefficient& scal) const override;
+//    algebra_t left_smul(const coefficient &other) const override;
+//    algebra_t right_smul(const coefficient &other) const override;
     algebra_t sdiv(const coefficient &other) const override;
     algebra_t mul(const interface_t &other) const override;
     void add_inplace(const interface_t &other) override;
     void sub_inplace(const interface_t &other) override;
-    void left_smul_inplace(const coefficient &other) override;
-    void right_smul_inplace(const coefficient &other) override;
+    void smul_inplace(const coefficient& other) override;
+//    void left_smul_inplace(const coefficient &other) override;
+//    void right_smul_inplace(const coefficient &other) override;
     void sdiv_inplace(const coefficient &other) override;
     void mul_inplace(const interface_t &other) override;
     std::ostream &print(std::ostream &os) const override;
@@ -140,8 +144,10 @@ public:
 template <typename Interface, typename Impl>
 struct implementation_wrapper_selection
 {
-    using type = algebra_implementation<Interface, Impl>;
+    using type = typename std::conditional<std::is_base_of<Interface, Impl>::value, Impl,
+        algebra_implementation<Interface, Impl>>::type;
 };
+
 
 template <typename Interface, typename Impl>
 using impl_wrapper = typename implementation_wrapper_selection<Interface, Impl>::type;
@@ -156,6 +162,7 @@ class algebra_base
 protected:
     std::shared_ptr<Interface> p_impl;
     friend class algebra_base_access;
+    friend class esig::algebra::algebra_implementation_access;
 
 public:
     using interface_t = Interface;
@@ -163,14 +170,21 @@ public:
     using algebra_t = typename Interface::algebra_t;
     using const_iterator = typename Interface::const_iterator;
 
+    algebra_base();
+
     template <typename Impl,
              typename=std::enable_if_t<
                  !std::is_same<
                      std::remove_cv_t<std::remove_reference_t<Impl>>, algebra_t>::value>>
     explicit algebra_base(Impl&& arg, const context* ctx);
 
+    template <typename Impl, typename... Args>
+    static algebra_t from_args(Args&&... args);
+
     const Interface& operator*() const noexcept;
     Interface& operator*() noexcept;
+
+    operator bool() const noexcept;
 
     dimn_t size() const;
     deg_t width() const;
@@ -185,42 +199,51 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
+    dense_data_access_iterator iterate_dense_components() const noexcept;
+
     // Binary operations
     algebra_t uminus() const;
-    algebra_t add(const algebra_base& rhs) const;
-    algebra_t sub(const algebra_base& rhs) const;
-    algebra_t left_smul(const coefficient& scal) const;
-    algebra_t right_smul(const coefficient& scal) const;
+    algebra_t add(const algebra_t& rhs) const;
+    algebra_t sub(const algebra_t& rhs) const;
+    algebra_t smul(const coefficient& rhs) const;
+//    algebra_t left_smul(const coefficient& scal) const;
+//    algebra_t right_smul(const coefficient& scal) const;
     algebra_t sdiv(const coefficient& scal) const;
-    algebra_t mul(const algebra_base& rhs) const;
+    algebra_t mul(const algebra_t& rhs) const;
 
     // In-place binary operations
-    algebra_base& add_inplace(const algebra_base& rhs);
-    algebra_base& sub_inplace(const algebra_base& rhs);
-    algebra_base& left_smul_inplace(const coefficient& rhs);
-    algebra_base& right_smul_inplace(const coefficient& rhs);
-    algebra_base& sdiv_inplace(const coefficient& rhs);
-    algebra_base& mul_inplace(const algebra_base& rhs);
+    algebra_t& add_inplace(const algebra_t& rhs);
+    algebra_t& sub_inplace(const algebra_t& rhs);
+    algebra_t& smul_inplace(const coefficient& scal);
+//    algebra_base& left_smul_inplace(const coefficient& rhs);
+//    algebra_base& right_smul_inplace(const coefficient& rhs);
+    algebra_t& sdiv_inplace(const coefficient& rhs);
+    algebra_t& mul_inplace(const algebra_t& rhs);
 
     // Hybrid in-place operations
-    algebra_base& add_scal_mul(const algebra_base& arg, const coefficient& scal);
-    algebra_base& add_scal_div(const algebra_base& arg, const coefficient& scal);
-    algebra_base& sub_scal_mul(const algebra_base& arg, const coefficient& scal);
-    algebra_base& sub_scal_div(const algebra_base& arg, const coefficient& scal);
-    algebra_base& add_mul(const algebra_base& lhs, const algebra_base& rhs);
-    algebra_base& sub_mul(const algebra_base& lhs, const algebra_base& rhs);
-    algebra_base& mul_left_smul(const algebra_base& arg, const coefficient& scal);
-    algebra_base& mul_right_smul(const algebra_base& arg, const coefficient& scal);
-    algebra_base& mul_sdiv(const algebra_base& arg, const coefficient& scal);
+    algebra_t& add_scal_mul(const algebra_t& arg, const coefficient& scal);
+    algebra_t& add_scal_div(const algebra_t& arg, const coefficient& scal);
+    algebra_t& sub_scal_mul(const algebra_t& arg, const coefficient& scal);
+    algebra_t& sub_scal_div(const algebra_t& arg, const coefficient& scal);
+    algebra_t& add_mul(const algebra_t& lhs, const algebra_t& rhs);
+    algebra_t& sub_mul(const algebra_t& lhs, const algebra_t& rhs);
+//    algebra_base& mul_left_smul(const algebra_base& arg, const coefficient& scal);
+//    algebra_base& mul_right_smul(const algebra_base& arg, const coefficient& scal);
+    algebra_t& mul_smul(const algebra_t& arg, const coefficient& scal);
+    algebra_t& mul_sdiv(const algebra_t& arg, const coefficient& scal);
 
 
     std::ostream& print(std::ostream& os) const;
 
-    bool operator==(const algebra_base& other) const;
-    bool operator!=(const algebra_base& other) const;
+    bool operator==(const algebra_t& other) const;
+    bool operator!=(const algebra_t& other) const;
 
 
 };
+
+template<typename Interface>
+algebra_base<Interface>::algebra_base() : p_impl(nullptr)
+{}
 
 template<typename Interface>
 template<typename Impl, typename>
@@ -228,15 +251,21 @@ algebra_base<Interface>::algebra_base(Impl &&arg, const context *ctx) :
     p_impl(new dtl::impl_wrapper<Interface, Impl>(std::forward<Impl>(arg), ctx))
 {
 }
+template<typename Interface>
+template<typename Impl, typename... Args>
+typename algebra_base<Interface>::algebra_t algebra_base<Interface>::from_args(Args &&...args) {
+    std::shared_ptr<interface_t> ptr(new dtl::impl_wrapper<Interface, Impl>{std::forward<Args>(args)...});
+    return algebra_t(ptr);
+}
 
 template<typename Algebra>
 void algebra_interface<Algebra>::add_scal_mul(const algebra_interface &rhs, const coefficient &coeff) {
-    auto tmp = rhs.right_smul(coeff);
+    auto tmp = rhs.smul(coeff);
     this->add_inplace(*tmp);
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::sub_scal_mul(const algebra_interface &rhs, const coefficient &coeff) {
-    auto tmp = rhs.right_smul(coeff);
+    auto tmp = rhs.smul(coeff);
     this->sub_inplace(*tmp);
 }
 template<typename Algebra>
@@ -261,7 +290,7 @@ void algebra_interface<Algebra>::sub_mul(const algebra_interface &lhs, const alg
 }
 template<typename Algebra>
 void algebra_interface<Algebra>::mul_smul(const algebra_interface &rhs, const coefficient &coeff) {
-    auto tmp = rhs.right_smul(coeff);
+    auto tmp = rhs.smul(coeff);
     this->mul_inplace(*tmp);
 }
 template<typename Algebra>
@@ -339,6 +368,12 @@ algebra_iterator algebra_implementation<Interface, Impl>::end() const {
     return algebra_iterator(m_data.end(), p_ctx);
 }
 template<typename Interface, typename Impl>
+dense_data_access_iterator algebra_implementation<Interface, Impl>::iterate_dense_components() const {
+    return dense_data_access_iterator(
+        dtl::dense_data_access_implementation<Impl>(m_data, algebra_info<Impl>::first_key(m_data))
+        );
+}
+template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::uminus() const {
     return algebra_t(-m_data, p_ctx);
 }
@@ -351,13 +386,17 @@ typename Interface::algebra_t algebra_implementation<Interface, Impl>::sub(const
     return algebra_t(m_data - cast(other), p_ctx);
 }
 template<typename Interface, typename Impl>
-typename Interface::algebra_t algebra_implementation<Interface, Impl>::left_smul(const coefficient &other) const {
-    return algebra_t(m_data*coefficient_cast<scalar_type>(other), p_ctx);
+typename Interface::algebra_t algebra_implementation<Interface, Impl>::smul(const coefficient &scal) const {
+    return algebra_t(m_data * coefficient_cast<scalar_type>(scal), p_ctx);
 }
-template<typename Interface, typename Impl>
-typename Interface::algebra_t algebra_implementation<Interface, Impl>::right_smul(const coefficient &other) const {
-    return algebra_t(m_data*coefficient_cast<scalar_type>(other), p_ctx);
-}
+//template<typename Interface, typename Impl>
+//typename Interface::algebra_t algebra_implementation<Interface, Impl>::left_smul(const coefficient &other) const {
+//    return algebra_t(m_data*coefficient_cast<scalar_type>(other), p_ctx);
+//}
+//template<typename Interface, typename Impl>
+//typename Interface::algebra_t algebra_implementation<Interface, Impl>::right_smul(const coefficient &other) const {
+//    return algebra_t(m_data*coefficient_cast<scalar_type>(other), p_ctx);
+//}
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::sdiv(const coefficient &other) const {
     return algebra_t(m_data/coefficient_cast<rational_type>(other), p_ctx);
@@ -375,13 +414,17 @@ void algebra_implementation<Interface, Impl>::sub_inplace(const Interface &other
     m_data -= cast(other);
 }
 template<typename Interface, typename Impl>
-void algebra_implementation<Interface, Impl>::left_smul_inplace(const coefficient &other) {
+void algebra_implementation<Interface, Impl>::smul_inplace(const coefficient &other) {
     m_data *= coefficient_cast<scalar_type>(other);
 }
-template<typename Interface, typename Impl>
-void algebra_implementation<Interface, Impl>::right_smul_inplace(const coefficient &other) {
-    m_data *= coefficient_cast<scalar_type>(other);
-}
+//template<typename Interface, typename Impl>
+//void algebra_implementation<Interface, Impl>::left_smul_inplace(const coefficient &other) {
+//    m_data *= coefficient_cast<scalar_type>(other);
+//}
+//template<typename Interface, typename Impl>
+//void algebra_implementation<Interface, Impl>::right_smul_inplace(const coefficient &other) {
+//    m_data *= coefficient_cast<scalar_type>(other);
+//}
 template<typename Interface, typename Impl>
 void algebra_implementation<Interface, Impl>::sdiv_inplace(const coefficient &other) {
     m_data /= coefficient_cast<rational_type>(other);
@@ -414,6 +457,10 @@ const Interface &algebra_base<Interface>::operator*() const noexcept {
 template<typename Interface>
 Interface &algebra_base<Interface>::operator*() noexcept {
     return *p_impl;
+}
+template<typename Interface>
+algebra_base<Interface>::operator bool() const noexcept {
+    return static_cast<bool>(p_impl);
 }
 template<typename Interface>
 dimn_t algebra_base<Interface>::size() const {
@@ -456,118 +503,136 @@ typename algebra_base<Interface>::const_iterator algebra_base<Interface>::end() 
     return p_impl->end();
 }
 template<typename Interface>
+dense_data_access_iterator algebra_base<Interface>::iterate_dense_components() const noexcept {
+    return p_impl->iterate_dense_components();
+}
+template<typename Interface>
 typename algebra_base<Interface>::algebra_t algebra_base<Interface>::uminus() const {
     return p_impl->uminus();
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t algebra_base<Interface>::add(const algebra_base &rhs) const {
+typename algebra_base<Interface>::algebra_t algebra_base<Interface>::add(const algebra_t &rhs) const {
     return p_impl->add(*rhs.p_impl);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t algebra_base<Interface>::sub(const algebra_base &rhs) const {
+typename algebra_base<Interface>::algebra_t algebra_base<Interface>::sub(const algebra_t &rhs) const {
     return p_impl->sub(*rhs.p_impl);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t algebra_base<Interface>::left_smul(const coefficient &scal) const {
-    return p_impl->left_smul(scal);
+typename algebra_base<Interface>::algebra_t algebra_base<Interface>::smul(const coefficient &rhs) const {
+    return p_impl->smul(rhs);
 }
-template<typename Interface>
-typename algebra_base<Interface>::algebra_t algebra_base<Interface>::right_smul(const coefficient &scal) const {
-    return p_impl->right_smul(scal);
-}
+//template<typename Interface>
+//typename algebra_base<Interface>::algebra_t algebra_base<Interface>::left_smul(const coefficient &scal) const {
+//    return p_impl->left_smul(scal);
+//}
+//template<typename Interface>
+//typename algebra_base<Interface>::algebra_t algebra_base<Interface>::right_smul(const coefficient &scal) const {
+//    return p_impl->right_smul(scal);
+//}
 template<typename Interface>
 typename algebra_base<Interface>::algebra_t algebra_base<Interface>::sdiv(const coefficient &scal) const {
     return p_impl->sdiv(scal);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t algebra_base<Interface>::mul(const algebra_base &rhs) const {
+typename algebra_base<Interface>::algebra_t algebra_base<Interface>::mul(const algebra_t &rhs) const {
     return p_impl->mul(*rhs.p_impl);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::add_inplace(const algebra_base<Interface> &rhs) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::add_inplace(const algebra_t &rhs) {
     p_impl->add_inplace(*rhs.p_impl);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::sub_inplace(const algebra_base<Interface> &rhs) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_inplace(const algebra_t &rhs) {
     p_impl->sub_inplace(*rhs.p_impl);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::left_smul_inplace(const coefficient &rhs) {
-    p_impl->left_smul_inplace(rhs);
-    return *this;
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::smul_inplace(const coefficient &scal) {
+    p_impl->smul_inplace(scal);
+    return static_cast<algebra_t&>(*this);
 }
+//template<typename Interface>
+//algebra_base<Interface> &algebra_base<Interface>::left_smul_inplace(const coefficient &rhs) {
+//    p_impl->left_smul_inplace(rhs);
+//    return *this;
+//}
+//template<typename Interface>
+//algebra_base<Interface> &algebra_base<Interface>::right_smul_inplace(const coefficient &rhs) {
+//    p_impl->right_smul_inplace(rhs);
+//    return *this;
+//}
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::right_smul_inplace(const coefficient &rhs) {
-    p_impl->right_smul_inplace(rhs);
-    return *this;
-}
-template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::sdiv_inplace(const coefficient& rhs) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sdiv_inplace(const coefficient& rhs) {
     p_impl->sdiv_inplace(rhs);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::mul_inplace(const algebra_base<Interface> &rhs) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_inplace(const algebra_t &rhs) {
     p_impl->mul_inplace(*rhs.p_impl);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::add_scal_mul(const algebra_base<Interface> &arg, const coefficient &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::add_scal_mul(const algebra_t &arg, const coefficient &scal) {
     p_impl->add_scal_mul(*arg.p_impl, scal);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::add_scal_div(const algebra_base<Interface> &arg, const coefficient &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::add_scal_div(const algebra_t &arg, const coefficient &scal) {
     p_impl->add_scal_div(*arg.p_impl, scal);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::sub_scal_mul(const algebra_base<Interface> &arg, const coefficient &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_scal_mul(const algebra_t &arg, const coefficient &scal) {
     p_impl->sub_scal_mul(*arg.p_impl, scal);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::sub_scal_div(const algebra_base<Interface> &arg, const coefficient &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_scal_div(const algebra_t &arg, const coefficient &scal) {
     p_impl->sub_scal_div(*arg.p_impl, scal);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::add_mul(const algebra_base<Interface> &lhs, const algebra_base<Interface> &rhs) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::add_mul(const algebra_t &lhs, const algebra_t &rhs) {
     p_impl->add_mul(*lhs.p_impl, *rhs.p_impl);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::sub_mul(const algebra_base<Interface> &lhs, const algebra_base<Interface> &rhs) {
-    p_impl->sub_mul(*lhs.p_impl, &rhs.p_impl);
-    return *this;
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_mul(const algebra_t &lhs, const algebra_t &rhs) {
+    p_impl->sub_mul(*lhs.p_impl, *rhs.p_impl);
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::mul_left_smul(const algebra_base<Interface> &arg, const coefficient &scal) {
-    p_impl->mul_left_smul(*arg.p_impl, scal);
-    return *this;
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_smul(const algebra_t &arg, const coefficient &scal) {
+    p_impl->mul_smul(*arg.p_impl, scal);
+    return static_cast<algebra_t&>(*this);
 }
+//template<typename Interface>
+//algebra_base<Interface> &algebra_base<Interface>::mul_left_smul(const algebra_base<Interface> &arg, const coefficient &scal) {
+//    p_impl->mul_left_smul(*arg.p_impl, scal);
+//    return *this;
+//}
+//template<typename Interface>
+//algebra_base<Interface> &algebra_base<Interface>::mul_right_smul(const algebra_base<Interface> &arg, const coefficient &scal) {
+//    p_impl->mul_right_smul(*arg.p_impl, scal);
+//    return *this;
+//}
 template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::mul_right_smul(const algebra_base<Interface> &arg, const coefficient &scal) {
-    p_impl->mul_right_smul(*arg.p_impl, scal);
-    return *this;
-}
-template<typename Interface>
-algebra_base<Interface> &algebra_base<Interface>::mul_sdiv(const algebra_base<Interface> &arg, const coefficient &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_sdiv(const algebra_t &arg, const coefficient &scal) {
     p_impl->mul_sdiv(*arg.p_impl, scal);
-    return *this;
+    return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
 std::ostream &algebra_base<Interface>::print(std::ostream &os) const {
     return p_impl->print(os);
 }
 template<typename Interface>
-bool algebra_base<Interface>::operator==(const algebra_base<Interface> &other) const {
+bool algebra_base<Interface>::operator==(const algebra_t &other) const {
     return p_impl->equals(*other.p_impl);
 }
 template<typename Interface>
-bool algebra_base<Interface>::operator!=(const algebra_base<Interface> &other) const {
+bool algebra_base<Interface>::operator!=(const algebra_t &other) const {
     return !p_impl->equals(*other.p_impl);
 }
 

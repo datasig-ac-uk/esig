@@ -508,6 +508,9 @@ struct algebra_info<sparse_lie<S>>
     static key_type convert_key(esig::key_type key) noexcept
     { return key; }
 
+    static key_type first_key(const sparse_lie<S>& instance) noexcept
+    { return 1; }
+
 };
 
 namespace dtl {

@@ -37,6 +37,8 @@ struct algebra_info
 
     using this_key_type = key_type;
     static this_key_type convert_key(esig::key_type key) noexcept;
+
+    static key_type first_key(const Algebra& instance) noexcept;
 };
 
 
@@ -82,20 +84,51 @@ struct algebra_base_access
     }
 };
 
-template <template <typename> class Wrapper, typename Implementation>
+
+
 struct algebra_implementation_access
 {
+    template<template <typename> class Wrapper, typename Impl>
+    using interface_t = typename Wrapper<Impl>::interface_t;
 
-    static const Implementation& get(const Wrapper<Implementation>& arg)
+    template <template <typename> class Wrapper, typename Impl>
+    using algebra_t = typename Wrapper<Impl>::algebra_t;
+
+    template <template <typename> class Wrapper, typename Impl>
+    static const Impl& get(const interface_t<Wrapper, Impl>& arg)
+    {
+        return dynamic_cast<const Wrapper<Impl>&>(arg).m_data;
+    }
+
+    template <template <typename> class Wrapper, typename Impl>
+    static Impl& get(interface_t<Wrapper, Impl>& arg)
+    {
+        return dynamic_cast<Wrapper<Impl>&>(arg).m_data;
+    }
+
+    template <template <typename> class Wrapper, typename Impl>
+    static const Impl& get(const Wrapper<Impl>& arg)
     {
         return arg.m_data;
     }
 
-    static Implementation& get(Wrapper<Implementation>& arg)
+    template <template <typename> class Wrapper, typename Impl>
+    static Impl& get(Wrapper<Impl>& arg)
     {
         return arg.m_data;
     }
 
+    template <template <typename> class Wrapper, typename Impl>
+    static const Impl& get(const algebra_t<Wrapper, Impl>& arg)
+    {
+        return get<Wrapper, Impl>(*arg.p_impl);
+    }
+
+    template <template <typename> class Wrapper, typename Impl>
+    static Impl& get(algebra_t<Wrapper, Impl>& arg)
+    {
+        return get<Wrapper, Impl>(*arg.p_impl);
+    }
 
 };
 

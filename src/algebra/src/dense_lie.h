@@ -571,6 +571,8 @@ struct algebra_info<dense_lie<S>>
 
     using this_key_type = key_type;
     static this_key_type convert_key(esig::key_type key) noexcept;
+
+    static key_type first_key(const dense_lie<S>& instance) noexcept;
 };
 
 template<typename S>
@@ -597,6 +599,10 @@ template<typename S>
 key_type algebra_info<dense_lie<S>>::convert_key(esig::key_type key) noexcept
 {
     return key;
+}
+template<typename S>
+key_type algebra_info<dense_lie<S>>::first_key(const dense_lie<S> &instance) noexcept {
+    return 1;
 }
 
 namespace dtl {

@@ -89,7 +89,7 @@ message(STATUS "Python directory: ${Python_INCLUDE_DIRS}")
 message(STATUS "Numpy version: ${Python_NumPy_VERSION}")
 message(STATUS "Numpy includes: ${Python_NumPy_INCLUDE_DIRS}")
 
-find_package(pybind11 CONFIG REQUIRED)
+#find_package(pybind11 CONFIG REQUIRED)
 
 #find_package(recombine CONFIG QUIET))
 
@@ -115,7 +115,7 @@ set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
 # Add dependencies
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/recombine)
-
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/pybind11)
 
 enable_testing()
 # Add the actual source folders

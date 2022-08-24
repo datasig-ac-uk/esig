@@ -101,11 +101,12 @@ class free_tensor_implementation : public free_tensor_interface
     Impl m_data;
     context_p p_ctx;
     friend class ::esig::algebra::free_tensor_base_access;
-    friend class ::esig::algebra::algebra_implementation_access<free_tensor_implementation, Impl>;
+    friend class ::esig::algebra::algebra_implementation_access;
 
     using scalar_type = typename algebra_info<Impl>::scalar_type;
 
 public:
+    using interface_t = free_tensor_interface;
 
     explicit free_tensor_implementation(Impl&& impl, context_p ctx);
     explicit free_tensor_implementation(const Impl& impl, context_p ctx);

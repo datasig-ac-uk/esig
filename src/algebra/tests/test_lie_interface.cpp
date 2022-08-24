@@ -12,9 +12,25 @@
 using namespace esig;
 using namespace esig::algebra;
 
+class MockLie;
+
+namespace esig {
+namespace algebra {
+namespace dtl {
+
+template <>
+struct implementation_wrapper_selection<lie_interface, MockLie>
+{
+    using type = MockLie;
+};
+}
+}
+}
+
 class MockLie : public esig::algebra::lie_interface
 {
 public:
+    using scalar_type = double;
     using interface_t = esig::algebra::lie_interface;
 
     MOCK_METHOD(algebra_iterator, begin, (), (const, override));
@@ -37,20 +53,20 @@ public:
     MOCK_METHOD(lie, sdiv, (const coefficient&), (const, override));
     MOCK_METHOD(lie, mul, (const lie_interface&), (const, override));
 
-    MOCK_METHOD(lie_interface&, add_inplace, (const lie_interface&), (override));
-    MOCK_METHOD(lie_interface&, sub_inplace, (const lie_interface&), (override));
-    MOCK_METHOD(lie_interface&, smul_inplace, (const coefficient&), (override));
-    MOCK_METHOD(lie_interface&, sdiv_inplace, (const coefficient&), (override));
-    MOCK_METHOD(lie_interface&, mul_inplace, (const lie_interface&), (override));
+    MOCK_METHOD(void, add_inplace, (const lie_interface&), (override));
+    MOCK_METHOD(void, sub_inplace, (const lie_interface&), (override));
+    MOCK_METHOD(void, smul_inplace, (const coefficient&), (override));
+    MOCK_METHOD(void, sdiv_inplace, (const coefficient&), (override));
+    MOCK_METHOD(void, mul_inplace, (const lie_interface&), (override));
 
-    MOCK_METHOD(lie_interface&, add_scal_mul, (const lie_interface&, const coefficient&), (override));
-    MOCK_METHOD(lie_interface&, sub_scal_mul, (const lie_interface&, const coefficient&), (override));
-    MOCK_METHOD(lie_interface&, add_scal_div, (const lie_interface&, const coefficient&), (override));
-    MOCK_METHOD(lie_interface&, sub_scal_div, (const lie_interface&, const coefficient&), (override));
-    MOCK_METHOD(lie_interface&, add_mul, (const lie_interface&, const lie_interface&), (override));
-    MOCK_METHOD(lie_interface&, sub_mul, (const lie_interface&, const lie_interface&), (override));
-    MOCK_METHOD(lie_interface&, mul_smul, (const lie_interface&, const coefficient&), (override));
-    MOCK_METHOD(lie_interface&, mul_sdiv, (const lie_interface&, const coefficient&), (override));
+    MOCK_METHOD(void, add_scal_mul, (const lie_interface&, const coefficient&), (override));
+    MOCK_METHOD(void, sub_scal_mul, (const lie_interface&, const coefficient&), (override));
+    MOCK_METHOD(void, add_scal_div, (const lie_interface&, const coefficient&), (override));
+    MOCK_METHOD(void, sub_scal_div, (const lie_interface&, const coefficient&), (override));
+    MOCK_METHOD(void, add_mul, (const lie_interface&, const lie_interface&), (override));
+    MOCK_METHOD(void, sub_mul, (const lie_interface&, const lie_interface&), (override));
+    MOCK_METHOD(void, mul_smul, (const lie_interface&, const coefficient&), (override));
+    MOCK_METHOD(void, mul_sdiv, (const lie_interface&, const coefficient&), (override));
 
     MOCK_METHOD(std::ostream&, print, (std::ostream&), (const, override));
 
@@ -90,19 +106,19 @@ protected:
         ON_CALL(mlie, smul(_)).WillByDefault(Return(lie::from_args<MockLie>()));
         ON_CALL(mlie, sdiv(_)).WillByDefault(Return(lie::from_args<MockLie>()));
         ON_CALL(mlie, mul(_)).WillByDefault(Return(lie::from_args<MockLie>()));
-        ON_CALL(mlie, add_inplace(_)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, sub_inplace(_)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, smul_inplace(_)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, sdiv_inplace(_)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, mul_inplace(_)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, add_scal_mul(_, _)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, sub_scal_mul(_, _)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, add_scal_div(_, _)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, sub_scal_div(_, _)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, add_mul(_, _)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, sub_mul(_, _)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, mul_smul(_, _)).WillByDefault(ReturnRef(mlie));
-        ON_CALL(mlie, mul_sdiv(_, _)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, add_inplace(_)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, sub_inplace(_)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, smul_inplace(_)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, sdiv_inplace(_)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, mul_inplace(_)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, add_scal_mul(_, _)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, sub_scal_mul(_, _)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, add_scal_div(_, _)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, sub_scal_div(_, _)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, add_mul(_, _)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, sub_mul(_, _)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, mul_smul(_, _)).WillByDefault(ReturnRef(mlie));
+//        ON_CALL(mlie, mul_sdiv(_, _)).WillByDefault(ReturnRef(mlie));
         ON_CALL(mlie, print(_)).WillByDefault(testing::ReturnArg<0>());
         ON_CALL(mlie, equals(_)).WillByDefault(Return(false));
         return result;

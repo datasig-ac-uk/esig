@@ -255,7 +255,7 @@ struct lie_base_access {
     {
         auto *ptr = algebra_base_access::get(wrapper);
         assert(ptr != nullptr);
-        return algebra_implementation_access<dtl::lie_implementation, Impl>::get(*ptr);
+        return algebra_implementation_access::get<dtl::lie_implementation, Impl>(*ptr);
 //        return dynamic_cast<const dtl::lie_implementation<Impl> &>(*ptr).m_data;
     }
 
@@ -264,7 +264,7 @@ struct lie_base_access {
     {
         auto *ptr = algebra_base_access::get(wrapper);
         assert(ptr != nullptr);
-        return algebra_implementation_access<dtl::lie_implementation, Impl>::get(*ptr);
+        return algebra_implementation_access::get(*ptr);
 //        return dynamic_cast<dtl::lie_implementation<Impl> &>(*ptr).m_data;
     }
 

@@ -42,7 +42,8 @@ public:
     operator const OutLie&()
     {
         if (typeid(*m_interface) == typeid(wrapper)) {
-            return lie_base_access::get(dynamic_cast<const wrapper&>(*m_interface));
+            return algebra_implementation_access::get<lie_implementation, OutLie>(*m_interface);
+//            return lie_base_access::get<OutLie>(dynamic_cast<const wrapper&>(*m_interface));
         } else {
             if (!converted) {
                 convert();
