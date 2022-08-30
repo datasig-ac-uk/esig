@@ -2,12 +2,11 @@
 // Created by user on 04/04/2022.
 //
 
-#include <esig/algebra/free_tensor_interface.h>
-#include <esig/algebra/coefficients.h>
 #include <esig/algebra/algebra_traits.h>
-#include <gtest/gtest.h>
+#include <esig/algebra/coefficients.h>
+#include <esig/algebra/tensor_interface.h>
 #include <gmock/gmock.h>
-
+#include <gtest/gtest.h>
 
 using namespace esig;
 using namespace esig::algebra;
@@ -16,6 +15,7 @@ class MockFreeTensor : public free_tensor_interface
 {
 public:
     using interface_t = free_tensor_interface;
+    using algebra_interface_t = algebra_interface<free_tensor>;
 
 //    MOCK_METHOD(algebra_iterator, begin, (), (const, override));
 //    MOCK_METHOD(algebra_iterator, end, (), (const, override));
@@ -35,26 +35,26 @@ public:
     MOCK_METHOD(algebra_iterator, end, (), (const, override));
 
     MOCK_METHOD(free_tensor, uminus, (), (const, override));
-    MOCK_METHOD(free_tensor, add, (const free_tensor_interface &), (const, override));
-    MOCK_METHOD(free_tensor, sub, (const free_tensor_interface &), (const, override));
+    MOCK_METHOD(free_tensor, add, (const algebra_interface_t &), (const, override));
+    MOCK_METHOD(free_tensor, sub, (const algebra_interface_t &), (const, override));
     MOCK_METHOD(free_tensor, smul, (const coefficient &), (const, override));
     MOCK_METHOD(free_tensor, sdiv, (const coefficient &), (const, override));
-    MOCK_METHOD(free_tensor, mul, (const free_tensor_interface &), (const, override));
+    MOCK_METHOD(free_tensor, mul, (const algebra_interface_t &), (const, override));
 
-    MOCK_METHOD(free_tensor_interface &, add_inplace, (const free_tensor_interface &), (override));
-    MOCK_METHOD(free_tensor_interface &, sub_inplace, (const free_tensor_interface &), (override));
-    MOCK_METHOD(free_tensor_interface &, smul_inplace, (const coefficient &), (override));
-    MOCK_METHOD(free_tensor_interface &, sdiv_inplace, (const coefficient &), (override));
-    MOCK_METHOD(free_tensor_interface &, mul_inplace, (const free_tensor_interface &), (override));
+    MOCK_METHOD(void, add_inplace, (const algebra_interface_t &), (override));
+    MOCK_METHOD(void, sub_inplace, (const algebra_interface_t &), (override));
+    MOCK_METHOD(void, smul_inplace, (const coefficient &), (override));
+    MOCK_METHOD(void, sdiv_inplace, (const coefficient &), (override));
+    MOCK_METHOD(void, mul_inplace, (const algebra_interface_t &), (override));
 
-    MOCK_METHOD(free_tensor_interface &, add_scal_mul, (const free_tensor_interface &, const coefficient &), (override));
-    MOCK_METHOD(free_tensor_interface &, sub_scal_mul, (const free_tensor_interface &, const coefficient &), (override));
-    MOCK_METHOD(free_tensor_interface &, add_scal_div, (const free_tensor_interface &, const coefficient &), (override));
-    MOCK_METHOD(free_tensor_interface &, sub_scal_div, (const free_tensor_interface &, const coefficient &), (override));
-    MOCK_METHOD(free_tensor_interface &, add_mul, (const free_tensor_interface &, const free_tensor_interface &), (override));
-    MOCK_METHOD(free_tensor_interface &, sub_mul, (const free_tensor_interface &, const free_tensor_interface &), (override));
-    MOCK_METHOD(free_tensor_interface &, mul_smul, (const free_tensor_interface &, const coefficient &), (override));
-    MOCK_METHOD(free_tensor_interface &, mul_sdiv, (const free_tensor_interface &, const coefficient &), (override));
+    MOCK_METHOD(void, add_scal_mul, (const algebra_interface_t &, const coefficient &), (override));
+    MOCK_METHOD(void, sub_scal_mul, (const algebra_interface_t &, const coefficient &), (override));
+    MOCK_METHOD(void, add_scal_div, (const algebra_interface_t &, const coefficient &), (override));
+    MOCK_METHOD(void, sub_scal_div, (const algebra_interface_t &, const coefficient &), (override));
+    MOCK_METHOD(void, add_mul, (const algebra_interface_t &, const algebra_interface_t &), (override));
+    MOCK_METHOD(void, sub_mul, (const algebra_interface_t &, const algebra_interface_t &), (override));
+    MOCK_METHOD(void, mul_smul, (const algebra_interface_t &, const coefficient &), (override));
+    MOCK_METHOD(void, mul_sdiv, (const algebra_interface_t &, const coefficient &), (override));
 
     MOCK_METHOD(free_tensor, exp, (), (const, override));
     MOCK_METHOD(free_tensor, log, (), (const, override));
@@ -63,7 +63,7 @@ public:
 
     MOCK_METHOD(std::ostream &, print, (std::ostream &), (const, override));
 
-    MOCK_METHOD(bool, equals, (const free_tensor_interface &), (const, override));
+    MOCK_METHOD(bool, equals, (const algebra_interface_t &), (const, override));
 };
 
 using ::testing::Return;
@@ -99,19 +99,19 @@ protected:
         ON_CALL(mtensor, smul(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
         ON_CALL(mtensor, sdiv(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
         ON_CALL(mtensor, mul(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, add_inplace(_)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, sub_inplace(_)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, smul_inplace(_)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, sdiv_inplace(_)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, mul_inplace(_)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, add_scal_mul(_, _)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, sub_scal_mul(_, _)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, add_scal_div(_, _)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, sub_scal_div(_, _)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, add_mul(_, _)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, sub_mul(_, _)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, mul_smul(_, _)).WillByDefault(ReturnRef(mtensor));
-        ON_CALL(mtensor, mul_sdiv(_, _)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, add_inplace(_)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, sub_inplace(_)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, smul_inplace(_)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, sdiv_inplace(_)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, mul_inplace(_)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, add_scal_mul(_, _)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, sub_scal_mul(_, _)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, add_scal_div(_, _)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, sub_scal_div(_, _)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, add_mul(_, _)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, sub_mul(_, _)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, mul_smul(_, _)).WillByDefault(ReturnRef(mtensor));
+//        ON_CALL(mtensor, mul_sdiv(_, _)).WillByDefault(ReturnRef(mtensor));
         ON_CALL(mtensor, print).WillByDefault(testing::ReturnArg<0>());
         ON_CALL(mtensor, equals(_)).WillByDefault(Return(false));
         ON_CALL(mtensor, exp()).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));

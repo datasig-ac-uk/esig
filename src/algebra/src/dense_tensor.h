@@ -43,6 +43,9 @@ class dense_tensor {
 public:
     using scalar_type = Scalar;
     using basis_type = tensor_basis;
+    using reference = Scalar&;
+    using const_reference = const Scalar&;
+    using const_iterator = dtl::dense_iterator<typename std::vector<Scalar>::const_iterator>;
     static constexpr vector_type vtype = vector_type::dense;
 
     explicit dense_tensor(deg_t width, deg_t depth)
@@ -181,9 +184,14 @@ public:
         return m_data;
     }
 
-    std::shared_ptr<tensor_basis> basis() const
+    std::shared_ptr<tensor_basis> get_basis() const noexcept
     {
         return m_basis;
+    }
+
+    const tensor_basis& basis() const
+    {
+        return *m_basis;
     }
 
     Scalar& operator[](const key_type& key)
@@ -199,13 +207,13 @@ public:
         return m_data[key];
     }
 
-    dtl::dense_kv_iterator<dense_tensor> begin() const noexcept
+    const_iterator begin() const noexcept
     {
-        return iterate_kv();
+        return {m_data.begin(), 0};
     }
-    dtl::dense_kv_iterator<dense_tensor> end() const noexcept
+    const_iterator end() const noexcept
     {
-        return {nullptr, nullptr};
+        return {m_data.end(), 0};
     }
 
 
@@ -717,20 +725,64 @@ public:
 template<typename S>
 struct algebra_info<dense_tensor<S>>
 {
+    using algebra_t = dense_tensor<S>;
+    using this_key_type = key_type;
     using scalar_type = S;
     using rational_type = S;
+    using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
 
     static constexpr coefficient_type ctype() noexcept
     { return dtl::get_coeff_type(S(0)); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::dense; }
-    static deg_t width(const dense_tensor<S> &instance) noexcept
-    { return instance.width(); }
-    static deg_t max_depth(const dense_tensor<S> &instance) noexcept
-    { return instance.depth(); }
+    static deg_t width(const dense_tensor<S> *instance) noexcept
+    { return instance->width(); }
+    static deg_t max_depth(const dense_tensor<S> *instance) noexcept
+    { return instance->depth(); }
 
-    static key_type convert_key(esig::key_type key) noexcept
+    static deg_t degree(const algebra_t* inst, key_type key) noexcept
+    {
+        if (inst) {
+            return inst->basis().degree(key);
+        }
+        return 0;
+    }
+    static deg_t native_degree(const algebra_t* inst, key_type key) noexcept
+    {
+        return degree(inst, key);
+    }
+
+
+    static key_type convert_key(const algebra_t* instance, esig::key_type key) noexcept
     { return key; }
+
+    static key_type first_key(const dense_tensor<S>* instance) noexcept
+    {
+        return 0;
+    }
+    static key_type last_key(const algebra_t* instance) noexcept
+    {
+        if (instance) {
+            return instance->basis().size(-1);
+        }
+        return 0;
+    }
+
+    static algebra_t create_like(const algebra_t& instance)
+    {
+        // using the initialiser list forces resize to degree.
+        return algebra_t(instance.get_basis(), instance.degree(), {S(0)});
+    }
+
+    static const key_prod_container& key_product(const algebra_t* instance, key_type k1, key_type k2)
+    {
+        if (instance) {
+            return instance->basis().prod(k1, k2);
+        }
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> empty;
+        return empty;
+    }
+
 };
 
 namespace dtl {

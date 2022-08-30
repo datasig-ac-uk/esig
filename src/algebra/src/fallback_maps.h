@@ -90,10 +90,9 @@ template<typename Lie, typename Tensor>
 Tensor maps::lie_to_tensor(const Lie &arg) const {
     using scal_t = typename Lie::scalar_type;
     Tensor result(p_tensor_basis);
-    auto iter = arg.iterate_kv();
-    while (iter.advance()) {
-        for (auto p : expand(iter.key())) {
-            result.add_scal_prod(p.first, iter.value()*scal_t(p.second));
+    for (const auto& item : arg) {
+        for (auto p : expand(item.key())) {
+            result.add_scal_prod(p.first, item.value()*scal_t(p.second));
         }
     }
     return result;
@@ -102,12 +101,11 @@ template<typename Lie, typename Tensor>
 Lie maps::tensor_to_lie(const Tensor &arg) const {
     using scal_t = typename Lie::scalar_type;
     Lie result(p_lie_basis);
-    auto iter = arg.iterate_kv();
-    while (iter.advance()) {
-        if (iter.value() != scal_t(0)) {
-            for (auto p : rbracket(iter.key())) {
+    for (const auto& item : arg) {
+        if (item.value() != scal_t(0)) {
+            for (auto p : rbracket(item.key())) {
                 auto deg = p_lie_basis->degree(p.first);
-                result.add_scal_prod(p.first, iter.value()*scal_t(p.second)/scal_t(deg));
+                result.add_scal_prod(p.first, item.value()*scal_t(p.second)/scal_t(deg));
             }
         }
     }

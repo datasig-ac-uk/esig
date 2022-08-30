@@ -194,7 +194,10 @@ testing::AssertionResult LiesEqual(
         const esig::algebra::sparse_lie<typename CType::S>& l1,
         const alg::algebra<alg::lie_basis<Width, Depth>, CType, alg::lie_multiplication<CType>, alg::vectors::sparse_vector>& l2)
 {
-    alg::lie<CType, Width, Depth, alg::vectors::sparse_vector> l3(l1.begin(), l1.end());
+    alg::lie<CType, Width, Depth, alg::vectors::sparse_vector> l3;
+    for (const auto& item : l1) {
+        l3.add_scal_prod(item.key(), item.value());
+    }
     if (l2 == l3) {
         return testing::AssertionSuccess();
     } else {
@@ -210,7 +213,7 @@ testing::AssertionResult TensorsEqual(
 {
     alg::free_tensor<CType, Width, Depth, alg::vectors::sparse_vector> t3;
     for (const auto& item : t1) {
-        t3.add_scal_prod(t3.basis.index_to_key(item.first), item.second);
+        t3.add_scal_prod(t3.basis.index_to_key(item.key()), item.value());
     }
     if (t2 == t3) {
         return testing::AssertionSuccess();

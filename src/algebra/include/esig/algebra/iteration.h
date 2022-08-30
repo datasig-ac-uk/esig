@@ -133,8 +133,6 @@ namespace dtl {
  */
 
 
-
-
 template <typename Iter>
 class algebra_iterator_implementation : public algebra_iterator_interface, public algebra_iterator_item
 {
@@ -184,12 +182,12 @@ struct iterator_helper
     }
     static key_type key(const Iter& iter)
     {
-        return iter->first;
+        return iter->key();
     }
     static coefficient value(const Iter& iter)
     {
-        using trait = coefficient_type_trait<decltype(iter->second)>;
-        return trait::make(iter->second);
+        using trait = coefficient_type_trait<decltype(iter->value())>;
+        return trait::make(iter->value());
     }
     static bool equals(const Iter& iter1, const Iter& iter2)
     {

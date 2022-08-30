@@ -14,6 +14,8 @@
 #include <memory>
 #include <unordered_map>
 
+#include <boost/container/small_vector.hpp>
+
 namespace esig {
 namespace algebra {
 
@@ -51,7 +53,12 @@ class lie_basis : public algebra_basis
     hall_extension<std::string (*)(let_t), std::string (*)(const std::string&, const std::string&)> m_k2s_impl;
 
     mutable std::recursive_mutex prod_lock;
-    mutable std::unordered_map<typename hall_set::parent_type, std::vector<std::pair<key_type, int>>, dtl::parent_hash> prod_cache;
+
+public:
+    using product_type = boost::container::small_vector<std::pair<key_type, int>, 1>;
+
+private:
+    mutable std::unordered_map<typename hall_set::parent_type, product_type, dtl::parent_hash> prod_cache;
 
 public:
 
@@ -73,12 +80,12 @@ public:
     let_t first_letter(const key_type &type) const noexcept override;
 
 private:
-    std::vector<std::pair<key_type, int>>
+    product_type
     prod_impl(const key_type&, const key_type&) const;
 
 public:
 
-    const std::vector<std::pair<key_type, int>>&
+    const product_type&
     prod(const key_type&, const key_type&) const;
 
 };

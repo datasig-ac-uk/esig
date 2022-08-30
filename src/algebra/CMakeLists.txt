@@ -8,7 +8,7 @@ project(esig_algebra VERSION 0.1)
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 
-add_library(esig_algebra SHARED)
+add_library(esig_algebra SHARED )
 # Use add_library because it works better with the IDE
 #add_library(esig_algebra SHARED)
 #pybind11_extension(esig_algebra)
@@ -41,12 +41,13 @@ target_include_directories(esig_algebra PUBLIC
 set(esig_algebra_HEADERS
         "include/esig/algebra/algebra_traits.h"
         "include/esig/algebra/basis.h"
-        "include/esig/algebra/free_tensor_interface.h"
+        "include/esig/algebra/tensor_interface.h"
         "include/esig/algebra/lie_interface.h"
         "include/esig/algebra/context.h"
         "include/esig/algebra/iteration.h"
         "include/esig/algebra/coefficients.h"
         "include/esig/algebra/base.h"
+        "include/esig/algebra/context_fwd.h"
         )
 
 set_target_properties(esig_algebra PROPERTIES PUBLIC_HEADER "${esig_algebra_HEADERS}")
@@ -54,8 +55,6 @@ set_target_properties(esig_algebra PROPERTIES PUBLIC_HEADER "${esig_algebra_HEAD
 target_sources(esig_algebra
         PRIVATE
             src/basis.cpp
-            src/free_tensor_interface_fused_default.cpp
-            src/lie_interface_fused_default.cpp
             src/lie_basis/hall_set.h
             src/lie_basis/hall_set.cpp
             src/lie_basis/hall_extension.h
@@ -93,6 +92,8 @@ target_sources(esig_algebra
             src/dense_data_access_iterator.cpp
             src/fallback_maps.cpp
             src/detail/converting_lie_iterator_adaptor.h
+            src/shuffle_tensor.cpp
+            src/algebra_base.cpp
             ${esig_algebra_HEADERS}
         )
 

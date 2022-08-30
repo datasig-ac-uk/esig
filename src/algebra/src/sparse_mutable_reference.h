@@ -18,9 +18,9 @@ class sparse_mutable_reference
 {
     Map& m_data;
     key_type m_key;
-    static const Scalar zero;
 
 public:
+    static const Scalar zero;
 
     explicit sparse_mutable_reference(Map& map, key_type key) : m_data(map), m_key(key)
     {}
@@ -121,7 +121,8 @@ public:
 
     coefficient_type ctype() const noexcept override;
     bool is_const() const noexcept override;
-    bool is_val() const noexcept override;
+    bool is_value() const noexcept override;
+    bool is_zero() const noexcept override;
     scalar_t as_scalar() const override;
     void assign(coefficient val) override;
     coefficient add(const coefficient_interface &other) const override;
@@ -148,10 +149,16 @@ bool coefficient_implementation<sparse_mutable_reference<Map, Scalar>>::is_const
     return false;
 }
 template<typename Map, typename Scalar>
-bool coefficient_implementation<sparse_mutable_reference<Map, Scalar>>::is_val() const noexcept
+bool coefficient_implementation<sparse_mutable_reference<Map, Scalar>>::is_value() const noexcept
 {
     return false;
 }
+template <typename Map, typename Scalar>
+bool coefficient_implementation<sparse_mutable_reference<Map, Scalar>>::is_zero() const noexcept
+{
+    return static_cast<const Scalar&>(m_data) == sparse_mutable_reference<Map, Scalar>::zero;
+}
+
 template<typename Map, typename Scalar>
 scalar_t coefficient_implementation<sparse_mutable_reference<Map, Scalar>>::as_scalar() const
 {

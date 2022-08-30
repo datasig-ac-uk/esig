@@ -11,11 +11,31 @@
 #include <esig/algebra/coefficients.h>
 #include <esig/algebra/iteration.h>
 
+#include <algorithm>
 #include <memory>
+#include <iosfwd>
+#include <type_traits>
+#include <utility>
+#include <vector>
 
 namespace esig {
 namespace algebra {
 
+enum class implementation_type {
+    borrowed,
+    owned
+};
+
+#define ESIG_DEFAULT_IMPTYPE_FAIL_OP
+#define ESIG_IMPTYPE_FAIL_OP ESIG_DEFAULT_IMPTYPE_FAIL_OP
+#define ESIG_SWITCH_IMPTYPE(TYPE)                   \
+    switch(TYPE) {                                  \
+        case implementation_type::owned:            \
+             ESIG_IMPTYPE_OWNED_OP                  \
+        case implementation_type::borrowed:         \
+             ESIG_IMPTYPE_BORROWED_OP               \
+        }                                           \
+    ESIG_IMPTYPE_FAIL_OP
 
 template <typename Algebra>
 struct algebra_interface
@@ -26,9 +46,9 @@ struct algebra_interface
     virtual ~algebra_interface() = default;
 
     virtual dimn_t size() const = 0;
-    virtual deg_t degree() const = 0;
-    virtual deg_t width() const = 0;
-    virtual deg_t depth() const = 0;
+    virtual deg_t degree() const;
+    virtual deg_t width() const;
+    virtual deg_t depth() const;
     virtual vector_type storage_type() const noexcept = 0;
     virtual coefficient_type coeff_type() const noexcept = 0;
 
@@ -76,14 +96,94 @@ struct algebra_interface
 
     // Equality testing
     virtual bool equals(const algebra_interface& other) const = 0;
+
+
+    virtual std::uintptr_t id() const noexcept;
+    virtual implementation_type type() const noexcept;
+
 };
+
+
+template <typename Base, typename Fibre>
+struct algebra_bundle_interface : public Base
+{
+    virtual Fibre fibre() = 0;
+};
+
+template <typename Argument, typename Result=Argument>
+struct operator_interface
+{
+    using argument_type = Argument;
+    using result_type = Result;
+
+    virtual ~operator_interface() = default;
+
+    virtual result_type apply(const argument_type& argument) const = 0;
+};
+
+
+
 
 namespace dtl {
 
 
+template <typename T, typename U>
+struct copy_constness
+{
+    using type = U;
+};
+
+template <typename T, typename U>
+struct copy_constness<const T, U>
+{
+    using type = const U;
+};
+
+template <typename T, typename U>
+using copy_constness_t = typename copy_constness<std::remove_reference_t<T>, U>::type;
+
+template <typename Interface, typename Impl, typename Fn>
+Impl fallback_binary_op(const Impl& lhs, const Interface& rhs, Fn op);
+
+template <typename Interface, typename Impl, typename Fn>
+void fallback_inplace_binary_op(Impl& lhs, const Interface& rhs, Fn op);
+
+template <typename Interface, typename Impl, typename Fn>
+void fallback_multiplication(Impl& result, const Interface& lhs, const Interface& rhs, Fn Op);
+
+template <typename Interface, typename Impl, typename Fn>
+void fallback_multiplication(Impl& result, const Impl& lhs, const Interface& rhs, Fn op);
+
+template <typename Interface, typename Impl, typename Fn>
+void fallback_multiplication(Impl& result, const Interface& lhs, const Impl& rhs, Fn op);
+
+template <typename Interface, typename Impl, typename Fn>
+void fallback_inplace_multiplication(Impl& result, const Interface& rhs, Fn Op);
+
+
+template<typename Algebra, typename LhsIt, typename RhsIt, typename Op>
+void multiply_and_add(Algebra &result,
+                      dtl::multiplication_data<LhsIt> lhs,
+                      dtl::multiplication_data<RhsIt> rhs,
+                      Op op
+                      )
+{
+    /*
+     * The dispatcher can be specialised by specific implementations to
+     * use a native multiplication operation where possible. Otherwise it
+     * uses the fallback multiplication defined in algebra_traits.h
+     */
+    dtl::multiplication_dispatcher<Algebra, LhsIt, RhsIt>::dispatch(result, lhs, rhs, op);
+}
+
+
+template <typename Interface, typename Impl>
+class borrowed_algebra_implementation;
+
 template <typename Interface, typename Impl>
 class algebra_implementation : public Interface
 {
+protected:
     using context_p = const context*;
     Impl m_data;
     context_p p_ctx;
@@ -94,19 +194,30 @@ public:
 
     using interface_t = Interface;
     using algebra_t = typename Interface::algebra_t;
+    using algebra_interface_t = algebra_interface<algebra_t>;
 
     friend class esig::algebra::algebra_implementation_access;
+    friend class borrowed_algebra_implementation<Interface, Impl>;
+    using borrowed_alg_impl_t = borrowed_algebra_implementation<Interface, Impl>;
 
 public:
     using scalar_type = typename algebra_info<Impl>::scalar_type;
     using rational_type = typename algebra_info<Impl>::rational_type;
 
 protected:
-    static const Impl& cast(const interface_t& arg);
-    static Impl& cast(interface_t& arg);
-
+    template <typename T>
+    static T cast(const algebra_interface_t& arg) noexcept
+    {
+        if (arg.type() == implementation_type::owned) {
+            return static_cast<copy_constness_t<std::remove_reference_t<T>, algebra_implementation>&>(arg).m_data;
+        } else {
+            return *static_cast<copy_constness_t<std::remove_reference_t<T>, borrowed_alg_impl_t>&>(arg).p_impl;
+        }
+    }
 
 public:
+    std::uintptr_t id() const noexcept override;
+
 
     algebra_implementation(Impl&& impl, context_p ctx);
     algebra_implementation(const Impl& impl, context_p ctx);
@@ -123,23 +234,152 @@ public:
     algebra_iterator end() const override;
     dense_data_access_iterator iterate_dense_components() const override;
     algebra_t uminus() const override;
-    algebra_t add(const interface_t &other) const override;
-    algebra_t sub(const interface_t &other) const override;
+    algebra_t add(const algebra_interface_t &other) const override;
+    algebra_t sub(const algebra_interface_t &other) const override;
     algebra_t smul(const coefficient& scal) const override;
 //    algebra_t left_smul(const coefficient &other) const override;
 //    algebra_t right_smul(const coefficient &other) const override;
     algebra_t sdiv(const coefficient &other) const override;
-    algebra_t mul(const interface_t &other) const override;
-    void add_inplace(const interface_t &other) override;
-    void sub_inplace(const interface_t &other) override;
+    algebra_t mul(const algebra_interface_t &other) const override;
+    void add_inplace(const algebra_interface_t &other) override;
+    void sub_inplace(const algebra_interface_t &other) override;
     void smul_inplace(const coefficient& other) override;
 //    void left_smul_inplace(const coefficient &other) override;
 //    void right_smul_inplace(const coefficient &other) override;
     void sdiv_inplace(const coefficient &other) override;
-    void mul_inplace(const interface_t &other) override;
+    void mul_inplace(const algebra_interface_t &other) override;
     std::ostream &print(std::ostream &os) const override;
-    bool equals(const interface_t &other) const override;
+    bool equals(const algebra_interface_t &other) const override;
 };
+
+template <typename Interface, typename Impl>
+class borrowed_algebra_implementation : public Interface
+{
+    using context_p = const context*;
+
+    Impl* p_impl;
+    context_p p_ctx;
+    using impl_base_type = std::remove_cv_t<Impl>;
+
+    using impl_type = Impl;
+
+    friend class ::esig::algebra::algebra_implementation_access;
+    friend class algebra_implementation<Interface, Impl>;
+    using alg_impl_t = algebra_implementation<Interface, Impl>;
+
+public:
+    using interface_t = Interface;
+    using algebra_t = typename Interface::algebra_t;
+    using algebra_interface_t = algebra_interface<algebra_t>;
+
+    std::uintptr_t id() const noexcept override;
+    implementation_type type() const noexcept override;
+
+
+    using scalar_type = typename algebra_info<impl_base_type>::scalar_type;
+    using rational_type = typename algebra_info<impl_base_type>::rational_type;
+
+    borrowed_algebra_implementation(Impl* impl, context_p ctx);
+
+    dimn_t size() const override;
+    deg_t degree() const override;
+    deg_t width() const override;
+    deg_t depth() const override;
+    vector_type storage_type() const noexcept override;
+    coefficient_type coeff_type() const noexcept override;
+    coefficient get(key_type key) const override;
+    coefficient get_mut(key_type key) override;
+    algebra_iterator begin() const override;
+    algebra_iterator end() const override;
+    dense_data_access_iterator iterate_dense_components() const override;
+    algebra_t uminus() const override;
+    algebra_t add(const algebra_interface_t &other) const override;
+    algebra_t sub(const algebra_interface_t &other) const override;
+    algebra_t smul(const coefficient& scal) const override;
+//    algebra_t left_smul(const coefficient &other) const override;
+//    algebra_t right_smul(const coefficient &other) const override;
+    algebra_t sdiv(const coefficient &other) const override;
+    algebra_t mul(const algebra_interface_t &other) const override;
+    void add_inplace(const algebra_interface_t &other) override;
+    void sub_inplace(const algebra_interface_t &other) override;
+    void smul_inplace(const coefficient& other) override;
+//    void left_smul_inplace(const coefficient &other) override;
+//    void right_smul_inplace(const coefficient &other) override;
+    void sdiv_inplace(const coefficient &other) override;
+    void mul_inplace(const algebra_interface_t &other) override;
+    std::ostream &print(std::ostream &os) const override;
+    bool equals(const algebra_interface_t &other) const override;
+
+};
+
+
+
+template <typename AlgebraInterface,
+         typename Impl,
+         typename FibreInterface,
+         template <typename, typename> class AlgebraWrapper=algebra_implementation,
+         template <typename, typename> class FibreWrapper=borrowed_algebra_implementation>
+class algebra_bundle_implementation
+    : public AlgebraWrapper<algebra_bundle_interface<AlgebraInterface,
+                                 typename FibreInterface::algebra_t>, Impl>
+{
+    using wrapped_alg_interface = algebra_bundle_interface<
+        AlgebraInterface, typename FibreInterface::algebra_t>;
+
+    using fibre_impl_type = decltype(std::declval<Impl>().fibre());
+    using base = AlgebraWrapper<wrapped_alg_interface, Impl>;
+
+    using fibre_wrap_type = FibreWrapper<FibreInterface, fibre_impl_type>;
+
+    friend class esig::algebra::algebra_implementation_access;
+
+    using alg_info = algebra_info<Impl>;
+    using fibre_info = algebra_info<fibre_impl_type>;
+
+public:
+    using fibre_type = typename FibreInterface::algebra_t;
+    using fibre_interface_t = FibreInterface;
+    using fibre_scalar_type = typename algebra_info<fibre_impl_type>::scalar_type;
+    using fibre_rational_type = typename algebra_info<fibre_impl_type>::rational_type;
+
+    using base::base;
+
+    fibre_type fibre() override;
+};
+
+
+template <typename Interface, typename Impl>
+class operator_implementation : public Interface
+{
+    using base_interface = operator_interface<
+        typename Interface::argument_type,
+        typename Interface::result_type>;
+
+    static_assert(std::is_base_of<base_interface, Interface>::value,
+                  "Interface must be derived from operator_interface");
+
+    Impl m_impl;
+    std::shared_ptr<const context> p_ctx;
+
+public:
+    using argument_type = typename base_interface::argument_type;
+    using result_type = typename base_interface::result_type;
+
+    using interface_t = Interface;
+
+    explicit operator_implementation(Impl&& arg, std::shared_ptr<const context> ctx)
+        : m_impl(std::move(arg)), p_ctx(std::move(ctx))
+    {}
+
+    result_type apply(const argument_type& arg) const
+    {
+        return result_type(m_impl(arg), p_ctx.get());
+    }
+
+};
+
+
+
 
 template <typename Interface, typename Impl>
 struct implementation_wrapper_selection
@@ -148,6 +388,19 @@ struct implementation_wrapper_selection
         algebra_implementation<Interface, Impl>>::type;
 };
 
+template <typename Interface, typename Impl>
+struct implementation_wrapper_selection<Interface, Impl*>
+{
+    using type = borrowed_algebra_implementation<Interface, Impl>;
+};
+
+template <typename AlgebraInterface, typename Fibre, typename Impl>
+struct implementation_wrapper_selection<
+    algebra_bundle_interface<AlgebraInterface, Fibre>,
+    Impl>
+{
+    using type = algebra_bundle_implementation<AlgebraInterface, Impl, algebra_interface<Fibre>>;
+};
 
 template <typename Interface, typename Impl>
 using impl_wrapper = typename implementation_wrapper_selection<Interface, Impl>::type;
@@ -184,7 +437,7 @@ public:
     const Interface& operator*() const noexcept;
     Interface& operator*() noexcept;
 
-    operator bool() const noexcept;
+    operator bool() const noexcept; // NOLINT(google-explicit-constructor)
 
     dimn_t size() const;
     deg_t width() const;
@@ -237,9 +490,50 @@ public:
 
     bool operator==(const algebra_t& other) const;
     bool operator!=(const algebra_t& other) const;
+};
 
+template <typename Interface>
+class linear_operator_base
+{
+    std::shared_ptr<const Interface> p_impl;
+public:
+
+    using argument_type = typename Interface::argument_type;
+    using result_type = typename Interface::argument_type;
+
+    result_type operator()(const argument_type& arg) const
+    {
+        return p_impl->apply(arg);
+    }
 
 };
+
+/////////////////////////////////////////////////////////////////////////
+// The rest of the file contains implementations for the templates above.
+/////////////////////////////////////////////////////////////////////////
+
+
+template<typename Algebra>
+deg_t algebra_interface<Algebra>::degree() const {
+    return 0;
+}
+template<typename Algebra>
+deg_t algebra_interface<Algebra>::width() const {
+    return 0;
+}
+template<typename Algebra>
+deg_t algebra_interface<Algebra>::depth() const {
+    return 0;
+}
+
+template<typename Algebra>
+std::uintptr_t algebra_interface<Algebra>::id() const noexcept {
+    return 0;
+}
+template<typename Algebra>
+implementation_type algebra_interface<Algebra>::type() const noexcept {
+    return implementation_type::owned;
+}
 
 template<typename Interface>
 algebra_base<Interface>::algebra_base() : p_impl(nullptr)
@@ -301,6 +595,18 @@ void algebra_interface<Algebra>::mul_sdiv(const algebra_interface &rhs, const co
 
 
 namespace dtl {
+
+bool fallback_equals(const algebra_iterator &lbegin, const algebra_iterator &lend,
+                     const algebra_iterator &rbegin, const algebra_iterator &rend) noexcept;
+
+template <typename Algebra, typename Interface, typename Fn>
+Algebra fallback_multiply(const Algebra& lhs, const Interface& rhs, Fn op)
+{
+    auto result = algebra_info<Algebra>::create_like(lhs);
+    fallback_multiplication(result, lhs, rhs, op);
+    return result;
+}
+
 template<typename Interface, typename Impl>
 algebra_implementation<Interface, Impl>::algebra_implementation(Impl &&impl, algebra_implementation::context_p ctx)
     : m_data(std::move(impl)), p_ctx(ctx)
@@ -311,14 +617,7 @@ algebra_implementation<Interface, Impl>::algebra_implementation(const Impl &impl
     : m_data(impl), p_ctx(ctx)
 {
 }
-template<typename Interface, typename Impl>
-const Impl &algebra_implementation<Interface, Impl>::cast(const algebra_implementation::interface_t &arg) {
-    return dynamic_cast<const algebra_implementation&>(arg).m_data;
-}
-template<typename Interface, typename Impl>
-Impl &algebra_implementation<Interface, Impl>::cast(algebra_implementation::interface_t &arg) {
-    return dynamic_cast<algebra_implementation&>(arg).m_data;
-}
+
 template<typename Interface, typename Impl>
 dimn_t algebra_implementation<Interface, Impl>::size() const {
     return m_data.size();
@@ -329,11 +628,11 @@ deg_t algebra_implementation<Interface, Impl>::degree() const {
 }
 template<typename Interface, typename Impl>
 deg_t algebra_implementation<Interface, Impl>::width() const {
-    return algebra_info<Impl>::width(m_data);
+    return algebra_info<Impl>::width(&m_data);
 }
 template<typename Interface, typename Impl>
 deg_t algebra_implementation<Interface, Impl>::depth() const {
-    return algebra_info<Impl>::max_depth(m_data);
+    return algebra_info<Impl>::max_depth(&m_data);
 }
 template<typename Interface, typename Impl>
 vector_type algebra_implementation<Interface, Impl>::storage_type() const noexcept {
@@ -346,7 +645,7 @@ coefficient_type algebra_implementation<Interface, Impl>::coeff_type() const noe
 template<typename Interface, typename Impl>
 coefficient algebra_implementation<Interface, Impl>::get(key_type key) const {
     using info_t = algebra_info<Impl>;
-    auto akey = info_t::convert_key(key);
+    auto akey = info_t::convert_key(&m_data, key);
     using ref_t = decltype(m_data[akey]);
     using trait = coefficient_type_trait<ref_t>;
     return trait::make(m_data[akey]);
@@ -354,7 +653,7 @@ coefficient algebra_implementation<Interface, Impl>::get(key_type key) const {
 template<typename Interface, typename Impl>
 coefficient algebra_implementation<Interface, Impl>::get_mut(key_type key) {
     using info_t = algebra_info<Impl>;
-    auto akey = info_t::convert_key(key);
+    auto akey = info_t::convert_key(&m_data, key);
     using ref_t = decltype(m_data[akey]);
     using trait = coefficient_type_trait<ref_t>;
     return trait::make(m_data[akey]);
@@ -370,7 +669,7 @@ algebra_iterator algebra_implementation<Interface, Impl>::end() const {
 template<typename Interface, typename Impl>
 dense_data_access_iterator algebra_implementation<Interface, Impl>::iterate_dense_components() const {
     return dense_data_access_iterator(
-        dtl::dense_data_access_implementation<Impl>(m_data, algebra_info<Impl>::first_key(m_data))
+        dtl::dense_data_access_implementation<Impl>(m_data, algebra_info<Impl>::first_key(&m_data))
         );
 }
 template<typename Interface, typename Impl>
@@ -378,12 +677,24 @@ typename Interface::algebra_t algebra_implementation<Interface, Impl>::uminus() 
     return algebra_t(-m_data, p_ctx);
 }
 template<typename Interface, typename Impl>
-typename Interface::algebra_t algebra_implementation<Interface, Impl>::add(const Interface &other) const {
-    return algebra_t(m_data + cast(other), p_ctx);
+typename Interface::algebra_t algebra_implementation<Interface, Impl>::add(const algebra_interface_t &other) const {
+    assert (id() != 0);
+    if (id() == other.id()) {
+        return algebra_t(m_data + cast<const Impl&>(other), p_ctx);
+    }
+    using ref_type = typename Impl::reference;
+    return algebra_t(fallback_binary_op(m_data, other,
+            [](ref_type lhs, const auto& rhs) { lhs += rhs; }), p_ctx);
 }
 template<typename Interface, typename Impl>
-typename Interface::algebra_t algebra_implementation<Interface, Impl>::sub(const Interface &other) const {
-    return algebra_t(m_data - cast(other), p_ctx);
+typename Interface::algebra_t algebra_implementation<Interface, Impl>::sub(const algebra_interface_t &other) const {
+    assert(id() != 0);
+    if (id() == other.id()) {
+        return algebra_t(m_data - cast<const Impl&>(other), p_ctx);
+    }
+    using ref_type = typename Impl::reference;
+    return algebra_t(fallback_binary_op(m_data, other,
+                                        [](ref_type lhs, const auto& rhs) { lhs -= rhs; }), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::smul(const coefficient &scal) const {
@@ -402,16 +713,38 @@ typename Interface::algebra_t algebra_implementation<Interface, Impl>::sdiv(cons
     return algebra_t(m_data/coefficient_cast<rational_type>(other), p_ctx);
 }
 template<typename Interface, typename Impl>
-typename Interface::algebra_t algebra_implementation<Interface, Impl>::mul(const Interface &other) const {
-    return algebra_t(m_data*cast(other), p_ctx);
+typename Interface::algebra_t algebra_implementation<Interface, Impl>::mul(const algebra_interface_t &other) const {
+    assert(id() != 0);
+    if (id() == other.id()) {
+        return algebra_t(m_data * cast<const Impl&>(other), p_ctx);
+    }
+    return algebra_t(fallback_multiply(m_data, other,
+                                       [](auto arg) { return arg; }), p_ctx);
+
 }
 template<typename Interface, typename Impl>
-void algebra_implementation<Interface, Impl>::add_inplace(const Interface &other) {
-    m_data += cast(other);
+void algebra_implementation<Interface, Impl>::add_inplace(const algebra_interface_t &other) {
+    assert(id() != 0);
+    if (id() == other.id()) {
+        m_data += cast<const Impl&>(other);
+    } else {
+        using ref_type = typename Impl::reference;
+        fallback_inplace_binary_op(m_data, other,
+                                   [](ref_type lhs, const auto& rhs) { lhs += rhs; });
+    }
+
 }
 template<typename Interface, typename Impl>
-void algebra_implementation<Interface, Impl>::sub_inplace(const Interface &other) {
-    m_data -= cast(other);
+void algebra_implementation<Interface, Impl>::sub_inplace(const algebra_interface_t &other) {
+    assert(id() != 0);
+    if (id() == other.id()) {
+        m_data -= cast<const Impl&>(other);
+    } else {
+        using ref_type = typename Impl::reference;
+        fallback_inplace_binary_op(m_data, other,
+                                   [](ref_type lhs, const auto& rhs) { lhs -= rhs; });
+    }
+
 }
 template<typename Interface, typename Impl>
 void algebra_implementation<Interface, Impl>::smul_inplace(const coefficient &other) {
@@ -430,21 +763,183 @@ void algebra_implementation<Interface, Impl>::sdiv_inplace(const coefficient &ot
     m_data /= coefficient_cast<rational_type>(other);
 }
 template<typename Interface, typename Impl>
-void algebra_implementation<Interface, Impl>::mul_inplace(const Interface &other) {
-    m_data *= cast(other);
+void algebra_implementation<Interface, Impl>::mul_inplace(const algebra_interface_t &other) {
+    assert(id() != 0);
+    if (id() == other.id()) {
+        m_data *= cast<const Impl&>(other);
+    } else {
+        fallback_inplace_multiplication(m_data, other, [](auto arg) { return arg; });
+    }
 }
 template<typename Interface, typename Impl>
 std::ostream &algebra_implementation<Interface, Impl>::print(std::ostream &os) const {
     return os << m_data;
 }
 template<typename Interface, typename Impl>
-bool algebra_implementation<Interface, Impl>::equals(const Interface &other) const {
-    try {
-        return m_data == cast(other);
-    } catch (std::bad_cast&) {
-        return false;
+bool algebra_implementation<Interface, Impl>::equals(const algebra_interface_t &other) const {
+    assert(id() != 0);
+
+    if (id() == other.id()) {
+        return m_data == cast<const Impl&>(other);
     }
+    return fallback_equals(begin(), end(), other.begin(), other.end());
 }
+
+template<typename Interface, typename Impl>
+std::uintptr_t algebra_implementation<Interface, Impl>::id() const noexcept {
+    return (std::uintptr_t) p_ctx;
+}
+
+template<typename Interface, typename Impl>
+borrowed_algebra_implementation<Interface, Impl>::borrowed_algebra_implementation(
+    Impl *impl, borrowed_algebra_implementation::context_p ctx)
+    : p_impl(impl), p_ctx(ctx)
+{
+    assert(p_impl != nullptr);
+}
+template<typename Interface, typename Impl>
+dimn_t borrowed_algebra_implementation<Interface, Impl>::size() const {
+    return p_impl->size();
+}
+template<typename Interface, typename Impl>
+deg_t borrowed_algebra_implementation<Interface, Impl>::degree() const {
+    return p_impl->degree();
+}
+template<typename Interface, typename Impl>
+deg_t borrowed_algebra_implementation<Interface, Impl>::width() const {
+    return algebra_info<Impl>::width(p_impl);
+}
+template<typename Interface, typename Impl>
+deg_t borrowed_algebra_implementation<Interface, Impl>::depth() const {
+    return algebra_info<Impl>::max_depth(p_impl);
+}
+template<typename Interface, typename Impl>
+vector_type borrowed_algebra_implementation<Interface, Impl>::storage_type() const noexcept {
+    return algebra_info<Impl>::vtype();
+}
+template<typename Interface, typename Impl>
+coefficient_type borrowed_algebra_implementation<Interface, Impl>::coeff_type() const noexcept {
+    return algebra_info<Impl>::ctype();
+}
+template<typename Interface, typename Impl>
+coefficient borrowed_algebra_implementation<Interface, Impl>::get(key_type key) const {
+    using info_t = algebra_info<Impl>;
+    using ref_t = decltype((*p_impl)[info_t::convert_key(p_impl, key)]);
+    using trait = coefficient_type_trait<ref_t>;
+    return trait::make((*p_impl)[info_t::convert_key(p_impl, key)]);
+}
+template<typename Interface, typename Impl>
+coefficient borrowed_algebra_implementation<Interface, Impl>::get_mut(key_type key) {
+    using info_t = algebra_info<Impl>;
+    using ref_t = decltype((*p_impl)[info_t::convert_key(p_impl, key)]);
+    using trait = coefficient_type_trait<ref_t>;
+    return trait::make((*p_impl)[info_t::convert_key(p_impl, key)]);
+}
+template<typename Interface, typename Impl>
+algebra_iterator borrowed_algebra_implementation<Interface, Impl>::begin() const {
+    return algebra_iterator(p_impl->begin(), p_ctx);
+}
+template<typename Interface, typename Impl>
+algebra_iterator borrowed_algebra_implementation<Interface, Impl>::end() const {
+    return algebra_iterator(p_impl->end(), p_ctx);
+}
+template<typename Interface, typename Impl>
+dense_data_access_iterator borrowed_algebra_implementation<Interface, Impl>::iterate_dense_components() const {
+    return dense_data_access_iterator(
+        dtl::dense_data_access_implementation<Impl>(*p_impl, algebra_info<Impl>::first_key(p_impl))
+        );
+}
+template<typename Interface, typename Impl>
+typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
+ borrowed_algebra_implementation<Interface, Impl>::uminus() const {
+    return algebra_t(-(*p_impl), p_ctx);
+}
+template<typename Interface, typename Impl>
+typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
+ borrowed_algebra_implementation<Interface, Impl>::add(const borrowed_algebra_implementation::algebra_interface_t &other) const {
+    assert(id() != 0);
+    assert(p_impl != nullptr);
+    if (id() == other.id()) {
+        return algebra_t((*p_impl) + alg_impl_t::template cast<const Impl &>(other), p_ctx);
+    }
+    using ref_type = typename Impl::reference;
+    return algebra_t(fallback_binary_op(*p_impl, other, [](ref_type lhs, const auto& rhs) { lhs += rhs; }), p_ctx);
+}
+template<typename Interface, typename Impl>
+typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
+ borrowed_algebra_implementation<Interface, Impl>::sub(const borrowed_algebra_implementation::algebra_interface_t &other) const {
+    assert(id() != 0);
+    assert(p_impl != nullptr);
+    if (id() == other.id()) {
+        return algebra_t((*p_impl) - alg_impl_t::template cast<const Impl&>(other), p_ctx);
+    }
+    using ref_type = typename Impl::reference;
+    return algebra_t(fallback_binary_op(*p_impl, other, [](ref_type lhs, const auto& rhs) { lhs -= rhs; }), p_ctx);
+}
+template<typename Interface, typename Impl>
+typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
+ borrowed_algebra_implementation<Interface, Impl>::smul(const coefficient &scal) const {
+    return algebra_t((*p_impl) * coefficient_cast<scalar_type>(scal), p_ctx);
+}
+template<typename Interface, typename Impl>
+typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
+ borrowed_algebra_implementation<Interface, Impl>::sdiv(const coefficient &other) const {
+    return algebra_t((*p_impl) / coefficient_cast<rational_type>(other), p_ctx);
+}
+template<typename Interface, typename Impl>
+typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
+ borrowed_algebra_implementation<Interface, Impl>::mul(const borrowed_algebra_implementation::algebra_interface_t &other) const {
+    return algebra_t((*p_impl) * alg_impl_t::cast(other), p_impl);
+}
+template<typename Interface, typename Impl>
+void borrowed_algebra_implementation<Interface, Impl>::add_inplace(
+    const borrowed_algebra_implementation::algebra_interface_t &other) {
+    (*p_impl) += alg_impl_t::cast(other);
+}
+template<typename Interface, typename Impl>
+void borrowed_algebra_implementation<Interface, Impl>::sub_inplace(const borrowed_algebra_implementation::algebra_interface_t &other) {
+    (*p_impl) -= alg_impl_t::cast(other);
+}
+template<typename Interface, typename Impl>
+void borrowed_algebra_implementation<Interface, Impl>::smul_inplace(const coefficient &other) {
+    (*p_impl) *= coefficient_cast<scalar_type>(other);
+}
+template<typename Interface, typename Impl>
+void borrowed_algebra_implementation<Interface, Impl>::sdiv_inplace(const coefficient &other) {
+    (*p_impl) /= coefficient_cast<rational_type>(other);
+}
+template<typename Interface, typename Impl>
+void borrowed_algebra_implementation<Interface, Impl>::mul_inplace(const borrowed_algebra_implementation::algebra_interface_t &other) {
+    (*p_impl) *= cast(other);
+}
+template<typename Interface, typename Impl>
+std::ostream &borrowed_algebra_implementation<Interface, Impl>::print(std::ostream &os) const {
+    return os << (*p_impl);
+}
+template<typename Interface, typename Impl>
+bool borrowed_algebra_implementation<Interface, Impl>::equals(const borrowed_algebra_implementation::algebra_interface_t &other) const {
+    return (*p_impl) == cast(other);
+}
+
+template<typename Interface, typename Impl>
+std::uintptr_t borrowed_algebra_implementation<Interface, Impl>::id() const noexcept {
+    return (std::uintptr_t) p_ctx;
+}
+template<typename Interface, typename Impl>
+implementation_type borrowed_algebra_implementation<Interface, Impl>::type() const noexcept {
+    return implementation_type::borrowed;
+}
+
+template<typename AlgebraInterface,
+         typename Impl,
+         typename FibreInterface,
+         template<typename, typename> class AlgebraWrapper,
+         template<typename, typename> class FibreWrapper>
+typename algebra_bundle_implementation<AlgebraInterface, Impl, FibreInterface, AlgebraWrapper, FibreWrapper>::fibre_type
+algebra_bundle_implementation<AlgebraInterface, Impl, FibreInterface, AlgebraWrapper, FibreWrapper>::fibre() {
+    return fibre_type(fibre_wrap_type(&base::m_data.fibre()), base::p_ctx);
+}
+
 } // namespace dtl
 
 template<typename Interface>
@@ -635,6 +1130,170 @@ template<typename Interface>
 bool algebra_base<Interface>::operator!=(const algebra_t &other) const {
     return !p_impl->equals(*other.p_impl);
 }
+
+
+
+namespace dtl {
+
+template <typename Impl>
+using key_value_buffer = std::vector<std::pair<
+    typename algebra_info<Impl>::this_key_type,
+    typename algebra_info<Impl>::scalar_type>>;
+
+template <typename Impl>
+using degree_range_buffer = std::vector<typename key_value_buffer<Impl>::const_iterator>;
+
+template <typename Impl>
+void impl_to_buffer(key_value_buffer<Impl>& buffer,
+                    degree_range_buffer<Impl>& degree_ranges,
+                    const Impl& arg)
+{
+    using traits = iterator_traits<typename Impl::const_iterator>;
+    buffer.reserve(arg.size());
+    for (auto it = arg.begin(); it != arg.end(); ++it) {
+       buffer.emplace_back(
+            traits::key(it),
+            traits::value(it)
+            );
+    }
+
+    std::sort(buffer.begin(), buffer.end(), [](auto lpair, auto rpair) {
+        return lpair.first < rpair.first;
+    });
+
+    degree_ranges = degree_range_buffer<Impl>(arg.depth()+1, buffer.end());
+    deg_t deg = 0;
+    for (auto it = buffer.begin(); it != buffer.end() && deg < degree_ranges.size(); ++it) {
+        deg_t d = algebra_info<Impl>::native_degree(&arg, it->first);
+        while (d > deg) {
+            degree_ranges[deg++] = it;
+        }
+    }
+
+}
+
+
+template <typename Impl, typename Interface>
+void interface_to_buffer(key_value_buffer<Impl>& buffer,
+                         degree_range_buffer<Impl>& degree_ranges,
+                         const Interface& arg, const Impl* rptr)
+{
+    using info = algebra_info<Impl>;
+    using scalar_type = typename info::scalar_type;
+    using pair_t = std::pair<key_type, scalar_type>;
+    buffer.reserve(arg.size());
+
+    for (auto it = arg.begin(); it != arg.end(); ++it) {
+        buffer.emplace_back(info::convert_key(rptr, it->key()), coefficient_cast<scalar_type>(it->value()));
+    }
+
+    std::sort(buffer.begin(), buffer.end(),
+              [](pair_t lhs, pair_t rhs) { return lhs.first < rhs.first; });
+
+
+    degree_ranges = degree_range_buffer<Impl>(arg.depth() + 1, buffer.end());
+    deg_t deg = 0;
+    for (auto it = buffer.begin(); it != buffer.end() && deg < degree_ranges.size(); ++it) {
+        deg_t d = info::degree(rptr, it->first);
+        while (d > deg) {
+            degree_ranges[deg++] = it;
+        }
+    }
+}
+
+
+
+template<typename Interface, typename Impl, typename Fn>
+void fallback_multiplication(Impl &result, const Interface &lhs, const Interface &rhs, Fn op)
+{
+    using info = algebra_info<Impl>;
+    using iter = typename key_value_buffer<Impl>::const_iterator;
+    key_value_buffer<Impl> lhs_buf, rhs_buf;
+
+    multiplication_data<iter> lhs_data;
+    interface_to_buffer(lhs_buf, lhs_data.degree_ranges, lhs, &result);
+    lhs_data.begin = lhs_buf.begin();
+    lhs_data.end = lhs_buf.end();
+    lhs_data.degree = lhs.degree();
+
+    multiplication_data<iter> rhs_data;
+    interface_to_buffer<Impl>(rhs_buf, rhs_data.degree_ranges, rhs, &result);
+    rhs_data.begin = rhs_buf.begin();
+    rhs_data.end = rhs_buf.end();
+    rhs_data.degree = rhs.degree();
+
+    multiply_and_add(result, lhs_data, rhs_data, op);
+}
+template<typename Interface, typename Impl, typename Fn>
+void fallback_multiplication(Impl &result, const Impl &lhs, const Interface &rhs, Fn op)
+{
+    using info = algebra_info<Impl>;
+    using iter = typename key_value_buffer<Impl>::const_iterator;
+    key_value_buffer<Impl> lhs_buf, rhs_buf;
+
+    multiplication_data<iter> lhs_data;
+    impl_to_buffer(lhs_buf, lhs_data.degree_ranges, lhs);
+    lhs_data.begin = lhs_buf.begin();
+    lhs_data.end = lhs_buf.end();
+    lhs_data.degree = lhs.degree();
+
+    multiplication_data<iter> rhs_data;
+    interface_to_buffer<Impl>(rhs_buf, rhs_data.degree_ranges, rhs, &result);
+    rhs_data.begin = rhs_buf.begin();
+    rhs_data.end = rhs_buf.end();
+    rhs_data.degree = rhs.degree();
+
+    multiply_and_add(result, lhs_data, rhs_data, op);
+}
+template<typename Interface, typename Impl, typename Fn>
+void fallback_multiplication(Impl &result, const Interface &lhs, const Impl &rhs, Fn op)
+{
+    using info = algebra_info<Impl>;
+    using iter = typename key_value_buffer<Impl>::const_iterator;
+    key_value_buffer<Impl> lhs_buf, rhs_buf;
+
+    multiplication_data<iter> lhs_data;
+    interface_to_buffer(lhs_buf, lhs_data.degree_ranges, lhs, &result);
+    lhs_data.begin = lhs_buf.begin();
+    lhs_data.end = lhs_buf.end();
+    lhs_data.degree = lhs.degree();
+
+    multiplication_data<iter> rhs_data;
+    impl_to_buffer<Impl>(rhs_buf, rhs_data.degree_ranges, rhs);
+    rhs_data.begin = rhs_buf.begin();
+    rhs_data.end = rhs_buf.end();
+    rhs_data.degree = rhs.degree();
+
+    multiply_and_add(result, lhs_data, rhs_data, op);
+}
+
+template<typename Interface, typename Impl, typename Fn>
+void fallback_inplace_multiplication(Impl &result, const Interface &rhs, Fn op)
+{
+    auto tmp = algebra_info<Impl>::create_like(result);
+    fallback_multiplication(tmp, result, rhs, op);
+    result = tmp;
+}
+
+template<typename Interface, typename Impl, typename Fn>
+Impl fallback_binary_op(const Impl &lhs, const Interface &rhs, Fn op) {
+    Impl result(lhs);
+    fallback_inplace_binary_op(result, rhs, op);
+    return result;
+}
+template<typename Interface, typename Impl, typename Fn>
+void fallback_inplace_binary_op(Impl &lhs, const Interface &rhs, Fn op) {
+    using scalar_type = typename algebra_info<Impl>::scalar_type;
+
+    for (const auto& item : rhs) {
+        op(lhs[item.key()], coefficient_cast<scalar_type>(item.value()));
+    }
+}
+
+} // namespace dtl
+
+
+
 
 } // namespace algebra
 } // namespace esig

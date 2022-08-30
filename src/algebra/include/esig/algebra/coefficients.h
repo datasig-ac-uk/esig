@@ -76,7 +76,8 @@ struct ESIG_ALGEBRA_EXPORT coefficient_interface {
 
     virtual coefficient_type ctype() const noexcept = 0;
     virtual bool is_const() const noexcept = 0;
-    virtual bool is_val() const noexcept = 0;
+    virtual bool is_value() const noexcept = 0;
+    virtual bool is_zero() const noexcept = 0;
 
     virtual scalar_t as_scalar() const;
     virtual void assign(coefficient val);
@@ -90,6 +91,8 @@ struct ESIG_ALGEBRA_EXPORT coefficient_interface {
     virtual coefficient sub(const scalar_t &other) const;
     virtual coefficient mul(const scalar_t &other) const;
     virtual coefficient div(const scalar_t &other) const;
+
+    virtual bool equals(const coefficient_interface& other) const noexcept;
 
     virtual std::ostream& print(std::ostream& os) const;
 
@@ -123,11 +126,12 @@ public:
 
     coefficient_type ctype() const noexcept override;
     bool is_const() const noexcept override;
-    bool is_val() const noexcept override;
+    bool is_value() const noexcept override;
+    bool is_zero() const noexcept override;
     scalar_t as_scalar() const override;
 
-    explicit operator const T&() const noexcept { return m_data; }
-    explicit operator T&() noexcept { return m_data; }
+    explicit operator std::add_lvalue_reference_t<std::add_const_t<T>>() const noexcept { return m_data; }
+    explicit operator std::add_lvalue_reference_t<T>() noexcept { return m_data; }
 
     void assign(coefficient other) override;
 
@@ -137,6 +141,8 @@ public:
     coefficient div(const coefficient_interface &other) const override;
 
     std::ostream &print(std::ostream &os) const override;
+
+    bool equals(const coefficient_interface &other) const noexcept override;
 };
 
 
@@ -191,6 +197,7 @@ public:
 
     bool is_const() const noexcept;
     bool is_value() const noexcept;
+    bool is_zero() const noexcept;
     coefficient_type ctype() const noexcept;
 
     const coefficient_interface& operator*() const noexcept;
@@ -214,20 +221,46 @@ public:
     coefficient &operator-=(const scalar_t &other);
     coefficient &operator*=(const scalar_t &other);
     coefficient &operator/=(const scalar_t &other);
+
+    bool operator==(const coefficient& rhs) const noexcept;
+
+    template <typename T>
+    friend bool operator==(const coefficient& lhs, T rhs) noexcept {
+        return false;
+    }
+    template <typename T>
+    friend bool operator!=(const coefficient& lhs, T rhs) noexcept {
+        return !(lhs == rhs);
+    }
+
+
+
 };
 
 template<typename T>
 T coefficient_cast(coefficient s)
 {
-    const auto &s_ref = *s;
-    if (typeid(s_ref) == typeid(dtl::coefficient_implementation<T>)) {
-        const auto &t_ref = dynamic_cast<const dtl::coefficient_implementation<T>&>(s_ref);
-        return T(static_cast<const T&>(t_ref));
-    }
-
-    return T(static_cast<scalar_t>(s));
+    return coefficient_cast<T>(*s);
 }
 
+template <typename T>
+std::remove_cv_t<std::remove_reference_t<T>> coefficient_cast(const coefficient_interface& arg)
+{
+    using ret_type = std::remove_cv_t<std::remove_reference_t<T>>;
+    using trait = dtl::coefficient_type_trait<T>;
+    if (dtl::get_coeff_type(ret_type()) == arg.ctype()) {
+        if (arg.is_value()) {
+            return static_cast<ret_type>(static_cast<const typename trait::value_wrapper&>(arg));
+        } else if (arg.is_const()) {
+            return static_cast<ret_type>(static_cast<const typename trait::const_reference_wrapper&>(arg));
+        } else {
+            return static_cast<ret_type>(static_cast<const typename trait::reference_wrapper&>(arg));
+        }
+    }
+
+    // As a fallback, first convert to a scalar_t and then to a T
+    return static_cast<ret_type>(arg.as_scalar());
+}
 
 
 struct ESIG_ALGEBRA_EXPORT data_allocator
@@ -456,10 +489,15 @@ bool coefficient_implementation<T>::is_const() const noexcept
     return std::is_const<T>::value;
 }
 template<typename T>
-bool coefficient_implementation<T>::is_val() const noexcept
+bool coefficient_implementation<T>::is_value() const noexcept
 {
     return std::is_same<T, coeff_t>::value;
 }
+template<typename T>
+bool coefficient_implementation<T>::is_zero() const noexcept {
+    return m_data == std::remove_cv_t<std::remove_reference_t<T>>(0);
+}
+
 template<typename T>
 scalar_t coefficient_implementation<T>::as_scalar() const
 {
@@ -526,6 +564,10 @@ template<typename T>
 std::ostream &coefficient_implementation<T>::print(std::ostream &os) const
 {
     return os << m_data;
+}
+template<typename T>
+bool coefficient_implementation<T>::equals(const coefficient_interface &other) const noexcept {
+   return m_data == coefficient_cast<T>(other);
 }
 
 #undef ESIG_ALGEBRA_GENERATE_DEFN

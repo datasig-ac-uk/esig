@@ -74,6 +74,65 @@ struct iterator_helper<dense_kv_iterator<Vector>>
 };
 
 
+
+template <typename Iterator>
+struct dense_iterator
+{
+    using traits = std::iterator_traits<Iterator>;
+    using value_type = dense_iterator;
+    using reference = dense_iterator&;
+    using const_reference = const dense_iterator&;
+    using iterator_category = std::forward_iterator_tag;
+    using pointer = dense_iterator*;
+    using const_pointer = const dense_iterator*;
+
+    dense_iterator(Iterator it, key_type start = 0)
+        : m_it(it), m_key(start)
+    {}
+
+    dense_iterator& operator++() noexcept
+    {
+        ++m_it;
+        ++m_key;
+        return *this;
+    }
+    const dense_iterator operator++(int) noexcept
+    {
+        dense_iterator result(*this);
+        ++(*this);
+        return result;
+    }
+    const_reference operator*() const noexcept
+    { return *this; }
+    const_pointer operator->() const noexcept
+    { return this; }
+
+    const key_type& key() const noexcept
+    { return m_key; }
+    const typename traits::value_type& value() const noexcept
+    { return *m_it; }
+
+    bool operator==(const dense_iterator& other) const noexcept
+    { return m_it == other.m_it; }
+    bool operator!=(const dense_iterator& other) const noexcept
+    { return m_it != other.m_it; }
+
+private:
+    Iterator m_it;
+    key_type m_key;
+};
+
+template <typename Iterator>
+struct iterator_traits<dense_iterator<Iterator>>
+{
+    using iterator_t = dense_iterator<Iterator>;
+    static const key_type& key(const iterator_t & it) noexcept
+    { return it->key(); }
+    static const typename Iterator::value_type&
+    value(const iterator_t& it) noexcept
+    { return it->value(); }
+};
+
 } // namespace dtl
 } // namespace algebra
 } // namespace esig

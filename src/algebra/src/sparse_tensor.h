@@ -47,7 +47,9 @@ public:
 
     using scalar_type = Scalar;
     using basis_type = tensor_basis;
-    using const_iterator = typename map_type::const_iterator;
+    using reference = dtl::sparse_mutable_reference<map_type, Scalar>;
+    using const_reference = const Scalar&;
+    using const_iterator = dtl::sparse_iterator<typename map_type::const_iterator>;
     static constexpr vector_type vtype = vector_type::sparse;
 
 
@@ -109,6 +111,17 @@ public:
     {
         return m_basis->depth();
     }
+
+    const tensor_basis& basis() const noexcept
+    {
+        return *m_basis;
+    }
+
+    std::shared_ptr<tensor_basis> get_basis() const noexcept
+    {
+        return m_basis;
+    }
+
     vector_type storage_type() const noexcept
     {
         return vector_type::sparse;
@@ -179,17 +192,17 @@ public:
 
     const_iterator begin() const noexcept
     {
-        return m_data.begin();
+        return const_iterator(m_data.begin());
     }
 
     const_iterator end() const noexcept
     {
-        return m_data.end();
+        return const_iterator(m_data.end());
     }
 
     const_iterator lower_bound(key_type k) const noexcept
     {
-        return m_data.lower_bound(k);
+        return const_iterator(m_data.lower_bound(k));
     }
 
 private:
@@ -380,7 +393,7 @@ private:
 
 
 
-        auto it = out_tensor.end();
+        auto it = out_tensor.m_data.end();
         for (const auto& val : tmp) {
             if (val.second != Scalar(0)) {
                 it = out_tensor.m_data.emplace_hint(it, val.first, val.second);
@@ -502,10 +515,10 @@ public:
         return os << '}';
     }
 
-    dtl::sparse_kv_iterator<sparse_tensor> iterate_kv() const
-    {
-        return {m_data.begin(), m_data.end()};
-    }
+//    dtl::sparse_kv_iterator<sparse_tensor> iterate_kv() const
+//    {
+//        return {m_data.begin(), m_data.end()};
+//    }
 
 
     bool operator==(const sparse_tensor& other) const
@@ -533,6 +546,9 @@ const Scalar sparse_tensor<Scalar>::zero(0);
 template <typename S>
 struct algebra_info<sparse_tensor<S>>
 {
+    using algebra_t = sparse_tensor<S>;
+    using this_key_type = key_type;
+    using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
     using scalar_type = S;
     using rational_type = S;
 
@@ -540,12 +556,49 @@ struct algebra_info<sparse_tensor<S>>
     { return dtl::get_coeff_type(S(0)); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
-    static deg_t width(const sparse_tensor<S>& instance) noexcept
-    { return instance.width(); }
-    static deg_t max_depth(const sparse_tensor<S>& instance) noexcept
-    { return instance.depth(); }
-    static key_type convert_key(esig::key_type key) noexcept
+    static deg_t width(const sparse_tensor<S>* instance) noexcept
+    { return instance->width(); }
+    static deg_t max_depth(const sparse_tensor<S>* instance) noexcept
+    { return instance->depth(); }
+
+    static deg_t degree(const algebra_t* instance, key_type key) noexcept
+    {
+        if (instance) {
+            return instance->basis().degree(key);
+        }
+        return 0;
+    }
+    static deg_t native_degree(const algebra_t* instance, this_key_type key) noexcept
+    {
+        return degree(instance, key);
+    }
+
+    static key_type convert_key(const algebra_t* inst, esig::key_type key) noexcept
     { return key; }
+    static key_type first_key(const sparse_tensor<S>* instance) noexcept
+    { return 0; }
+    static key_type last_key(const algebra_t* instance) noexcept
+    {
+        if (instance) {
+            return instance->basis().size(-1);
+        }
+        return 0;
+    }
+
+    static const key_prod_container& key_product(const algebra_t* instance, key_type k1, key_type k2)
+    {
+        if (instance) {
+            return instance->basis().prod(k1, k2);
+        }
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> empty;
+        return empty;
+    }
+
+    static algebra_t create_like(const algebra_t& instance)
+    {
+        return algebra_t(instance.get_basis());
+    }
+
 };
 
 namespace dtl {
@@ -564,8 +617,8 @@ public:
 
     dense_data_access_item next() override {
         if (m_current != m_end) {
-            auto key = m_current->first;
-            const auto* p = &m_current->second;
+            auto key = m_current->key();
+            const auto* p = &m_current->value();
             ++m_current;
             return {key, p, p+1};
         }

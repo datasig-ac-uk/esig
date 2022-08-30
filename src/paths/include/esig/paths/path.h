@@ -30,9 +30,9 @@
 #include <esig/algebra/coefficients.h>
 #include <esig/algebra/algebra_traits.h>
 
-#include <esig/algebra/free_tensor_interface.h>
-#include <esig/algebra/lie_interface.h>
 #include <esig/algebra/context.h>
+#include <esig/algebra/lie_interface.h>
+#include <esig/algebra/tensor_interface.h>
 
 #include <boost/container/map.hpp>
 

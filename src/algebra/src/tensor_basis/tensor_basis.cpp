@@ -159,6 +159,29 @@ const std::vector<dimn_t> &tensor_basis::powers() const noexcept
     return *m_powers;
 }
 
+const tensor_basis::product_type &tensor_basis::prod(key_type k1, key_type k2) const {
+    auto deg1 = degree(k1);
+    auto deg2 = degree(k2);
+
+    static const product_type empty;
+    if (deg1 + deg2 > m_depth) {
+        return empty;
+    }
+
+    product_type& result = m_cache[{k1, k2}];
+    if (result.empty()) {
+        assert(k1 >= start_of_degree(deg1));
+        assert(k2 >= start_of_degree(deg2));
+
+        auto left_adj = k1 - start_of_degree(deg1);
+        auto right_adj = k2 - start_of_degree(deg2);
+
+        auto adj_prod = left_adj * (*m_powers)[deg2] + right_adj;
+        result.emplace_back(adj_prod + start_of_degree(deg1 + deg2), 1);
+    }
+
+    return result;
+}
 
 } // namespace algebra_old
 } // namespace esig_paths

@@ -5,11 +5,11 @@
 #ifndef ESIG_PY_FREE_TENSOR_H
 #define ESIG_PY_FREE_TENSOR_H
 
-#include <pybind11/pybind11.h>
-#include <esig/algebra/context.h>
-#include <esig/algebra/free_tensor_interface.h>
 #include <esig/algebra/basis.h>
+#include <esig/algebra/context.h>
 #include <esig/algebra/python_interface.h>
+#include <esig/algebra/tensor_interface.h>
+#include <pybind11/pybind11.h>
 
 namespace esig {
 namespace algebra {

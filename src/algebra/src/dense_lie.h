@@ -48,6 +48,10 @@ public:
 
     using scalar_type = Scalar;
     using basis_type = lie_basis;
+    using reference = Scalar&;
+    using const_reference = const Scalar&;
+
+    using const_iterator = dtl::dense_iterator<typename std::vector<Scalar>::const_iterator>;
 
 
     explicit dense_lie(deg_t width, deg_t depth)
@@ -186,6 +190,15 @@ public:
         }
     }
 
+    std::shared_ptr<lie_basis> get_basis() const noexcept
+    {
+        return m_basis;
+    }
+
+    const lie_basis& basis() const noexcept
+    {
+        return *m_basis;
+    }
 
     const std::vector<Scalar> &data() const noexcept
     {
@@ -218,13 +231,13 @@ public:
     }
 
 
-    dtl::dense_kv_iterator<dense_lie> begin() const noexcept
+    const_iterator begin() const noexcept
     {
-        return {m_data.data(), m_data.data() + m_data.size(), 1};
+        return {m_data.begin(), 1};
     }
-    dtl::dense_kv_iterator<dense_lie> end() const noexcept
+    const_iterator end() const noexcept
     {
-        return {nullptr, nullptr};
+        return {m_data.end(), 1};
     }
 
 private:
@@ -561,49 +574,63 @@ public:
 template <typename S>
 struct algebra_info<dense_lie<S>>
 {
+    using algebra_t = dense_lie<S>;
     using scalar_type = S;
     using rational_type = S;
-
-    static constexpr coefficient_type ctype() noexcept;
-    static constexpr vector_type vtype() noexcept;
-    static deg_t width(const dense_lie<S>& instance) noexcept;
-    static deg_t max_depth(const dense_lie<S>& instance) noexcept;
-
     using this_key_type = key_type;
-    static this_key_type convert_key(esig::key_type key) noexcept;
 
-    static key_type first_key(const dense_lie<S>& instance) noexcept;
+    static constexpr coefficient_type ctype() noexcept
+    { return dtl::get_coeff_type(S()); }
+    static constexpr vector_type vtype() noexcept
+    { return vector_type::dense; }
+    static deg_t width(const dense_lie<S>* instance) noexcept
+    { return instance->width(); }
+
+    static deg_t max_depth(const dense_lie<S>* instance) noexcept
+    { return instance->depth(); }
+    static deg_t degree(const algebra_t* instance, key_type key) noexcept
+    {
+        if (instance) {
+            return instance->basis().degree(key);
+        }
+        return 0;
+    }
+
+    static deg_t native_degree(const algebra_t* instance, this_key_type key)
+    {
+        return degree(instance, key);
+    }
+    static this_key_type convert_key(const algebra_t* instance, esig::key_type key) noexcept
+    { return key; }
+
+    static key_type first_key(const dense_lie<S>* instance) noexcept
+    { return 1; }
+    static key_type last_key(const algebra_t* instance) noexcept
+    {
+        if (instance) {
+            return instance->basis().size(-1) + 1;
+        }
+        return 1;
+    }
+
+    using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
+    static const key_prod_container& key_product(const algebra_t* inst, key_type k1, key_type k2)
+    {
+        if (inst) {
+            return inst->basis().prod(k1, k2);
+        }
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> empty;
+        return empty;
+    }
+
+    static algebra_t create_like(const algebra_t& instance)
+    {
+        // Using the initialiser list ctor forces a resize to the degree.
+        return algebra_t(instance.get_basis(), instance.degree(), {S(0)});
+    }
+
 };
 
-template<typename S>
-constexpr coefficient_type algebra_info<dense_lie<S>>::ctype() noexcept
-{
-    return dtl::get_coeff_type(S(0));
-}
-template<typename S>
-constexpr vector_type algebra_info<dense_lie<S>>::vtype() noexcept
-{
-    return vector_type::dense;
-}
-template<typename S>
-deg_t algebra_info<dense_lie<S>>::width(const dense_lie<S> &instance) noexcept
-{
-    return instance.width();
-}
-template<typename S>
-deg_t algebra_info<dense_lie<S>>::max_depth(const dense_lie<S> &instance) noexcept
-{
-    return instance.depth();
-}
-template<typename S>
-key_type algebra_info<dense_lie<S>>::convert_key(esig::key_type key) noexcept
-{
-    return key;
-}
-template<typename S>
-key_type algebra_info<dense_lie<S>>::first_key(const dense_lie<S> &instance) noexcept {
-    return 1;
-}
 
 namespace dtl {
 

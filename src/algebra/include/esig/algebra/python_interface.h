@@ -191,7 +191,7 @@ get_construction_data(const pybind11::object& arg,
 //
 //    coefficient_type ctype() const noexcept override;
 //    bool is_const() const noexcept override;
-//    bool is_val() const noexcept override;
+//    bool is_value() const noexcept override;
 //
 //    scalar_t as_scalar() const override;
 //    void assign(coefficient val) override;

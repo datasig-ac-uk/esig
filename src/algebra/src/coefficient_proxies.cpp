@@ -31,7 +31,9 @@ coefficient coefficient_interface::div(const coefficient_interface &other) const
 {
     throw std::runtime_error("cannot divide this value");
 }
-
+bool coefficient_interface::equals(const coefficient_interface &other) const noexcept {
+    return false;
+}
 coefficient coefficient::operator-() const
 {
     throw std::runtime_error("cannot unary minus this value");
@@ -81,6 +83,12 @@ bool coefficient::is_const() const noexcept
 bool coefficient::is_value() const noexcept
 {
     return false;
+}
+bool coefficient::is_zero() const noexcept {
+    if (p_impl) {
+        return p_impl->is_zero();
+    }
+    return true;
 }
 coefficient_type coefficient::ctype() const noexcept
 {
@@ -152,7 +160,15 @@ coefficient &coefficient::operator/=(const scalar_t &other)
     return *this;
 }
 
-
+bool coefficient::operator==(const coefficient &rhs) const noexcept {
+    if (!p_impl) {
+        return rhs.is_zero();
+    }
+    if (!rhs.p_impl) {
+        return is_zero();
+    }
+    return p_impl->equals(*rhs.p_impl);
+}
 #define ESIG_ALGEBRA_IMPLEMENT_METHOD(NAME)                                    \
     coefficient coefficient_interface::NAME(const scalar_t &other) const \
     {                                                                          \

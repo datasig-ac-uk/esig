@@ -85,13 +85,12 @@ deg_t lie_basis::degree(const key_type &key) const
     return m_degree_impl(key);
 }
 
-
-std::vector<std::pair<key_type, int>>
+typename lie_basis::product_type
 lie_basis::prod_impl(const key_type &k1, const key_type &k2) const
 {
     if (k1 > k2) {
         const auto& tmp = prod(k2, k1);
-        std::vector<std::pair<key_type, int>> result;
+        product_type result;
         result.reserve(tmp.size());
         for (const auto& val : tmp) {
             result.emplace_back(val.first, -val.second);
@@ -118,13 +117,13 @@ lie_basis::prod_impl(const key_type &k1, const key_type &k2) const
         }
     }
 
-    return std::vector<std::pair<key_type, int>>(tmp.begin(), tmp.end());
+    return product_type(tmp.begin(), tmp.end());
 }
 
-const std::vector<std::pair<key_type, int>>&
+const typename lie_basis::product_type&
 lie_basis::prod(const key_type &k1, const key_type &k2) const
 {
-    static const std::vector<std::pair<key_type, int>> empty;
+    static const product_type empty;
     if (k1 == k2) {
         return empty;
     }

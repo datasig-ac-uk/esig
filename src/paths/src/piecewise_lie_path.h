@@ -10,8 +10,7 @@
 #include <esig/paths/path.h>
 
 #include <esig/algebra/lie_interface.h>
-#include <esig/algebra/free_tensor_interface.h>
-
+#include <esig/algebra/tensor_interface.h>
 
 namespace esig {
 namespace paths {
