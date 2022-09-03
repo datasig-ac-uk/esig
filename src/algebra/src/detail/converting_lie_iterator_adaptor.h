@@ -42,7 +42,7 @@ public:
     operator const OutLie&()
     {
         if (typeid(*m_interface) == typeid(wrapper)) {
-            return algebra_implementation_access::get<lie_implementation, OutLie>(*m_interface);
+            return algebra_access<lie_interface>::get<OutLie>(*m_interface);
 //            return lie_base_access::get<OutLie>(dynamic_cast<const wrapper&>(*m_interface));
         } else {
             if (!converted) {
@@ -55,7 +55,7 @@ public:
     operator const OutLie*()
     {
         if (typeid(*m_interface) == typeid(wrapper)) {
-            return &lie_base_access::get(dynamic_cast<const wrapper&>(*m_interface));
+            return algebra_access<lie_interface>::get<OutLie>(*m_interface);
         } else {
             if (!converted) {
                 convert();
@@ -108,7 +108,7 @@ public:
 
     reference operator*()
     {
-        return reference(m_basis, algebra_base_access::get(*m_data));
+        return reference(m_basis, algebra_access<lie_interface>::get(*m_data));
     }
 };
 

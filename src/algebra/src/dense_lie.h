@@ -6,8 +6,7 @@
 #define ESIG_PATHS_INCLUDE_ESIG_PATHS_ALGEBRA_LOCAL_DENSE_LIE_H_
 
 #include <esig/implementation_types.h>
-#include <esig/algebra/iteration.h>
-#include <esig/algebra/algebra_traits.h>
+#include <esig/algebra/base.h>
 #include "lie_basis/lie_basis.h"
 
 #include "dense_kv_iterator.h"

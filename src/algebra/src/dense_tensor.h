@@ -5,10 +5,11 @@
 #ifndef ESIG_PATHS_DENSE_TENSOR_H
 #define ESIG_PATHS_DENSE_TENSOR_H
 
-#include <esig/implementation_types.h>
-#include <esig/algebra/iteration.h>
-#include <esig/algebra/algebra_traits.h>
+
+#include <esig/algebra/base.h>
 #include "tensor_basis/tensor_basis.h"
+
+
 
 #include "dense_kv_iterator.h"
 

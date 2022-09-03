@@ -6,12 +6,13 @@
 #define ESIG_SRC_ALGEBRA_INCLUDE_ESIG_ALGEBRA_BASE_H_
 
 #include <esig/implementation_types.h>
-#include <esig/algebra/esig_algebra_export.h>
-#include <esig/algebra/algebra_traits.h>
-#include <esig/algebra/coefficients.h>
-#include <esig/algebra/iteration.h>
+#include "esig/algebra/esig_algebra_export.h"
+#include "esig/algebra/algebra_traits.h"
+#include "esig/algebra/coefficients.h"
+#include "esig/algebra/iteration.h"
 
 #include <algorithm>
+#include <cassert>
 #include <memory>
 #include <iosfwd>
 #include <type_traits>
@@ -26,16 +27,15 @@ enum class implementation_type {
     owned
 };
 
-#define ESIG_DEFAULT_IMPTYPE_FAIL_OP
-#define ESIG_IMPTYPE_FAIL_OP ESIG_DEFAULT_IMPTYPE_FAIL_OP
-#define ESIG_SWITCH_IMPTYPE(TYPE)                   \
-    switch(TYPE) {                                  \
-        case implementation_type::owned:            \
-             ESIG_IMPTYPE_OWNED_OP                  \
-        case implementation_type::borrowed:         \
-             ESIG_IMPTYPE_BORROWED_OP               \
-        }                                           \
-    ESIG_IMPTYPE_FAIL_OP
+enum class vector_type {
+    sparse,
+    dense
+};
+
+template <typename Algebra>
+struct algebra_info;
+
+
 
 template <typename Algebra>
 struct algebra_interface
@@ -122,6 +122,8 @@ struct operator_interface
 };
 
 
+template <typename Interface>
+struct algebra_access;
 
 
 namespace dtl {
@@ -160,7 +162,32 @@ void fallback_multiplication(Impl& result, const Interface& lhs, const Impl& rhs
 template <typename Interface, typename Impl, typename Fn>
 void fallback_inplace_multiplication(Impl& result, const Interface& rhs, Fn Op);
 
+template<typename It>
+struct multiplication_data {
+    It begin;
+    It end;
+    std::vector<It> degree_ranges;
+    deg_t degree;
+};
 
+template<typename Algebra, typename LhsIt, typename RhsIt, typename Op>
+void fallback_multiplication_impl(Algebra &result,
+                             const multiplication_data<LhsIt>& lhs,
+                             const multiplication_data<RhsIt>& rhs,
+                             Op op);
+
+template <typename Algebra, typename LhsIt, typename RhsIt>
+struct multiplication_dispatcher
+{
+    template <typename Op>
+    static void dispatch(Algebra& result,
+                         const multiplication_data<LhsIt>& lhs,
+                         const multiplication_data<RhsIt>& rhs,
+                         Op op)
+    {
+        fallback_multiplication_impl(result, lhs, rhs, op);
+    }
+};
 template<typename Algebra, typename LhsIt, typename RhsIt, typename Op>
 void multiply_and_add(Algebra &result,
                       dtl::multiplication_data<LhsIt> lhs,
@@ -188,6 +215,7 @@ protected:
     Impl m_data;
     context_p p_ctx;
 
+
     static_assert(std::is_base_of<algebra_interface<typename Interface::algebra_t>, Interface>::value,
                   "algebra_interface must be an accessible base of Interface");
 public:
@@ -196,7 +224,8 @@ public:
     using algebra_t = typename Interface::algebra_t;
     using algebra_interface_t = algebra_interface<algebra_t>;
 
-    friend class esig::algebra::algebra_implementation_access;
+    friend class ::esig::algebra::algebra_access<Interface>;
+    friend class ::esig::algebra::algebra_access<algebra_interface_t>;
     friend class borrowed_algebra_implementation<Interface, Impl>;
     using borrowed_alg_impl_t = borrowed_algebra_implementation<Interface, Impl>;
 
@@ -263,14 +292,18 @@ class borrowed_algebra_implementation : public Interface
 
     using impl_type = Impl;
 
-    friend class ::esig::algebra::algebra_implementation_access;
-    friend class algebra_implementation<Interface, Impl>;
-    using alg_impl_t = algebra_implementation<Interface, Impl>;
-
 public:
     using interface_t = Interface;
     using algebra_t = typename Interface::algebra_t;
     using algebra_interface_t = algebra_interface<algebra_t>;
+
+private:
+    friend class ::esig::algebra::algebra_access<Interface>;
+    friend class ::esig::algebra::algebra_access<algebra_interface_t>;
+    friend class algebra_implementation<Interface, Impl>;
+    using alg_impl_t = algebra_implementation<Interface, Impl>;
+
+public:
 
     std::uintptr_t id() const noexcept override;
     implementation_type type() const noexcept override;
@@ -331,8 +364,6 @@ class algebra_bundle_implementation
 
     using fibre_wrap_type = FibreWrapper<FibreInterface, fibre_impl_type>;
 
-    friend class esig::algebra::algebra_implementation_access;
-
     using alg_info = algebra_info<Impl>;
     using fibre_info = algebra_info<fibre_impl_type>;
 
@@ -378,32 +409,33 @@ public:
 
 };
 
+template<typename T>
+using impl_options = std::conditional_t<std::is_pointer<T>::value, std::true_type, std::false_type>;
 
-
-
-template <typename Interface, typename Impl>
+template <typename Interface, typename Impl, typename Options=impl_options<Impl>>
 struct implementation_wrapper_selection
 {
+    static_assert(!std::is_pointer<Impl>::value, "Impl cannot be a pointer");
     using type = typename std::conditional<std::is_base_of<Interface, Impl>::value, Impl,
         algebra_implementation<Interface, Impl>>::type;
 };
 
 template <typename Interface, typename Impl>
-struct implementation_wrapper_selection<Interface, Impl*>
+struct implementation_wrapper_selection<Interface, Impl, std::true_type>
 {
     using type = borrowed_algebra_implementation<Interface, Impl>;
 };
 
-template <typename AlgebraInterface, typename Fibre, typename Impl>
+template <typename AlgebraInterface, typename Fibre, typename Impl, typename Options>
 struct implementation_wrapper_selection<
     algebra_bundle_interface<AlgebraInterface, Fibre>,
-    Impl>
+    Impl, Options>
 {
     using type = algebra_bundle_implementation<AlgebraInterface, Impl, algebra_interface<Fibre>>;
 };
 
 template <typename Interface, typename Impl>
-using impl_wrapper = typename implementation_wrapper_selection<Interface, Impl>::type;
+using impl_wrapper = typename implementation_wrapper_selection<Interface, std::remove_pointer_t<Impl>, impl_options<Impl>>::type;
 
 } // namespace dtl
 
@@ -415,7 +447,9 @@ class algebra_base
 protected:
     std::shared_ptr<Interface> p_impl;
     friend class algebra_base_access;
-    friend class esig::algebra::algebra_implementation_access;
+
+    friend class algebra_access<Interface>;
+    friend class algebra_access<algebra_interface<typename Interface::algebra_t>>;
 
 public:
     using interface_t = Interface;
@@ -492,6 +526,7 @@ public:
     bool operator!=(const algebra_t& other) const;
 };
 
+
 template <typename Interface>
 class linear_operator_base
 {
@@ -511,6 +546,65 @@ public:
 /////////////////////////////////////////////////////////////////////////
 // The rest of the file contains implementations for the templates above.
 /////////////////////////////////////////////////////////////////////////
+
+// First up is the algebra_info trait, we'll need this throughout the rest
+// of the implementations.
+template <typename Algebra>
+struct algebra_info
+{
+    using scalar_type = typename Algebra::scalar_type;
+    using rational_type = scalar_type;
+    using reference = scalar_type&;
+    using const_reference = const scalar_type&;
+    using pointer = scalar_type*;
+    using const_pointer = const scalar_type*;
+
+    static constexpr coefficient_type ctype() noexcept
+    { return dtl::get_coeff_type(scalar_type()); }
+    static constexpr vector_type vtype() noexcept
+    { return vector_type::sparse; }
+    static deg_t width(const Algebra* instance) noexcept
+    { return instance->width(); }
+    static deg_t max_depth(const Algebra* instance) noexcept
+    { return instance->depth(); }
+
+    using this_key_type = key_type;
+    static this_key_type convert_key(const Algebra* instance, esig::key_type key) noexcept
+    { return key; }
+
+    static deg_t degree(const Algebra* instance, esig::key_type key) noexcept
+    { return instance->basis().degree(convert_key(instance, key)); }
+    static deg_t native_degree(const Algebra* instance, this_key_type key)
+    { return instance->basis().degree(key); }
+
+    static key_type first_key(const Algebra* instance) noexcept
+    { return 0; }
+    static key_type last_key(const Algebra* instance) noexcept
+    { return instance->basis().size(); }
+
+    using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
+    static const key_prod_container& key_product(const Algebra* inst, key_type k1, key_type k2)
+    {
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
+        return null;
+    }
+
+    static Algebra create_like(const Algebra& instance)
+    {
+        return Algebra();
+    }
+};
+
+
+
+
+
+
+template <typename Interface>
+std::ostream& operator<<(std::ostream& os, const algebra_base<Interface>& arg)
+{
+    return arg.print(os);
+}
 
 
 template<typename Algebra>
@@ -1143,6 +1237,47 @@ using key_value_buffer = std::vector<std::pair<
 template <typename Impl>
 using degree_range_buffer = std::vector<typename key_value_buffer<Impl>::const_iterator>;
 
+template<typename Algebra, typename LhsIt, typename RhsIt, typename Op>
+void fallback_multiplication_impl(Algebra &result,
+                             const multiplication_data<LhsIt>& lhs,
+                             const multiplication_data<RhsIt>& rhs,
+                             Op op)
+{
+    using litraits = iterator_traits<LhsIt>;
+    using ritraits = iterator_traits<RhsIt>;
+    using info = algebra_info<Algebra>;
+
+    auto max_deg = std::min(info::max_depth(&result), lhs.degree + rhs.degree);
+
+    const auto* ref = &result;
+    auto product = [ref](LhsIt lit, RhsIt rit)
+        -> const typename info::key_prod_container& {
+      auto lkey = litraits::key(lit);
+      auto rkey = ritraits::key(rit);
+      return info::key_product(ref, lkey, rkey);
+    };
+
+
+    for (int out_deg = static_cast<int>(max_deg); out_deg > 0; --out_deg) {
+        int lhs_max_deg = std::min(out_deg, static_cast<int>(lhs.degree));
+        int lhs_min_deg = std::max(0, out_deg - static_cast<int>(rhs.degree));
+
+        for (int lhs_d = lhs_max_deg; lhs_d >= lhs_min_deg; --lhs_d) {
+            auto rhs_d = out_deg - lhs_d;
+
+            for (auto lit = lhs.degree_ranges[lhs_d]; lit != lhs.degree_ranges[lhs_d + 1]; ++lit) {
+                for (auto rit = rhs.degree_ranges[rhs_d]; rit != rhs.degree_ranges[rhs_d + 1]; ++rit) {
+                    auto val = op(litraits::value(lit) * ritraits::value(rit));
+                    for (auto prd : product(lit, rit)) {
+                        result[prd.first] += prd.second*val;
+                    }
+                }
+            }
+        }
+    }
+}
+
+
 template <typename Impl>
 void impl_to_buffer(key_value_buffer<Impl>& buffer,
                     degree_range_buffer<Impl>& degree_ranges,
@@ -1291,6 +1426,64 @@ void fallback_inplace_binary_op(Impl &lhs, const Interface &rhs, Fn op) {
 }
 
 } // namespace dtl
+
+
+
+
+template <typename Interface>
+struct algebra_access
+{
+
+    using interface_type = Interface;
+
+    template <typename Impl>
+    using wrapper_t = typename dtl::implementation_wrapper_selection<Interface, Impl, std::false_type>::type;
+
+    template <typename Impl>
+    using borrowed_wrapper_t = typename dtl::implementation_wrapper_selection<Interface, Impl, std::true_type>::type;
+
+    template <typename Impl>
+    static const Impl& get(const interface_type& arg)
+    {
+        if (arg.type() == implementation_type::owned) {
+            return static_cast<const wrapper_t<Impl>&>(arg).m_data;
+        } else {
+            return *static_cast<const borrowed_wrapper_t<Impl>&>(arg).p_impl;
+        }
+    }
+
+    template <typename Impl>
+    static Impl& get(interface_type& arg)
+    {
+        if (arg.type() == implementation_type::owned) {
+            return static_cast<wrapper_t<Impl>&>(arg).m_data;
+        } else {
+            return *static_cast<borrowed_wrapper_t<Impl>&>(arg).p_impl;
+        }
+    }
+
+    template <typename Impl>
+    static Impl& get(typename interface_type::algebra_t& arg)
+    {
+        return get<Impl>(*arg.p_impl);
+    }
+
+    template <typename Impl>
+    static const Impl& get(const typename interface_type::algebra_t& arg)
+    {
+        return get<Impl>(*arg.p_impl);
+    }
+
+    static const interface_type* get(const typename interface_type::algebra_t& arg)
+    {
+        return arg.p_impl.get();
+    }
+    static interface_type* get(typename interface_type::algebra_t& arg)
+    {
+        return arg.p_impl.get();
+    }
+
+};
 
 
 

@@ -24,8 +24,6 @@ class lie;
 
 using lie_interface = algebra_interface<lie>;
 
-struct lie_base_access;
-
 
 namespace dtl {
 /*
@@ -59,43 +57,6 @@ public:
 
 };
 
-
-struct lie_base_access {
-    template<typename Impl>
-    static const Impl &get(const lie &wrapper)
-    {
-        auto *ptr = algebra_base_access::get(wrapper);
-        assert(ptr != nullptr);
-        return algebra_implementation_access::get<dtl::lie_implementation, Impl>(*ptr);
-//        return dynamic_cast<const dtl::lie_implementation<Impl> &>(*ptr).m_data;
-    }
-
-    template<typename Impl>
-    static Impl &get(lie &wrapper)
-    {
-        auto *ptr = algebra_base_access::get(wrapper);
-        assert(ptr != nullptr);
-        return algebra_implementation_access::get(*ptr);
-//        return dynamic_cast<dtl::lie_implementation<Impl> &>(*ptr).m_data;
-    }
-
-//    template <typename Wrapper>
-//    static typename Wrapper::impl_type& get(Wrapper& arg)
-//    {
-//        return arg.m_data;
-//    }
-//
-//    template <typename Wrapper>
-//    static const typename Wrapper::impl_type& get(const Wrapper& arg)
-//    {
-//        return arg.m_data;
-//    }
-
-
-};
-
-ESIG_ALGEBRA_EXPORT
-std::ostream &operator<<(std::ostream &os, const lie &arg);
 
 }// namespace algebra
 }// namespace esig

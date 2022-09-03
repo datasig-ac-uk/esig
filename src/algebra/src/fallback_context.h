@@ -216,7 +216,7 @@ template <coefficient_type CType>
 template<vector_type VType>
 ftensor_type<CType, VType> fallback_context<CType>::lie_to_tensor_impl(const lie &arg) const
 {
-    const auto& inner = lie_base_access::get<lie_type<CType, VType>>(arg);
+    const auto& inner = algebra_access<lie_interface>::get<lie_type<CType, VType>>(arg);
     return lie_to_tensor_impl<VType>(inner);
 }
 template<coefficient_type CType>
@@ -229,7 +229,7 @@ template<vector_type VType>
 lie_type<CType, VType> fallback_context<CType>::tensor_to_lie_impl(const free_tensor &arg) const
 {
 //    try {
-        const auto& inner = free_tensor_base_access::get<ftensor_type<CType, VType>>(arg);
+        const auto& inner = algebra_access<free_tensor_interface>::get<ftensor_type<CType, VType>>(arg);
         return tensor_to_lie_impl<VType>(inner);
 //    } catch (std::bad_cast&) {
 //
@@ -309,9 +309,11 @@ ftensor_type<CType, VType> fallback_context<CType>::sig_derivative_impl(const st
 
     ftensor_type<CType, VType> result(get_tensor_basis());
 
+    using access = algebra_access<lie_interface>;
+
     for (const auto &data : info) {
-        const auto &perturb = lie_base_access::get<lie_type<CType, VType>>(data.perturbation);
-        const auto &incr = lie_base_access::get<lie_type<CType, VType>>(data.logsig_of_interval);
+        const auto &perturb = access::get<lie_type<CType, VType>>(data.perturbation);
+        const auto &incr = access::get<lie_type<CType, VType>>(data.logsig_of_interval);
         auto sig = exp(lie_to_tensor_impl<VType>(incr));
 
         result *= sig;
@@ -324,7 +326,7 @@ ftensor_type<CType, VType> fallback_context<CType>::sig_derivative_impl(const st
 template<coefficient_type CType>
 template<typename VectorImpl, template <typename> class VectorImplWrapper, typename VectorWrapper, typename Basis>
 VectorWrapper fallback_context<CType>::convert_impl(const VectorWrapper &arg, Basis basis) const {
-    const auto *base = algebra_base_access::get(arg);
+    const auto *base = algebra_access<typename VectorImplWrapper<VectorImpl>::interface_t>::get(arg);
     VectorImpl result(basis);
 
     if (base != nullptr) {
@@ -337,8 +339,8 @@ VectorWrapper fallback_context<CType>::convert_impl(const VectorWrapper &arg, Ba
              * If the base is already of the same type as result then we can use assign/data
              * defined on the fallback vector types.
              */
-            using access = algebra_implementation_access;
-            const auto& impl = access::get<VectorImplWrapper, VectorImpl>(dynamic_cast<const VectorImplWrapper<VectorImpl> &>(*base));
+            using access = algebra_access<typename VectorImplWrapper<VectorImpl>::interface_t>;
+            const auto& impl = access::template get<VectorImpl>(*base);
             if (impl.coeff_type() == CType) {
                 result.assign(impl.data());
             } else {

@@ -165,111 +165,150 @@ py_vector_construction_helper
 get_construction_data(const pybind11::object& arg,
                       const pybind11::kwargs& kwargs);
 
+namespace dtl {
+template<typename... ExtrasFns>
+struct exec_for_each;
 
 
+template <typename Fn, typename... Extras>
+struct exec_for_each<Fn, Extras...> : exec_for_each<Extras...>
+{
+    using next = exec_for_each<Extras...>;
+
+    exec_for_each(Fn&& fn, Extras&&... extras)
+        : m_fn(std::move<Fn>(fn)), next(std::move(extras)...)
+    {}
+
+    template <typename PyClass>
+    void eval(PyClass& m) const
+    {
+        m_fn(m);
+        next::eval(m);
+    }
+private:
+    Fn m_fn;
+};
+
+template <>
+struct exec_for_each<>
+{
+    template <typename PyClass>
+    void eval(PyClass& m) const
+    {}
+};
 
 
+}
 
-//namespace dtl {
-//
-//
-//template <>
-//class coefficient_implementation<pybind11::object> : public coefficient_interface
-//{
-//    pybind11::object m_data;
-//
-//    friend struct coefficient_value_helper;
-//    using coeff_t = typename pybind11::object;
-//    using coeff_impl = coefficient_implementation<pybind11::object>;
-//
-//    template <typename S>
-//    friend class coefficient_implementation;
-//
-//public:
-//
-//    explicit coefficient_implementation(pybind11::object arg);
-//
-//    coefficient_type ctype() const noexcept override;
-//    bool is_const() const noexcept override;
-//    bool is_value() const noexcept override;
-//
-//    scalar_t as_scalar() const override;
-//    void assign(coefficient val) override;
-//    coefficient add(const coefficient_interface &other) const override;
-//    coefficient sub(const coefficient_interface &other) const override;
-//    coefficient mul(const coefficient_interface &other) const override;
-//    coefficient div(const coefficient_interface &other) const override;
-//    coefficient add(const scalar_t &other) const override;
-//    coefficient sub(const scalar_t &other) const override;
-//    coefficient mul(const scalar_t &other) const override;
-//    coefficient div(const scalar_t &other) const override;
-//};
-//
-//template <>
-//struct coefficient_type_trait<pybind11::object>
-//{
-//    using value_type = pybind11::object;
-//    using reference = value_type;
-//    using const_reference = value_type;
-//
-//    using value_wrapper = coefficient_implementation<value_type>;
-//    using reference_wrapper = value_wrapper;
-//    using const_reference_wrapper = reference_wrapper;
-//
-//    static coefficient make(reference arg)
-//    {
-//        return coefficient(std::shared_ptr<coefficient_interface>(new
-//                          value_wrapper(arg)));
-//    }
-//
-//};
-//
-//
-//template <>
-//struct coefficient_type_trait<pybind11::object&>
-//{
-//    using value_type = pybind11::object;
-//    using reference = value_type;
-//    using const_reference = value_type;
-//
-//    using value_wrapper = coefficient_implementation<value_type>;
-//    using reference_wrapper = value_wrapper;
-//    using const_reference_wrapper = value_wrapper;
-//
-//    static coefficient make(reference arg)
-//    {
-//        return coefficient(std::shared_ptr<coefficient_interface>(new
-//                           value_wrapper(arg)));
-//    }
-//};
-//
-//template <>
-//struct coefficient_type_trait<const pybind11::object&>
-//{
-//    using value_type = pybind11::object;
-//    using reference = value_type;
-//    using const_reference = value_type;
-//
-//    using value_wrapper = coefficient_implementation<value_type>;
-//    using reference_wrapper = value_wrapper;
-//    using const_reference_wrapper = value_wrapper;
-//
-//    static coefficient make(reference arg)
-//    {
-//        return coefficient(std::shared_ptr<coefficient_interface>(new
-//                           value_wrapper(arg)));
-//    }
-//};
-//
-//
-//
-//
-//} // namespace dtl
-//
-//
-//namespace dtl {
-//
-//} // namespace dtl
+template <typename Interface, typename... Extras>
+void make_py_wrapper(pybind11::module_& m, const char* name, const char* doc_string, Extras... extras)
+{
+    namespace py = pybind11;
+    using namespace pybind11::literals;
+
+    using algebra_type = typename Interface::algebra_t;
+
+    py::class_<algebra_type> klass(m, name, doc_string);
+
+    klass.def_property_readonly("width", &algebra_type::width);
+    klass.def_property_readonly("depth", &algebra_type::depth);
+    klass.def_property_readonly("dtype", &algebra_type::coeff_type);
+    klass.def_property_readonly("storage_type", &algebra_type::storage_type);
+
+    klass.def("size", &algebra_type::size);
+    klass.def("degree", &algebra_type::degree);
+
+    klass.def("__getitem__", [](const algebra_type& self, key_type key) {
+        return static_cast<scalar_t>(self[key]);
+    });
+    klass.def("__iter__", [](const algebra_type& self) {
+        //TODO: Generic iterators
+    });
+
+    klass.def("__neg__", &algebra_type::uminus, py::is_operator());
+
+    klass.def("__add__", &algebra_type::add, py::is_operator());
+    klass.def("__sub__", &algebra_type::add, py::is_operator());
+    klass.def("__mul__", &algebra_type::smul, py::is_operator());
+    klass.def("__truediv__", &algebra_type::sdiv, py::is_operator());
+    klass.def("__mul__", &algebra_type::mul, py::is_operator());
+    klass.def("__rmul__", &algebra_type::smul, py::is_operator());
+
+    klass.def("__mul__", [](const algebra_type& self, scalar_t arg) {
+        return self.smul(coefficient(arg));
+    }, py::is_operator());
+    klass.def("__mul__", [](const algebra_type& self, long long arg) {
+        return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+    }, py::is_operator());
+    klass.def("__rmul__", [](const algebra_type& self, scalar_t arg) {
+         return self.smul(coefficient(arg));
+    }, py::is_operator());
+    klass.def("__rmul__", [](const algebra_type& self, long long arg) {
+      return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+    }, py::is_operator());
+    klass.def("__truediv__", [](const algebra_type& self, scalar_t arg) {
+             return self.sdiv(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__truediv__", [](const algebra_type& self, scalar_t arg) {
+             return self.sdiv(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+
+    klass.def("__iadd__", &algebra_type::add_inplace, py::is_operator());
+    klass.def("__isub__", &algebra_type::sub_inplace, py::is_operator());
+    klass.def("__imul__", &algebra_type::smul_inplace, py::is_operator());
+    klass.def("__itruediv__", &algebra_type::sdiv_inplace, py::is_operator());
+    klass.def("__imul__", &algebra_type::mul_inplace, py::is_operator());
+
+    klass.def("__imul__", [](algebra_type& self, scalar_t arg) {
+             return self.smul_inplace(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__imul__", [](algebra_type& self, long long arg) {
+             return self.smul_inplace(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+    klass.def("__itruediv__", [](algebra_type& self, scalar_t arg) {
+             return self.sdiv_inplace(coefficient(arg));
+         }, py::is_operator());
+    klass.def("__itruediv__", [](algebra_type& self, long long arg) {
+             return self.sdiv_inplace(coefficient(arg, 1LL, self.coeff_type()));
+         }, py::is_operator());
+
+
+    klass.def("add_scal_mul", &algebra_type::add_scal_mul, "other"_a, "scalar"_a);
+    klass.def("sub_scal_mul", &algebra_type::sub_scal_mul, "other"_a, "scalar"_a);
+    klass.def("add_scal_div", &algebra_type::add_scal_div, "other"_a, "scalar"_a);
+    klass.def("sub_scal_div", &algebra_type::sub_scal_div, "other"_a, "scalar"_a);
+
+    klass.def("add_mul", &algebra_type::add_mul, "lhs"_a, "rhs"_a);
+    klass.def("sub_mul", &algebra_type::sub_mul, "lhs"_a, "rhs"_a);
+    klass.def("mul_smul", &algebra_type::mul_smul, "other"_a, "scalar"_a);
+    klass.def("mul_sdiv", &algebra_type::mul_sdiv, "other"_a, "scalar"_a);
+
+
+    klass.def("__str__", [](const algebra_type& self) {
+        std::stringstream ss;
+        self.print(ss);
+        return ss.str();
+    });
+
+    klass.def("__repr__", [](const algebra_type& self) {
+                std::stringstream ss;
+                ss << "Lie(width=" << self.width() << ", depth=" << self.depth();
+                ss << ", ctype=" << static_cast<int>(self.coeff_type()) << ')';
+                return ss.str();
+            });
+
+    klass.def("__eq__",
+        [](const algebra_type& lhs, const algebra_type& rhs) { return lhs == rhs; },
+        py::is_operator());
+    klass.def("__neq__",
+              [](const algebra_type& lhs, const algebra_type& rhs) { return lhs != rhs; },
+        py::is_operator());
+
+    dtl::exec_for_each<Extras...> helper(std::move(extras)...);
+    helper.eval(klass);
+}
+
+
 
 } // namespace algebra
 } // namespace esig

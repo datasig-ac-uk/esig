@@ -86,7 +86,7 @@ protected:
 
     static MockLie &mocked(lie &arg) noexcept
     {
-        return dynamic_cast<MockLie&>(*algebra_base_access::get(arg));
+        return dynamic_cast<MockLie&>(*algebra_access<lie_interface>::get(arg));
     }
 
     static lie setup_mock_lie()

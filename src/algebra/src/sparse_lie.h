@@ -6,9 +6,9 @@
 #define ESIG_PATHS_SRC_ALGEBRA_TMP_SRC_SPARSE_LIE_H_
 
 #include <esig/implementation_types.h>
+#include <esig/algebra/base.h>
 #include "lie_basis/lie_basis.h"
-#include <esig/algebra/iteration.h>
-#include <esig/algebra/algebra_traits.h>
+
 
 #include "sparse_kv_iterator.h"
 #include "sparse_mutable_reference.h"

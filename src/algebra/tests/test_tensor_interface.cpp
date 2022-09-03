@@ -79,7 +79,7 @@ protected:
 
     static MockFreeTensor &mocked(free_tensor &arg) noexcept
     {
-        return dynamic_cast<MockFreeTensor&>(*algebra_base_access::get(arg));
+        return dynamic_cast<MockFreeTensor&>(*algebra_access<free_tensor_interface>::get(arg));
     }
 
     static free_tensor setup_mock_tensor()

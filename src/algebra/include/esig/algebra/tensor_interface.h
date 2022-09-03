@@ -44,7 +44,6 @@ extern template class ESIG_ALGEBRA_EXPORT algebra_interface<shuffle_tensor>;
 using shuffle_tensor_interface = algebra_interface<shuffle_tensor>;
 
 
-struct free_tensor_base_access;
 
 
 namespace dtl {
@@ -58,7 +57,9 @@ template <typename Impl>
 class free_tensor_implementation : public algebra_implementation<free_tensor_interface, Impl>
 {
     using base = algebra_implementation<free_tensor_interface, Impl>;
-    friend class ::esig::algebra::algebra_implementation_access;
+    friend class algebra_access<free_tensor_interface>;
+    friend class algebra_access<algebra_interface<free_tensor>>;
+
 public:
 
     using base::base;
@@ -67,7 +68,24 @@ public:
     free_tensor log() const override;
     free_tensor inverse() const override;
     free_tensor_interface &fmexp(const free_tensor_interface &other) override;
+};
 
+template <typename Impl>
+class borrowed_free_tensor_implementation : public borrowed_algebra_implementation<free_tensor_interface, Impl>
+{
+    using base = borrowed_algebra_implementation<free_tensor_interface, Impl>;
+    friend class ::esig::algebra::algebra_access<free_tensor_interface>;
+    friend class ::esig::algebra::algebra_access<algebra_interface<free_tensor>>;
+
+
+public:
+
+    using base::base;
+
+    free_tensor exp() const override;
+    free_tensor log() const override;
+    free_tensor inverse() const override;
+    free_tensor_interface &fmexp(const free_tensor_interface &other) override;
 };
 
 template <typename Impl>
@@ -76,6 +94,13 @@ struct implementation_wrapper_selection<free_tensor_interface, Impl>
     using type = std::conditional_t<std::is_base_of<free_tensor_interface, Impl>::value, Impl,
           free_tensor_implementation<Impl>>;
 };
+
+template <typename Impl>
+struct implementation_wrapper_selection<free_tensor_interface, Impl*>
+{
+    using type = dtl::borrowed_free_tensor_implementation<Impl>;
+};
+
 
 
 template <typename Impl>
@@ -115,26 +140,6 @@ public:
     using base::base;
 };
 
-struct free_tensor_base_access
-{
-    template<typename Impl>
-    static const Impl &get(const free_tensor &wrapper)
-    {
-        return algebra_implementation_access::get<dtl::free_tensor_implementation, Impl>(wrapper);
-    }
-
-    template<typename Impl>
-    static Impl &get(free_tensor &wrapper)
-    {
-        return algebra_implementation_access::get<dtl::free_tensor_implementation, Impl>(wrapper);
-    }
-};
-
-ESIG_ALGEBRA_EXPORT
-std::ostream& operator<<(std::ostream& os, const free_tensor & arg);
-
-ESIG_ALGEBRA_EXPORT
-std::ostream& operator<<(std::ostream& os, const shuffle_tensor& arg);
 
 
 
@@ -178,167 +183,7 @@ Tensor inverse_wrapper(const Tensor& arg)
     return inverse(arg);
 }
 
-//
-//template<typename Impl>
-//free_tensor_implementation<Impl>::free_tensor_implementation(Impl &&impl, context_p ctx)
-//    : m_data(std::forward<Impl>(impl)), p_ctx(ctx)
-//{
-//}
-//
-//template<typename Impl>
-//free_tensor_implementation<Impl>::free_tensor_implementation(const Impl &impl, context_p ctx)
-//    : m_data(impl), p_ctx(ctx)
-//{
-//}
-//
-//template<typename Impl>
-//dimn_t free_tensor_implementation<Impl>::size() const
-//{
-//    return m_data.size();
-//}
-//template<typename Impl>
-//deg_t free_tensor_implementation<Impl>::degree() const
-//{
-//    return m_data.degree();
-//}
-//template<typename Impl>
-//deg_t free_tensor_implementation<Impl>::width() const
-//{
-//    return algebra_info<Impl>::width(m_data);
-//}
-//template<typename Impl>
-//deg_t free_tensor_implementation<Impl>::depth() const
-//{
-//    return algebra_info<Impl>::max_depth(m_data);
-//}
-//template<typename Impl>
-//vector_type free_tensor_implementation<Impl>::storage_type() const noexcept
-//{
-//    return algebra_info<Impl>::vtype();
-//}
-//template<typename Impl>
-//coefficient_type free_tensor_implementation<Impl>::coeff_type() const noexcept
-//{
-//    return algebra_info<Impl>::ctype();
-//}
-//template<typename Impl>
-//free_tensor free_tensor_implementation<Impl>::uminus() const
-//{
-//    return free_tensor(-m_data, p_ctx);
-//}
-//template<typename Impl>
-//free_tensor free_tensor_implementation<Impl>::add(const free_tensor_interface &other) const
-//{
-//    return free_tensor(m_data + dynamic_cast<const free_tensor_implementation&>(other).m_data, p_ctx);
-//}
-//template<typename Impl>
-//free_tensor free_tensor_implementation<Impl>::sub(const free_tensor_interface &other) const
-//{
-//    return free_tensor(m_data - dynamic_cast<const free_tensor_implementation&>(other).m_data, p_ctx);
-//}
-//template<typename Impl>
-//free_tensor free_tensor_implementation<Impl>::smul(const coefficient &other) const
-//{
-//    return free_tensor(m_data * coefficient_cast<scalar_type>(other), p_ctx);
-//}
-//template<typename Impl>
-//free_tensor free_tensor_implementation<Impl>::sdiv(const coefficient &other) const
-//{
-//    return free_tensor(m_data / coefficient_cast<scalar_type>(other), p_ctx);
-//}
-//template<typename Impl>
-//free_tensor free_tensor_implementation<Impl>::mul(const free_tensor_interface &other) const
-//{
-//    return free_tensor(m_data * dynamic_cast<const free_tensor_implementation&>(other).m_data, p_ctx);
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::add_inplace(const free_tensor_interface &other)
-//{
-//    m_data += dynamic_cast<const free_tensor_implementation&>(other).m_data;
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::sub_inplace(const free_tensor_interface &other)
-//{
-//    m_data -= dynamic_cast<const free_tensor_implementation &>(other).m_data;
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::smul_inplace(const coefficient &other)
-//{
-//    m_data *= coefficient_cast<scalar_type>(other);
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::sdiv_inplace(const coefficient &other)
-//{
-//    m_data /= coefficient_cast<scalar_type>(other);
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::mul_inplace(const free_tensor_interface &other)
-//{
-//    m_data *= dynamic_cast<const free_tensor_implementation &>(other).m_data;
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::add_scal_mul(const free_tensor_interface &other, const coefficient &scal)
-//{
-//    const auto& dother = dynamic_cast<const free_tensor_implementation&>(other).m_data;
-//    m_data.add_scal_prod(dother, coefficient_cast<scalar_type>(scal));
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::sub_scal_mul(const free_tensor_interface &other, const coefficient &scal)
-//{
-//    const auto &dother = dynamic_cast<const free_tensor_implementation &>(other).m_data;
-//    m_data.sub_scal_prod(dother, coefficient_cast<scalar_type>(scal));
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::add_scal_div(const free_tensor_interface &other, const coefficient &scal)
-//{
-//    const auto &dother = dynamic_cast<const free_tensor_implementation &>(other).m_data;
-//    m_data.add_scal_div(dother, coefficient_cast<scalar_type>(scal));
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::sub_scal_div(const free_tensor_interface &other, const coefficient &scal)
-//{
-//    const auto &dother = dynamic_cast<const free_tensor_implementation &>(other).m_data;
-//    m_data.sub_scal_div(dother, coefficient_cast<scalar_type>(scal));
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::add_mul(const free_tensor_interface &lhs, const free_tensor_interface &rhs)
-//{
-//    const auto& dlhs = dynamic_cast<const free_tensor_implementation&>(lhs).m_data;
-//    const auto& drhs = dynamic_cast<const free_tensor_implementation&>(rhs).m_data;
-//    m_data.add_mul(dlhs, drhs);
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::sub_mul(const free_tensor_interface &lhs, const free_tensor_interface &rhs)
-//{
-//    const auto &dlhs = dynamic_cast<const free_tensor_implementation &>(lhs).m_data;
-//    const auto &drhs = dynamic_cast<const free_tensor_implementation &>(rhs).m_data;
-//    m_data.sub_mul(dlhs, drhs);
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::mul_smul(const free_tensor_interface &other, const coefficient &scal)
-//{
-//    const auto& dother = dynamic_cast<const free_tensor_implementation&>(other).m_data;
-//    m_data.mul_scal_prod(dother, coefficient_cast<scalar_type>(scal));
-//    return *this;
-//}
-//template<typename Impl>
-//free_tensor_interface &free_tensor_implementation<Impl>::mul_sdiv(const free_tensor_interface &other, const coefficient &scal)
-//{
-//    const auto& dother = dynamic_cast<const free_tensor_implementation&>(other).m_data;
-//    m_data.mul_scal_div(dother, coefficient_cast<scalar_type>(scal));
-//    return *this;
-//}
+
 template<typename Impl>
 free_tensor free_tensor_implementation<Impl>::exp() const
 {
@@ -360,55 +205,23 @@ free_tensor_interface &free_tensor_implementation<Impl>::fmexp(const free_tensor
     free_tensor_implementation::m_data.fmexp_inplace(dynamic_cast<const free_tensor_implementation&>(other).m_data);
     return *this;
 }
-//template<typename Impl>
-//std::ostream &free_tensor_implementation<Impl>::print(std::ostream &os) const
-//{
-//    return os << m_data;
-//}
-//template<typename Impl>
-//bool free_tensor_implementation<Impl>::equals(const free_tensor_interface &other) const
-//{
-//    try {
-//        auto o_data = dynamic_cast<const free_tensor_implementation&>(other).m_data;
-//        return m_data == o_data;
-//    } catch (std::bad_cast&) {
-//        return false;
-//    }
-//}
-//template<typename Impl>
-//coefficient free_tensor_implementation<Impl>::get(key_type key) const
-//{
-//    using info_t = algebra_info<Impl>;
-//    auto akey = info_t::convert_key(key);
-//    using ref_t = decltype(m_data[akey]);
-//    using trait = coefficient_type_trait<ref_t>;
-//    return trait::make(m_data[akey]);
-//}
-//template<typename Impl>
-//coefficient free_tensor_implementation<Impl>::get_mut(key_type key)
-//{
-//    using info_t = algebra_info<Impl>;
-//    auto akey = info_t::convert_key(key);
-//    using ref_t = decltype(m_data[akey]);
-//    using trait = coefficient_type_trait<ref_t>;
-//    return trait::make(m_data[akey]);
-//}
-//template<typename Impl>
-//algebra_iterator free_tensor_implementation<Impl>::begin() const
-//{
-//    return algebra_iterator(m_data.begin(), p_ctx);
-//}
-//template<typename Impl>
-//algebra_iterator free_tensor_implementation<Impl>::end() const
-//{
-//    return algebra_iterator(m_data.end());
-//}
-//template<typename Impl>
-//dense_data_access_iterator free_tensor_implementation<Impl>::iterate_dense_components() const {
-//    return dense_data_access_iterator(
-//        dtl::dense_data_access_implementation<Impl>(m_data, 0)
-//            );
-//}
+template<typename Impl>
+free_tensor borrowed_free_tensor_implementation<Impl>::exp() const {
+    return free_tensor(exp_wrapper(*borrowed_free_tensor_implementation::p_impl), borrowed_free_tensor_implementation::p_ctx);
+}
+template<typename Impl>
+free_tensor borrowed_free_tensor_implementation<Impl>::log() const {
+    return free_tensor(log_wrapper(*borrowed_free_tensor_implementation::p_impl), borrowed_free_tensor_implementation::p_ctx);
+}
+template<typename Impl>
+free_tensor borrowed_free_tensor_implementation<Impl>::inverse() const {
+    return free_tensor(inverse_wrapper(*borrowed_free_tensor_implementation::p_impl), borrowed_free_tensor_implementation::p_ctx);
+}
+template<typename Impl>
+free_tensor_interface &borrowed_free_tensor_implementation<Impl>::fmexp(const free_tensor_interface &other) {
+    base::p_impl->fmexp(base::cast(other));
+    return *this;
+}
 
 } // namespace dtl
 
