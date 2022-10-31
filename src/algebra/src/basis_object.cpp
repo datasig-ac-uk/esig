@@ -20,7 +20,7 @@ boost::optional<deg_t> basis::degree(key_type key) const noexcept {
     return p_impl->degree(key);
 }
 std::string basis::key_to_string(key_type key) const noexcept {
-    p_impl->key_to_string(key);
+    return p_impl->key_to_string(key);
 }
 dimn_t basis::size(int deg) const noexcept {
     return p_impl->size(deg);
