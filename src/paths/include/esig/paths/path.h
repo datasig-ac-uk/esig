@@ -247,8 +247,8 @@ public:
                          accuracy_t accuracy,
                          const algebra::context &ctx) const;
 
-
-    paths::path rough_simplified_path(partiton, deg_t depth)
+// TODO: Add new interface that constructs a simplified path from a partition
+//    paths::path rough_simplified_path(partiton, deg_t depth)
 
 };
 
