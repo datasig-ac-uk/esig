@@ -55,7 +55,7 @@ dyadic &dyadic::operator++()
     ++m_multiplier;
     return *this;
 }
-dyadic dyadic::operator++(int)
+const dyadic dyadic::operator++(int)
 {
     dyadic old(*this);
     ++m_multiplier;
@@ -66,7 +66,7 @@ dyadic &dyadic::operator--()
     --m_multiplier;
     return *this;
 }
-dyadic dyadic::operator--(int)
+const dyadic dyadic::operator--(int)
 {
     dyadic old(*this);
     --m_multiplier;
