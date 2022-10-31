@@ -129,7 +129,7 @@ struct py_vector_construction_helper
     /// Buffer used if conversion is needed
     allocating_data_buffer buffer;
     /// Context if provided by user
-    std::shared_ptr<context> ctx = nullptr;
+    std::shared_ptr<const context> ctx = nullptr;
     /// Pointers to beginning and end of data
     const char* begin_ptr;
     const char* end_ptr;

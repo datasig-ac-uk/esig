@@ -106,10 +106,11 @@ class SwitchStatement:
 
 class RegisterFunction:
 
-    def __init__(self, width, depth):
+    def __init__(self, width, depth, ctype):
         self.width = width
         self.depth = depth
-        self.name = "register_la_context_{width}_{depth}".format(width=width, depth=depth)
+        self.ctype = ctype
+        self.name = "register_la_context_{width}_{depth}_{ctype}".format(width=width, depth=depth, ctype=ctype)
 
     def __call__(self, dir, namespaces, fq_mapname):
         fq_name = "::".join([*namespaces, self.name])
@@ -117,12 +118,14 @@ class RegisterFunction:
         with open(path, "wt") as fp:
             fp.writelines([
                 "#include \"register_la_contexts.h\"\n",
+                "\nusing namespace esig;\n"
+                "using namespace esig::algebra;\n",
                 "void {name}({mapname}& map)\n".format(name=fq_name, mapname=fq_mapname),
                 "{\n",
                 "    using context_t = esig::algebra::libalgebra_context<{width}, "
-                "{depth}>;\n".format(width=self.width, depth=self.depth),
-                "    map[{{{width}, {depth}}}] = std::shared_ptr<esig::algebra::context>(new "
-                "context_t());\n".format(width=self.width, depth=self.depth),
+                "{depth}, coefficient_type::{ctype}>;\n".format(width=self.width, depth=self.depth, ctype=self.ctype),
+                "    map[{{{width}, {depth}, coefficient_type::{ctype}}}] = std::shared_ptr<const esig::algebra::context>(new "
+                "context_t());\n".format(width=self.width, depth=self.depth, ctype=self.ctype),
                 "}\n"
             ])
         print_file(path)
@@ -312,9 +315,10 @@ def load_config(path):
 
 
 def get_register_functions(config):
-    return [RegisterFunction(width, depth)
+    return [RegisterFunction(width, depth, ctype)
             for width, depths in config.items()
-            for depth in depths]
+            for depth in depths
+            for ctype in ["dp_real", "sp_real"]]
 
 
 def write_register_funcs(dir, funcs):

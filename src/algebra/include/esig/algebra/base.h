@@ -6,10 +6,6 @@
 #define ESIG_SRC_ALGEBRA_INCLUDE_ESIG_ALGEBRA_BASE_H_
 
 #include <esig/implementation_types.h>
-#include "esig/algebra/esig_algebra_export.h"
-#include "esig/algebra/algebra_traits.h"
-#include "esig/algebra/coefficients.h"
-#include "esig/algebra/iteration.h"
 
 #include <algorithm>
 #include <cassert>
@@ -18,6 +14,16 @@
 #include <type_traits>
 #include <utility>
 #include <vector>
+
+#include <boost/optional.hpp>
+#include <boost/type_traits/copy_cv.hpp>
+#include <boost/type_traits/copy_cv_ref.hpp>
+
+#include "esig/algebra/esig_algebra_export.h"
+#include "algebra_traits.h"
+#include "coefficients.h"
+#include "iteration.h"
+
 
 namespace esig {
 namespace algebra {
@@ -34,6 +40,120 @@ enum class vector_type {
 
 template <typename Algebra>
 struct algebra_info;
+
+
+class ESIG_ALGEBRA_EXPORT basis_interface {
+public:
+
+    virtual ~basis_interface() = default;
+
+    virtual boost::optional<deg_t> width() const noexcept;
+    virtual boost::optional<deg_t> depth() const noexcept;
+    virtual boost::optional<deg_t> degree(key_type key) const noexcept;
+    virtual std::string key_to_string(key_type key) const noexcept;
+    virtual dimn_t size(int) const noexcept;
+    virtual dimn_t start_of_degree(int) const noexcept;
+    virtual boost::optional<key_type> lparent(key_type key) const noexcept;
+    virtual boost::optional<key_type> rparent(key_type key) const noexcept;
+    virtual key_type index_to_key(dimn_t idx) const noexcept;
+    virtual dimn_t key_to_index(key_type key) const noexcept;
+    virtual let_t first_letter(key_type key) const noexcept;
+    virtual key_type key_of_letter(let_t letter) const noexcept;
+    virtual bool letter(key_type key) const noexcept;
+};
+
+
+namespace dtl {
+
+template <typename Impl>
+class basis_implementation : public basis_interface
+{
+    std::shared_ptr<const Impl> p_basis;
+
+public:
+
+    explicit basis_implementation(std::shared_ptr<const Impl> basis)
+        : p_basis(std::move(basis))
+    {}
+
+    boost::optional<deg_t> width() const noexcept override {
+        return p_basis->width();
+    }
+    boost::optional<deg_t> depth() const noexcept override {
+        return p_basis->depth();
+    }
+    boost::optional<deg_t> degree(key_type key) const noexcept override {
+        return p_basis->degree(key);
+    }
+    std::string key_to_string(key_type key) const noexcept override {
+        return p_basis->key_to_string(key);
+    }
+    dimn_t size(int i) const noexcept override {
+        return p_basis->size(i);
+    }
+    dimn_t start_of_degree(int i) const noexcept override {
+        return p_basis->start_of_degree(i);
+    }
+    boost::optional<key_type> lparent(key_type key) const noexcept override {
+        return p_basis->lparent(key);
+    }
+    boost::optional<key_type> rparent(key_type key) const noexcept override {
+        return p_basis->rparent(key);
+    }
+    key_type index_to_key(dimn_t idx) const noexcept override {
+        return key_type(idx);
+    }
+    dimn_t key_to_index(key_type key) const noexcept override {
+        return dimn_t(key);
+    }
+    let_t first_letter(key_type key) const noexcept override {
+        return p_basis->first_letter(key);
+    }
+    key_type key_of_letter(let_t letter) const noexcept override {
+        return p_basis->key_of_letter(letter);
+    }
+    bool letter(key_type key) const noexcept override {
+        return p_basis->letter(key);
+    }
+};
+
+} // namespace dtl
+
+
+class ESIG_ALGEBRA_EXPORT basis
+{
+    std::unique_ptr<const basis_interface> p_impl;
+
+public:
+
+    template <typename T>
+    explicit basis(T arg) : p_impl(new dtl::basis_implementation<T>(std::move(arg)))
+    {}
+
+    template <typename T>
+    explicit basis(std::shared_ptr<const T> arg) : p_impl(new dtl::basis_implementation<T>(std::move(arg)))
+    {}
+
+    const basis_interface& operator*() const noexcept
+    {
+        return *p_impl;
+    }
+
+    boost::optional<deg_t> width() const noexcept;
+    boost::optional<deg_t> depth() const noexcept;
+    boost::optional<deg_t> degree(key_type key) const noexcept;
+    std::string key_to_string(key_type key) const noexcept;
+    dimn_t size(int deg) const noexcept;
+    dimn_t start_of_degree(int deg) const noexcept;
+    boost::optional<key_type> lparent(key_type key) const noexcept;
+    boost::optional<key_type> rparent(key_type key) const noexcept;
+    key_type index_to_key(dimn_t idx) const noexcept;
+    dimn_t key_to_index(key_type key) const noexcept;
+    let_t first_letter(key_type) const noexcept;
+    key_type key_of_letter(let_t letter) const noexcept;
+    bool letter(key_type key) const noexcept;
+
+};
 
 
 
@@ -127,22 +247,6 @@ struct algebra_access;
 
 
 namespace dtl {
-
-
-template <typename T, typename U>
-struct copy_constness
-{
-    using type = U;
-};
-
-template <typename T, typename U>
-struct copy_constness<const T, U>
-{
-    using type = const U;
-};
-
-template <typename T, typename U>
-using copy_constness_t = typename copy_constness<std::remove_reference_t<T>, U>::type;
 
 template <typename Interface, typename Impl, typename Fn>
 Impl fallback_binary_op(const Impl& lhs, const Interface& rhs, Fn op);
@@ -238,9 +342,9 @@ protected:
     static T cast(const algebra_interface_t& arg) noexcept
     {
         if (arg.type() == implementation_type::owned) {
-            return static_cast<copy_constness_t<std::remove_reference_t<T>, algebra_implementation>&>(arg).m_data;
+            return static_cast<boost::copy_cv_t<algebra_implementation, std::remove_reference_t<T>>&>(arg).m_data;
         } else {
-            return *static_cast<copy_constness_t<std::remove_reference_t<T>, borrowed_alg_impl_t>&>(arg).p_impl;
+            return *static_cast<boost::copy_cv_t<borrowed_alg_impl_t, std::remove_reference_t<T>>&>(arg).p_impl;
         }
     }
 

@@ -17,24 +17,26 @@ static const char* LKEY_ITERATOR_DOC = R"eadoc(Iterator over range of Hall set m
 )eadoc";
 
 
-py_lie_key to_py_lie_key(key_type k, const algebra_basis& lbasis)
+py_lie_key to_py_lie_key(key_type k, const basis_interface& lbasis)
 {
+    auto width = lbasis.width().value();
+
     if (lbasis.letter(k)) {
-        return py_lie_key(lbasis.width(), k);
+        return py_lie_key(width, k);
     }
 
-    auto lparent = lbasis.lparent(k);
-    auto rparent = lbasis.rparent(k);
+    auto lparent = lbasis.lparent(k).value();
+    auto rparent = lbasis.rparent(k).value();
 
     if (lbasis.letter(lparent) && lbasis.letter(rparent)) {
-        return py_lie_key(lbasis.width(), lparent, rparent);
+        return py_lie_key(lbasis.width().value(), lparent, rparent);
     }
     if (lbasis.letter(lparent)) {
-        return py_lie_key(lbasis.width(), lparent, to_py_lie_key(rparent, lbasis));
+        return py_lie_key(width, lparent, to_py_lie_key(rparent, lbasis));
     }
-    return py_lie_key(lbasis.width(),
-                      to_py_lie_key(lbasis.lparent(k), lbasis),
-                      to_py_lie_key(lbasis.rparent(k), lbasis));
+    return py_lie_key(width,
+                      to_py_lie_key(lparent, lbasis),
+                      to_py_lie_key(rparent, lbasis));
 }
 
 
@@ -57,7 +59,7 @@ py_lie_key py_lie_key_iterator::next()
     }
     auto current = m_current;
     ++m_current;
-    return to_py_lie_key(current, p_ctx->borrow_lbasis());
+    return to_py_lie_key(current, *p_ctx->get_lie_basis());
 }
 
 

@@ -26,7 +26,7 @@ class sparse_tensor
 {
     using map_type = std::map<key_type, Scalar>;
     map_type m_data;
-    std::shared_ptr<tensor_basis> m_basis;
+    std::shared_ptr<const tensor_basis> m_basis;
     static const Scalar zero;
 
     void check_compatible(const tensor_basis& other) const
@@ -57,11 +57,11 @@ public:
     {
     }
 
-    explicit sparse_tensor(std::shared_ptr<tensor_basis> basis)
+    explicit sparse_tensor(std::shared_ptr<const tensor_basis> basis)
         : m_basis(std::move(basis)), m_data()
     {}
 
-    sparse_tensor(std::shared_ptr<tensor_basis> basis, const Scalar* begin, const Scalar* end)
+    sparse_tensor(std::shared_ptr<const tensor_basis> basis, const Scalar* begin, const Scalar* end)
             : m_basis(std::move(basis))
     {
         key_type k = 0;
@@ -70,20 +70,20 @@ public:
         }
     }
 
-    sparse_tensor(std::shared_ptr<tensor_basis> basis, std::initializer_list<std::pair<const key_type, Scalar>> args)
+    sparse_tensor(std::shared_ptr<const tensor_basis> basis, std::initializer_list<std::pair<const key_type, Scalar>> args)
         : m_basis(std::move(basis)), m_data(args)
     {}
 
-    sparse_tensor(std::shared_ptr<tensor_basis> basis, key_type key, Scalar s)
+    sparse_tensor(std::shared_ptr<const tensor_basis> basis, key_type key, Scalar s)
         : m_basis(std::move(basis)), m_data{{key, s}}
     {}
 
-    sparse_tensor(std::shared_ptr<tensor_basis> basis, Scalar val)
+    sparse_tensor(std::shared_ptr<const tensor_basis> basis, Scalar val)
             : m_basis(std::move(basis)), m_data {{0, val}}
     {}
 
     template <typename InputIt>
-    sparse_tensor(std::shared_ptr<tensor_basis> basis, InputIt begin, InputIt end)
+    sparse_tensor(std::shared_ptr<const tensor_basis> basis, InputIt begin, InputIt end)
             : m_basis(std::move(basis)), m_data(begin, end)
     {}
 
@@ -116,7 +116,7 @@ public:
         return *m_basis;
     }
 
-    std::shared_ptr<tensor_basis> get_basis() const noexcept
+    std::shared_ptr<const tensor_basis> get_basis() const noexcept
     {
         return m_basis;
     }

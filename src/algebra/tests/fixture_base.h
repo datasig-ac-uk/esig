@@ -32,7 +32,7 @@ public:
     std::uniform_int_distribution<key_type> kdist;
 
 
-    std::shared_ptr<algebra::context> ctx;
+    std::shared_ptr<const algebra::context> ctx;
 
     fixture_base();
 

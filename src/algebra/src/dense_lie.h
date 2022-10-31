@@ -24,7 +24,7 @@ template <typename Scalar>
 class dense_lie
 {
     std::vector<Scalar> m_data;
-    std::shared_ptr<lie_basis> m_basis;
+    std::shared_ptr<const lie_basis> m_basis;
     deg_t m_degree;
 
 
@@ -57,28 +57,28 @@ public:
             : m_basis(new lie_basis(width, depth)), m_degree(0), m_data()
     {}
 
-    explicit dense_lie(std::shared_ptr<lie_basis> basis)
+    explicit dense_lie(std::shared_ptr<const lie_basis> basis)
             : m_basis(std::move(basis)), m_degree(0), m_data()
     {}
 
-    dense_lie(std::shared_ptr<lie_basis> basis, deg_t degree)
+    dense_lie(std::shared_ptr<const lie_basis> basis, deg_t degree)
             : m_basis(std::move(basis)), m_degree(degree), m_data()
     {}
 
-    dense_lie(std::shared_ptr<lie_basis> basis, deg_t degree, std::initializer_list<Scalar> args)
+    dense_lie(std::shared_ptr<const lie_basis> basis, deg_t degree, std::initializer_list<Scalar> args)
             : m_basis(std::move(basis)), m_degree(degree), m_data(args)
     {
         resize(m_basis->size(static_cast<int>(m_degree)));
     }
 
 
-    dense_lie(std::shared_ptr<lie_basis> basis, deg_t degree, std::vector<Scalar>&& data)
+    dense_lie(std::shared_ptr<const lie_basis> basis, deg_t degree, std::vector<Scalar>&& data)
             : m_basis(std::move(basis)), m_degree(degree), m_data(std::move(data))
     {
         resize(m_basis->size(static_cast<int>(m_degree)));
     }
 
-    dense_lie(std::shared_ptr<lie_basis> basis, const Scalar* begin, const Scalar* end)
+    dense_lie(std::shared_ptr<const lie_basis> basis, const Scalar* begin, const Scalar* end)
             : m_basis(std::move(basis)), m_degree(0), m_data(begin, end)
     {
         if (!m_data.empty()) {
@@ -189,7 +189,7 @@ public:
         }
     }
 
-    std::shared_ptr<lie_basis> get_basis() const noexcept
+    std::shared_ptr<const lie_basis> get_basis() const noexcept
     {
         return m_basis;
     }

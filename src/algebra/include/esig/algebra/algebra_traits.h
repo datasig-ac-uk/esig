@@ -23,13 +23,6 @@ namespace algebra {
 
 
 
-
-
-
-
-
-
-
 template <typename Algebra>
 struct dense_data_access
 {

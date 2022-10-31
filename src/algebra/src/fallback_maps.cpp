@@ -27,7 +27,7 @@ esig::algebra::dtl::expand_binop::result_t esig::algebra::dtl::expand_binop::ope
     return {tmp.begin(), tmp.end()};
 }
 
-esig::algebra::maps::maps(std::shared_ptr<tensor_basis> tbasis, std::shared_ptr<lie_basis> lbasis)
+esig::algebra::maps::maps(std::shared_ptr<const tensor_basis> tbasis, std::shared_ptr<const lie_basis> lbasis)
     : p_tensor_basis(std::move(tbasis)), p_lie_basis(std::move(lbasis)),
       expand(p_lie_basis->get_hall_set(), &maps::expand_func, dtl::expand_binop(p_tensor_basis.get()))
 {

@@ -53,8 +53,8 @@ private:
 class maps
 {
 
-    std::shared_ptr<tensor_basis> p_tensor_basis;
-    std::shared_ptr<lie_basis> p_lie_basis;
+    std::shared_ptr<const tensor_basis> p_tensor_basis;
+    std::shared_ptr<const lie_basis> p_lie_basis;
 
     static std::vector<std::pair<key_type, int>> expand_func(let_t letter);
 
@@ -69,7 +69,7 @@ public:
     const std::vector<std::pair<key_type, int>>& rbracket(key_type key) const;
 
 
-    maps(std::shared_ptr<tensor_basis> tbasis, std::shared_ptr<lie_basis> lbasis);
+    maps(std::shared_ptr<const tensor_basis> tbasis, std::shared_ptr<const lie_basis> lbasis);
 
     template <typename Lie, typename Tensor>
     Tensor lie_to_tensor(const Lie& arg) const;

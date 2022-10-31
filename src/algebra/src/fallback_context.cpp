@@ -75,10 +75,10 @@ class fallback_context_cache
     using hash = boost::hash<key_type>;
 
     std::mutex m_lock;
-    std::unordered_map<key_type, std::shared_ptr<context>, hash> m_cache;
+    std::unordered_map<key_type, std::shared_ptr<const context>, hash> m_cache;
 
 
-    std::shared_ptr<context> make(deg_t width, deg_t depth, coefficient_type ctype)
+    std::shared_ptr<const context> make(deg_t width, deg_t depth, coefficient_type ctype)
     {
 #define ESIG_SWITCH_FN(CTYPE) std::shared_ptr<context>(new fallback_context<(CTYPE)>(width, depth))
         ESIG_MAKE_CTYPE_SWITCH(ctype)
@@ -87,7 +87,7 @@ class fallback_context_cache
 
 public:
 
-    std::shared_ptr<context> get(deg_t width, deg_t depth, coefficient_type ctype)
+    std::shared_ptr<const context> get(deg_t width, deg_t depth, coefficient_type ctype)
     {
         std::lock_guard<std::mutex> access(m_lock);
 
@@ -106,7 +106,7 @@ public:
 
 static fallback_context_cache s_cache;
 
-std::shared_ptr<context> get_fallback_context(deg_t width, deg_t depth, coefficient_type ctype) {
+std::shared_ptr<const context> get_fallback_context(deg_t width, deg_t depth, coefficient_type ctype) {
     return s_cache.get(width, depth, ctype);
 }
 
@@ -285,7 +285,7 @@ std::shared_ptr<context> get_fallback_context(deg_t width, deg_t depth, coeffici
 
 
 
-std::shared_ptr<context> fallback_context_maker::get_context(deg_t width, deg_t depth, coefficient_type ctype) const
+std::shared_ptr<const context> fallback_context_maker::get_context(deg_t width, deg_t depth, coefficient_type ctype) const
 {
     return s_cache.get(width, depth, ctype);
 }

@@ -246,6 +246,10 @@ public:
     signature_derivative(const perturbation_list_t &perturbations,
                          accuracy_t accuracy,
                          const algebra::context &ctx) const;
+
+
+    paths::path rough_simplified_path(partiton, deg_t depth)
+
 };
 
 

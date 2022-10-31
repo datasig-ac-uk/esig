@@ -34,7 +34,7 @@ class converting_reference_wrapper
 public:
 
     explicit converting_reference_wrapper(
-        std::shared_ptr<lie_basis> basis,
+        std::shared_ptr<const lie_basis> basis,
         const lie_interface* interface)
         : m_interface(interface), tmp(std::move(basis))
     {}
@@ -71,7 +71,7 @@ class converting_lie_iterator_adaptor
 {
     using base_iterator = std::vector<lie>::const_iterator;
     base_iterator m_data;
-    std::shared_ptr<lie_basis> m_basis;
+    std::shared_ptr<const lie_basis> m_basis;
 public:
     using difference_type = std::ptrdiff_t;
     using value_type = OutLie;
@@ -81,7 +81,7 @@ public:
 
 
     explicit converting_lie_iterator_adaptor(
-        std::shared_ptr<lie_basis> basis,
+        std::shared_ptr<const lie_basis> basis,
         base_iterator it) : m_data(it), m_basis(std::move(basis))
     {}
 

@@ -5,18 +5,18 @@
 #ifndef ESIG_PATHS_SRC_CONTEXT_CONTEXT_CPP_FALLBACK_CONTEXT1_H_
 #define ESIG_PATHS_SRC_CONTEXT_CONTEXT_CPP_FALLBACK_CONTEXT1_H_
 
-#include <esig/algebra/context.h>
-#include "dense_tensor.h"
 #include "dense_lie.h"
-#include "sparse_tensor.h"
-#include "sparse_lie.h"
-#include "lie_basis/lie_basis.h"
-#include "lie_basis/hall_extension.h"
-#include "fallback_maps.h"
+#include "dense_tensor.h"
 #include "detail/converting_lie_iterator_adaptor.h"
+#include "fallback_maps.h"
+#include "lie_basis/hall_extension.h"
+#include "lie_basis/lie_basis.h"
+#include "sparse_lie.h"
+#include "sparse_tensor.h"
+#include <boost/move/utility_core.hpp>
+#include <esig/algebra/context.h>
 #include <memory>
 #include <unordered_map>
-
 
 namespace esig {
 namespace algebra {
@@ -38,7 +38,7 @@ template<typename Lie>
 struct to_lie_helper {
     using scalar_type = typename Lie::scalar_type;
 
-    to_lie_helper(std::shared_ptr<lie_basis> b, deg_t degree)
+    to_lie_helper(std::shared_ptr<const lie_basis> b, deg_t degree)
         : m_basis(std::move(b)), m_degree(degree) {}
 
     Lie operator()(const char *b, const char *e) const {
@@ -57,13 +57,13 @@ struct to_lie_helper {
     }
 
 private:
-    std::shared_ptr<lie_basis> m_basis;
+    std::shared_ptr<const lie_basis> m_basis;
     deg_t m_degree;
 };
 
 
 
-std::shared_ptr<context> get_fallback_context(deg_t width, deg_t depth, coefficient_type ctype);
+std::shared_ptr<const context> get_fallback_context(deg_t width, deg_t depth, coefficient_type ctype);
 
 
 
@@ -73,8 +73,8 @@ class fallback_context
 {
     deg_t m_width;
     deg_t m_depth;
-    std::shared_ptr<tensor_basis> m_tensor_basis;
-    std::shared_ptr<lie_basis> m_lie_basis;
+    std::shared_ptr<const tensor_basis> m_tensor_basis;
+    std::shared_ptr<const lie_basis> m_lie_basis;
 
     std::shared_ptr<data_allocator> m_coeff_alloc;
     std::shared_ptr<data_allocator> m_pair_alloc;
@@ -130,16 +130,19 @@ public:
     deg_t depth() const noexcept override;
     coefficient_type ctype() const noexcept override;
 
-    const algebra_basis &borrow_tbasis() const noexcept override;
-    const algebra_basis &borrow_lbasis() const noexcept override;
+//    const algebra_basis &borrow_tbasis() const noexcept override;
+//    const algebra_basis &borrow_lbasis() const noexcept override;
 
-    std::shared_ptr<tensor_basis> tbasis() const noexcept;
-    std::shared_ptr<lie_basis> lbasis() const noexcept;
+//    std::shared_ptr<const tensor_basis> tbasis() const noexcept;
+//    std::shared_ptr<const lie_basis> lbasis() const noexcept;
 
-    std::shared_ptr<context> get_alike(deg_t new_depth) const override;
-    std::shared_ptr<context> get_alike(coefficient_type new_coeff) const override;
-    std::shared_ptr<context> get_alike(deg_t new_depth, coefficient_type new_coeff) const override;
-    std::shared_ptr<context> get_alike(deg_t new_width, deg_t new_depth, coefficient_type new_coeff) const override;
+    basis get_tensor_basis() const override;
+    basis get_lie_basis() const override;
+
+    std::shared_ptr<const context> get_alike(deg_t new_depth) const override;
+    std::shared_ptr<const context> get_alike(coefficient_type new_coeff) const override;
+    std::shared_ptr<const context> get_alike(deg_t new_depth, coefficient_type new_coeff) const override;
+    std::shared_ptr<const context> get_alike(deg_t new_width, deg_t new_depth, coefficient_type new_coeff) const override;
 
     std::shared_ptr<data_allocator> coefficient_alloc() const override;
     std::shared_ptr<data_allocator> pair_alloc() const override;
@@ -153,8 +156,7 @@ public:
     free_tensor sig_derivative(const std::vector<derivative_compute_info> &info, vector_type vtype, vector_type type) const override;
     dimn_t lie_size(deg_t d) const noexcept override;
     dimn_t tensor_size(deg_t d) const noexcept override;
-    std::shared_ptr<tensor_basis> get_tensor_basis() const noexcept;
-    std::shared_ptr<lie_basis> get_lie_basis() const noexcept;
+
     free_tensor construct_tensor(const vector_construction_data &data) const override;
     lie construct_lie(const vector_construction_data &data) const override;
     free_tensor lie_to_tensor(const lie &arg) const override;
@@ -169,7 +171,7 @@ public:
 class fallback_context_maker : public context_maker
 {
 public:
-    std::shared_ptr<context> get_context(deg_t width, deg_t depth, coefficient_type ctype) const override;
+    std::shared_ptr<const context> get_context(deg_t width, deg_t depth, coefficient_type ctype) const override;
     bool can_get(deg_t width, deg_t depth, coefficient_type ctype) const noexcept override;
     int get_priority(const std::vector<std::string> &preferences) const noexcept override;
 };
@@ -248,8 +250,8 @@ template<vector_type VType>
 ftensor_type<CType, VType> fallback_context<CType>::compute_signature(signature_data data) const {
     //TODO: In the future, use a method on signature_data to get the
     // correct depth for the increments.
-    to_lie_helper<lie_type<CType, VType>> helper(get_lie_basis(), 1);
-    ftensor_type<CType, VType> result(get_tensor_basis(), typename ftensor_type<CType, VType>::scalar_type(1));
+    to_lie_helper<lie_type<CType, VType>> helper(m_lie_basis, 1);
+    ftensor_type<CType, VType> result(m_tensor_basis, typename ftensor_type<CType, VType>::scalar_type(1));
     for (auto incr : data.template iter_increments(helper)) {
         result.fmexp_inplace(lie_to_tensor_impl<VType>(incr));
     }
@@ -304,10 +306,10 @@ template<vector_type VType>
 ftensor_type<CType, VType> fallback_context<CType>::sig_derivative_impl(const std::vector<derivative_compute_info> &info) const
 {
     if (info.empty()) {
-        return ftensor_type<CType, VType>(get_tensor_basis());
+        return ftensor_type<CType, VType>(m_tensor_basis);
     }
 
-    ftensor_type<CType, VType> result(get_tensor_basis());
+    ftensor_type<CType, VType> result(m_tensor_basis);
 
     using access = algebra_access<lie_interface>;
 
@@ -424,38 +426,38 @@ template<coefficient_type CType>
 coefficient_type fallback_context<CType>::ctype() const noexcept {
     return coefficient_type::dp_real;
 }
-template<coefficient_type CType>
-const algebra_basis &fallback_context<CType>::borrow_tbasis() const noexcept {
-    return *m_tensor_basis;
-}
-template<coefficient_type CType>
-const algebra_basis &fallback_context<CType>::borrow_lbasis() const noexcept {
-    return *m_lie_basis;
-}
-template<coefficient_type CType>
-std::shared_ptr<tensor_basis> fallback_context<CType>::tbasis() const noexcept {
-    return m_tensor_basis;
-}
-template<coefficient_type CType>
-std::shared_ptr<lie_basis> fallback_context<CType>::lbasis() const noexcept {
-    return m_lie_basis;
+//template<coefficient_type CType>
+//const algebra_basis &fallback_context<CType>::borrow_tbasis() const noexcept {
+//    return *m_tensor_basis;
+//}
+//template<coefficient_type CType>
+//const algebra_basis &fallback_context<CType>::borrow_lbasis() const noexcept {
+//    return *m_lie_basis;
+//}
+//template<coefficient_type CType>
+//std::shared_ptr<tensor_basis> fallback_context<CType>::tbasis() const noexcept {
+//    return m_tensor_basis;
+//}
+//template<coefficient_type CType>
+//std::shared_ptr<lie_basis> fallback_context<CType>::lbasis() const noexcept {
+//    return m_lie_basis;
+//
+//}
 
-}
-
 template<coefficient_type CType>
-std::shared_ptr<context> fallback_context<CType>::get_alike(deg_t new_depth) const {
+std::shared_ptr<const context> fallback_context<CType>::get_alike(deg_t new_depth) const {
     return get_fallback_context(m_width, new_depth, CType);
 }
 template<coefficient_type CType>
-std::shared_ptr<context> fallback_context<CType>::get_alike(coefficient_type new_coeff) const {
+std::shared_ptr<const context> fallback_context<CType>::get_alike(coefficient_type new_coeff) const {
     return get_fallback_context(m_width, m_depth, new_coeff);
 }
 template<coefficient_type CType>
-std::shared_ptr<context> fallback_context<CType>::get_alike(deg_t new_depth, coefficient_type new_coeff) const {
+std::shared_ptr<const context> fallback_context<CType>::get_alike(deg_t new_depth, coefficient_type new_coeff) const {
     return get_fallback_context(m_width, new_depth, new_coeff);
 }
 template<coefficient_type CType>
-std::shared_ptr<context> fallback_context<CType>::get_alike(deg_t new_width, deg_t new_depth, coefficient_type new_coeff) const {
+std::shared_ptr<const context> fallback_context<CType>::get_alike(deg_t new_width, deg_t new_depth, coefficient_type new_coeff) const {
     return get_fallback_context(new_width, new_depth, new_coeff);
 }
 template<coefficient_type CType>
@@ -499,14 +501,14 @@ template<coefficient_type CType>
 dimn_t fallback_context<CType>::tensor_size(deg_t d) const noexcept {
     return m_tensor_basis->size(static_cast<int>(d));
 }
-template<coefficient_type CType>
-std::shared_ptr<tensor_basis> fallback_context<CType>::get_tensor_basis() const noexcept {
-    return m_tensor_basis;
-}
-template<coefficient_type CType>
-std::shared_ptr<lie_basis> fallback_context<CType>::get_lie_basis() const noexcept {
-    return m_lie_basis;
-}
+//template<coefficient_type CType>
+//std::shared_ptr<tensor_basis> fallback_context<CType>::get_tensor_basis() const noexcept {
+//    return m_tensor_basis;
+//}
+//template<coefficient_type CType>
+//std::shared_ptr<lie_basis> fallback_context<CType>::get_lie_basis() const noexcept {
+//    return m_lie_basis;
+//}
 template<coefficient_type CType>
 free_tensor fallback_context<CType>::construct_tensor(const vector_construction_data &data) const {
     switch (data.vtype()) {
@@ -556,6 +558,14 @@ lie fallback_context<CType>::log_signature(signature_data data) const {
 #define ESIG_SWITCH_FN(VTYPE) lie(tensor_to_lie_impl<(VTYPE)>(log(compute_signature<(VTYPE)>(std::move(data)))), this)
     ESIG_MAKE_VTYPE_SWITCH(data.vtype())
 #undef ESIG_SWITCH_FN
+}
+template<coefficient_type CType>
+basis fallback_context<CType>::get_tensor_basis() const {
+    return basis(m_tensor_basis);
+}
+template<coefficient_type CType>
+basis fallback_context<CType>::get_lie_basis() const {
+    return basis(m_lie_basis);
 }
 
 }// namespace algebra

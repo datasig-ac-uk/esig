@@ -27,7 +27,7 @@ class sparse_lie
 {
     using map_type = std::map<key_type, Scalar>;
     map_type m_data;
-    std::shared_ptr<lie_basis> m_basis;
+    std::shared_ptr<const lie_basis> m_basis;
 
     static const Scalar zero;
 
@@ -56,19 +56,19 @@ public:
         : m_basis(new lie_basis(width, depth)), m_data()
     {}
 
-    explicit sparse_lie(std::shared_ptr<lie_basis> basis)
+    explicit sparse_lie(std::shared_ptr<const lie_basis> basis)
         : m_basis(std::move(basis)), m_data()
     {}
 
-    sparse_lie(std::shared_ptr<lie_basis> basis, std::initializer_list<std::pair<const key_type, Scalar>> args)
+    sparse_lie(std::shared_ptr<const lie_basis> basis, std::initializer_list<std::pair<const key_type, Scalar>> args)
         : m_basis(std::move(basis)), m_data(args)
     {}
 
-    sparse_lie(std::shared_ptr<lie_basis> basis, key_type key, Scalar s)
+    sparse_lie(std::shared_ptr<const lie_basis> basis, key_type key, Scalar s)
         : m_basis(std::move(basis)), m_data{{key, s}}
     {}
 
-    sparse_lie(std::shared_ptr<lie_basis> basis, const Scalar *begin, const Scalar *end)
+    sparse_lie(std::shared_ptr<const lie_basis> basis, const Scalar *begin, const Scalar *end)
         : m_basis(std::move(basis))
     {
         key_type k = 1;
@@ -79,7 +79,7 @@ public:
 
 
     template <typename InputIt>
-    sparse_lie(std::shared_ptr<lie_basis> basis, InputIt begin, InputIt end)
+    sparse_lie(std::shared_ptr<const lie_basis> basis, InputIt begin, InputIt end)
         : m_basis(std::move(basis)), m_data()
     {
         for (auto it = begin; it != end; ++it) {
@@ -123,7 +123,7 @@ public:
     {
         return *m_basis;
     }
-    std::shared_ptr<lie_basis> get_basis() const noexcept
+    std::shared_ptr<const lie_basis> get_basis() const noexcept
     {
         return m_basis;
     }

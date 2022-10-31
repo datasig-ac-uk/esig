@@ -53,7 +53,7 @@ static std::vector<std::unique_ptr<context_maker>>& get_context_maker_list() noe
     return list;
 }
 
-std::shared_ptr<context> get_context(deg_t width, deg_t depth, coefficient_type ctype, const std::vector<std::string>& preferences)
+std::shared_ptr<const context> get_context(deg_t width, deg_t depth, coefficient_type ctype, const std::vector<std::string>& preferences)
 {
     std::lock_guard<std::mutex> access(s_context_lock);
     std::vector<std::pair<int, const context_maker*>> found;

@@ -181,10 +181,10 @@ public:
     virtual coefficient_type ctype() const noexcept = 0;
 
     // Get related contexts
-    virtual std::shared_ptr<context> get_alike(deg_t new_depth) const = 0;
-    virtual std::shared_ptr<context> get_alike(coefficient_type new_coeff) const = 0;
-    virtual std::shared_ptr<context> get_alike(deg_t new_depth, coefficient_type new_coeff) const = 0;
-    virtual std::shared_ptr<context> get_alike(deg_t new_width, deg_t new_depth, coefficient_type new_coeff) const = 0;
+    virtual std::shared_ptr<const context> get_alike(deg_t new_depth) const = 0;
+    virtual std::shared_ptr<const context> get_alike(coefficient_type new_coeff) const = 0;
+    virtual std::shared_ptr<const context> get_alike(deg_t new_depth, coefficient_type new_coeff) const = 0;
+    virtual std::shared_ptr<const context> get_alike(deg_t new_width, deg_t new_depth, coefficient_type new_coeff) const = 0;
 
     // Scalar allocators
     virtual std::shared_ptr<data_allocator> coefficient_alloc() const = 0;
@@ -204,8 +204,12 @@ public:
     // Access the basis interface for lie and tensors
     //virtual std::shared_ptr<algebra_basis> get_tensor_basis() const noexcept = 0;
     //virtual std::shared_ptr<algebra_basis> get_lie_basis() const noexcept = 0;
-    virtual const algebra_basis &borrow_tbasis() const noexcept = 0;
-    virtual const algebra_basis &borrow_lbasis() const noexcept = 0;
+//    virtual const algebra_basis &borrow_tbasis() const noexcept = 0;
+//    virtual const algebra_basis &borrow_lbasis() const noexcept = 0;
+
+    virtual basis get_tensor_basis() const = 0;
+    virtual basis get_lie_basis() const = 0;
+
 
     // Construct new instances of tensors and lies
     virtual free_tensor construct_tensor(const vector_construction_data &) const = 0;
@@ -234,7 +238,7 @@ public:
 };
 
 
-std::shared_ptr<context> ESIG_ALGEBRA_EXPORT get_context(
+std::shared_ptr<const context> ESIG_ALGEBRA_EXPORT get_context(
         deg_t width,
         deg_t depth,
         coefficient_type ctype,
@@ -245,7 +249,7 @@ struct ESIG_ALGEBRA_EXPORT context_maker {
     virtual ~context_maker() = default;
     virtual bool can_get(deg_t, deg_t, coefficient_type) const noexcept = 0;
     virtual int get_priority(const std::vector<std::string> &preferences) const noexcept;
-    virtual std::shared_ptr<context> get_context(deg_t, deg_t, coefficient_type) const = 0;
+    virtual std::shared_ptr<const context> get_context(deg_t, deg_t, coefficient_type) const = 0;
 };
 
 ESIG_ALGEBRA_EXPORT

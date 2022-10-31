@@ -12,7 +12,7 @@ include(GenerateExportHeader)
 
 
 
-add_library(esig_common SHARED)
+add_library(esig_common SHARED src/interval_partition.cpp)
 #add_library(esig_common SHARED )
 #pybind11_extension(esig_common)
 #target_link_libraries(esig_common PUBLIC

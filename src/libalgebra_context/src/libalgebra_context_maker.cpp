@@ -4,7 +4,6 @@
 
 #include "libalgebra_context_maker.h"
 #include "register_la_contexts.h"
-#include "vector_construction_data.h"
 #include <esig/libalgebra_context/libalgebra_context.h>
 
 #include <functional>
@@ -14,11 +13,11 @@ namespace {
 
 using esig::deg_t;
 
-template <deg_t Width, deg_t Depth>
-std::shared_ptr<esig::algebra::context> build_ctx()
+template <deg_t Width, deg_t Depth, esig::algebra::coefficient_type CType>
+std::shared_ptr<const esig::algebra::context> build_ctx()
 {
-    using ctx_t = esig::algebra::libalgebra_context<Width, Depth>;
-    return std::shared_ptr<esig::algebra::context>(new ctx_t());
+    using ctx_t = esig::algebra::libalgebra_context<Width, Depth, CType>;
+    return std::shared_ptr<const esig::algebra::context>(new ctx_t());
 }
 
 //std::shared_ptr<esig::algebra::context> get_ctx(deg_t width, deg_t depth)
@@ -43,20 +42,20 @@ esig::algebra::libalgebra_context_maker::libalgebra_context_maker()
     esig::algebra::dtl::register_la_contexts(cache);
 }
 
-bool esig::algebra::libalgebra_context_maker::can_get(esig::deg_t width, esig::deg_t depth) const noexcept
+bool esig::algebra::libalgebra_context_maker::can_get(esig::deg_t width, esig::deg_t depth, coefficient_type ctype) const noexcept
 {
     std::lock_guard<std::recursive_mutex> access(m_lock);
-    auto found = cache.find({width, depth});
+    auto found = cache.find({width, depth, ctype});
     return found != cache.end();
 }
 int esig::algebra::libalgebra_context_maker::get_priority(const std::vector<std::string> &preferences) const noexcept
 {
     return 1;
 }
-std::shared_ptr<esig::algebra::context> esig::algebra::libalgebra_context_maker::get_context(esig::deg_t width, esig::deg_t depth) const
+std::shared_ptr<const esig::algebra::context> esig::algebra::libalgebra_context_maker::get_context(esig::deg_t width, esig::deg_t depth, esig::algebra::coefficient_type ctype) const
 {
     std::lock_guard<std::recursive_mutex> access(m_lock);
-    auto found = cache.find({width, depth});
+    auto found = cache.find({width, depth, ctype});
     if (found != cache.end()) {
         return found->second;
     }

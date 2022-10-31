@@ -26,7 +26,7 @@ namespace algebra {
 template <typename Scalar>
 class dense_tensor {
     std::vector<Scalar> m_data;
-    std::shared_ptr<tensor_basis> m_basis;
+    std::shared_ptr<const tensor_basis> m_basis;
     deg_t m_degree;
 
     void check_compatible(const tensor_basis &other_basis) const {
@@ -52,30 +52,30 @@ public:
     explicit dense_tensor(deg_t width, deg_t depth)
         : m_basis(new tensor_basis(width, depth)), m_degree(0), m_data() {}
 
-    explicit dense_tensor(std::shared_ptr<tensor_basis> basis)
+    explicit dense_tensor(std::shared_ptr<const tensor_basis> basis)
         : m_basis(std::move(basis)), m_degree(0), m_data() {}
 
-    dense_tensor(std::shared_ptr<tensor_basis> basis, deg_t degree)
+    dense_tensor(std::shared_ptr<const tensor_basis> basis, deg_t degree)
         : m_basis(std::move(basis)), m_degree(degree), m_data() {}
 
-    dense_tensor(std::shared_ptr<tensor_basis> basis, deg_t degree, std::initializer_list<Scalar> args)
+    dense_tensor(std::shared_ptr<const tensor_basis> basis, deg_t degree, std::initializer_list<Scalar> args)
         : m_basis(std::move(basis)), m_degree(degree), m_data(args) {
         m_data.resize(m_basis->size(static_cast<int>(m_degree)));
     }
 
-    dense_tensor(std::shared_ptr<tensor_basis> basis, deg_t degree, std::vector<Scalar> &&data)
+    dense_tensor(std::shared_ptr<const tensor_basis> basis, deg_t degree, std::vector<Scalar> &&data)
         : m_basis(std::move(basis)), m_degree(degree), m_data(std::move(data)) {
         m_data.resize(m_basis->size(static_cast<int>(m_degree)));
     }
 
-    dense_tensor(std::shared_ptr<tensor_basis> basis, const Scalar *begin, const Scalar *end)
+    dense_tensor(std::shared_ptr<const tensor_basis> basis, const Scalar *begin, const Scalar *end)
         : m_basis(std::move(basis)), m_degree(0), m_data(begin, end) {
         if (!m_data.empty()) {
             resize(m_data.size());
         }
     }
 
-    dense_tensor(std::shared_ptr<tensor_basis> basis, Scalar val)
+    dense_tensor(std::shared_ptr<const tensor_basis> basis, Scalar val)
         : m_basis(std::move(basis)), m_degree(0), m_data{val} {}
 
 protected:
@@ -185,7 +185,7 @@ public:
         return m_data;
     }
 
-    std::shared_ptr<tensor_basis> get_basis() const noexcept
+    std::shared_ptr<const tensor_basis> get_basis() const noexcept
     {
         return m_basis;
     }

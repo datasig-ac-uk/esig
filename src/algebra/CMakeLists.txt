@@ -8,7 +8,7 @@ project(esig_algebra VERSION 0.1)
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 
-add_library(esig_algebra SHARED )
+add_library(esig_algebra SHARED src/basis_interface.cpp src/basis_interface.h src/basis_object.cpp)
 # Use add_library because it works better with the IDE
 #add_library(esig_algebra SHARED)
 #pybind11_extension(esig_algebra)
