@@ -94,9 +94,9 @@ public:
 
     dyadic& move_forward(multiplier_t arg);
     dyadic& operator++();
-    dyadic operator++(int);
+    const dyadic operator++(int);
     dyadic& operator--();
-    dyadic operator--(int);
+    const dyadic operator--(int);
 
 public:
     bool rebase(power_t resolution=std::numeric_limits<power_t>::lowest());
@@ -221,6 +221,18 @@ public:
 
 
 
+class ESIG_EXPORT partition : public real_interval {
+
+    std::vector<param_t> m_midpoints;
+public:
+
+    using real_interval::real_interval;
+
+    partition(real_interval base, std::initializer_list<param_t> midpoints);
+
+    real_interval operator[](dimn_t index) noexcept;
+
+};
 
 
 } // namespace esig
