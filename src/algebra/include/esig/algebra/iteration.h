@@ -132,9 +132,10 @@ namespace dtl {
  * vector iterator type as a template parameter.
  */
 
+
 template<typename Iterator>
 struct iterator_traits {
-    static key_type key(Iterator it) noexcept
+    static decltype(auto) key(Iterator it) noexcept
     { return it->first; }
     static typename std::iterator_traits<Iterator>::value_type::second_type
     value(Iterator it) noexcept
