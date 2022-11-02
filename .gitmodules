@@ -5,10 +5,6 @@
 	path = external/libalgebra
 	url = git@github.com:terrylyons/libalgebra.git
 	branch = develop
-[submodule "external/recombine"]
-	path = external/recombine
-	url = https://github.com/terrylyons/recombine.git
-	branch = cleanup
 [submodule "pybind11"]
 	path = external/pybind11
 	url = https://github.com/pybind/pybind11.git
