@@ -6,7 +6,7 @@
 #include <gtest/gtest.h>
 #include "lie_basis.h"
 #include <libalgebra/libalgebra.h>
-#include <libalgebra/coefficients/rational_coefficients.h>
+#include <libalgebra/rational_coefficients.h>
 
 using esig::deg_t;
 

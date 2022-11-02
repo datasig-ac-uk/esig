@@ -10,14 +10,15 @@
 #include <mutex>
 
 #include <boost/functional/hash.hpp>
+#include <boost/move/utility_core.hpp>
 
+#include <libalgebra/coefficients.h>
 #include <libalgebra/hall_set.h>
 #include <libalgebra/libalgebra.h>
-#include <libalgebra/coefficients/coefficients.h>
 
-#include <boost/move/utility_core.hpp>
 #include <esig/algebra/algebra_traits.h>
 #include <esig/algebra/context.h>
+#include <esig/algebra/iteration.h>
 
 namespace esig {
 namespace algebra {
@@ -34,18 +35,29 @@ struct vector_type_helper<alg::vectors::dense_vector> {
     static constexpr vector_type value = vector_type::dense;
 };
 
+template<vector_type>
+struct vtype_helper;
 
-template <deg_t Width, deg_t Depth>
+template<>
+struct vtype_helper<vector_type::dense> {
+    template<typename B, typename C, typename...>
+    using type = alg::vectors::dense_vector<B, C>;
+};
+
+template<>
+struct vtype_helper<vector_type::sparse> {
+    template<typename B, typename C>
+    using type = alg::vectors::sparse_vector<B, C>;
+};
+
+template<deg_t Width, deg_t Depth>
 class basis_implementation<alg::free_tensor_basis<Width, Depth>>
-    : public basis_interface
-{
+    : public basis_interface {
     using basis_type = alg::free_tensor_basis<Width, Depth>;
-    const basis_type& m_basis;
+    const basis_type &m_basis;
 
 public:
-
-    explicit basis_implementation(const basis_type& basis) : m_basis(basis)
-    {}
+    explicit basis_implementation(const basis_type &basis) : m_basis(basis) {}
 
     boost::optional<deg_t> width() const noexcept override {
         return Width;
@@ -60,7 +72,7 @@ public:
         return m_basis.key2string(m_basis.index_to_key(key));
     }
     dimn_t size(int i) const noexcept override {
-        return m_basis.start_of_degree(unsigned(i+1));
+        return m_basis.start_of_degree(unsigned(i + 1));
     }
     dimn_t start_of_degree(int i) const noexcept override {
         return m_basis.start_of_degree(unsigned(i));
@@ -78,7 +90,7 @@ public:
         return key;
     }
     let_t first_letter(key_type key) const noexcept override {
-        return m_basis.getletter(lparent(key));
+        return m_basis.getletter(lparent(key).get());
     }
     key_type key_of_letter(let_t letter) const noexcept override {
         return m_basis.key_to_index(m_basis.keyofletter(letter));
@@ -88,18 +100,14 @@ public:
     }
 };
 
-
-template <deg_t Width, deg_t Depth>
+template<deg_t Width, deg_t Depth>
 class basis_implementation<alg::lie_basis<Width, Depth>>
-    : public basis_interface
-{
+    : public basis_interface {
     using basis_type = alg::lie_basis<Width, Depth>;
-    const basis_type& m_basis;
+    const basis_type &m_basis;
+
 public:
-
-    explicit basis_implementation(const basis_type& basis) : m_basis(basis)
-    {}
-
+    explicit basis_implementation(const basis_type &basis) : m_basis(basis) {}
 
     boost::optional<deg_t> width() const noexcept override {
         return Width;
@@ -114,7 +122,7 @@ public:
         return m_basis.key2string(key);
     }
     dimn_t size(int i) const noexcept override {
-        return m_basis.start_of_degree(unsigned(i+1));
+        return m_basis.start_of_degree(unsigned(i + 1));
     }
     dimn_t start_of_degree(int i) const noexcept override {
         return m_basis.start_of_degree(unsigned(i));
@@ -132,7 +140,7 @@ public:
         return key;
     }
     let_t first_letter(key_type key) const noexcept override {
-        return m_basis.getletter(lparent(key));
+        return m_basis.getletter(lparent(key).get());
     }
     key_type key_of_letter(let_t letter) const noexcept override {
         return m_basis.keyofletter(letter);
@@ -143,47 +151,242 @@ public:
     }
 };
 
+
+/*
+ * There is an annoying problem with template argument deduction here
+ * which means that the correct data access type is not selected as
+ * hoped. Rather than using the vector type directly, we have to use
+ * the vtype_helper<...>::template type to detect the underlying
+ * vector type.
+ */
+template<typename Basis,
+         typename Coeffs,
+         typename Multiplication,
+         vector_type VType,
+         typename Derived,
+         typename... Args>
+class dense_data_access_implementation<
+    alg::algebra<Basis, Coeffs, Multiplication, vtype_helper<VType>::template type, Derived, Args...>>
+    : public dense_data_access_interface {
+    using algebra_t = alg::algebra<Basis, Coeffs, Multiplication, vtype_helper<VType>::template type, Derived, Args...>;
+    using iter_t = typename algebra_t::const_iterator;
+
+    iter_t m_current;
+    iter_t m_end;
+
+    using alg_info = algebra_info<algebra_t>;
+
+public:
+    dense_data_access_implementation(const algebra_t &alg, key_type start)
+        : m_current(alg.find(alg_info::convert_key(&alg, start)), alg.end()) {}
+
+    dense_data_access_item next() override {
+        Basis basis;
+        if (m_current != m_end) {
+            auto key = m_current->key();
+            const auto *p = &m_current->value();
+            ++m_current;
+            return {basis.key_to_index(key), p, p + 1};
+        }
+        return {0, nullptr, nullptr};
+    }
+};
+
+template<deg_t Width, deg_t Depth, typename Coeffs,
+         typename... Args>
+class dense_data_access_implementation<
+    alg::free_tensor<Coeffs, Width, Depth, vtype_helper<vector_type::sparse>::template type, Args...>>
+    : public dense_data_access_interface {
+    using algebra_t = alg::free_tensor<Coeffs, Width, Depth,
+                                       vtype_helper<vector_type::sparse>::template type, Args...>;
+    using iter_t = typename algebra_t::const_iterator;
+
+    using alg_info = algebra_info<algebra_t>;
+
+    iter_t m_current;
+    iter_t m_end;
+
+public:
+    dense_data_access_implementation(const algebra_t &arg, key_type start)
+        : m_current(arg.find(alg_info::convert_key(&arg, start))), m_end(arg.end()) {}
+
+    dense_data_access_item next() override {
+        alg::free_tensor_basis<Width, Depth> basis;
+        if (m_current != m_end) {
+            auto key = m_current->key();
+            const auto *p = &m_current->value();
+            ++m_current;
+            return {basis.key_to_index(key), p, p + 1};
+        }
+        return {0, nullptr, nullptr};
+    }
+};
+
+template<deg_t Width, deg_t Depth, typename Coeffs,
+         typename... Args>
+class dense_data_access_implementation<
+    alg::free_tensor<Coeffs, Width, Depth, vtype_helper<vector_type::dense>::template type, Args...>>
+    : public dense_data_access_interface {
+    using algebra_t = alg::free_tensor<Coeffs, Width, Depth,
+                                       vtype_helper<vector_type::dense>::template type, Args...>;
+    using iter_t = typename algebra_t::const_iterator;
+
+    using alg_info = algebra_info<algebra_t>;
+
+    const typename Coeffs::S *m_ptr;
+    dimn_t m_size;
+    key_type m_start;
+    bool m_used = false;
+
+public:
+    dense_data_access_implementation(const algebra_t &arg, key_type start)
+        : m_ptr(arg.base_vector().as_ptr() + start), m_start(start) {
+        auto dimension = arg.base_vector().dimension();
+        if (start >= dimension) {
+            m_size = 0;
+            m_ptr = nullptr;
+            m_used = true;
+        } else {
+            m_size = dimension - static_cast<dimn_t>(start);
+            m_used = false;
+        }
+    }
+
+    dense_data_access_item next() override {
+        if (!m_used) {
+            m_used = true;
+            return {m_start, m_ptr, m_ptr + m_size};
+        }
+        return {0, nullptr, nullptr};
+    }
+};
+
+template<deg_t Width, deg_t Depth, typename Coeffs,
+         typename... Args>
+class dense_data_access_implementation<
+    alg::lie<Coeffs, Width, Depth, vtype_helper<vector_type::dense>::template type, Args...>>
+    : public dense_data_access_interface {
+    using algebra_t = alg::lie<Coeffs, Width, Depth,
+                               vtype_helper<vector_type::dense>::template type, Args...>;
+    using iter_t = typename algebra_t::const_iterator;
+
+    using alg_info = algebra_info<algebra_t>;
+
+    const typename Coeffs::S *m_ptr;
+    dimn_t m_size;
+    key_type m_start;
+    bool m_used = false;
+
+public:
+    dense_data_access_implementation(const algebra_t &arg, key_type start)
+        : m_ptr(arg.base_vector().as_ptr() + start), m_start(start) {
+        auto dimension = arg.base_vector().dimension();
+        if (start >= dimension) {
+            m_size = 0;
+            m_ptr = nullptr;
+            m_used = true;
+        } else {
+            m_size = dimension - static_cast<dimn_t>(start);
+            m_used = false;
+        }
+    }
+
+    dense_data_access_item next() override {
+        if (!m_used) {
+            m_used = true;
+            return {m_start, m_ptr, m_ptr + m_size};
+        }
+        return {0, nullptr, nullptr};
+    }
+};
+
+template<deg_t Width, deg_t Depth, typename Coeffs>
+class dense_data_access_implementation<
+    alg::lie<Coeffs, Width, Depth, vtype_helper<vector_type::sparse>::template type>>
+    : public dense_data_access_interface {
+    using algebra_t = alg::lie<Coeffs, Width, Depth,
+                               vtype_helper<vector_type::sparse>::template type>;
+    using iter_t = typename algebra_t::const_iterator;
+
+    using alg_info = algebra_info<algebra_t>;
+
+    iter_t m_current;
+    iter_t m_end;
+
+public:
+    dense_data_access_implementation(const algebra_t &arg, key_type start)
+        : m_current(arg.find(alg_info::convert_key(&arg, start))), m_end(arg.end()) {}
+
+    dense_data_access_item next() override {
+        alg::free_tensor_basis<Width, Depth> basis;
+        if (m_current != m_end) {
+            auto key = m_current->key();
+            const auto *p = &m_current->value();
+            ++m_current;
+            return {basis.key_to_index(key), p, p + 1};
+        }
+        return {0, nullptr, nullptr};
+    }
+};
+
+
+template <deg_t Width, deg_t Depth>
+constexpr key_type iterator_convert_key(alg::_tensor_basis<Width, Depth> arg) noexcept
+{
+    return alg::tensor_basis<Width, Depth>::key_to_index(arg);
+}
+
+constexpr key_type iterator_convert_key(alg::LET arg) noexcept
+{ return arg; }
+
+template <typename Item>
+struct iterator_traits<alg::vectors::iterators::vector_iterator<Item>>
+{
+    using iterator_t = alg::vectors::iterators::vector_iterator<Item>;
+    static key_type key(const iterator_t& it) noexcept
+    { return iterator_convert_key(it->key()); }
+    static auto value(const iterator_t& it) noexcept -> decltype(it->value())
+    { return it->value(); }
+
+};
+
 }// namespace dtl
 
-
-template<deg_t Width, deg_t Depth, typename Coeffs, template<typename, typename, typename...> class Vector, typename... Args>
+template<deg_t Width, deg_t Depth, typename Coeffs,
+         template<typename, typename, typename...> class Vector,
+         typename... Args>
 struct algebra_info<alg::free_tensor<Coeffs, Width, Depth, Vector, Args...>> {
     using tensor_t = alg::free_tensor<Coeffs, Width, Depth, Vector, Args...>;
     using scalar_type = typename Coeffs::S;
     using rational_type = typename Coeffs::Q;
     using reference = decltype(std::declval<tensor_t>()[std::declval<typename tensor_t::KEY>()]);
     using const_reference = decltype(std::declval<const tensor_t>()[std::declval<typename tensor_t::KEY>()]);
-    using pointer = scalar_type*;
-    using const_pointer = const scalar_type*;
+    using pointer = scalar_type *;
+    using const_pointer = const scalar_type *;
 
-    static constexpr coefficient_type ctype() noexcept
-    { return dtl::get_coeff_type(Coeffs::zero); }
-    static constexpr vector_type vtype() noexcept
-    { return dtl::vector_type_helper<Vector>::value; }
+    static constexpr coefficient_type ctype() noexcept { return dtl::get_coeff_type(Coeffs::zero); }
+    static constexpr vector_type vtype() noexcept { return dtl::vector_type_helper<Vector>::value; }
     static deg_t width(const tensor_t *) noexcept { return Width; }
     static deg_t max_depth(const tensor_t *) noexcept { return Depth; }
 
     using this_key_type = typename tensor_t::KEY;
-    static this_key_type convert_key(const tensor_t*, esig::key_type key)
-    { return tensor_t::basis.index_to_key(key); }
+    template <typename Tensor>
+    static this_key_type convert_key(const Tensor *, esig::key_type key) { return tensor_t::basis.index_to_key(key); }
 
-    static deg_t degree(const tensor_t* inst, key_type key) noexcept
-    { return native_degree(inst, convert_key(inst, key)); }
-    static deg_t native_degree(const tensor_t*, this_key_type key) noexcept
-    { return tensor_t::basis.degree(key); }
+    static deg_t degree(const tensor_t& instance) noexcept
+    { return instance.degree(); }
+    static deg_t degree(const tensor_t *inst, key_type key) noexcept { return native_degree(inst, convert_key(inst, key)); }
+    static deg_t native_degree(const tensor_t *, this_key_type key) noexcept { return tensor_t::basis.degree(key); }
 
-    static key_type first_key(const tensor_t*) noexcept
-    { return 0; }
-    static key_type last_key(const tensor_t*) noexcept
-    { return tensor_t::basis.size(); }
+    static key_type first_key(const tensor_t *) noexcept { return 0; }
+    static key_type last_key(const tensor_t *) noexcept { return tensor_t::basis.size(); }
 
     using key_prod_container = boost::container::small_vector<std::pair<key_type, int>, 1>;
-    static key_prod_container key_product(const tensor_t* inst, key_type k1, key_type k2)
-    {
-        return {tensor_t::basis.key_to_index(convert_key(inst, k1)*convert_key(inst, k2)), 1};
+    static key_prod_container key_product(const tensor_t *inst, this_key_type k1, this_key_type k2) {
+        return {{tensor_t::basis.key_to_index(k1 * k2), 1}};
     }
 
-    static tensor_t create_like(const tensor_t& instance) { return tensor_t(); }
+    static tensor_t create_like(const tensor_t &instance) { return tensor_t(); }
 };
 
 template<deg_t Width, deg_t Depth, typename Coeffs, template<typename, typename, typename...> class Vector, typename... Args>
@@ -194,31 +397,42 @@ struct algebra_info<alg::lie<Coeffs, Width, Depth, Vector, Args...>> {
     using rational_type = typename Coeffs::Q;
     using reference = decltype(std::declval<lie_t>()[std::declval<typename lie_t::KEY>()]);
     using const_reference = decltype(std::declval<const lie_t>()[std::declval<typename lie_t::KEY>()]);
-    using pointer = scalar_type*;
-    using const_pointer = const scalar_type*;
+    using pointer = scalar_type *;
+    using const_pointer = const scalar_type *;
 
-    static constexpr coefficient_type ctype() noexcept
-    {
+    static constexpr coefficient_type ctype() noexcept {
         return dtl::get_coeff_type(Coeffs::zero);
     }
-    static constexpr vector_type vtype() noexcept
-    {
+    static constexpr vector_type vtype() noexcept {
         return dtl::vector_type_helper<Vector>::value;
     }
     static deg_t width(const lie_t *) noexcept { return Width; }
     static deg_t max_depth(const lie_t *) noexcept { return Depth; }
 
     using this_key_type = typename lie_t::KEY;
-    static this_key_type convert_key(const lie_t*, esig::key_type key)
-    {
+    template <typename Lie>
+    static this_key_type convert_key(const Lie *, esig::key_type key) {
         // For now, the key_type and usage are equivalent between libalgebra and esig::algebra
         return key;
     }
 
+    static deg_t degree(const lie_t& instance) noexcept
+    { return instance.degree(); }
+    static deg_t degree(const lie_t *instance, esig::key_type key) noexcept { return instance->basis.degree(convert_key(instance, key)); }
+    static deg_t native_degree(const lie_t *instance, this_key_type key) noexcept { return instance->basis.degree(key); }
+    static key_type first_key(const lie_t *) noexcept { return 1; }
+    static key_type last_Key(const lie_t *) noexcept { return 0; }
 
+    using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
+    static const key_prod_container &key_product(const lie_t *instance, this_key_type lhs, this_key_type rhs) {
+        alg::lie_multiplier<Width, Depth> mul;
+        return mul(convert_key(instance, lhs), convert_key(instance, rhs));
+    }
 
+    static lie_t create_like(const lie_t &instance) {
+        return lie_t();
+    }
 };
-
 
 template<typename Basis, typename Coeffs, typename Multiplication, template<typename, typename, typename...> class Vector, typename... Args>
 struct algebra_info<alg::algebra<Basis, Coeffs, Multiplication, Vector, Args...>> {
@@ -228,47 +442,57 @@ struct algebra_info<alg::algebra<Basis, Coeffs, Multiplication, Vector, Args...>
     using rational_type = typename Coeffs::Q;
     using reference = decltype(std::declval<alg_t>()[std::declval<typename alg_t::KEY>()]);
     using const_reference = decltype(std::declval<const alg_t>()[std::declval<typename alg_t::KEY>()]);
-    using pointer = scalar_type*;
-    using const_pointer = const scalar_type*;
+    using pointer = scalar_type *;
+    using const_pointer = const scalar_type *;
 
-    static constexpr coefficient_type ctype() noexcept
-    {
+    static constexpr coefficient_type ctype() noexcept {
         return dtl::get_coeff_type(Coeffs::zero);
     }
-    static constexpr vector_type vtype() noexcept
-    {
+    static constexpr vector_type vtype() noexcept {
         return dtl::vector_type_helper<Vector>::value;
     }
-    static deg_t width(const alg_t* ) noexcept { return 0; }
-    static deg_t max_depth(const alg_t*) noexcept { return 0; }
+    static deg_t width(const alg_t *) noexcept { return 0; }
+    static deg_t max_depth(const alg_t *) noexcept { return 0; }
     using this_key_type = typename alg_t::KEY;
-    static this_key_type convert_key(esig::key_type key)
-    {
+    static this_key_type convert_key(esig::key_type key) {
         // For now, the key_type and usage are equivalent between libalgebra and esig::algebra
         return key;
     }
+
+    static deg_t degree(const alg_t *instance, esig::key_type key) noexcept { return instance->basis.degree(convert_key(instance, key)); }
+    static deg_t native_degree(const alg_t *instance, this_key_type key) noexcept { return instance->basis.degree(key); }
+    static key_type first_key(const alg_t *) noexcept { return 1; }
+    static key_type last_Key(const alg_t *) noexcept { return 0; }
+
+    using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
+    static const key_prod_container &key_product(const alg_t *instance, this_key_type lhs, this_key_type rhs) {
+        const auto &mul = instance->multiplication();
+        return mul.eval(convert_key(instance, lhs), convert_key(instance, rhs));
+    }
+
+    static alg_t create_like(const alg_t &instance) {
+        return alg_t();
+    }
 };
-
-
-
-
 
 namespace dtl {
 
-template <typename ValueType>
-struct iterator_helper<alg::vectors::iterators::vector_iterator<ValueType>>
-{
+template<typename ValueType>
+struct iterator_helper<alg::vectors::iterators::vector_iterator<ValueType>> {
     using iter_t = alg::vectors::iterators::vector_iterator<ValueType>;
 
-    static void advance(iter_t& iter) { ++iter; }
-    static key_type key(iter_t& iter) { return iter->key(); }
-    static const void* value(iter_t& iter) { return &iter->value(); }
-    static bool equals(const iter_t& iter1, const iter_t& iter2)
-    { return iter1 == iter2; }
+    static void advance(iter_t &iter) { ++iter; }
+    static key_type key(const iter_t &iter)
+    {
+        return iterator_convert_key(iter->key());
+    }
+    static coefficient value(const iter_t &iter)
+    {
+        using trait = coefficient_type_trait<decltype(iter->value())>;
+        return trait::make(iter->value());
+    }
+    static bool equals(const iter_t &iter1, const iter_t &iter2) { return iter1 == iter2; }
 };
-
-
-
 
 template<coefficient_type>
 struct ctype_helper;
@@ -286,52 +510,32 @@ struct ctype_helper<coefficient_type::sp_real> {
 template<vector_type>
 struct vtype_helper;
 
-template<>
-struct vtype_helper<vector_type::dense> {
-    template<typename B, typename C, typename...>
-    using type = alg::vectors::dense_vector<B, C>;
-};
-
-template<>
-struct vtype_helper<vector_type::sparse> {
-    template<typename B, typename C, typename... Args>
-    using type = alg::vectors::sparse_vector<B, C, Args...>;
-};
-
 
 
 }// namespace dtl
-
 
 template<typename Lie>
 struct to_libalgebra_lie_helper {
 
     using scalar_type = typename Lie::SCALAR;
 
-    Lie operator()(const char* b, const char* e) const
-    {
-        return Lie(reinterpret_cast<const scalar_type*>(b), reinterpret_cast<const scalar_type*>(e));
+    Lie operator()(const char *b, const char *e) const {
+        return Lie(reinterpret_cast<const scalar_type *>(b), reinterpret_cast<const scalar_type *>(e));
     }
 
-    Lie operator()(data_iterator* data) const
-    {
+    Lie operator()(data_iterator *data) const {
         return Lie();
     }
-
 };
 
-
 template<deg_t Width, deg_t Depth, coefficient_type CType>
-class libalgebra_context : public context
-{
+class libalgebra_context : public context {
     using coeff_ring = typename dtl::ctype_helper<CType>::type;
     static const alg::lie_basis<Width, Depth> m_lie_basis;
     static const alg::free_tensor_basis<Width, Depth> m_tensor_basis;
 
-
     template<vector_type VType>
-    free_tensor make_free_tensor(const vector_construction_data &data) const
-    {
+    free_tensor make_free_tensor(const vector_construction_data &data) const {
         using scalar_t = typename coeff_ring::S;
 
         using vec_t = alg::free_tensor<
@@ -342,16 +546,16 @@ class libalgebra_context : public context
 
         if (data.input_type() == esig::algebra::input_data_type::value_array) {
             return free_tensor(vec_t(
-                reinterpret_cast<const scalar_t *>(data.begin()),
-                reinterpret_cast<const scalar_t *>(data.end())), this);
+                                   reinterpret_cast<const scalar_t *>(data.begin()),
+                                   reinterpret_cast<const scalar_t *>(data.end())),
+                               this);
         } else {
             return free_tensor(vec_t(), this);
         }
     }
 
     template<vector_type VType>
-    lie make_lie(const vector_construction_data &data) const
-    {
+    lie make_lie(const vector_construction_data &data) const {
         using scalar_t = typename coeff_ring::S;
 
         using vec_t = alg::lie<
@@ -362,60 +566,58 @@ class libalgebra_context : public context
 
         if (data.input_type() == esig::algebra::input_data_type::value_array) {
             return lie(vec_t(
-                reinterpret_cast<const scalar_t *>(data.begin()),
-                reinterpret_cast<const scalar_t *>(data.end())), this);
+                           reinterpret_cast<const scalar_t *>(data.begin()),
+                           reinterpret_cast<const scalar_t *>(data.end())),
+                       this);
         } else {
             return lie(vec_t(), this);
         }
     }
 
-    template< vector_type VType>
-    free_tensor lie_to_tensor_impl(const lie &arg) const
-    {
+    template<vector_type VType>
+    free_tensor lie_to_tensor_impl(const lie &arg) const {
         using tensor_t = alg::free_tensor<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         using lie_t = alg::lie<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         alg::maps<coeff_ring, Width, Depth, tensor_t, lie_t> maps;
         return free_tensor(maps.l2t(algebra_access<lie_interface>::template get<lie_t>(arg)), this);
     }
 
     template<vector_type VType>
-    lie tensor_to_lie_impl(const free_tensor &arg) const
-    {
+    lie tensor_to_lie_impl(const free_tensor &arg) const {
         using tensor_t = alg::free_tensor<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         using lie_t = alg::lie<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         alg::maps<coeff_ring, Width, Depth, tensor_t, lie_t> maps;
         return lie(maps.t2l(algebra_access<free_tensor_interface>::template get<tensor_t>(arg)), this);
     }
 
     template<vector_type VType>
-    lie cbh_impl(const std::vector<lie> &lies) const
-    {
+    lie cbh_impl(const std::vector<lie> &lies) const {
         using tensor_t = alg::free_tensor<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         using lie_t = alg::lie<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         alg::cbh<coeff_ring, Width, Depth, tensor_t, lie_t> cbh;
         std::vector<const lie_t *> real_lies;
         real_lies.reserve(lies.size());
@@ -426,8 +628,7 @@ class libalgebra_context : public context
     }
 
     template<typename Lie, typename Tensor>
-    static Tensor compute_signature(signature_data data)
-    {
+    static Tensor compute_signature(signature_data data) {
         to_libalgebra_lie_helper<Lie> helper;
         Tensor result(typename Tensor::SCALAR(1));
         alg::maps<typename Tensor::coefficient_field, Width, Depth, Tensor, Lie> maps;
@@ -438,41 +639,38 @@ class libalgebra_context : public context
     }
 
     template<vector_type VType>
-    free_tensor signature_impl(signature_data data) const
-    {
+    free_tensor signature_impl(signature_data data) const {
         using tensor_t = alg::free_tensor<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         using lie_t = alg::lie<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         return free_tensor(compute_signature<lie_t, tensor_t>(std::move(data)), this);
     }
 
     template<vector_type VType>
-    lie log_signature_impl(signature_data data) const
-    {
+    lie log_signature_impl(signature_data data) const {
         using tensor_t = alg::free_tensor<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         using lie_t = alg::lie<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         alg::maps<coeff_ring, Width, Depth, tensor_t, lie_t> maps;
         return lie(maps.t2l(log(compute_signature<lie_t, tensor_t>(std::move(data)))), this);
     }
 
     template<typename Lie>
-    static Lie ad_x_n(deg_t d, const Lie &x, const Lie &y)
-    {
+    static Lie ad_x_n(deg_t d, const Lie &x, const Lie &y) {
         auto tmp = x * y;
         while (--d) {
             tmp = x * tmp;
@@ -481,8 +679,7 @@ class libalgebra_context : public context
     }
 
     template<typename Lie>
-    static Lie derive_series_compute(const Lie &incr, const Lie &perturbation)
-    {
+    static Lie derive_series_compute(const Lie &incr, const Lie &perturbation) {
         Lie result;
         typename Lie::SCALAR factor(1);
         for (deg_t d = 1; d <= Depth; ++d) {
@@ -497,35 +694,30 @@ class libalgebra_context : public context
     }
 
     template<typename Lie, typename Tensor>
-    static Tensor compute_single_deriv(const Lie &incr, const Tensor &sig, const Lie &perturb)
-    {
+    static Tensor compute_single_deriv(const Lie &incr, const Tensor &sig, const Lie &perturb) {
         alg::maps<coeff_ring, Width, Depth, Tensor, Lie> maps;
         return sig * maps.l2t(derive_series_compute(incr, perturb));
     }
 
     template<vector_type VType>
-    free_tensor sig_derivative_impl(const std::vector<derivative_compute_info> &info) const
-    {
+    free_tensor sig_derivative_impl(const std::vector<derivative_compute_info> &info) const {
         using tensor_t = alg::free_tensor<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
         using lie_t = alg::lie<
-                coeff_ring,
-                Width,
-                Depth,
-                dtl::vtype_helper<VType>::template type>;
-
+            coeff_ring,
+            Width,
+            Depth,
+            dtl::vtype_helper<VType>::template type>;
 
         alg::maps<coeff_ring, Width, Depth, tensor_t, lie_t> maps;
         tensor_t result;
 
         for (const auto &data : info) {
-            const auto &perturb = algebra_access<lie_interface>::template
-                get<lie_t>(data.perturbation);
-            const auto &incr = algebra_access<lie_interface>::template
-                get<lie_t>(data.logsig_of_interval);
+            const auto &perturb = algebra_access<lie_interface>::template get<lie_t>(data.perturbation);
+            const auto &incr = algebra_access<lie_interface>::template get<lie_t>(data.logsig_of_interval);
             auto sig = exp(maps.l2t(incr));
 
             result *= sig;
@@ -563,12 +755,12 @@ public:
     lie convert(const lie &arg, vector_type new_vec_type) const override {
         return lie();
     }
-//    const algebra_basis &borrow_tbasis() const noexcept override {
-//        return ;
-//    }
-//    const algebra_basis &borrow_lbasis() const noexcept override {
-//        return <#initializer #>;
-//    }
+    //    const algebra_basis &borrow_tbasis() const noexcept override {
+    //        return ;
+    //    }
+    //    const algebra_basis &borrow_lbasis() const noexcept override {
+    //        return <#initializer #>;
+    //    }
     basis get_tensor_basis() const override {
         return basis(m_tensor_basis);
     }
@@ -576,78 +768,58 @@ public:
         return basis(m_lie_basis);
     }
 
-    deg_t width() const noexcept override
-    {
+    deg_t width() const noexcept override {
         return Width;
     }
-    deg_t depth() const noexcept override
-    {
+    deg_t depth() const noexcept override {
         return Depth;
     }
-    dimn_t lie_size(deg_t d) const noexcept override
-    {
+    dimn_t lie_size(deg_t d) const noexcept override {
         if (d == 0) {
             return 0;
         } else {
             return m_lie_basis.start_of_degree(d + 1);
         }
     }
-    dimn_t tensor_size(deg_t d) const noexcept override
-    {
+    dimn_t tensor_size(deg_t d) const noexcept override {
         if (d == 0) {
             return 1;
         } else {
             return m_tensor_basis.start_of_degree(d + 1);
         }
     }
-    free_tensor construct_tensor(const vector_construction_data &data) const override
-    {
+    free_tensor construct_tensor(const vector_construction_data &data) const override{
 #define ESIG_SWITCH_FN(VTYPE) make_free_tensor<VTYPE>(data)
-            ESIG_MAKE_VTYPE_SWITCH(data.vtype())
+        ESIG_MAKE_VTYPE_SWITCH(data.vtype())
 #undef ESIG_SWITCH_FN
-    }
-    lie construct_lie(const vector_construction_data &data) const override
-    {
+    } lie construct_lie(const vector_construction_data &data) const override{
 #define ESIG_SWITCH_FN(VTYPE) make_lie<VTYPE>(data)
-            ESIG_MAKE_VTYPE_SWITCH(data.vtype())
+        ESIG_MAKE_VTYPE_SWITCH(data.vtype())
 #undef ESIG_SWITCH_FN
-    }
-    free_tensor lie_to_tensor(const lie &arg) const override
-    {
+    } free_tensor lie_to_tensor(const lie &arg) const override{
 #define ESIG_SWITCH_FN(VTYPE) lie_to_tensor_impl<VTYPE>(arg)
-            ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
+        ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
 #undef ESIG_SWITCH_FN
-    }
-    lie tensor_to_lie(const free_tensor &arg) const override
-    {
+    } lie tensor_to_lie(const free_tensor &arg) const override{
 #define ESIG_SWITCH_FN(VTYPE) tensor_to_lie_impl<VTYPE>(arg)
-            ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
+        ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
 #undef ESIG_SWITCH_FN
-    }
-    lie cbh(const std::vector<lie> &lies, vector_type vtype) const override
-    {
+    } lie cbh(const std::vector<lie> &lies, vector_type vtype) const override{
 #define ESIG_SWITCH_FN(VTYPE) cbh_impl<VTYPE>(lies)
-            ESIG_MAKE_VTYPE_SWITCH(vtype)
+        ESIG_MAKE_VTYPE_SWITCH(vtype)
 #undef ESIG_SWITCH_FN
-    }
-    free_tensor to_signature(const lie &log_sig) const override
-    {
+    } free_tensor to_signature(const lie &log_sig) const override {
         return lie_to_tensor(log_sig).exp();
     }
-    free_tensor signature(signature_data data) const override
-    {
+    free_tensor signature(signature_data data) const override{
 #define ESIG_SWITCH_FN(VTYPE) signature_impl<VTYPE>(std::move(data))
-            ESIG_MAKE_VTYPE_SWITCH(data.vtype())
+        ESIG_MAKE_VTYPE_SWITCH(data.vtype())
 #undef ESIG_SWITCH_FN
-    }
-    lie log_signature(signature_data data) const override
-    {
+    } lie log_signature(signature_data data) const override{
 #define ESIG_SWITCH_FN(VTYPE) log_signature_impl<VTYPE>(std::move(data))
-            ESIG_MAKE_VTYPE_SWITCH(data.vtype())
+        ESIG_MAKE_VTYPE_SWITCH(data.vtype())
 #undef ESIG_SWITCH_FN
-    }
-    free_tensor sig_derivative(const std::vector<derivative_compute_info> &info, vector_type vtype, vector_type type) const override
-    {
+    } free_tensor sig_derivative(const std::vector<derivative_compute_info> &info, vector_type vtype, vector_type type) const override {
         if (info.empty()) {
             return zero_tensor(vtype);
         }
@@ -657,14 +829,11 @@ public:
     }
 };
 
-
 template<deg_t Width, deg_t Depth, coefficient_type CType>
 const alg::lie_basis<Width, Depth> libalgebra_context<Width, Depth, CType>::m_lie_basis;
 
 template<deg_t Width, deg_t Depth, coefficient_type CType>
 const alg::free_tensor_basis<Width, Depth> libalgebra_context<Width, Depth, CType>::m_tensor_basis;
-
-
 
 namespace dtl {
 
@@ -672,8 +841,7 @@ struct pair_hash {
     using argument_type = std::pair<deg_t, deg_t>;
     using result_type = std::size_t;
 
-    inline result_type operator()(const argument_type &arg) const noexcept
-    {
+    inline result_type operator()(const argument_type &arg) const noexcept {
         static constexpr deg_t shift = std::numeric_limits<std::size_t>::digits / 2;
         std::size_t result = static_cast<std::size_t>(arg.first) << shift;
         result += static_cast<std::size_t>(arg.second);
@@ -684,13 +852,9 @@ struct pair_hash {
 using la_config = std::tuple<esig::deg_t, esig::deg_t, coefficient_type>;
 using context_map = std::unordered_map<la_config, std::shared_ptr<const context>, boost::hash<la_config>>;
 
-
-
-} // namespace dtl
+}// namespace dtl
 
 void install_default_libalgebra_contexts();
-
-
 
 }// namespace algebra
 }// namespace esig

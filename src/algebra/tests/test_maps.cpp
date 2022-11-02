@@ -5,8 +5,8 @@
 
 #include <esig/implementation_types.h>
 #include <libalgebra/libalgebra.h>
-#include <libalgebra/vectors/vectors.h>
-#include <libalgebra/coefficients/rational_coefficients.h>
+#include <libalgebra/vectors.h>
+#include <libalgebra/rational_coefficients.h>
 
 #include "fallback_context.h"
 

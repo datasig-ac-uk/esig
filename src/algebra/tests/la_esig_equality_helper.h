@@ -17,7 +17,9 @@
 template <typename CType, esig::deg_t Width, esig::deg_t Depth>
 bool equals_helper(
         const esig::algebra::dense_tensor<typename CType::S>& t1,
-        const alg::algebra<alg::free_tensor_basis<Width, Depth>, CType, alg::free_tensor_multiplication<CType>, alg::vectors::dense_vector>& t2)
+        const alg::algebra<alg::free_tensor_basis<Width, Depth>, CType,
+                       alg::free_tensor_multiplication<Width, Depth>,
+                           alg::vectors::dense_vector>& t2)
 {
     using base_vec = alg::vectors::dense_vector<alg::free_tensor_basis<Width, Depth>, CType>;
 
@@ -59,7 +61,9 @@ bool equals_helper(
 template <typename CType, esig::deg_t Width, esig::deg_t Depth>
 bool equals_helper(
         const esig::algebra::dense_lie<typename CType::S>& l1,
-        const alg::algebra<alg::lie_basis<Width, Depth>, CType, alg::lie_multiplication<CType>, alg::vectors::dense_vector>& l2)
+        const alg::algebra<alg::lie_basis<Width, Depth>, CType,
+                       alg::lie_multiplication<Width, Depth>,
+                           alg::vectors::dense_vector>& l2)
 {
     using base_vec = alg::vectors::dense_vector<alg::lie_basis<Width, Depth>, CType>;
 
@@ -100,7 +104,9 @@ bool equals_helper(
 template <typename CType, esig::deg_t Width, esig::deg_t Depth>
 bool equals_helper(
         const esig::algebra::sparse_tensor<typename CType::S>& t1,
-        const alg::algebra<alg::free_tensor_basis<Width, Depth>, CType, alg::free_tensor_multiplication<CType>, alg::vectors::sparse_vector>& t2
+        const alg::algebra<alg::free_tensor_basis<Width, Depth>, CType,
+                       alg::free_tensor_multiplication<Width, Depth>,
+                           alg::vectors::sparse_vector>& t2
         )
 {
     using base_vec = alg::vectors::dense_vector<alg::free_tensor_basis<Width, Depth>, CType>;
@@ -132,7 +138,9 @@ bool equals_helper(
 template <typename CType, esig::deg_t Width, esig::deg_t Depth>
 bool equals_helper(
         const esig::algebra::sparse_lie<typename CType::S>& l1,
-        const alg::algebra<alg::lie_basis<Width, Depth>, CType, alg::lie_multiplication<CType>, alg::vectors::sparse_vector>& l2
+        const alg::algebra<alg::lie_basis<Width, Depth>, CType,
+                       alg::lie_multiplication<Width, Depth>,
+                           alg::vectors::sparse_vector>& l2
         )
 {
     using base_vec = alg::vectors::dense_vector<alg::lie_basis<Width, Depth>, CType>;
@@ -162,10 +170,13 @@ bool equals_helper(
 
 
 
-template<typename CType, esig::deg_t Width, esig::deg_t Depth>
+template<typename CType, esig::deg_t Width, esig::deg_t Depth, typename Derived>
 ::testing::AssertionResult TensorsEqual(
         const esig::algebra::dense_tensor<typename CType::S>& t1,
-        const alg::algebra<alg::free_tensor_basis<Width, Depth>, CType, alg::free_tensor_multiplication<CType>, alg::vectors::dense_vector>& t2)
+        const alg::algebra<alg::free_tensor_basis<Width, Depth>, CType,
+                       alg::free_tensor_multiplication<Width, Depth>,
+                           alg::vectors::dense_vector,
+                       Derived>& t2)
 {
     alg::free_tensor<CType, Width, Depth, alg::vectors::dense_vector> t3(t1.data().data(), t1.data().data() + t1.size());
     if (t3 == t2) {
@@ -175,10 +186,13 @@ template<typename CType, esig::deg_t Width, esig::deg_t Depth>
     }
 }
 
-template <typename CType, esig::deg_t Width, esig::deg_t Depth>
+template <typename CType, esig::deg_t Width, esig::deg_t Depth, typename Derived>
 testing::AssertionResult LiesEqual(
         const esig::algebra::dense_lie<typename CType::S>& l1,
-        const alg::algebra<alg::lie_basis<Width, Depth>, CType, alg::lie_multiplication<CType>, alg::vectors::dense_vector>& l2
+        const alg::algebra<alg::lie_basis<Width, Depth>, CType,
+                       alg::lie_multiplication<Width, Depth>,
+                           alg::vectors::dense_vector,
+                       Derived>& l2
         )
 {
     alg::lie<CType, Width, Depth, alg::vectors::dense_vector> l3(l1.data().data(), l1.data().data() + l1.size());
@@ -189,10 +203,13 @@ testing::AssertionResult LiesEqual(
     }
 }
 
-template <typename CType, esig::deg_t Width, esig::deg_t Depth>
+template <typename CType, esig::deg_t Width, esig::deg_t Depth, typename Derived>
 testing::AssertionResult LiesEqual(
         const esig::algebra::sparse_lie<typename CType::S>& l1,
-        const alg::algebra<alg::lie_basis<Width, Depth>, CType, alg::lie_multiplication<CType>, alg::vectors::sparse_vector>& l2)
+        const alg::algebra<alg::lie_basis<Width, Depth>, CType,
+                       alg::lie_multiplication<Width, Depth>,
+                           alg::vectors::sparse_vector,
+                       Derived>& l2)
 {
     alg::lie<CType, Width, Depth, alg::vectors::sparse_vector> l3;
     for (const auto& item : l1) {
@@ -205,10 +222,14 @@ testing::AssertionResult LiesEqual(
     }
 }
 
-template <typename CType, esig::deg_t Width, esig::deg_t Depth>
+template <typename CType, esig::deg_t Width, esig::deg_t Depth, typename Derived>
 testing::AssertionResult TensorsEqual(
         const esig::algebra::sparse_tensor<typename CType::S>& t1,
-        const alg::algebra<alg::free_tensor_basis<Width, Depth>, CType, alg::free_tensor_multiplication<CType>, alg::vectors::sparse_vector>& t2
+        const alg::algebra<alg::free_tensor_basis<Width, Depth>, CType,
+                       alg::free_tensor_multiplication<Width, Depth>,
+                           alg::vectors::sparse_vector,
+                       Derived
+                       >& t2
         )
 {
     alg::free_tensor<CType, Width, Depth, alg::vectors::sparse_vector> t3;
