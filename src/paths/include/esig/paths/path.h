@@ -57,7 +57,7 @@ struct path_metadata {
     deg_t width;
     deg_t depth;
     real_interval effective_domain;
-    std::shared_ptr<algebra::context> ctx;
+    std::shared_ptr<const algebra::context> ctx;
 
     algebra::coefficient_type ctype;
     algebra::input_data_type data_type;
@@ -189,7 +189,7 @@ struct ESIG_PATHS_EXPORT dynamically_constructed_path : dyadic_caching_layer
 class ESIG_PATHS_EXPORT path
 {
     std::unique_ptr<const path_interface> p_impl;
-    std::shared_ptr<algebra::context> get_default_context() const;
+    std::shared_ptr<const algebra::context> get_default_context() const;
 
     friend struct path_base_access;
 
