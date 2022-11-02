@@ -731,6 +731,8 @@ struct algebra_info<dense_tensor<S>>
     using scalar_type = S;
     using rational_type = S;
     using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
+    using reference = S&;
+    using const_reference = const S&;
 
     static constexpr coefficient_type ctype() noexcept
     { return dtl::get_coeff_type(S(0)); }

@@ -577,6 +577,8 @@ struct algebra_info<dense_lie<S>>
     using scalar_type = S;
     using rational_type = S;
     using this_key_type = key_type;
+    using reference = S&;
+    using const_reference = const S&;
 
     static constexpr coefficient_type ctype() noexcept
     { return dtl::get_coeff_type(S()); }
