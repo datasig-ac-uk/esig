@@ -676,6 +676,8 @@ struct algebra_info
     static this_key_type convert_key(const Algebra* instance, esig::key_type key) noexcept
     { return key; }
 
+    static deg_t degree(const Algebra& instance) noexcept
+    { return instance.degree(); }
     static deg_t degree(const Algebra* instance, esig::key_type key) noexcept
     { return instance->basis().degree(convert_key(instance, key)); }
     static deg_t native_degree(const Algebra* instance, this_key_type key)
@@ -880,9 +882,10 @@ typename Interface::algebra_t algebra_implementation<Interface, Impl>::add(const
     if (id() == other.id()) {
         return algebra_t(m_data + cast<const Impl&>(other), p_ctx);
     }
-    using ref_type = typename Impl::reference;
+    using ref_type = typename algebra_info<Impl>::reference;
+    using cref_type = typename algebra_info<Impl>::const_reference;
     return algebra_t(fallback_binary_op(m_data, other,
-            [](ref_type lhs, const auto& rhs) { lhs += rhs; }), p_ctx);
+            [](ref_type lhs, cref_type rhs) { lhs += rhs; }), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::sub(const algebra_interface_t &other) const {
@@ -890,9 +893,10 @@ typename Interface::algebra_t algebra_implementation<Interface, Impl>::sub(const
     if (id() == other.id()) {
         return algebra_t(m_data - cast<const Impl&>(other), p_ctx);
     }
-    using ref_type = typename Impl::reference;
+    using ref_type = typename algebra_info<Impl>::reference;
+    using cref_type = typename algebra_info<Impl>::const_reference;
     return algebra_t(fallback_binary_op(m_data, other,
-                                        [](ref_type lhs, const auto& rhs) { lhs -= rhs; }), p_ctx);
+                                        [](ref_type lhs, cref_type rhs) { lhs -= rhs; }), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::smul(const coefficient &scal) const {
@@ -926,9 +930,10 @@ void algebra_implementation<Interface, Impl>::add_inplace(const algebra_interfac
     if (id() == other.id()) {
         m_data += cast<const Impl&>(other);
     } else {
-        using ref_type = typename Impl::reference;
+        using ref_type = typename algebra_info<Impl>::reference;
+        using cref_type = typename algebra_info<Impl>::const_reference;
         fallback_inplace_binary_op(m_data, other,
-                                   [](ref_type lhs, const auto& rhs) { lhs += rhs; });
+                                   [](ref_type lhs, cref_type rhs) { lhs += rhs; });
     }
 
 }
@@ -938,9 +943,10 @@ void algebra_implementation<Interface, Impl>::sub_inplace(const algebra_interfac
     if (id() == other.id()) {
         m_data -= cast<const Impl&>(other);
     } else {
-        using ref_type = typename Impl::reference;
+        using ref_type = typename algebra_info<Impl>::reference;
+        using cref_type = typename algebra_info<Impl>::const_reference;
         fallback_inplace_binary_op(m_data, other,
-                                   [](ref_type lhs, const auto& rhs) { lhs -= rhs; });
+                                   [](ref_type lhs, cref_type rhs) { lhs -= rhs; });
     }
 
 }
@@ -1354,8 +1360,7 @@ void fallback_multiplication_impl(Algebra &result,
     auto max_deg = std::min(info::max_depth(&result), lhs.degree + rhs.degree);
 
     const auto* ref = &result;
-    auto product = [ref](LhsIt lit, RhsIt rit)
-        -> const typename info::key_prod_container& {
+    auto product = [ref](LhsIt lit, RhsIt rit) -> decltype(auto) {
       auto lkey = litraits::key(lit);
       auto rkey = ritraits::key(rit);
       return info::key_product(ref, lkey, rkey);
@@ -1400,7 +1405,7 @@ void impl_to_buffer(key_value_buffer<Impl>& buffer,
         return lpair.first < rpair.first;
     });
 
-    degree_ranges = degree_range_buffer<Impl>(arg.depth()+1, buffer.end());
+    degree_ranges = degree_range_buffer<Impl>(algebra_info<Impl>::max_depth(&arg)+1, buffer.end());
     deg_t deg = 0;
     for (auto it = buffer.begin(); it != buffer.end() && deg < degree_ranges.size(); ++it) {
         deg_t d = algebra_info<Impl>::native_degree(&arg, it->first);
@@ -1419,7 +1424,7 @@ void interface_to_buffer(key_value_buffer<Impl>& buffer,
 {
     using info = algebra_info<Impl>;
     using scalar_type = typename info::scalar_type;
-    using pair_t = std::pair<key_type, scalar_type>;
+    using pair_t = std::pair<typename info::this_key_type, scalar_type>;
     buffer.reserve(arg.size());
 
     for (auto it = arg.begin(); it != arg.end(); ++it) {
@@ -1427,13 +1432,13 @@ void interface_to_buffer(key_value_buffer<Impl>& buffer,
     }
 
     std::sort(buffer.begin(), buffer.end(),
-              [](pair_t lhs, pair_t rhs) { return lhs.first < rhs.first; });
+              [](auto lhs, auto rhs) { return lhs.first < rhs.first; });
 
 
     degree_ranges = degree_range_buffer<Impl>(arg.depth() + 1, buffer.end());
     deg_t deg = 0;
     for (auto it = buffer.begin(); it != buffer.end() && deg < degree_ranges.size(); ++it) {
-        deg_t d = info::degree(rptr, it->first);
+        deg_t d = info::native_degree(rptr, it->first);
         while (d > deg) {
             degree_ranges[deg++] = it;
         }
