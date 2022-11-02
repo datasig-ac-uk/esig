@@ -509,6 +509,8 @@ struct algebra_info<sparse_lie<S>>
     using algebra_t = sparse_lie<S>;
     using scalar_type = S;
     using rational_type = S;
+    using reference = typename algebra_t::reference;
+    using const_reference = const S&;
     using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
 
     static constexpr coefficient_type ctype() noexcept
@@ -520,6 +522,8 @@ struct algebra_info<sparse_lie<S>>
     static deg_t max_depth(const sparse_lie<S>* instance) noexcept
     { return instance->depth(); }
 
+    static deg_t degree(const algebra_t& instance) noexcept
+    { return instance.depth(); }
     static deg_t degree(const algebra_t* instance, key_type key) noexcept
     {
         if (instance) {
