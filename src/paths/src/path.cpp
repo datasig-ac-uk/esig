@@ -44,7 +44,7 @@ algebra::lie path_interface::log_signature(const interval &domain, path_interfac
     return log_signature(domain, ctx);
 }
 
-std::shared_ptr<algebra::context> path::get_default_context() const
+std::shared_ptr<const algebra::context> path::get_default_context() const
 {
     return p_impl->metadata().ctx;
 }

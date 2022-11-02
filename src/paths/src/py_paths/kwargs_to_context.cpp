@@ -7,7 +7,7 @@
 namespace py = pybind11;
 using namespace esig;
 
-std::shared_ptr<algebra::context> paths::kwargs_to_context(const esig::paths::path_metadata& md, const pybind11::kwargs &kwargs)
+std::shared_ptr<const algebra::context> paths::kwargs_to_context(const esig::paths::path_metadata& md, const pybind11::kwargs &kwargs)
 {
     if (kwargs.empty()) {
         return { nullptr };

@@ -15,7 +15,7 @@ protected:
 
     static constexpr esig::deg_t width = 5;
     static constexpr esig::deg_t depth = 2;
-    std::shared_ptr<esig::algebra::context> ctx;
+    std::shared_ptr<const esig::algebra::context> ctx;
 
     LieIncrementPathTestsFixture()
         : ctx(esig::algebra::get_context(width, depth, esig::algebra::coefficient_type::sp_real, {}))

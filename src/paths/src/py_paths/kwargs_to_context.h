@@ -14,7 +14,7 @@
 namespace esig {
 namespace paths {
 
-std::shared_ptr<algebra::context> kwargs_to_context(const path_metadata& md, const pybind11::kwargs &kwargs);
+std::shared_ptr<const algebra::context> kwargs_to_context(const path_metadata& md, const pybind11::kwargs &kwargs);
 
 } // namespace paths
 } // namespace esig

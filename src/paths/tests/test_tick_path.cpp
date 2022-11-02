@@ -16,7 +16,7 @@ protected:
     static constexpr esig::deg_t width = 5;
     static constexpr esig::deg_t depth = 2;
     static constexpr esig::algebra::coefficient_type ctype = esig::algebra::coefficient_type::dp_real;
-    std::shared_ptr<esig::algebra::context> ctx;
+    std::shared_ptr<const esig::algebra::context> ctx;
 
     esig::paths::path path;
 
