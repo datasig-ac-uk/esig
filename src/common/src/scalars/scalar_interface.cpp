@@ -3,6 +3,7 @@
 //
 
 #include "esig/scalars.h"
+#include <ostream>
 
 using namespace esig;
 

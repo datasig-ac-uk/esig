@@ -12,7 +12,7 @@
 #include <memory>
 #include <stdexcept>
 #include <type_traits>
-#include <iosfwd>
+#include <ostream>
 
 
 

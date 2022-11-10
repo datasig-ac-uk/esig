@@ -6,7 +6,6 @@
 #define ESIG_IMPLEMENTATION_TYPES_H_
 
 #include <cstdint>
-#include <iostream>
 
 
 namespace esig {

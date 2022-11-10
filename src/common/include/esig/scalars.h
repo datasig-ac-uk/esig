@@ -68,6 +68,15 @@ class ESIG_EXPORT scalar_type
 
     using interface_ptr = std::shared_ptr<scalar_interface>;
 
+    friend class scalar_pointer;
+    friend class scalar;
+
+protected:
+    virtual scalar dereference_pointer(void* ptr) const;
+    virtual scalar dereference_pointer(const void* ptr) const;
+    virtual void assign_pointer(void* ptr, scalar value) const;
+
+
 public:
     explicit scalar_type(scalar_type_info info) : m_info(info) {}
 
@@ -193,7 +202,17 @@ class scalar_pointer
     void* p_data;
     const scalar_type* p_type;
 
+    scalar_pointer(void* ptr, const scalar_type* type)
+        : p_data(ptr), p_type(type)
+    {}
+
 public:
+
+    template <typename T>
+    T* raw_cast() noexcept
+    {
+        return reinterpret_cast<T*>(p_data);
+    }
 
     scalar operator*() noexcept;
     scalar operator*() const noexcept;
@@ -205,6 +224,10 @@ public:
     scalar operator[](dimn_t index) const noexcept
     { return *(*this + index); }
 
+    bool operator==(const scalar_pointer& other) const noexcept
+    { return p_type == other.p_type && p_data == other.p_data; }
+    bool operator!=(const scalar_pointer& other) const noexcept
+    { return p_type != other.p_type || p_data != other.p_data; }
 
 };
 

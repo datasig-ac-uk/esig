@@ -17,19 +17,23 @@ add_library(esig_common SHARED
         src/scalars/floats.cpp
         src/scalars/floats.h
         src/scalars/scalar_type.cpp
-        src/scalars/scalar_interface.cpp src/scalars/scalar.cpp)
+        src/scalars/scalar_interface.cpp
+        src/scalars/scalar.cpp
+        src/scalars/scalar_pointer.cpp src/scalars/scalar_array.cpp)
 #add_library(esig_common SHARED )
 #pybind11_extension(esig_common)
 #target_link_libraries(esig_common PUBLIC
 #        pybind11::module
 #        )
-
+generate_export_header(esig_common
+        BASE_NAME "esig"
+        EXPORT_FILE_NAME "esig_export.h")
 
 set(esig_common_HEADERS
         "include/esig/implementation_types.h"
         "include/esig/intervals.h"
         "include/esig/scalars.h"
-        "esig_export.h")
+        "${CMAKE_CURRENT_BINARY_DIR}/esig_export.h")
 
 
 set_target_properties(esig_common PROPERTIES

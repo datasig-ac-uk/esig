@@ -5,8 +5,8 @@
 #ifndef ESIG_INTERVALS_H_
 #define ESIG_INTERVALS_H_
 
-#include <esig/esig_export.h>
-#include <esig/implementation_types.h>
+#include "esig_export.h"
+#include "implementation_types.h"
 
 #include <iosfwd>
 #include <limits>
