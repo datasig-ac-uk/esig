@@ -673,7 +673,7 @@ struct algebra_info
     { return instance->depth(); }
 
     using this_key_type = key_type;
-    static this_key_type convert_key(const Algebra* instance, esig::key_type key) noexcept
+    static this_key_type convert_key(const Algebra*, esig::key_type key) noexcept
     { return key; }
 
     static deg_t degree(const Algebra& instance) noexcept
@@ -683,7 +683,7 @@ struct algebra_info
     static deg_t native_degree(const Algebra* instance, this_key_type key)
     { return instance->basis().degree(key); }
 
-    static key_type first_key(const Algebra* instance) noexcept
+    static key_type first_key(const Algebra*) noexcept
     { return 0; }
     static key_type last_key(const Algebra* instance) noexcept
     { return instance->basis().size(); }

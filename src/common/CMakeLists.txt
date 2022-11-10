@@ -12,7 +12,12 @@ include(GenerateExportHeader)
 
 
 
-add_library(esig_common SHARED src/interval_partition.cpp)
+add_library(esig_common SHARED
+        src/interval_partition.cpp
+        src/scalars/floats.cpp
+        src/scalars/floats.h
+        src/scalars/scalar_type.cpp
+        src/scalars/scalar_interface.cpp src/scalars/scalar.cpp)
 #add_library(esig_common SHARED )
 #pybind11_extension(esig_common)
 #target_link_libraries(esig_common PUBLIC
@@ -23,11 +28,8 @@ add_library(esig_common SHARED src/interval_partition.cpp)
 set(esig_common_HEADERS
         "include/esig/implementation_types.h"
         "include/esig/intervals.h"
-        )
-
-generate_export_header(esig_common
-        BASE_NAME esig
-        EXPORT_FILE_NAME "include/esig/esig_export.h")
+        "include/esig/scalars.h"
+        "esig_export.h")
 
 
 set_target_properties(esig_common PROPERTIES
@@ -53,7 +55,7 @@ configure_file("src/config.h.in" "include/esig/config.h" NO_SOURCE_PERMISSIONS @
 
 target_include_directories(esig_common PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/recombine>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
         )
