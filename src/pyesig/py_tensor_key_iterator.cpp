@@ -30,7 +30,7 @@ py_tensor_key py_tensor_key_iterator::next() {
     return py_tensor_key(current, m_width, m_depth);
 }
 
-void init_tensor_key_iterator(pybind11::module_ &m) {
+void esig::python::init_tensor_key_iterator(pybind11::module_ &m) {
     py::class_<py_tensor_key_iterator> klass(m, "TensorKeyIterator", TKEY_ITERATOR_DOC);
 
     klass.def(py::init([](const py_tensor_key &start_key) {

@@ -52,7 +52,7 @@ py_lie_key py_lie_key_iterator::next() {
     return to_py_lie_key(current, *p_ctx->get_lie_basis());
 }
 
-void init_lie_key_iterator(pybind11::module_ &m) {
+void esig::python::init_lie_key_iterator(pybind11::module_ &m) {
     py::class_<py_lie_key_iterator> klass(m, "LieKeyIterator", LKEY_ITERATOR_DOC);
     klass.def(py::init<const algebra::context *>(), "algebra::context"_a);
     klass.def(py::init<const algebra::context *, key_type>(), "algebra::context"_a, "start_key"_a);
