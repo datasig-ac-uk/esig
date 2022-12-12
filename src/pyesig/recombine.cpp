@@ -6,7 +6,9 @@
 
 
 #include <pybind11/numpy.h>
+#include <recombine/recombine.h>
 
+using namespace esig;
 using namespace pybind11::literals;
 
 
@@ -30,8 +32,61 @@ and moments. The default is to index of all the points, the default weights are
 )edoc";
 
 
+static void recombine_wrapper(dimn_t stCubatureDimension,
+                              dimn_t dimension,
+                              dimn_t no_locations,
+                              dimn_t* pno_kept_locations,
+                              const void** ppLocationBuffer,
+                              scalar_t* pdWeightBuffer,
+                              dimn_t* pKeptLocations,
+                              scalar_t* pNewWeights)
+{
+    auto& no_kept_locations = *pno_kept_locations;
+    auto iNoDimensionsToCubature = RdToPowersCubatureDimension(dimension, stCubatureDimension);
+    if (no_locations == 0) {
+        no_kept_locations = iNoDimensionsToCubature;
+        return;
+    }
 
-static py::tuple py_recombine(const py::array_t<double>& data,
+    if (no_kept_locations < iNoDimensionsToCubature) {
+        no_kept_locations = 0;
+        return;
+    }
+
+    CMultiDimensionalBufferHelper sConditioning {
+        dimension,
+        stCubatureDimension
+    };
+
+    sCloud in {
+        dimn_t(no_locations),
+        pdWeightBuffer,
+        const_cast<void *>(static_cast<const void *>(ppLocationBuffer)),
+        &sConditioning
+    };
+
+    sRCloudInfo out {
+        iNoDimensionsToCubature,
+        pNewWeights,
+        pKeptLocations,
+        nullptr
+    };
+
+    sRecombineInterface data {
+        &in,
+        &out,
+        iNoDimensionsToCubature,
+        &RdToPowers,
+        nullptr
+    };
+
+    Recombine(&data);
+
+    no_kept_locations = data.pOutCloudInfo->No_KeptLocations;
+}
+
+
+static py::tuple py_recombine(const py::array_t<scalar_t>& data,
                        const py::object& src_locations,
                        const py::object& src_weights,
                        std::ptrdiff_t cubature_degree)
@@ -40,8 +95,8 @@ static py::tuple py_recombine(const py::array_t<double>& data,
         throw py::value_error("data is badly formed");
     }
 
-    std::ptrdiff_t no_data_points = data.shape(0);
-    std::ptrdiff_t point_dimension = data.shape(1);
+    auto no_data_points = data.shape(0);
+    auto point_dimension = data.shape(1);
 
     py::array_t<std::size_t> src_locs;
     if (!src_locations.is_none()) {
@@ -57,17 +112,17 @@ static py::tuple py_recombine(const py::array_t<double>& data,
             *(sloc_p++) = i;
         }
     }
-    std::ptrdiff_t no_locations = src_locs.shape(0);
+    dimn_t no_locations = src_locs.shape(0);
 
-    py::array_t<double> src_wghts;
+    py::array_t<scalar_t> src_wghts;
     if (!src_weights.is_none()) {
-        src_wghts = py::array_t<double>::ensure(src_weights);
+        src_wghts = py::array_t<scalar_t>::ensure(src_weights);
 
         if (src_wghts.ndim() != 1 || src_wghts.shape(0) == 0) {
             throw py::value_error("source weights badly formed");
         }
     } else {
-        src_wghts = py::array_t<double>(py::array::ShapeContainer {data.shape(0)});
+        src_wghts = py::array_t<scalar_t>(py::array::ShapeContainer {data.shape(0)});
         auto* swht_p = src_wghts.mutable_data();
         for (std::ptrdiff_t i=0; i<data.shape(0); ++i) {
             swht_p[i] = 1.0;
@@ -83,7 +138,7 @@ static py::tuple py_recombine(const py::array_t<double>& data,
     }
 
     // Normalise the weights
-    double total_mass = 0.0;
+    scalar_t total_mass = 0.0;
     {
         auto *w_ptr = src_wghts.mutable_data();
         for (std::ptrdiff_t i = 0; i < no_locations; ++i) {
@@ -96,19 +151,19 @@ static py::tuple py_recombine(const py::array_t<double>& data,
 
 
     // Get the max number of points needed for the output
-    std::ptrdiff_t no_dimension_to_cubature = 0;
-//    _recombineC(cubature_degree,
-//                point_dimension,
-//                0,
-//                &no_dimension_to_cubature,
-//                nullptr,
-//                nullptr,
-//                nullptr,
-//                nullptr);
+    dimn_t no_dimension_to_cubature = 0;
+    recombine_wrapper(cubature_degree,
+                      point_dimension,
+                      0,
+                      &no_dimension_to_cubature,
+                      nullptr,
+                      nullptr,
+                      nullptr,
+                      nullptr);
 
-    std::ptrdiff_t no_kept_locations = no_dimension_to_cubature;
-    py::array_t<std::ptrdiff_t> kept_locations(py::array::ShapeContainer {no_kept_locations});
-    py::array_t<double> new_weights(py::array::ShapeContainer {no_kept_locations});
+    auto no_kept_locations = no_dimension_to_cubature;
+    py::array_t<dimn_t> kept_locations(py::array::ShapeContainer {no_kept_locations});
+    py::array_t<scalar_t> new_weights(py::array::ShapeContainer {no_kept_locations});
 
     {
         std::vector<const void*> locations_map;
@@ -129,6 +184,15 @@ static py::tuple py_recombine(const py::array_t<double>& data,
 //                    reinterpret_cast<std::size_t*>(kept_locations.mutable_data()),
 //                    new_weights.mutable_data()
 //            );
+        recombine_wrapper(cubature_degree,
+                          point_dimension,
+                          no_locations,
+                          &no_kept_locations,
+                          locations_map.data(),
+                          src_wghts.mutable_data(),
+                          static_cast<dimn_t*>(kept_locations.mutable_data()),
+                          new_weights.mutable_data());
+
         kept_locations.resize(py::array::ShapeContainer {no_kept_locations});
         new_weights.resize(py::array::ShapeContainer {no_kept_locations});
     }
