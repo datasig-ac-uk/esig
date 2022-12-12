@@ -40,6 +40,9 @@ public:
     bool equals(const py_lie_key &other) const noexcept;
 };
 
+
+void init_py_lie_key(py::module_& m);
+
 }}
 
 #endif//ESIG_SRC_PYESIG_PY_LIE_KEY_H_
