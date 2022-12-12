@@ -11,5 +11,12 @@
 
 #cmakedefine ESIG_RECOMBINE_AVAILABLE
 
+#include <boost/multiprecision/@ESIG_RATIONAL_HEADER@>
+
+namespace esig {
+
+using rational_scalar_type = @ESIG_RATIONAL_TYPE@;
+
+} // namespace esig
 
 #endif // ESIG_CONFIG_H_

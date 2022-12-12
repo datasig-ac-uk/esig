@@ -4,7 +4,7 @@ find_package(GTest CONFIG)
 if (TARGET GTest::gtest)
 include(GoogleTest)
 
-add_executable(esig_common_tests)
+add_executable(esig_common_tests scalars_fixture.h scalar_pointer_tests.cpp scalar_tests.cpp scalar_array_tests.cpp)
 target_link_libraries(esig_common_tests PRIVATE
         GTest::gtest_main
         esig_common

@@ -26,8 +26,8 @@
 
 #include <esig/implementation_types.h>
 #include <esig/intervals.h>
+#include <esig/scalars.h>
 #include <esig/paths/esig_paths_export.h>
-#include <esig/algebra/coefficients.h>
 #include <esig/algebra/algebra_traits.h>
 
 #include <esig/algebra/context.h>
@@ -59,8 +59,7 @@ struct path_metadata {
     real_interval effective_domain;
     std::shared_ptr<const algebra::context> ctx;
 
-    algebra::coefficient_type ctype;
-    algebra::input_data_type data_type;
+    const scalars::scalar_type* ctype;
     algebra::vector_type result_vec_type;
 };
 
@@ -173,7 +172,7 @@ struct ESIG_PATHS_EXPORT dynamically_constructed_path : dyadic_caching_layer
 {
     using dyadic_caching_layer::dyadic_caching_layer;
 
-    virtual algebra::allocating_data_buffer eval(const interval &domain) const = 0;
+    virtual owned_scalar_array eval(const interval &domain) const = 0;
 
     bool empty(const interval &domain) const override;
 

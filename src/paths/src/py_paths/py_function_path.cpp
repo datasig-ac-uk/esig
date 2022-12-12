@@ -5,7 +5,6 @@
 
 #include "py_function_path.h"
 
-#include <esig/algebra/coefficients.h>
 #include "python_arguments.h"
 
 #include <pybind11/functional.h>

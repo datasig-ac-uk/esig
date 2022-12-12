@@ -49,8 +49,8 @@ struct iterator_helper<sparse_kv_iterator<Vector>> {
 
     static void advance(iter_type &iter) { iter.advance(); }
     static key_type key(const iter_type &iter) { return iter.key(); }
-    static coefficient value(const iter_type &iter) {
-        using traits = coefficient_type_trait<decltype(*iter)>;
+    static scalars::scalar value(const iter_type &iter) {
+        using traits = ::esig::scalars::dtl::scalar_type_trait<decltype(*iter)>;
         return traits::make(iter->value());
     }
     static bool equals(const iter_type &iter1, const iter_type &) { return iter1.finished(); }

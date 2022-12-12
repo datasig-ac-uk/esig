@@ -6,11 +6,11 @@
 #include <sstream>
 #include "py_iterator.h"
 #include <pybind11/numpy.h>
+#include <esig/pycommon.h>
 
 namespace py = pybind11;
 using namespace pybind11::literals;
 
-using esig::algebra::coefficient_type;
 
 
 static const char* LIE_DOC = R"eadoc(Element of the free Lie algebra.
@@ -32,15 +32,14 @@ esig::algebra::lie lie_from_buffer(const py::object& arg, const py::kwargs& kwar
         helper.ctx = esig::algebra::get_context(helper.width, helper.depth, helper.ctype);
     }
 
-    esig::algebra::vector_construction_data data(
-        helper.begin_ptr,
-        helper.end_ptr,
-        helper.ctype,
-        helper.vtype,
-        helper.input_vec_type,
-        helper.itemsize
-    );
-    return helper.ctx->construct_lie(data);
+//    esig::algebra::vector_construction_data data{
+//        helper.end_ptr,
+//        helper.ctype,
+//        helper.vtype,
+//        helper.itemsize
+//    };
+    return helper.ctx->zero_lie(esig::algebra::vector_type::sparse);
+//    return helper.ctx->construct_lie(data);
 }
 
 }
@@ -69,7 +68,7 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
     klass.def("degree", &lie::degree);
 
     klass.def("__getitem__", [](const lie& self, key_type key) {
-        return static_cast<scalar_t>(self[key]);
+        return self[key];
     });
     klass.def("__iter__", [](const lie& self) {
              return py_lie_iterator(self.begin(), self.end());
@@ -82,26 +81,26 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
     klass.def("__mul__", &lie::smul, py::is_operator());
     klass.def("__truediv__", &lie::smul, py::is_operator());
     klass.def("__mul__", &lie::mul, py::is_operator());
-    klass.def("__rmul__", [](const lie& self, const coefficient& other) { return self.smul(other); },
+    klass.def("__rmul__", [](const lie& self, const scalars::scalar& other) { return self.smul(other); },
             py::is_operator());
 
     klass.def("__mul__", [](const lie& self, scalar_t arg) {
-        return self.smul(coefficient(arg));
+        return self.smul(scalars::scalar(arg));
     }, py::is_operator());
     klass.def("__mul__", [](const lie& self, long long arg) {
-        return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+        return self.smul(scalars::scalar(arg, 1LL, self.coeff_type()));
     }, py::is_operator());
     klass.def("__rmul__", [](const lie& self, scalar_t arg) {
-         return self.smul(coefficient(arg));
+         return self.smul(scalars::scalar(arg));
     }, py::is_operator());
     klass.def("__rmul__", [](const lie& self, long long arg) {
-      return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+      return self.smul(scalars::scalar(arg, 1LL, self.coeff_type()));
     }, py::is_operator());
     klass.def("__truediv__", [](const lie& self, scalar_t arg) {
-             return self.sdiv(coefficient(arg));
+             return self.sdiv(scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__truediv__", [](const lie& self, scalar_t arg) {
-             return self.sdiv(coefficient(arg, 1LL, self.coeff_type()));
+             return self.sdiv(scalars::scalar(arg, self.coeff_type()));
          }, py::is_operator());
 
     klass.def("__iadd__", &lie::add_inplace, py::is_operator());
@@ -111,16 +110,16 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
     klass.def("__imul__", &lie::mul_inplace, py::is_operator());
 
     klass.def("__imul__", [](lie& self, scalar_t arg) {
-             return self.smul_inplace(coefficient(arg));
+             return self.smul_inplace(scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__imul__", [](lie& self, long long arg) {
-             return self.smul_inplace(coefficient(arg, 1LL, self.coeff_type()));
+             return self.smul_inplace(scalars::scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__itruediv__", [](lie& self, scalar_t arg) {
-             return self.sdiv_inplace(coefficient(arg));
+             return self.sdiv_inplace(scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__itruediv__", [](lie& self, long long arg) {
-             return self.sdiv_inplace(coefficient(arg, 1LL, self.coeff_type()));
+             return self.sdiv_inplace(scalars::scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
 
     klass.def("add_scal_mul", &lie::add_scal_mul, "other"_a, "scalar"_a);
@@ -143,7 +142,7 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
     klass.def("__repr__", [](const lie& self) {
                 std::stringstream ss;
                 ss << "Lie(width=" << self.width() << ", depth=" << self.depth();
-                ss << ", ctype=" << static_cast<int>(self.coeff_type()) << ')';
+                ss << ", ctype=" << self.coeff_type()->info().name << ')';
                 return ss.str();
             });
 
@@ -151,7 +150,7 @@ void esig::algebra::init_py_lie(pybind11::module_ &m)
     klass.def("__neq__", [](const lie& lhs, const lie& rhs) { return lhs != rhs; });
 
     klass.def("__array__", [](const lie& arg) {
-        py::dtype dtype = esig::algebra::dtype_from(arg.coeff_type());
+        py::dtype dtype = ::esig::ctype_to_npy_dtype(arg.coeff_type());
 
         if (arg.storage_type() == vector_type::dense) {
             auto it = arg.iterate_dense_components().next();

@@ -3,7 +3,6 @@
 //
 
 #include <esig/algebra/algebra_traits.h>
-#include <esig/algebra/coefficients.h>
 #include <esig/algebra/tensor_interface.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
@@ -24,10 +23,10 @@ public:
     MOCK_METHOD(deg_t, width, (), (const, override));
     MOCK_METHOD(deg_t, depth, (), (const, override));
     MOCK_METHOD(vector_type, storage_type, (), (const, noexcept, override));
-    MOCK_METHOD(coefficient_type, coeff_type, (), (const, noexcept, override));
+    MOCK_METHOD(const esig::scalar_type*, coeff_type, (), (const, noexcept, override));
 
-    MOCK_METHOD(coefficient, get, (key_type), (const, override));
-    MOCK_METHOD(coefficient, get_mut, (key_type), (override));
+    MOCK_METHOD(scalar, get, (key_type), (const, override));
+    MOCK_METHOD(scalar, get_mut, (key_type), (override));
 
     MOCK_METHOD(dense_data_access_iterator, iterate_dense_components, (), (const, override));
 
@@ -37,24 +36,24 @@ public:
     MOCK_METHOD(free_tensor, uminus, (), (const, override));
     MOCK_METHOD(free_tensor, add, (const algebra_interface_t &), (const, override));
     MOCK_METHOD(free_tensor, sub, (const algebra_interface_t &), (const, override));
-    MOCK_METHOD(free_tensor, smul, (const coefficient &), (const, override));
-    MOCK_METHOD(free_tensor, sdiv, (const coefficient &), (const, override));
+    MOCK_METHOD(free_tensor, smul, (const scalar &), (const, override));
+    MOCK_METHOD(free_tensor, sdiv, (const scalar &), (const, override));
     MOCK_METHOD(free_tensor, mul, (const algebra_interface_t &), (const, override));
 
     MOCK_METHOD(void, add_inplace, (const algebra_interface_t &), (override));
     MOCK_METHOD(void, sub_inplace, (const algebra_interface_t &), (override));
-    MOCK_METHOD(void, smul_inplace, (const coefficient &), (override));
-    MOCK_METHOD(void, sdiv_inplace, (const coefficient &), (override));
+    MOCK_METHOD(void, smul_inplace, (const scalar &), (override));
+    MOCK_METHOD(void, sdiv_inplace, (const scalar &), (override));
     MOCK_METHOD(void, mul_inplace, (const algebra_interface_t &), (override));
 
-    MOCK_METHOD(void, add_scal_mul, (const algebra_interface_t &, const coefficient &), (override));
-    MOCK_METHOD(void, sub_scal_mul, (const algebra_interface_t &, const coefficient &), (override));
-    MOCK_METHOD(void, add_scal_div, (const algebra_interface_t &, const coefficient &), (override));
-    MOCK_METHOD(void, sub_scal_div, (const algebra_interface_t &, const coefficient &), (override));
+    MOCK_METHOD(void, add_scal_mul, (const algebra_interface_t &, const scalar &), (override));
+    MOCK_METHOD(void, sub_scal_mul, (const algebra_interface_t &, const scalar &), (override));
+    MOCK_METHOD(void, add_scal_div, (const algebra_interface_t &, const scalar &), (override));
+    MOCK_METHOD(void, sub_scal_div, (const algebra_interface_t &, const scalar &), (override));
     MOCK_METHOD(void, add_mul, (const algebra_interface_t &, const algebra_interface_t &), (override));
     MOCK_METHOD(void, sub_mul, (const algebra_interface_t &, const algebra_interface_t &), (override));
-    MOCK_METHOD(void, mul_smul, (const algebra_interface_t &, const coefficient &), (override));
-    MOCK_METHOD(void, mul_sdiv, (const algebra_interface_t &, const coefficient &), (override));
+    MOCK_METHOD(void, mul_smul, (const algebra_interface_t &, const scalar &), (override));
+    MOCK_METHOD(void, mul_sdiv, (const algebra_interface_t &, const scalar &), (override));
 
     MOCK_METHOD(free_tensor, exp, (), (const, override));
     MOCK_METHOD(free_tensor, log, (), (const, override));
@@ -92,7 +91,7 @@ protected:
         ON_CALL(mtensor, width()).WillByDefault(Return(5));
         ON_CALL(mtensor, depth()).WillByDefault(Return(2));
         ON_CALL(mtensor, storage_type()).WillByDefault(Return(vector_type::dense));
-        ON_CALL(mtensor, coeff_type()).WillByDefault(Return(coefficient_type::dp_real));
+        ON_CALL(mtensor, coeff_type()).WillByDefault(Return(::esig::dtl::scalar_type_trait<double>::get_type()));
         ON_CALL(mtensor, uminus()).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
         ON_CALL(mtensor, add(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
         ON_CALL(mtensor, sub(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
@@ -190,12 +189,12 @@ TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceMul)
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceSmul)
 {
     EXPECT_CALL(mocked(tensorobj), smul(_)).Times(1);
-    auto v = tensorobj.smul(coefficient(1.0));
+    auto v = tensorobj.smul(scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceSdiv)
 {
     EXPECT_CALL(mocked(tensorobj), sdiv(_)).Times(1);
-    auto v = tensorobj.sdiv(coefficient(1.0));
+    auto v = tensorobj.sdiv(scalar(1.0));
 }
 
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceAddInplace)
@@ -218,32 +217,32 @@ TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceMulInplace)
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceSMulInplace)
 {
     EXPECT_CALL(mocked(tensorobj), smul_inplace(_)).Times(1);
-    auto v = tensorobj.smul_inplace(coefficient(1.0));
+    auto v = tensorobj.smul_inplace(scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceSDivInplace)
 {
     EXPECT_CALL(mocked(tensorobj), sdiv_inplace(_)).Times(1);
-    auto v = tensorobj.sdiv_inplace(coefficient(1.0));
+    auto v = tensorobj.sdiv_inplace(scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceAddScalMul)
 {
     EXPECT_CALL(mocked(tensorobj), add_scal_mul(_, _)).Times(1);
-    auto v = tensorobj.add_scal_mul(othertensor, coefficient(1.0));
+    auto v = tensorobj.add_scal_mul(othertensor, scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceSubScalMul)
 {
     EXPECT_CALL(mocked(tensorobj), add_scal_mul(_, _)).Times(1);
-    auto v = tensorobj.add_scal_mul(othertensor, coefficient(1.0));
+    auto v = tensorobj.add_scal_mul(othertensor, scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceAddScalDiv)
 {
     EXPECT_CALL(mocked(tensorobj), add_scal_div(_, _)).Times(1);
-    auto v = tensorobj.add_scal_div(othertensor, coefficient(1.0));
+    auto v = tensorobj.add_scal_div(othertensor, scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceSubScalDiv)
 {
     EXPECT_CALL(mocked(tensorobj), add_scal_div(_, _)).Times(1);
-    auto v = tensorobj.add_scal_div(othertensor, coefficient(1.0));
+    auto v = tensorobj.add_scal_div(othertensor, scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceAddMul)
 {
@@ -260,12 +259,12 @@ TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceSubMul)
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceMulSMul)
 {
     EXPECT_CALL(mocked(tensorobj), mul_smul(_, _)).Times(1);
-    auto v = tensorobj.mul_smul(othertensor, coefficient(1.0));
+    auto v = tensorobj.mul_smul(othertensor, scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfaceMulSDiv)
 {
     EXPECT_CALL(mocked(tensorobj), mul_sdiv(_, _)).Times(1);
-    auto v = tensorobj.mul_sdiv(othertensor, coefficient(1.0));
+    auto v = tensorobj.mul_sdiv(othertensor, scalar(1.0));
 }
 TEST_F(FreeTensorWrapperFixture, TestFreeTensorInterfacePrint)
 {

@@ -125,10 +125,6 @@ public:
     {
         return vector_type::sparse;
     }
-    coefficient_type coeff_type() const noexcept
-    {
-        return dtl::get_coeff_type(Scalar(0));
-    }
 
     void assign(const map_type& arg)
     {
@@ -553,8 +549,8 @@ struct algebra_info<sparse_tensor<S>>
     using reference = typename algebra_t::reference;
     using const_reference = const S&;
 
-    static constexpr coefficient_type ctype() noexcept
-    { return dtl::get_coeff_type(S(0)); }
+    static constexpr const esig::scalars::scalar_type* ctype() noexcept
+    { return ::esig::scalars::dtl::scalar_type_holder<S>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
     static deg_t width(const sparse_tensor<S>* instance) noexcept

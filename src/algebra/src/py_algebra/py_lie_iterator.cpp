@@ -4,6 +4,7 @@
 
 #include <esig/algebra/python_interface.h>
 #include "py_lie.h"
+#include <esig/scalars.h>
 
 namespace py = pybind11;
 
@@ -15,7 +16,7 @@ py_lie_iterator::py_lie_iterator(algebra_iterator it, algebra_iterator end)
     : m_it(std::move(it)), m_end(std::move(end))
 {}
 
-std::pair<py_lie_key, coefficient> py_lie_iterator::next()
+std::pair<py_lie_key, scalars::scalar> py_lie_iterator::next()
 {
     if (m_it == m_end) {
         throw py::stop_iteration();

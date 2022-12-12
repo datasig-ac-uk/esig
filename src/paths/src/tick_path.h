@@ -7,7 +7,6 @@
 
 #include <esig/implementation_types.h>
 #include <esig/paths/path.h>
-#include <esig/algebra/coefficients.h>
 
 #include <boost/container/flat_map.hpp>
 

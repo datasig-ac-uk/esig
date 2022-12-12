@@ -7,7 +7,6 @@
 
 #include <esig/implementation_types.h>
 #include <esig/paths/path.h>
-#include <esig/algebra/coefficients.h>
 
 #include <boost/container/flat_map.hpp>
 
@@ -37,12 +36,12 @@ public:
 
 class lie_increment_path : public dyadic_caching_layer
 {
-    algebra::rowed_data_buffer m_buffer;
+    owned_scalar_array m_buffer;
     boost::container::flat_map<param_t, std::pair<const char*, const char*>> m_data;
 
 public:
     lie_increment_path(
-            algebra::rowed_data_buffer&& buffer,
+            owned_scalar_array&& buffer,
             const std::vector<param_t>& indices,
             path_metadata metadata
             );

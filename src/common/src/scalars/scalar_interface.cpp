@@ -6,29 +6,28 @@
 #include <ostream>
 
 using namespace esig;
+using namespace esig::scalars;
 
 scalar scalar_interface::uminus() const {
-    auto tmp = this->type()->mone();
-    return this->mul(tmp.get());
+    return type()->uminus(to_pointer());
 }
-void scalar_interface::add_inplace(const scalar_interface *other)
-{
-    this->assign(this->add(other).p_impl.get());
-}
-void scalar_interface::sub_inplace(const scalar_interface *other) {
-    this->assign(this->sub(other).p_impl.get());
-}
-void scalar_interface::mul_inplace(const scalar_interface *other) {
-    this->assign(this->mul(other).p_impl.get());
-}
-void scalar_interface::div_inplace(const scalar_interface *other) {
-    this->assign(this->div(other).p_impl.get());
+//scalar scalar_interface::add(const scalar& other) const {
+//    return type()->add(to_pointer().ptr(), other.to_const_pointer());
+//}
+//scalar scalar_interface::sub(const scalar& other) const {
+//    return type()->sub(to_pointer().ptr(), other.to_const_pointer());
+//}
+//scalar scalar_interface::mul(const scalar& other) const {
+//    return type()->mul(to_pointer().ptr(), other.to_const_pointer());
+//}
+//scalar scalar_interface::div(const scalar& other) const {
+//    return type()->div(to_pointer().ptr(), other.to_const_pointer());
+//}
+bool scalar_interface::equals(const scalar& other) const noexcept {
+    return type()->are_equal(to_pointer().ptr(), other.to_const_pointer());
 }
 
-bool scalar_interface::equals(const scalar_interface *other) const noexcept {
-    return this->as_scalar() == other->as_scalar();
 
-}
 std::ostream &scalar_interface::print(std::ostream &os) const {
     os << this->as_scalar();
     return os;

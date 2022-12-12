@@ -7,7 +7,6 @@
 
 #include <esig/implementation_types.h>
 #include <esig/algebra/esig_algebra_export.h>
-#include <esig/algebra/coefficients.h>
 
 #include <cassert>
 #include <iostream>

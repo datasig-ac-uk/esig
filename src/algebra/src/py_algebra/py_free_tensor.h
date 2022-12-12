@@ -21,7 +21,7 @@ class py_free_tensor_iterator
 
 public:
     py_free_tensor_iterator(algebra_iterator it, algebra_iterator end);
-    std::pair<py_tensor_key, coefficient> next();
+    std::pair<py_tensor_key, scalars::scalar> next();
 };
 
 

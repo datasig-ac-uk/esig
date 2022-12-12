@@ -8,7 +8,7 @@
 #include <esig/implementation_types.h>
 #include <esig/algebra/esig_algebra_export.h>
 #include <esig/algebra/algebra_traits.h>
-#include <esig/algebra/coefficients.h>
+#include <esig/scalars.h>
 
 #include <memory>
 
@@ -23,7 +23,7 @@ struct ESIG_ALGEBRA_EXPORT algebra_iterator_item
     virtual ~algebra_iterator_item() = default;
 
     virtual key_type key() const noexcept = 0;
-    virtual coefficient value() const noexcept = 0;
+    virtual scalars::scalar value() const noexcept = 0;
 };
 
 
@@ -159,7 +159,7 @@ public:
     pointer get_ptr() const override;
     bool equals(const algebra_iterator_interface &other) const noexcept override;
     key_type key() const noexcept override;
-    coefficient value() const noexcept override;
+    scalars::scalar value() const noexcept override;
 };
 } // namespace dtl
 
@@ -194,9 +194,9 @@ struct iterator_helper
     {
         return iter->key();
     }
-    static coefficient value(const Iter& iter)
+    static scalars::scalar value(const Iter& iter)
     {
-        using trait = coefficient_type_trait<decltype(iter->value())>;
+        using trait = ::esig::scalars::dtl::scalar_type_trait<decltype(iter->value())>;
         return trait::make(iter->value());
     }
     static bool equals(const Iter& iter1, const Iter& iter2)
@@ -248,7 +248,7 @@ key_type algebra_iterator_implementation<Iter>::key() const noexcept
     return iterator_helper<Iter>::key(m_current);
 }
 template<typename Iter>
-coefficient algebra_iterator_implementation<Iter>::value() const noexcept
+scalars::scalar algebra_iterator_implementation<Iter>::value() const noexcept
 {
     return iterator_helper<Iter>::value(m_current);
 }

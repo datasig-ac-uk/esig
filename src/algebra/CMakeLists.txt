@@ -45,7 +45,6 @@ set(esig_algebra_HEADERS
         "include/esig/algebra/lie_interface.h"
         "include/esig/algebra/context.h"
         "include/esig/algebra/iteration.h"
-        "include/esig/algebra/coefficients.h"
         "include/esig/algebra/base.h"
         "include/esig/algebra/context_fwd.h"
         )
@@ -82,13 +81,6 @@ target_sources(esig_algebra
             src/dense_kv_iterator.h
             src/sparse_kv_iterator.h
             src/sparse_mutable_reference.h
-            src/coefficient_proxies.cpp
-            src/coefficients.cpp
-            src/data_buffer.cpp
-            src/allocating_data_buffer.cpp
-            src/rowed_data_buffer.cpp
-            src/vector_construction_data.cpp
-            src/stream_out_helpers.cpp
             src/dense_data_access_iterator.cpp
             src/fallback_maps.cpp
             src/detail/converting_lie_iterator_adaptor.h
@@ -97,43 +89,9 @@ target_sources(esig_algebra
             ${esig_algebra_HEADERS}
         )
 
-pybind11_add_module(py_esig_algebra MODULE WITH_SOABI)
-
-set_target_properties(py_esig_algebra PROPERTIES
-        LIBRARY_OUTPUT_NAME algebra
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../esig")
 
 
-target_include_directories(py_esig_algebra PRIVATE
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-target_link_libraries(py_esig_algebra PRIVATE esig_algebra)
-
-target_sources(py_esig_algebra PRIVATE
-        src/py_algebra/py_esig_algebra.cpp
-        src/py_algebra/py_lie.cpp
-        src/py_algebra/py_lie.h
-        src/py_algebra/py_coefficients.h
-        src/py_algebra/py_coefficients.cpp
-        src/py_algebra/py_tensor_key.cpp
-        src/py_algebra/py_free_tensor_iterator.cpp
-        src/py_algebra/py_free_tensor.cpp
-        src/py_algebra/py_free_tensor.h
-        src/py_algebra/py_lie_key.cpp
-        src/py_algebra/py_lie_iterator.cpp
-        src/py_algebra/py_tensor_key_iterator.h
-        src/py_algebra/py_tensor_key_iterator.cpp
-        src/py_algebra/py_lie_key_iterator.h
-        src/py_algebra/py_lie_key_iterator.cpp
-        src/py_algebra/kwargs_parser.cpp
-        include/esig/algebra/python_interface.h
-        src/py_algebra/dtype_from.cpp
-        src/py_algebra/py_keys.h
-        src/py_algebra/convert_buffer.cpp
-        )
-
-install(TARGETS esig_algebra py_esig_algebra
+install(TARGETS esig_algebra
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         PUBLIC_HEADER DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

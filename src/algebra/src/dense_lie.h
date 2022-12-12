@@ -143,11 +143,6 @@ public:
     {
         return vector_type::dense;
     }
-    coefficient_type coeff_type() const noexcept 
-    {
-        return dtl::get_coeff_type(Scalar(0));
-    }
-
     void assign(const std::vector<Scalar>& arg)
     {
         m_data = arg;
@@ -580,8 +575,8 @@ struct algebra_info<dense_lie<S>>
     using reference = S&;
     using const_reference = const S&;
 
-    static constexpr coefficient_type ctype() noexcept
-    { return dtl::get_coeff_type(S()); }
+    static constexpr const esig::scalars::scalar_type* ctype() noexcept
+    { return ::esig::scalars::dtl::scalar_type_holder<S>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::dense; }
     static deg_t width(const dense_lie<S>* instance) noexcept

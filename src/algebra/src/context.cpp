@@ -17,14 +17,7 @@ namespace algebra {
 
 
 
-coefficient_type signature_data::ctype() const
-{
-    return m_coeff_type;
-}
-vector_type signature_data::vtype() const
-{
-    return m_vector_type;
-}
+
 
 bool context::check_compatible(const context &other) const noexcept {
     return other.width() == width();
@@ -32,11 +25,11 @@ bool context::check_compatible(const context &other) const noexcept {
 
 free_tensor context::zero_tensor(vector_type vtype) const
 {
-    return construct_tensor({ctype(), vtype});
+    return construct_tensor({ .vect_type=vtype });
 }
 lie context::zero_lie(vector_type vtype) const
 {
-    return construct_lie({ctype(), vtype});
+    return construct_lie({ scalars::scalar_array(), nullptr, vtype });
 }
 int context_maker::get_priority(const std::vector<std::string> &preferences) const noexcept
 {
@@ -53,7 +46,7 @@ static std::vector<std::unique_ptr<context_maker>>& get_context_maker_list() noe
     return list;
 }
 
-std::shared_ptr<const context> get_context(deg_t width, deg_t depth, coefficient_type ctype, const std::vector<std::string>& preferences)
+std::shared_ptr<const context> get_context(deg_t width, deg_t depth, const scalars::scalar_type* ctype, const std::vector<std::string>& preferences)
 {
     std::lock_guard<std::mutex> access(s_context_lock);
     std::vector<std::pair<int, const context_maker*>> found;

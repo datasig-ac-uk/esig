@@ -21,7 +21,7 @@ class py_lie_iterator
 
 public:
     py_lie_iterator(algebra_iterator it, algebra_iterator end);
-    std::pair<py_lie_key, coefficient> next();
+    std::pair<py_lie_key, scalars::scalar> next();
 
 
 };

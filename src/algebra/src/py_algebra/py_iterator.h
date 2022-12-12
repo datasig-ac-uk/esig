@@ -22,7 +22,7 @@ class py_algebra_iterator
 public:
     py_algebra_iterator(esig::algebra::algebra_iterator it, esig::algebra::algebra_iterator end);
 
-    std::pair<key_type, coefficient> next();
+    std::pair<key_type, scalars::scalar> next();
 
 
 };

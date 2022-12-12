@@ -9,7 +9,6 @@
 #include <pybind11/numpy.h>
 #include <esig/implementation_types.h>
 #include <esig/algebra/esig_algebra_export.h>
-#include <esig/algebra/coefficients.h>
 #include <esig/algebra/context.h>
 
 #include <boost/container/small_vector.hpp>
@@ -19,137 +18,14 @@
 namespace esig {
 namespace algebra {
 
-ESIG_ALGEBRA_EXPORT
-pybind11::dtype dtype_from(coefficient_type ctype);
-
-class ESIG_ALGEBRA_EXPORT py_tensor_key
-{
-    key_type m_key;
-    deg_t m_width;
-    deg_t m_depth;
-
-public:
-    explicit py_tensor_key(key_type key, deg_t width, deg_t depth);
-
-    explicit operator key_type() const noexcept;
-
-    std::string to_string() const;
-    py_tensor_key lparent() const;
-    py_tensor_key rparent() const;
-    bool is_letter() const;
-
-    deg_t width() const;
-    deg_t depth() const;
-
-    deg_t degree() const;
-    std::vector<let_t> to_letters() const;
-
-    bool equals(const py_tensor_key &other) const noexcept;
-    bool less(const py_tensor_key &other) const noexcept;
-};
 
 
-class ESIG_ALGEBRA_EXPORT py_lie_letter
-{
-    dimn_t m_data = 0;
-
-    constexpr explicit py_lie_letter(dimn_t raw) : m_data(raw)
-    {}
-
-public:
-
-    py_lie_letter() = default;
-
-    static constexpr py_lie_letter from_letter(let_t letter) {
-        return py_lie_letter(1 + (dimn_t(letter) << 1));
-    }
-
-    static constexpr py_lie_letter from_offset(dimn_t offset) {
-        return py_lie_letter(offset << 1);
-    }
-
-    constexpr bool is_offset() const noexcept
-    {
-        return (m_data & 1) == 0;
-    }
-
-    explicit operator let_t () const noexcept
-    {
-        return esig::let_t(m_data >> 1);
-    }
-
-    explicit constexpr operator dimn_t() const noexcept
-    {
-        return m_data >> 1;
-    }
-
-    inline friend std::ostream& operator<<(std::ostream& os, const py_lie_letter& let)
-    {
-        return os << let.m_data;
-    }
-
-};
 
 
-class ESIG_ALGEBRA_EXPORT py_lie_key
-{
-public:
-    using container_type = boost::container::small_vector<py_lie_letter, 2>;
-
-private:
-
-    container_type m_data;
-    deg_t m_width;
 
 
-public:
-
-    explicit py_lie_key(deg_t width);
-    explicit py_lie_key(deg_t width, let_t letter);
-    explicit py_lie_key(deg_t width, const boost::container::small_vector_base<py_lie_letter>& data);
-    explicit py_lie_key(deg_t width, let_t left, let_t right);
-    explicit py_lie_key(deg_t width, let_t left, const py_lie_key& right);
-    explicit py_lie_key(deg_t width, const py_lie_key& left, const py_lie_key& right);
-
-    bool is_letter() const noexcept;
-    let_t as_letter() const;
-    std::string to_string() const;
-    py_lie_key lparent() const;
-    py_lie_key rparent() const;
-
-    deg_t degree() const;
-
-    bool equals(const py_lie_key& other) const noexcept;
 
 
-};
-
-struct py_vector_construction_helper
-{
-    /// Buffer used if conversion is needed
-    allocating_data_buffer buffer;
-    /// Context if provided by user
-    std::shared_ptr<const context> ctx = nullptr;
-    /// Pointers to beginning and end of data
-    const char* begin_ptr;
-    const char* end_ptr;
-    /// Number of elements
-    dimn_t count = 0;
-    /// Item size
-    dimn_t itemsize = 0;
-    /// Width and depth
-    deg_t width = 0;
-    deg_t depth = 0;
-    /// Coefficient type
-    coefficient_type ctype = coefficient_type::dp_real;
-    /// Vector type to be requested
-    vector_type vtype = vector_type::dense;
-    /// flags for saying if the user explicitly requested ctype and vtype
-    bool ctype_requested = false;
-    bool vtype_requested = false;
-    /// Data type provided
-    input_data_type input_vec_type = input_data_type::value_array;
-};
 
 ESIG_ALGEBRA_EXPORT
 py_vector_construction_helper kwargs_to_construction_data(const pybind11::kwargs& kwargs);
@@ -235,22 +111,22 @@ void make_py_wrapper(pybind11::module_& m, const char* name, const char* doc_str
     klass.def("__rmul__", &algebra_type::smul, py::is_operator());
 
     klass.def("__mul__", [](const algebra_type& self, scalar_t arg) {
-        return self.smul(coefficient(arg));
+        return self.smul(scalars::scalar(arg));
     }, py::is_operator());
     klass.def("__mul__", [](const algebra_type& self, long long arg) {
-        return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+        return self.smul(scalar(arg, 1LL, self.coeff_type()));
     }, py::is_operator());
     klass.def("__rmul__", [](const algebra_type& self, scalar_t arg) {
-         return self.smul(coefficient(arg));
+         return self.smul(scalars::scalar(arg));
     }, py::is_operator());
     klass.def("__rmul__", [](const algebra_type& self, long long arg) {
-      return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+      return self.smul(scalar(arg, 1LL, self.coeff_type()));
     }, py::is_operator());
     klass.def("__truediv__", [](const algebra_type& self, scalar_t arg) {
-             return self.sdiv(coefficient(arg));
+             return self.sdiv(scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__truediv__", [](const algebra_type& self, scalar_t arg) {
-             return self.sdiv(coefficient(arg, 1LL, self.coeff_type()));
+             return self.sdiv(scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
 
     klass.def("__iadd__", &algebra_type::add_inplace, py::is_operator());
@@ -260,16 +136,16 @@ void make_py_wrapper(pybind11::module_& m, const char* name, const char* doc_str
     klass.def("__imul__", &algebra_type::mul_inplace, py::is_operator());
 
     klass.def("__imul__", [](algebra_type& self, scalar_t arg) {
-             return self.smul_inplace(coefficient(arg));
+             return self.smul_inplacei(scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__imul__", [](algebra_type& self, long long arg) {
-             return self.smul_inplace(coefficient(arg, 1LL, self.coeff_type()));
+             return self.smul_inplace(scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__itruediv__", [](algebra_type& self, scalar_t arg) {
-             return self.sdiv_inplace(coefficient(arg));
+             return self.sdiv_inplace(scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__itruediv__", [](algebra_type& self, long long arg) {
-             return self.sdiv_inplace(coefficient(arg, 1LL, self.coeff_type()));
+             return self.sdiv_inplace(scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
 
 

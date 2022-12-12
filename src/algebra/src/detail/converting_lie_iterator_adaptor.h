@@ -26,7 +26,7 @@ class converting_reference_wrapper
     {
         using scal_t = typename OutLie::scalar_type;
         for (auto &item : *m_interface) {
-            tmp.add_scal_prod(item.key(), coefficient_cast<scal_t>(item.value()));
+            tmp.add_scal_prod(item.key(), scalars::scalar_cast<scal_t>(item.value()));
         }
         converted = true;
     }

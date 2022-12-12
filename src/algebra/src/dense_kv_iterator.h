@@ -5,6 +5,8 @@
 #ifndef ESIG_PATHS_SRC_ALGEBRA_SRC_DENSE_KV_ITERATOR_H_
 #define ESIG_PATHS_SRC_ALGEBRA_SRC_DENSE_KV_ITERATOR_H_
 
+#include <esig/implementation_types.h>
+
 namespace esig {
 namespace algebra {
 namespace dtl {
@@ -65,9 +67,9 @@ struct iterator_helper<dense_kv_iterator<Vector>>
 
     static void advance(iter_type &iter) { iter.advance(); }
     static key_type key(const iter_type &iter) { return iter.key(); }
-    static coefficient value(const iter_type &iter)
+    static scalars::scalar value(const iter_type &iter)
     {
-        using traits = coefficient_type_trait<decltype(iter.value())>;
+        using traits = ::esig::scalars::dtl::scalar_type_trait<decltype(iter.value())>;
         return traits::make(iter.value());
     }
     static bool equals(const iter_type &iter1, const iter_type &) { return iter1.finished(); }

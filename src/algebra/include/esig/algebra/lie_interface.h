@@ -7,7 +7,6 @@
 
 
 #include <esig/algebra/algebra_traits.h>
-#include <esig/algebra/coefficients.h>
 #include <esig/algebra/esig_algebra_export.h>
 #include <esig/algebra/iteration.h>
 #include <esig/implementation_types.h>

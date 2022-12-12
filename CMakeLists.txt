@@ -32,7 +32,7 @@ endif()
 
 
 
-find_package(Boost COMPONENTS headers system thread REQUIRED)
+find_package(Boost 1.75 COMPONENTS headers system thread REQUIRED)
 
 message(STATUS "Boost thread library: ${Boost_THREAD_LIBRARY_RELEASE}")
 message(STATUS "Boost system library: ${Boost_SYSTEM_LIBRARY_RELEASE}")
@@ -125,8 +125,7 @@ add_subdirectory(src)
 
 add_custom_target(esig DEPENDS
         esig_common
-        py_esig_common
         esig_algebra
-        py_esig_algebra
         esig_paths
-        py_esig_paths)
+        esig_py_module
+        )

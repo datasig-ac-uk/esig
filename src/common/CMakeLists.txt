@@ -10,16 +10,12 @@ project(esig_common VERSION 1.0.0)
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 
+find_package(Boost CONFIG REQUIRED)
+find_package(Bignum QUIET)
 
-
-add_library(esig_common SHARED
-        src/interval_partition.cpp
-        src/scalars/floats.cpp
-        src/scalars/floats.h
-        src/scalars/scalar_type.cpp
-        src/scalars/scalar_interface.cpp
-        src/scalars/scalar.cpp
-        src/scalars/scalar_pointer.cpp src/scalars/scalar_array.cpp)
+add_library(esig_common SHARED src/scalars/rational_type.cpp
+        src/scalars/rational_type.h
+        src/scalars/ratonal_scalar_type_holder.cpp )
 #add_library(esig_common SHARED )
 #pybind11_extension(esig_common)
 #target_link_libraries(esig_common PUBLIC
@@ -49,60 +45,58 @@ target_sources(esig_common
             src/dyadic_interval.cpp
             src/to_dyadic_intervals.cpp
             src/real_interval.cpp
+            src/interval_partition.cpp
+            src/scalars/scalar_type.cpp
+            src/scalars/scalar_interface.cpp
+            src/scalars/scalar.cpp
+            src/scalars/scalar_pointer.cpp
+            src/scalars/scalar_array.cpp
+            src/scalars/float_type.cpp
+            src/scalars/float_type.h
+            src/scalars/double_type.cpp
+            src/scalars/double_type.h
+            src/scalars/float_scalar_type_holder.cpp
+            src/scalars/double_scalar_type_holder.cpp
+            src/scalars/owned_scalar_array.cpp
+            src/scalars/type_registry.cpp
+            src/scalars/scalar_stream.cpp
+            src/scalars/standard_scalar_type.h
             ${esig_common_HEADERS}
         )
 
 
-target_link_libraries(esig_common)
+target_link_libraries(esig_common PRIVATE Boost::boost)
+if (TARGET Bignum::Bignum)
+    set(ESIG_RATIONAL_HEADER "gmp.hpp")
+    set(ESIG_RATIONAL_TYPE "boost::multiprecision::mpq_rational")
+    target_link_libraries(esig_common PRIVATE Bignum::Bignum)
+else()
+    set(ESIG_RATIONAL_HEADER "cpp_int.hpp")
+    set(ESIG_RATIONAL_TYPE "boost::multiprecision::cpp_rational")
+endif()
 
 configure_file("src/config.h.in" "include/esig/config.h" NO_SOURCE_PERMISSIONS @ONLY)
 
 target_include_directories(esig_common PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/esig>"
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/recombine>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
         )
 
+set(ESIG_COMMON_INCLUDE_POLYNOMIALS OFF)
+if (ESIG_COMMON_INCLUDE_POLYNOMIALS AND TARGET Libalgebra::Libagebra)
+    target_link_libraries(esig_common PRIVATE Libalgebra::Libalgebra)
+    target_sources(esig_common PRIVATE
+        src/scalars/poly_scalars.cpp
+        src/scalars/poly_scalars.h
+        src/scalars/poly_ring_type_holder.cpp)
 
-pybind11_add_module(py_esig_common MODULE WITH_SOABI)
-set_target_properties(py_esig_common PROPERTIES
-        LIBRARY_OUTPUT_NAME common
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../esig"
-#        INSTALL_RPATH $ORIGIN
-        )
+endif()
 
 
 
-target_include_directories(py_esig_common PUBLIC
-
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/recombine>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
-        )
-
-target_link_libraries(py_esig_common PRIVATE esig_common recombine::recombine)
-
-target_sources(py_esig_common PRIVATE
-        src/py_common/py_common.h
-        src/py_common/py_common.cpp
-        src/py_common/py_real_interval.cpp
-        src/py_common/py_intervals.cpp
-        src/py_common/py_intervals.h
-        src/py_common/py_dyadic.cpp
-        src/py_common/py_dyadic_interval.cpp
-        src/py_common/py_recombine.h
-        src/py_common/py_recombine.cpp
-        src/recombine/_recombine.h
-        src/recombine/_recombine.cpp
-        src/recombine/TestVec/RdToPowers2.cpp
-        src/recombine/TestVec/RdToPowers.h
-        src/recombine/TestVec/EvaluateAllMonomials.h
-        src/recombine/TestVec/RdToPowers2.h
-        )
-
-install(TARGETS esig_common py_esig_common
+install(TARGETS esig_common
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"
         LIBRARY DESTINATION "${CMAKE_INSTALL_LIBDIR}"

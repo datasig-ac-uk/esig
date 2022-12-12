@@ -114,11 +114,6 @@ public:
     {
         return vector_type::sparse;
     }
-    coefficient_type coeff_type() const noexcept
-    {
-        return dtl::get_coeff_type(zero);
-    }
-
     const lie_basis& basis() const noexcept
     {
         return *m_basis;
@@ -513,8 +508,8 @@ struct algebra_info<sparse_lie<S>>
     using const_reference = const S&;
     using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
 
-    static constexpr coefficient_type ctype() noexcept
-    { return dtl::get_coeff_type(S(0)); }
+    static constexpr const esig::scalars::scalar_type* ctype() noexcept
+    { return ::esig::scalars::dtl::scalar_type_holder<S>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
     static deg_t width(const sparse_lie<S>* instance) noexcept

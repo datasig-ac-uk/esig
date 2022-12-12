@@ -14,7 +14,7 @@ namespace algebra {
 py_free_tensor_iterator::py_free_tensor_iterator(algebra_iterator it, algebra_iterator end)
     : m_it(std::move(it)), m_end(std::move(end))
 {}
-std::pair<py_tensor_key, coefficient> py_free_tensor_iterator::next()
+std::pair<py_tensor_key, scalars::scalar> py_free_tensor_iterator::next()
 {
     if (m_it == m_end) {
         throw py::stop_iteration();

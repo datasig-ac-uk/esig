@@ -5,9 +5,9 @@
 #include "py_free_tensor.h"
 #include <sstream>
 #include <esig/algebra/context.h>
-#include "py_coefficients.h"
 #include "py_iterator.h"
 #include "convert_buffer.h"
+#include <esig/pycommon.h>
 
 #include <pybind11/numpy.h>
 
@@ -17,7 +17,6 @@ using namespace pybind11::literals;
 
 using esig::deg_t;
 using esig::dimn_t;
-using esig::algebra::coefficient_type;
 using esig::algebra::vector_type;
 
 static const char* FREE_TENSOR_DOC = R"eadoc(Element of the (truncated) tensor algebra.
@@ -86,15 +85,16 @@ esig::algebra::free_tensor ft_from_buffer(const py::object& arg, const py::kwarg
         helper.ctx = esig::algebra::get_context(helper.width, helper.depth, helper.ctype);
     }
 
-    esig::algebra::vector_construction_data data(
-        helper.begin_ptr,
-        helper.end_ptr,
-        helper.ctype,
-        helper.vtype,
-        helper.input_vec_type,
-        helper.itemsize
-    );
-    return helper.ctx->construct_tensor(data);
+//    esig::algebra::vector_construction_data data(
+//        helper.begin_ptr,
+//        helper.end_ptr,
+//        helper.ctype,
+//        helper.vtype,
+//        helper.input_vec_type,
+//        helper.itemsize
+//    );
+//    return helper.ctx->construct_tensor(data);
+    return helper.ctx->zero_tensor(vector_type::sparse);
 }
 
 void init_free_tensor_iterator(py::module& m)
@@ -123,7 +123,7 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
     klass.def("degree", &free_tensor::degree);
 
     klass.def("__getitem__", [](const free_tensor& self, key_type key) {
-        return static_cast<scalar_t>(self[key]);
+        return self[key];
     });
     klass.def("__iter__", [](const free_tensor& self) {
              return py_free_tensor_iterator(self.begin(), self.end());
@@ -137,26 +137,26 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
     klass.def("__mul__", &free_tensor::smul, py::is_operator());
     klass.def("__truediv__", &free_tensor::smul, py::is_operator());
     klass.def("__mul__", &free_tensor::mul, py::is_operator());
-    klass.def("__rmul__", [](const free_tensor& self, const coefficient& other) { return self.smul(other); },
+    klass.def("__rmul__", [](const free_tensor& self, const scalars::scalar& other) { return self.smul(other); },
             py::is_operator());
 
     klass.def("__mul__", [](const free_tensor& self, scalar_t arg) {
-             return self.smul(coefficient(arg));
+             return self.smul( scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__rmul__", [](const free_tensor& self, scalar_t arg) {
-             return self.smul(coefficient(arg));
+             return self.smul( scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__mul__", [](const free_tensor& self, long long arg) {
-             return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+             return self.smul( scalars::scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__rmul__", [](const free_tensor& self, long long arg) {
-             return self.smul(coefficient(arg, 1LL, self.coeff_type()));
+             return self.smul( scalars::scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__truediv__", [](const free_tensor& self, scalar_t arg) {
-             return self.sdiv(coefficient(arg));
+             return self.sdiv( scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__truediv__", [](const free_tensor& self, long long arg) {
-             return self.sdiv(coefficient(arg, 1LL, self.coeff_type()));
+             return self.sdiv( scalars::scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
 
     klass.def("__iadd__", &free_tensor::add_inplace, py::is_operator());
@@ -166,16 +166,16 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
     klass.def("__imul__", &free_tensor::mul_inplace, py::is_operator());
 
     klass.def("__imul__", [](free_tensor& self, scalar_t arg) {
-             return self.smul_inplace(coefficient(arg));
+             return self.smul_inplace( scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__imul__", [](free_tensor& self, long long arg) {
-             return self.smul_inplace(coefficient(arg, 1LL, self.coeff_type()));
+             return self.smul_inplace( scalars::scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__itruediv__", [](free_tensor& self, scalar_t arg) {
-             return self.sdiv_inplace(coefficient(arg));
+             return self.sdiv_inplace( scalars::scalar(arg));
          }, py::is_operator());
     klass.def("__itruediv__", [](free_tensor& self, long long arg) {
-             return self.sdiv_inplace(coefficient(arg, 1LL, self.coeff_type()));
+             return self.sdiv_inplace( scalars::scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
 
     klass.def("add_scal_mul", &free_tensor::add_scal_mul, "other"_a, "scalar"_a);
@@ -202,7 +202,7 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
     klass.def("__repr__", [](const free_tensor& self) {
                 std::stringstream ss;
                 ss << "FreeTensor(width=" << self.width() << ", depth=" << self.depth();
-                ss << ", ctype=" << static_cast<int>(self.coeff_type()) << ')';
+                ss << ", ctype=" << self.coeff_type()->info().name << ')';
                 return ss.str();
             });
 
@@ -210,7 +210,8 @@ void esig::algebra::init_free_tensor(pybind11::module_ &m)
     klass.def("__neq__", [](const free_tensor& lhs, const free_tensor& rhs) { return lhs != rhs; });
 
     klass.def("__array__", [](const free_tensor& self) {
-        py::dtype dtype = dtype_from(self.coeff_type());
+//        py::dtype dtype = dtype_from(self.coeff_type());
+        py::dtype dtype = ::esig::ctype_to_npy_dtype(self.coeff_type());
 
         if (self.storage_type() == vector_type::dense) {
             auto it = self.iterate_dense_components().next();
