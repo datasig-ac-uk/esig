@@ -10,6 +10,27 @@
 
 namespace esig { namespace python {
 
+namespace maths {
+template<typename I, typename E>
+constexpr I power(I arg, E exponent) noexcept {
+    if (exponent == 0) {
+        return I(1);
+    }
+    if (exponent == 1) {
+        return arg;
+    }
+    auto recurse = power(arg, exponent / 2);
+    return recurse * recurse * ((exponent & 1) == 1 ? arg : I(1));
+}
+
+template <typename I, typename B>
+constexpr I log(I arg, B base) noexcept {
+    return (arg < base) ? I(0) : I(1) + log(arg / static_cast<I>(base), base);
+}
+
+} // namespace maths
+
+
 class py_tensor_key {
     key_type m_key;
     deg_t m_width;
@@ -34,6 +55,9 @@ public:
     bool equals(const py_tensor_key &other) const noexcept;
     bool less(const py_tensor_key &other) const noexcept;
 };
+
+void init_py_tensor_key(py::module_& m);
+
 }}
 
 
