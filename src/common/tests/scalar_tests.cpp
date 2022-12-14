@@ -5,7 +5,7 @@
 #include "scalars_fixture.h"
 
 using namespace esig;
-
+using namespace esig::scalars;
 using esig::testing::EsigScalarFixture;
 
 TEST_F(EsigScalarFixture, test_creation_default)

@@ -111,10 +111,12 @@ public:
         } else {
             auto cv = get_converter(type->id());
             auto *out_ptr = static_cast<Scalar *>(out);
-            const auto *in_ptr = in.template raw_cast<const Scalar>();
+            const auto *in_ptr = in.template raw_cast<const char>();
+            const auto stride = in.type()->itemsize();
 
             while (count--) {
-                cv(out_ptr++, in_ptr++);
+                cv(out_ptr++, in_ptr);
+                in_ptr += stride;
             }
         }
     }

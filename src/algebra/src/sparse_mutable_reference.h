@@ -107,6 +107,7 @@ namespace dtl {
 
 template<typename Map, typename Scalar>
 class scalar_type_trait<algebra::dtl::sparse_mutable_reference<Map, Scalar>> {
+    static_assert(!std::is_pointer<Scalar>::value, "scalar cannot be pointer");
 public:
     using value_type = Scalar;
     using rational_type = Scalar;
@@ -123,7 +124,7 @@ public:
     static const scalar_type *get_type() noexcept { return scalar_type_holder<Scalar>::get_type(); }
 
     static scalar make(reference val) {
-        return scalar(new r_wrapper(std::move(val)), get_type());
+        return scalar(new r_wrapper(std::move(val)), typename scalar::interface_pointer {});
     }
 };
 
@@ -142,7 +143,7 @@ public:
     explicit scalar_implementation(algebra::dtl::sparse_mutable_reference<Map, Scalar> &&val)
         : m_data(std::move(val)) {}
 
-    const scalar_type *type() const noexcept override {
+    const scalars::scalar_type *type() const noexcept override {
         return trait::get_type();
     }
 

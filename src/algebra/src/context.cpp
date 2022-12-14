@@ -29,7 +29,7 @@ free_tensor context::zero_tensor(vector_type vtype) const
 }
 lie context::zero_lie(vector_type vtype) const
 {
-    return construct_lie({ scalars::scalar_array(), nullptr, vtype });
+    return construct_lie({ scalars::key_scalar_array(), vtype });
 }
 int context_maker::get_priority(const std::vector<std::string> &preferences) const noexcept
 {

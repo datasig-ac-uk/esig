@@ -6,7 +6,7 @@ include (GNUInstallDirs)
 find_package(Boost CONFIG REQUIRED)
 
 
-add_library(esig_py_module SHARED get_vector_construction_data.cpp get_vector_construction_data.h)
+add_library(esig_py_module SHARED get_vector_construction_data.cpp get_vector_construction_data.h py_tensor_key_iterator.cpp py_tensor_key_iterator.h py_lie_key_iterator.cpp py_lie_key_iterator.h)
 #pybind11_add_module(esig_py_module MODULE WITH_SOABI)
 set_target_properties(esig_py_module PROPERTIES
         LIBRARY_OUTPUT_NAME _esig

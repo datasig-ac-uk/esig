@@ -207,13 +207,13 @@ Vector construct_vector(
 
     const auto *s_data_begin = static_cast<const scalar_type *>(data_begin);
 
-    if (data.key_data == nullptr) {
+    if (data.data.keys() == nullptr) {
         // Construct from densely defined data
         const auto *s_data_end = s_data_begin + size;
         return Vector(std::move(basis), s_data_begin, s_data_end);
     }
 
-    const auto* keys = data.key_data;
+    const auto* keys = data.data.keys();
 
     Vector result(std::move(basis));
     for (dimn_t i=0; i<size; ++i) {
@@ -236,7 +236,7 @@ ftensor_type<Scalar, VType> fallback_context<Scalar>::compute_signature(const si
     for (dimn_t i=0; i<nrows; ++i) {
         auto row = data.data_stream[i];
         const auto* keys = data.key_stream.empty() ? nullptr : data.key_stream[i];
-        vector_construction_data row_cdata { row, keys, VType };
+        vector_construction_data row_cdata { scalars::key_scalar_array(row, keys), VType };
 
         // This if statement is known at compile-time, so the optimizer should
         // go ahead and throw away the branch that does not apply.

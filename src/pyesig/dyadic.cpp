@@ -4,6 +4,8 @@
 
 #include "dyadic.h"
 
+#include <sstream>
+
 #include <pybind11/operators.h>
 
 #include <esig/intervals.h>

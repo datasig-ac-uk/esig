@@ -172,7 +172,7 @@ struct ESIG_PATHS_EXPORT dynamically_constructed_path : dyadic_caching_layer
 {
     using dyadic_caching_layer::dyadic_caching_layer;
 
-    virtual owned_scalar_array eval(const interval &domain) const = 0;
+    virtual scalars::owned_scalar_array eval(const interval &domain) const = 0;
 
     bool empty(const interval &domain) const override;
 

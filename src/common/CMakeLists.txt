@@ -13,9 +13,7 @@ include(GenerateExportHeader)
 find_package(Boost CONFIG REQUIRED)
 find_package(Bignum QUIET)
 
-add_library(esig_common SHARED src/scalars/rational_type.cpp
-        src/scalars/rational_type.h
-        src/scalars/ratonal_scalar_type_holder.cpp )
+add_library(esig_common SHARED )
 #add_library(esig_common SHARED )
 #pybind11_extension(esig_common)
 #target_link_libraries(esig_common PUBLIC
@@ -61,6 +59,10 @@ target_sources(esig_common
             src/scalars/type_registry.cpp
             src/scalars/scalar_stream.cpp
             src/scalars/standard_scalar_type.h
+            src/scalars/rational_type.cpp
+            src/scalars/rational_type.h
+            src/scalars/ratonal_scalar_type_holder.cpp
+            src/scalars/key_scalar_array.cpp
             ${esig_common_HEADERS}
         )
 
@@ -75,12 +77,11 @@ else()
     set(ESIG_RATIONAL_TYPE "boost::multiprecision::cpp_rational")
 endif()
 
-configure_file("src/config.h.in" "include/esig/config.h" NO_SOURCE_PERMISSIONS @ONLY)
+configure_file("src/config.h.in" "config.h" NO_SOURCE_PERMISSIONS @ONLY)
 
 target_include_directories(esig_common PUBLIC
         "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include/esig>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/src/recombine>"
+        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
         "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>"
         )
 
@@ -104,8 +105,8 @@ install(TARGETS esig_common
         PUBLIC_HEADER DESTINATION "${CMAKE_INSTALL_INCLUDEDIR}")
 
 install(FILES
-        ${CMAKE_CURRENT_BINARY_DIR}/include/esig/config.h
-        ${CMAKE_CURRENT_BINARY_DIR}/include/esig/esig_export.h
+        ${CMAKE_CURRENT_BINARY_DIR}/config.h
+        ${CMAKE_CURRENT_BINARY_DIR}/esig_export.h
         DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}
         )
 

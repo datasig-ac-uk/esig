@@ -11,8 +11,8 @@ namespace esig {
 namespace paths {
 tick_path::tick_path(
         path_metadata &&md,
-        std::vector<std::pair<param_t, dimn_t>> &&index_data,
-        algebra::allocating_data_buffer &&data)
+        std::vector<std::pair<param_t, std::vector<key_type>>> &&index_data,
+        scalars::owned_scalar_array &&data)
     : dyadic_caching_layer(std::move(md)),
       m_data(std::move(data)),
       m_index()
@@ -51,42 +51,5 @@ algebra::lie tick_path::log_signature(const interval &domain, const algebra::con
     return ctx.log_signature(std::move(data));
 }
 
-tick_increment_iterator::tick_increment_iterator(
-        tick_increment_iterator::iterator_type b,
-        tick_increment_iterator::iterator_type e,
-        dimn_t pair_size)
-    : m_current(b), m_end(e), m_index(0), m_pair_size(pair_size)
-{
-}
-
-const char *tick_increment_iterator::dense_begin()
-{
-    return nullptr;
-}
-const char *tick_increment_iterator::dense_end()
-{
-    return nullptr;
-}
-bool tick_increment_iterator::next_sparse()
-{
-    assert(m_current != m_end);
-    return m_index < m_current->second.count;
-}
-const void *tick_increment_iterator::sparse_kv_pair()
-{
-    assert(m_current != m_end);
-    assert(m_index < m_current->second.count);
-    dimn_t idx = m_index++;
-    return m_current->second.ptr + m_pair_size*idx;
-}
-bool tick_increment_iterator::advance()
-{
-    ++m_current;
-    return m_current != m_end;
-}
-bool tick_increment_iterator::finished() const
-{
-    return m_current == m_end;
-}
 }// namespace paths
 }// namespace esig

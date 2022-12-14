@@ -10,7 +10,7 @@ using namespace esig::scalars;
 scalar::scalar(scalar_pointer data, scalar::pointer_type ptype)
     : scalar_pointer(data), m_pointer_type(ptype) {
 }
-scalar::scalar(scalar_interface *other)
+scalar::scalar(scalar_interface *other, interface_pointer)
     : scalar_pointer(other, other->type(),
                      other->is_const() ? IsConst : IsMutable),
       m_pointer_type(InterfacePointer) {
@@ -103,16 +103,26 @@ scalar &scalar::operator=(const scalar &other) {
     }
     return *this;
 }
-scalar &scalar::operator=(scalar &&other) {
-    if (m_constness == IsConst) {
-        throw std::runtime_error("Cannot assign to a const value");
-    }
+scalar &scalar::operator=(scalar &&other) noexcept {
     if (this != std::addressof(other)) {
-        this->~scalar();
-        p_data = other.p_data;
-        p_type = other.p_type;
-        m_constness = other.m_constness;
-        m_pointer_type = other.m_pointer_type;
+        if (p_type == nullptr || m_constness == IsConst) {
+            this->~scalar();
+            p_data = other.p_data;
+            p_type = other.p_type;
+            m_constness = other.m_constness;
+            m_pointer_type = other.m_pointer_type;
+            other.p_data = nullptr;
+            other.p_type = nullptr;
+            other.m_constness = IsConst;
+            other.m_pointer_type = BorrowedPointer;
+        } else {
+            if (m_pointer_type == InterfacePointer) {
+                auto* iface = static_cast<scalar_interface*>(const_cast<void*>(p_data));
+                iface->assign(other.to_const_pointer());
+            } else {
+                p_type->assign(const_cast<void*>(p_data), other.to_const_pointer());
+            }
+        }
     }
 
     return *this;

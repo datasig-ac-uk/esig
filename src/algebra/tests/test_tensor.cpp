@@ -4,6 +4,8 @@
 
 #include "fixture_base.h"
 
+using namespace esig;
+
 namespace {
 
 
@@ -22,39 +24,17 @@ private:
 
 public:
 
-
-    esig::algebra::free_tensor make_tensor_dense_data(const std::vector<char>& data)
+    algebra::free_tensor make_sparse_free_tensor(idimn_t size=-1)
     {
-        switch (std::get<2>(GetParam())) {
-            case esig::algebra::coefficient_type::sp_real: {
-                auto* begin = reinterpret_cast<const float*>(data.data());
-                auto* end = reinterpret_cast<const float*>(data.data() + data.size());
-                return make_tensor_impl(begin, end);
-            }
-            case esig::algebra::coefficient_type::dp_real: {
-                auto* begin = reinterpret_cast<const double*>(data.data());
-                auto* end = reinterpret_cast<const double*>(data.data() + data.size());
-                return make_tensor_impl(begin, end);
-            }
-        }
-        throw std::runtime_error("bad data");
+        auto make_size = (size == -1) ? ctx->tensor_size(std::get<1>(GetParam())) : dimn_t(size);
+        return ctx->construct_tensor(get_construction_data(make_size, algebra::vector_type::sparse));
     }
 
-    esig::algebra::free_tensor make_tensor_sparse_data(const std::vector<char>& data)
+    algebra::free_tensor make_dense_free_tensor(idimn_t size=-1)
     {
-        switch(std::get<2>(GetParam())) {
-            case esig::algebra::coefficient_type::sp_real: {
-                auto* begin = reinterpret_cast<const std::pair<esig::key_type, float>*>(data.data());
-                auto* end = reinterpret_cast<const std::pair<esig::key_type, float>*>(data.data()+data.size());
-                return make_tensor_impl(begin, end);
-            }
-            case esig::algebra::coefficient_type::dp_real: {
-                auto *begin = reinterpret_cast<const std::pair<esig::key_type, double> *>(data.data());
-                auto *end = reinterpret_cast<const std::pair<esig::key_type, double> *>(data.data() + data.size());
-                return make_tensor_impl(begin, end);
-            }
-        }
-        throw std::runtime_error("bad data");
+        auto make_size = (size == -1) ? ctx->tensor_size(std::get<1>(GetParam())) : dimn_t(size);
+        auto cons_data = get_construction_data(make_size, algebra::vector_type::dense);
+        return ctx->construct_tensor(cons_data);
     }
 
 };
@@ -66,11 +46,9 @@ public:
 TEST_P(TensorFixture, TestTensorAdditionDenseData) {
     auto params = GetParam();
     auto tensor_size = ctx->tensor_size(ctx->depth());
-    auto d1 = random_dense_data(tensor_size);
-    auto d2 = random_dense_data(tensor_size);
 
-    const auto l1 = make_tensor_dense_data(d1);
-    const auto l2 = make_tensor_dense_data(d2);
+    const auto l1 = make_dense_free_tensor();
+    const auto l2 = make_dense_free_tensor();
 
     auto expected = ctx->zero_tensor(std::get<3>(params));
     for (esig::key_type k=0; k<tensor_size; ++k) {
@@ -78,17 +56,16 @@ TEST_P(TensorFixture, TestTensorAdditionDenseData) {
     }
 
     auto result = l1.add(l2);
+//    std::cout << result << '\n' << expected << '\n';
     ASSERT_EQ(expected, result);
 }
 
 TEST_P(TensorFixture, TestTensorSubtractionDenseData) {
     auto params = GetParam();
     auto tensor_size = ctx->tensor_size(ctx->depth());
-    auto d1 = random_dense_data(tensor_size);
-    auto d2 = random_dense_data(tensor_size);
 
-    const auto l1 = make_tensor_dense_data(d1);
-    const auto l2 = make_tensor_dense_data(d2);
+    const auto l1 = make_dense_free_tensor();
+    const auto l2 = make_dense_free_tensor();
 
     auto expected = ctx->zero_tensor(std::get<3>(params));
     for (esig::key_type k=0; k< tensor_size; ++k) {
@@ -117,22 +94,20 @@ TEST_P(TensorFixture, TestTensorSubtractionDenseData) {
 
 TEST_P(TensorFixture, TestFMExpInplace) {
     auto tensor_size = ctx->tensor_size(ctx->depth());
-    auto d1 = random_dense_data(tensor_size);
-    auto d2 = random_dense_data(tensor_size);
 
-    auto l1 = make_tensor_dense_data(d1);
-    const auto l2 = make_tensor_dense_data(d2);
+    auto l1 = make_dense_free_tensor();
+    const auto l2 = make_dense_free_tensor();
 
     const auto result = l1.fmexp(l2);
 
 }
 
 
-INSTANTIATE_TEST_CASE_P(TensorTests, TensorFixture,
+INSTANTIATE_TEST_SUITE_P(TensorTests, TensorFixture,
                         ::testing::Combine(
                                 ::testing::Values(2, 5, 10),
                                 ::testing::Values(2, 5),
-                                ::testing::Values(esig::algebra::coefficient_type::sp_real, esig::algebra::coefficient_type::dp_real),
+                                ::testing::Values(esig::scalars::dtl::scalar_type_holder<float>::get_type(), esig::scalars::dtl::scalar_type_holder<double>::get_type()),
                                 ::testing::Values(esig::algebra::vector_type::sparse, esig::algebra::vector_type::dense)
                                 ),
                         esig::testing::get_param_test_name

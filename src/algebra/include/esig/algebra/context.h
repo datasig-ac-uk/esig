@@ -31,8 +31,7 @@ struct derivative_compute_info {
 
 struct vector_construction_data
 {
-    scalars::scalar_array data;
-    const key_type* key_data = nullptr;
+    scalars::key_scalar_array data;
     vector_type vect_type = vector_type::sparse;
 };
 

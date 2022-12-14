@@ -626,6 +626,11 @@ public:
 
     std::ostream& print(std::ostream& os) const;
 
+    friend std::ostream& operator<<(std::ostream& os, const algebra_base& rhs)
+    {
+        return rhs.print(os);
+    }
+
     bool operator==(const algebra_t& other) const;
     bool operator!=(const algebra_t& other) const;
 };

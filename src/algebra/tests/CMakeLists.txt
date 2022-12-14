@@ -10,6 +10,7 @@ add_executable(esig_algebra_tests )
 target_link_libraries(esig_algebra_tests PRIVATE
         GTest::gtest_main
         GTest::gmock
+        esig_common
         esig_algebra
         )
 

@@ -18,59 +18,27 @@ bool dynamically_constructed_path::empty(const interval &domain) const
 algebra::lie dynamically_constructed_path::log_signature(const interval &domain, const algebra::context &ctx) const
 {
 //    std::cout << domain << '\n';
-    const auto& md = metadata();
-    const auto buf = eval(domain);
+//    const auto& md = metadata();
+//    const auto buf = eval(domain);
+//
+//    const auto* ptr = reinterpret_cast<const double*>(buf.begin());
+//    const auto* end = reinterpret_cast<const double*>(buf.end());
+////    for (; ptr != end; ++ptr) {
+////        std::cout << *ptr << ' ';
+////    }
+////    std::cout << '\n';
+//
+//    esig::algebra::signature_data data(
+//            md.ctype,
+//            md.result_vec_type,
+//            dtl::function_increment_iterator(buf.begin(), buf.end())
+//            );
 
-    const auto* ptr = reinterpret_cast<const double*>(buf.begin());
-    const auto* end = reinterpret_cast<const double*>(buf.end());
-//    for (; ptr != end; ++ptr) {
-//        std::cout << *ptr << ' ';
-//    }
-//    std::cout << '\n';
-
-    esig::algebra::signature_data data(
-            md.ctype,
-            md.result_vec_type,
-            dtl::function_increment_iterator(buf.begin(), buf.end())
-            );
-
-    auto result = ctx.log_signature(std::move(data));
+//    auto result = ctx.log_signature(std::move(data));
 //    std::cout << result << '\n';
-    return result;
+    return ctx.zero_lie(algebra::vector_type::dense);
 }
 
 
-dtl::function_increment_iterator::function_increment_iterator(const char *begin, const char *end)
-    : m_begin(begin), m_end(end), state(false)
-{
-}
-const char *dtl::function_increment_iterator::dense_begin()
-{
-    return m_begin;
-}
-const char *dtl::function_increment_iterator::dense_end()
-{
-    return m_end;
-}
-bool dtl::function_increment_iterator::next_sparse()
-{
-    return false;
-}
-const void *dtl::function_increment_iterator::sparse_kv_pair()
-{
-    return nullptr;
-}
-bool dtl::function_increment_iterator::advance()
-{
-    if (!state) {
-        state = true;
-        return false;
-    }
-    return state;
-}
-bool dtl::function_increment_iterator::finished() const
-{
-    return state;
-}
 } // namespace paths
 } // namespace esig

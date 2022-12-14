@@ -14,31 +14,12 @@ namespace esig {
 namespace paths {
 
 struct tick_entry {
-    const char* ptr;
-    dimn_t count;
+    scalars::scalar_array data_ptr;
+    const key_type* key_ptr;
 };
 
 
-class tick_increment_iterator : public algebra::data_iterator
-{
-    using iterator_type = typename boost::container::flat_map<param_t, tick_entry>::const_iterator;
 
-    iterator_type m_current;
-    iterator_type m_end;
-    dimn_t m_index;
-    dimn_t m_pair_size;
-
-public:
-
-    tick_increment_iterator(iterator_type b, iterator_type e, dimn_t pair_size);
-
-    const char *dense_begin() override;
-    const char *dense_end() override;
-    bool next_sparse() override;
-    const void *sparse_kv_pair() override;
-    bool advance() override;
-    bool finished() const override;
-};
 
 /**
  * @brief Path constructed from an ordered stream of events.
@@ -59,14 +40,14 @@ public:
  */
 class tick_path : public dyadic_caching_layer
 {
-    algebra::allocating_data_buffer m_data;
+    scalars::owned_scalar_array m_data;
     boost::container::flat_map<param_t, tick_entry> m_index;
 
 public:
 
     tick_path(path_metadata&& md,
-              std::vector<std::pair<param_t, dimn_t>>&& index_data,
-              algebra::allocating_data_buffer&& data);
+              std::vector<std::pair<param_t, std::vector<key_type>>>&& index_data,
+              scalars::owned_scalar_array&& data);
     algebra::lie log_signature(const interval &domain, const algebra::context &ctx) const override;
 };
 

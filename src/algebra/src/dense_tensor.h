@@ -202,6 +202,7 @@ public:
 
     const Scalar& operator[](const key_type& key) const
     {
+        assert(key < key_type(m_data.size()));
         return m_data[key];
     }
 

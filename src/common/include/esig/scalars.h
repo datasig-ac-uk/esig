@@ -186,6 +186,15 @@ public:
     scalar_pointer(const void *ptr, const scalar_type *type)
         : p_data(ptr), p_type(type), m_constness(IsConst) {}
 
+    template <typename T>
+    explicit scalar_pointer(T* ptr)
+        : p_data(ptr), p_type(dtl::scalar_type_trait<T>::get_type()), m_constness(IsMutable)
+    {}
+    template <typename T>
+    explicit scalar_pointer(const T* ptr)
+        : p_data(ptr), p_type(dtl::scalar_type_trait<T>::get_type()), m_constness(IsConst)
+    {}
+
     const void *ptr() const noexcept { return p_data; }
     void *ptr() noexcept { return const_cast<void *>(p_data); }
 
@@ -221,6 +230,9 @@ class ESIG_EXPORT scalar : private scalar_pointer {
     friend class scalar_pointer;
     friend class scalar_type;
 
+    template <typename T>
+    friend class dtl::scalar_type_trait;
+
     //    const void* p_impl;
     //    const scalar_type* p_type;
 
@@ -233,13 +245,15 @@ class ESIG_EXPORT scalar : private scalar_pointer {
     using scalar_pointer::IsMutable;
     using scalar_pointer::m_constness;
 
+    struct interface_pointer {};
+
     enum pointer_type {
         OwnedPointer,   // A raw pointer to a scalar, onwed by this
         BorrowedPointer,// A raw pointer to a scalar, borrowed fomr elsewhere
         InterfacePointer// A pointer to a scalar_interface type
     } m_pointer_type = OwnedPointer;
 
-    explicit scalar(scalar_interface *other);
+    explicit scalar(scalar_interface *other, interface_pointer);
 
     scalar(scalar_pointer data, pointer_type ptype);
 
@@ -275,7 +289,7 @@ public:
     ~scalar();
 
     scalar &operator=(const scalar &other);
-    scalar &operator=(scalar &&other);
+    scalar &operator=(scalar &&other) noexcept;
 
     using scalar_pointer::is_const;
     //    bool is_const() const noexcept;
@@ -308,6 +322,9 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const scalar &arg);
 };
+
+
+ESIG_EXPORT std::ostream& operator<<(std::ostream& os, const scalar& arg);
 
 class scalar_array : public scalar_pointer {
     friend class scalar_stream;
@@ -360,9 +377,9 @@ public:
 
 class ESIG_EXPORT key_scalar_array : public scalar_array {
 
-    key_type* p_keys = nullptr;
-    dimn_t m_keys_size = 0;
+    const key_type* p_keys = nullptr;
     bool m_scalars_owned = false;
+    bool m_keys_owned = true;
 
 public:
 
@@ -372,17 +389,19 @@ public:
     key_scalar_array(const key_scalar_array& other);
     key_scalar_array(key_scalar_array&& other) noexcept;
 
-    key_scalar_array(owned_scalar_array&& sa) noexcept;
+    explicit key_scalar_array(owned_scalar_array&& sa) noexcept;
+    key_scalar_array(scalar_array base, const key_type* keys);
 
-    explicit key_scalar_array(dimn_t n);
-    key_scalar_array(const void* begin, dimn_t count) noexcept;
+    explicit key_scalar_array(const scalar_type* type) noexcept;
+    explicit key_scalar_array(const scalar_type* type, dimn_t n) noexcept;
+    key_scalar_array(const scalar_type *type, const void *begin, dimn_t count) noexcept;
 
     key_scalar_array& operator=(key_scalar_array&& other) noexcept;
     key_scalar_array& operator=(owned_scalar_array&& other) noexcept;
 
     const key_type* keys() const noexcept { return p_keys; }
+    key_type* keys();
     bool has_keys() const noexcept { return p_keys == nullptr; }
-    dimn_t keys_count() const noexcept { return m_keys_size; }
 
     void allocate_scalars(idimn_t count = -1);
     void allocate_keys(idimn_t count = -1);
@@ -453,7 +472,10 @@ scalar_cast(const scalar &arg) {
 namespace dtl {
 
 template<typename Scalar>
-class scalar_type_holder {
+class ESIG_EXPORT scalar_type_holder {
+    static_assert(!std::is_pointer<Scalar>::value, "Scalar value cannot be a pointer");
+    static_assert(!std::is_reference<Scalar>::value, "Scalar value cannot be a reference");
+
 public:
     static const scalar_type *get_type() noexcept;
 };
@@ -461,20 +483,35 @@ public:
 // Explicit implementation for float defined in the library
 template<>
 ESIG_EXPORT const scalar_type *scalar_type_holder<float>::get_type() noexcept;
+//template <> class ESIG_EXPORT scalar_type_holder<float> {
+//   public:
+//    static const scalar_type *get_type() noexcept;
+//};
+
 
 // Explicit implementation for double defined in the library.
 template<>
 ESIG_EXPORT const scalar_type *scalar_type_holder<double>::get_type() noexcept;
+//template<>
+//class ESIG_EXPORT scalar_type_holder<double> {
+//public:
+//    static const scalar_type *get_type() noexcept;
+//};
 
 // explicit instantiation for rational type defined in the library
 template<>
 ESIG_EXPORT const scalar_type *scalar_type_holder<rational_scalar_type>::get_type() noexcept;
+
+
+
 
 template<typename Scalar>
 class scalar_implementation;
 
 template<typename T>
 class scalar_type_trait {
+    static_assert(!std::is_pointer<T>::value, "scalar cannot be pointer");
+    static_assert(!std::is_reference<T>::value, "scalar cannot be reference");
 public:
     using value_type = T;
     using rational_type = T;
@@ -515,7 +552,7 @@ public:
     }
 
     static scalar make(reference arg) {
-        return scalar(arg, get_type());
+        return scalar(scalar_pointer(&arg, get_type()));
     }
 };
 
@@ -537,7 +574,7 @@ public:
     }
 
     static scalar make(const_reference arg) {
-        return scalar(arg, get_type());
+        return scalar(scalar_pointer(&arg, get_type()));
     }
 };
 //

@@ -28,8 +28,8 @@ public:
     MOCK_METHOD(algebra::lie, cbh, (const lie_vec_t&, algebra::vector_type), (const, override));
 
     MOCK_METHOD(algebra::free_tensor, to_signature, (const algebra::lie&), (const, override));
-    MOCK_METHOD(algebra::free_tensor, signature, (algebra::signature_data), (const, override));
-    MOCK_METHOD(algebra::lie, log_signature, (algebra::signature_data), (const, override));
+    MOCK_METHOD(algebra::free_tensor, signature, (const algebra::signature_data&), (const, override));
+    MOCK_METHOD(algebra::lie, log_signature, (const algebra::signature_data&), (const, override));
 
     using vec_deriv_info = std::vector<algebra::derivative_compute_info>;
     MOCK_METHOD(algebra::free_tensor, sig_derivative, (const vec_deriv_info&, algebra::vector_type, algebra::vector_type), (const, override));
