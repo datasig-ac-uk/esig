@@ -60,39 +60,39 @@ target_sources(esig_paths
         )
 
 
-pybind11_add_module(py_esig_paths MODULE WITH_SOABI)
-set_target_properties(py_esig_paths PROPERTIES
-        LIBRARY_OUTPUT_NAME _paths
-        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../esig"
-        )
+#pybind11_add_module(py_esig_paths MODULE WITH_SOABI)
+#set_target_properties(py_esig_paths PROPERTIES
+#        LIBRARY_OUTPUT_NAME _paths
+#        LIBRARY_OUTPUT_DIRECTORY "${CMAKE_CURRENT_LIST_DIR}/../esig"
+#        )
+#
+#target_sources(py_esig_paths PRIVATE
+#        src/py_paths/py_esig_paths.cpp
+#        src/py_paths/py_path.h
+#        src/py_paths/py_path.cpp
+#        src/py_paths/py_lie_increment_path.cpp
+#        src/py_paths/py_lie_increment_path.h
+#        src/py_paths/py_function_path.cpp
+#        src/py_paths/py_function_path.h
+#        src/py_paths/py_tick_path.h
+#        src/py_paths/py_tick_path.cpp
+#        src/py_paths/py_piecewise_lie_path.cpp
+#        src/py_paths/py_piecewise_lie_path.h
+#        src/py_paths/kwargs_to_metadata.cpp
+#        src/py_paths/python_arguments.cpp
+#        src/py_paths/python_arguments.h
+#        src/py_paths/kwargs_to_context.cpp
+#        )
+#
+#target_include_directories(py_esig_paths PRIVATE
+#        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
+#        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
+#        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
+#
+#target_link_libraries(py_esig_paths PRIVATE esig_paths)
 
-target_sources(py_esig_paths PRIVATE
-        src/py_paths/py_esig_paths.cpp
-        src/py_paths/py_path.h
-        src/py_paths/py_path.cpp
-        src/py_paths/py_lie_increment_path.cpp
-        src/py_paths/py_lie_increment_path.h
-        src/py_paths/py_function_path.cpp
-        src/py_paths/py_function_path.h
-        src/py_paths/py_tick_path.h
-        src/py_paths/py_tick_path.cpp
-        src/py_paths/py_piecewise_lie_path.cpp
-        src/py_paths/py_piecewise_lie_path.h
-        src/py_paths/kwargs_to_metadata.cpp
-        src/py_paths/python_arguments.cpp
-        src/py_paths/python_arguments.h
-        src/py_paths/kwargs_to_context.cpp
-        )
 
-target_include_directories(py_esig_paths PRIVATE
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/include>"
-        "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>"
-        "$<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>")
-
-target_link_libraries(py_esig_paths PRIVATE esig_paths)
-
-
-install(TARGETS esig_paths py_esig_paths
+install(TARGETS esig_paths
         LIBRARY DESTINATION esig
         RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}"
         ARCHIVE DESTINATION "${CMAKE_INSTALL_LIBDIR}"

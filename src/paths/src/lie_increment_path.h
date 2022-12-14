@@ -17,7 +17,9 @@ namespace paths {
 class lie_increment_path : public dyadic_caching_layer
 {
     scalars::owned_scalar_array m_buffer;
-    boost::container::flat_map<param_t, std::pair<const char*, const char*>> m_data;
+    std::vector<key_type> m_keys;
+    boost::container::flat_map<param_t, dimn_t> m_data;
+
 
 public:
     lie_increment_path(

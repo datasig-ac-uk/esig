@@ -7,20 +7,16 @@
 namespace esig {
 namespace paths {
 
-dense_increment_iterator::dense_increment_iterator(dense_increment_iterator::iterator_type b, dense_increment_iterator::iterator_type e)
-    : m_current(b), m_end(e)
-{
-}
+
 lie_increment_path::lie_increment_path(
-        algebra::rowed_data_buffer&& buffer,
+        scalars::owned_scalar_array&& buffer,
         const std::vector<param_t>& indices,
         esig::paths::path_metadata metadata)
-    : dyadic_caching_layer(std::move(metadata)), m_buffer(buffer), m_data()
+    : dyadic_caching_layer(std::move(metadata)), m_buffer(std::move(buffer)), m_data()
 {
-    assert(indices.empty() || buffer.begin() != nullptr);
-    assert(indices.empty() || m_buffer.begin() != nullptr);
+    const auto& md = this->metadata();
     for (dimn_t i=0; i<indices.size(); ++i) {
-        m_data[indices[i]] = m_buffer[i];
+        m_data[indices[i]] = i*md.width;
     }
 }
 
@@ -32,16 +28,47 @@ algebra::lie lie_increment_path::log_signature(const esig::interval &domain, con
         return ctx.zero_lie(md.result_vec_type);
     }
 
+    esig::algebra::signature_data data {
+        scalars::scalar_stream(ctx.ctype()), {}, md.result_vec_type
+    };
 
 
-    esig::algebra::signature_data data (
-            md.ctype,
-            md.result_vec_type,
-            dense_increment_iterator(
-                    m_data.lower_bound(domain.inf()),
-                    m_data.lower_bound(domain.sup())
-                    )
-            );
+    if (m_keys.empty()) {
+        data.data_stream.set_elts_per_row(m_data.size() == 1
+                                              ? m_buffer.size()
+                                              : m_data.begin()[1].second - m_data.begin()[0].second);
+    }
+
+
+    auto begin = (domain.get_type() == interval_type::clopen)
+        ? m_data.lower_bound(domain.inf())
+        : m_data.upper_bound(domain.inf());
+
+    auto end = (domain.get_type() == interval_type::clopen)
+                 ? m_data.lower_bound(domain.sup())
+                 : m_data.upper_bound(domain.sup());
+
+    if (begin == end) {
+        return ctx.zero_lie(md.result_vec_type);
+    }
+
+    data.data_stream.reserve_size(end - begin);
+
+
+    for (auto it1 = begin, it = it1++; it1 != end; ++it, ++it1) {
+        data.data_stream.push_back({m_buffer[it->second].to_const_pointer(), it1->second - it->second});
+    }
+    // Case it = it1 - 1 and it1 == end
+    --end;
+    data.data_stream.push_back({m_buffer[end->second].to_const_pointer(), m_buffer.size() - end->second});
+
+    if (m_keys.empty()) {
+        data.key_stream.reserve(end - begin);
+        ++end;
+        for (auto it=begin; it!= end; ++it) {
+            data.key_stream.push_back(m_keys.data() + it->second);
+        }
+    }
 
     assert(ctx.width() == md.width);
 //    assert(ctx.depth() == md.depth);
@@ -56,31 +83,6 @@ bool lie_increment_path::empty(const interval &domain) const
 }
 
 
-const char *dense_increment_iterator::dense_begin()
-{
-    return m_current->second.first;
-}
-const char *dense_increment_iterator::dense_end()
-{
-    return m_current->second.second;
-}
-bool dense_increment_iterator::next_sparse()
-{
-    return false;
-}
-const void *dense_increment_iterator::sparse_kv_pair()
-{
-    return nullptr;
-}
-bool dense_increment_iterator::advance()
-{
-    ++m_current;
-    return m_current != m_end;
-}
-bool dense_increment_iterator::finished() const
-{
-    return m_current == m_end;
-}
 
 }// namespace paths
 }// namespace esig

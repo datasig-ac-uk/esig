@@ -354,6 +354,13 @@ public:
         return scalar_pointer::operator[](uindex);
     }
 
+    template<typename Int>
+    scalar operator[](Int index) const {
+        auto uindex = static_cast<dimn_t>(index);
+        assert(0 <= uindex && uindex <= m_size);
+        return scalar_pointer::operator[](uindex);
+    }
+
     constexpr dimn_t size() const noexcept { return m_size; }
 };
 
@@ -439,6 +446,14 @@ public:
 
     scalar_array operator[](dimn_t row) const noexcept;
     scalar operator[](std::pair<dimn_t, dimn_t> index) const noexcept;
+
+    void set_elts_per_row(dimn_t num_elts) noexcept;
+
+    void reserve_size(dimn_t num_rows);
+
+    void push_back(const scalar_pointer& data);
+    void push_back(const scalar_array& data);
+
 };
 
 namespace dtl {
