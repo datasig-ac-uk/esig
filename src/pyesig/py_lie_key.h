@@ -10,6 +10,7 @@
 #include <boost/container/small_vector.hpp>
 
 #include "py_lie_letter.h"
+#include <esig/algebra/context_fwd.h>
 
 namespace esig { namespace python {
 
@@ -28,6 +29,7 @@ public:
     explicit py_lie_key(deg_t width, let_t left, let_t right);
     explicit py_lie_key(deg_t width, let_t left, const py_lie_key &right);
     explicit py_lie_key(deg_t width, const py_lie_key &left, const py_lie_key &right);
+    py_lie_key(const algebra::context* ctx, key_type key);
 
     bool is_letter() const noexcept;
     let_t as_letter() const;

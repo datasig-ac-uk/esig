@@ -668,7 +668,7 @@ struct algebra_info
     using pointer = scalar_type*;
     using const_pointer = const scalar_type*;
 
-    static constexpr const scalar_type* ctype() noexcept
+    static const scalars::scalar_type* ctype() noexcept
     { return ::esig::scalars::dtl::scalar_type_holder<scalar_type>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
@@ -678,7 +678,7 @@ struct algebra_info
     { return instance->depth(); }
 
     using this_key_type = key_type;
-    static this_key_type convert_key(const Algebra*, esig::key_type key) noexcept
+    static this_key_type convert_key(const Algebra* instance, esig::key_type key) noexcept
     { return key; }
 
     static deg_t degree(const Algebra& instance) noexcept

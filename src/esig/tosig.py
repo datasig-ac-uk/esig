@@ -6,10 +6,7 @@ warnings.warn("Importing functions from \"esig.tosig\" is deprecated and will be
               " removed in version 1.2. Import the functions from the main \"esig\" "
               "package instead.", DeprecationWarning)
 
-import esig.algebra
-from esig.common import recombine
-from esig.algebra import get_context
-from esig.paths import Stream, LieIncrementPath
+from esig._esig import recombine, get_context, Stream, LieIncrementPath
 
 __all__ = [
     "recombine",

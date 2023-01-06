@@ -61,3 +61,34 @@ scalar scalar_stream::operator[](std::pair<dimn_t, dimn_t> index) const noexcept
     auto first = operator[](index.first);
     return first[index.second];
 }
+
+void scalar_stream::set_elts_per_row(dimn_t num_elts) noexcept {
+    if (m_elts_per_row.size() > 1) {
+        m_elts_per_row.clear();
+        m_elts_per_row.push_back(num_elts);
+    } else if (m_elts_per_row.size() == 1) {
+        m_elts_per_row[0] = num_elts;
+    } else {
+        m_elts_per_row.push_back(num_elts);
+    }
+}
+void scalar_stream::reserve_size(dimn_t num_rows) {
+    m_stream.reserve(num_rows);
+}
+void scalar_stream::push_back(const scalar_pointer &data) {
+    assert(m_elts_per_row.size() == 1 && m_elts_per_row[0] > 0);
+    m_stream.push_back(data.ptr());
+}
+void scalar_stream::push_back(const scalar_array &data) {
+    if (m_elts_per_row.size() == 1) {
+        m_stream.push_back(data.ptr());
+        if (data.size() != m_elts_per_row[0]) {
+            m_elts_per_row.reserve(m_stream.size() + 1);
+            m_elts_per_row.resize(m_stream.size(), m_elts_per_row[0]);
+            m_elts_per_row.push_back(data.size());
+        }
+    } else {
+        m_stream.push_back(data.ptr());
+        m_elts_per_row.push_back(data.size());
+    }
+}

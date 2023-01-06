@@ -54,8 +54,8 @@ target_sources(esig_paths
             src/piecewise_lie_path.h
             src/piecewise_lie_path.cpp
             src/dyadic_caching_layer.cpp
-            src/tick_path.h
-            src/tick_path.cpp
+#            src/tick_path.h
+#            src/tick_path.cpp
             ${esig_paths_HEADERS}
         )
 

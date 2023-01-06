@@ -14,9 +14,11 @@
 #include <esig/algebra/lie_interface.h>
 
 #include "ctype_to_npy_dtype.h"
+#include "py_lie_key.h"
 
 using namespace esig;
 using namespace esig::algebra;
+using namespace esig::python;
 using namespace pybind11::literals;
 
 
@@ -24,7 +26,7 @@ static const char* LIE_DOC = R"edoc(
 Element of the free Lie algebra.
 )edoc";
 
-class py_lie_key;
+
 
 class py_lie_iterator
 {
@@ -37,7 +39,14 @@ public:
 
 };
 
-
+py_lie_iterator::py_lie_iterator(algebra_iterator it, algebra_iterator end) {
+}
+std::pair<py_lie_key, scalars::scalar> py_lie_iterator::next() {
+    if (m_it == m_end) {
+        throw py::stop_iteration();
+    }
+    return {{m_it.get_context(), m_it->key()}, m_it->value()};
+}
 
 static void init_py_lie_iterator(py::module_& m)
 {

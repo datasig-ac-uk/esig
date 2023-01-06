@@ -13,9 +13,9 @@
 namespace esig {
 namespace paths {
 
-void init_tick_path(pybind11::module_& m);
-
-path construct_tick_path(const pybind11::args& arg, const pybind11::kwargs& kwargs);
+//void init_tick_path(pybind11::module_& m);
+//
+//path construct_tick_path(const pybind11::args& arg, const pybind11::kwargs& kwargs);
 
 
 

@@ -207,3 +207,17 @@ static py::tuple py_recombine(const py::array_t<scalar_t>& data,
 
     return py::make_tuple(kept_locations, new_weights);
 }
+
+
+
+void python::init_recombine(py::module_ &m) {
+
+    m.def("recombine",
+          &py_recombine,
+          "data"_a,
+          "src_locations"_a,
+          "src_weights"_a,
+          "cubature_degree"_a,
+          RECOMBINE_DOC);
+
+}

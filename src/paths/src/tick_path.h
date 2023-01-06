@@ -40,7 +40,7 @@ struct tick_entry {
  */
 class tick_path : public dyadic_caching_layer
 {
-    scalars::owned_scalar_array m_data;
+    scalars::key_scalar_array m_data;
     boost::container::flat_map<param_t, tick_entry> m_index;
 
 public:

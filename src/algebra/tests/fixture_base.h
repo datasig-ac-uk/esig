@@ -10,9 +10,6 @@
 #include <esig/algebra/basis.h>
 #include <esig/algebra/context.h>
 
-#include <lie_basis/lie_basis.h>
-#include <tensor_basis/tensor_basis.h>
-
 #include <gtest/gtest.h>
 
 

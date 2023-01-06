@@ -6,8 +6,8 @@ include (GNUInstallDirs)
 find_package(Boost CONFIG REQUIRED)
 
 
-add_library(esig_py_module SHARED get_vector_construction_data.cpp get_vector_construction_data.h py_tensor_key_iterator.cpp py_tensor_key_iterator.h py_lie_key_iterator.cpp py_lie_key_iterator.h)
-#pybind11_add_module(esig_py_module MODULE WITH_SOABI)
+#add_library(esig_py_module SHARED )
+pybind11_add_module(esig_py_module MODULE WITH_SOABI)
 set_target_properties(esig_py_module PROPERTIES
         LIBRARY_OUTPUT_NAME _esig
         )
@@ -62,6 +62,14 @@ target_sources(esig_py_module PRIVATE
         kwargs_to_vector_construction.h
         list_to_buffer.cpp
         list_to_buffer.h
+        get_vector_construction_data.cpp
+        get_vector_construction_data.h
+        py_tensor_key_iterator.cpp
+        py_tensor_key_iterator.h
+        py_lie_key_iterator.cpp
+        py_lie_key_iterator.h
+        scalar_meta.h
+        scalar_meta.cpp
         )
 
 target_link_libraries(esig_py_module PRIVATE

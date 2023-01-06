@@ -13,12 +13,23 @@
 namespace esig {
 namespace algebra {
 
+void context::lie_to_tensor_fallback(free_tensor &result, const lie &arg) const {
 
 
 
+}
+void context::tensor_to_lie_fallback(lie &result, const free_tensor &arg) const {
+}
 
 
-
+void context::cbh_fallback(free_tensor &collector, const std::vector<lie> &lies) const {
+    for (const auto& alie : lies)  {
+        collector.fmexp(this->lie_to_tensor(alie));
+    }
+}
+free_tensor context::to_signature(const lie &log_sig) const {
+    return this->lie_to_tensor(log_sig).exp();
+}
 bool context::check_compatible(const context &other) const noexcept {
     return other.width() == width();
 }

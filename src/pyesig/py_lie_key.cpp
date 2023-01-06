@@ -7,6 +7,9 @@
 #include <algorithm>
 #include <sstream>
 
+
+#include <esig/algebra/context.h>
+
 using namespace esig;
 using namespace esig::python;
 
@@ -140,6 +143,69 @@ py_lie_key::py_lie_key(deg_t width, const py_lie_key &left, const py_lie_key &ri
     m_data.assign(left.m_data.begin(), left.m_data.end());
     m_data.assign(right.m_data.begin(), right.m_data.end());
 }
+
+static py_lie_key::container_type parse_key(const algebra::basis& lbasis, key_type key)
+{
+    if (lbasis.letter(key)) {
+        return {py_lie_letter::from_letter(lbasis.first_letter(key))};
+    }
+
+
+    auto left = lbasis.lparent(key);
+    auto right = lbasis.rparent(key);
+
+    assert(left.has_value() && right.has_value());
+
+    auto left_key = left.get();
+    auto right_key = right.get();
+
+    const bool left_letter = lbasis.letter(left_key);
+    const bool right_letter = lbasis.letter(right_key);
+
+    if (left_letter && right_letter) {
+        return {py_lie_letter::from_letter(lbasis.first_letter(left_key)),
+                py_lie_letter::from_letter(lbasis.first_letter(right_key))};
+    }
+
+    py_lie_key::container_type result;
+
+    if (left_letter) {
+        auto right_result = parse_key(lbasis, right_key);
+
+        result.reserve(2 + right_result.size());
+        result.push_back(py_lie_letter::from_letter(lbasis.first_letter(left_key)));
+        result.push_back(py_lie_letter::from_offset(1));
+
+        result.insert(result.cend(), right_result.begin(), right_result.end());
+    } else if (right_letter) {
+        auto left_result = parse_key(lbasis, left_key);
+
+        result.reserve(2 + left_result.size());
+        result.push_back(py_lie_letter::from_offset(2));
+        result.push_back(py_lie_letter::from_letter(lbasis.first_letter(right_key)));
+
+        result.insert(result.cend(), left_result.begin(), left_result.end());
+    } else {
+        auto right_result = parse_key(lbasis, right_key);
+        auto left_result = parse_key(lbasis, left_key);
+
+        result.reserve(2 + left_result.size() + right_result.size());
+        result.push_back(py_lie_letter::from_offset(2));
+        result.push_back(py_lie_letter::from_offset(1 + left_result.size()));
+
+        result.insert(result.cend(), left_result.begin(), left_result.end());
+        result.insert(result.cend(), right_result.begin(), right_result.end());
+    }
+
+    return result;
+}
+
+
+py_lie_key::py_lie_key(const algebra::context *ctx, key_type key)
+    : m_data(parse_key(ctx->get_lie_basis(), key)), m_width(ctx->width())
+{
+}
+
 std::string py_lie_key::to_string() const {
     if (m_data.size() == 1) {
         std::stringstream ss;

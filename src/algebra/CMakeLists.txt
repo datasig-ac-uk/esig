@@ -8,7 +8,7 @@ project(esig_algebra VERSION 0.1)
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 
-add_library(esig_algebra SHARED src/basis_interface.cpp src/basis_interface.h src/basis_object.cpp)
+add_library(esig_algebra SHARED )
 # Use add_library because it works better with the IDE
 #add_library(esig_algebra SHARED)
 #pybind11_extension(esig_algebra)
@@ -24,6 +24,7 @@ target_link_libraries(esig_algebra
             esig_common
         PRIVATE
             Boost::boost
+            Libalgebra_lite
         )
 #set_target_properties(esig_algebra PROPERTIES
 #        INSTALL_RPATH $ORIGIN)
@@ -54,38 +55,19 @@ set_target_properties(esig_algebra PROPERTIES PUBLIC_HEADER "${esig_algebra_HEAD
 target_sources(esig_algebra
         PRIVATE
             src/basis.cpp
-            src/lie_basis/hall_set.h
-            src/lie_basis/hall_set.cpp
-            src/lie_basis/hall_extension.h
-            src/lie_basis/hall_basis_map.h
-            src/lie_basis/hall_basis_map.cpp
-            src/lie_basis/lie_basis.h
-            src/lie_basis/lie_basis.cpp
-            src/tensor_basis/tensor_basis.h
-            src/tensor_basis/tensor_basis.cpp
-            src/fallback_context.h
-            src/fallback_context.cpp
-            src/fallback_maps.h
             src/free_tensor_wrapper.cpp
             src/context.cpp
-            src/dense_lie.h
-            src/dense_lie.cpp
-            src/dense_tensor.h
-            src/dense_tensor.cpp
-            src/sparse_tensor.h
-            src/sparse_tensor.cpp
-            src/sparse_lie.h
-            src/sparse_lie.cpp
             src/lie_wrapper.cpp
             src/iteration.cpp
-            src/dense_kv_iterator.h
-            src/sparse_kv_iterator.h
-            src/sparse_mutable_reference.h
             src/dense_data_access_iterator.cpp
-            src/fallback_maps.cpp
             src/detail/converting_lie_iterator_adaptor.h
             src/shuffle_tensor.cpp
             src/algebra_base.cpp
+            src/basis_interface.cpp
+            src/basis_interface.h
+            src/basis_object.cpp
+            src/lite_context.cpp
+            src/lite_context.h
             ${esig_algebra_HEADERS}
         )
 

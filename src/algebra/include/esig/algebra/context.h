@@ -98,15 +98,24 @@ public:
     virtual lie zero_lie(vector_type vtype) const;
 
     // Conversions between Lie and Tensors
+protected:
+    void lie_to_tensor_fallback(free_tensor& result, const lie& arg) const;
+    void tensor_to_lie_fallback(lie& result, const free_tensor& arg) const;
+
+public:
     virtual free_tensor lie_to_tensor(const lie &arg) const = 0;
     virtual lie tensor_to_lie(const free_tensor &arg) const = 0;
 
     // Campbell-Baker-Hausdorff formula
+protected:
+    void cbh_fallback(free_tensor& collector, const std::vector<lie>& lies) const;
+
+public:
     virtual lie cbh(const std::vector<lie> &lies, vector_type vtype) const = 0;
 
 
     // Methods for computing signatures
-    virtual free_tensor to_signature(const lie &log_sig) const = 0;
+    virtual free_tensor to_signature(const lie &log_sig) const;
     virtual free_tensor signature(const signature_data& data) const = 0;
     virtual lie log_signature(const signature_data& data) const = 0;
 

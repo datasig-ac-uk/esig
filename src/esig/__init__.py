@@ -26,12 +26,10 @@ except AttributeError:
     pass
 
 from esig.backends import get_backend, set_backend, list_backends
+from esig import _esig
 
-from . import common
-from . import algebra
-from . import paths
 
-from esig.common import recombine
+from esig._esig import recombine
 
 __all__ = [
     "get_version",

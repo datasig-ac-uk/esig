@@ -18,21 +18,7 @@ tick_path::tick_path(
       m_index()
 {
     m_index.reserve(index_data.size());
-    const dimn_t item_size = m_data.item_size();
-    const char* position = m_data.begin();
 
-    std::sort(index_data.begin(), index_data.end(),
-              [](const std::pair<key_type, dimn_t>& i1,
-                 const std::pair<key_type, dimn_t>& i2) {
-                  return i1.first < i2.first;
-              });
-
-    for (auto item : index_data) {
-        m_index[item.first] = {position, item.second};
-        position += item.second*item_size;
-        assert(position <= m_data.end());
-    }
-    assert(position == m_data.end());
 }
 
 algebra::lie tick_path::log_signature(const interval &domain, const algebra::context &ctx) const
@@ -40,15 +26,30 @@ algebra::lie tick_path::log_signature(const interval &domain, const algebra::con
     const auto& md = metadata();
 
     algebra::signature_data data {
-            md.ctype,
-            md.result_vec_type,
-            tick_increment_iterator {
-                    m_index.lower_bound(domain.inf()),
-                    m_index.lower_bound(domain.sup()),
-                    m_data.item_size()
-            }
+        scalars::scalar_stream(ctx.ctype()), {}, md.result_vec_type
     };
-    return ctx.log_signature(std::move(data));
+
+    auto begin = (domain.get_type() == interval_type::clopen)
+                 ? m_index.lower_bound(domain.inf())
+                 : m_index.upper_bound(domain.inf());
+
+    auto end = (domain.get_type() == interval_type::clopen)
+                 ? m_index.lower_bound(domain.sup())
+                 : m_index.upper_bound(domain.sup());
+
+    if (begin == end) {
+        return ctx.zero_lie(md.result_vec_type);
+    }
+
+    data.data_stream.reserve_size(end - begin);
+
+    for (auto it1 = begin, it = it1++; it1 != end; ++it, ++it1) {
+        data.data_stream.push_back(m_data[it->second])
+    }
+
+
+
+    return ctx.log_signature(data);
 }
 
 }// namespace paths

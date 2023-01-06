@@ -7,9 +7,7 @@ import threading
 
 import numpy
 
-import esig.algebra
-from esig.algebra import get_context
-from esig.paths import Stream, LieIncrementPath
+from esig import _esig
 
 try:
     import iisignature
