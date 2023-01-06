@@ -7,7 +7,9 @@
 
 #include "py_esig.h"
 
+
 namespace esig { namespace python {
+
 
 void init_paths(py::module_& m);
 
