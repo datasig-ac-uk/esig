@@ -116,6 +116,7 @@ set(RECOMBINE_MAKE_FRAMEWORK OFF CACHE BOOL "Do not make a framework on Apple")
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/recombine)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/pybind11)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra-lite)
 
 enable_testing()
 # Add the actual source folders
