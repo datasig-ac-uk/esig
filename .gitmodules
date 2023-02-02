@@ -12,6 +12,7 @@
 [submodule "external/recombine"]
 	path = external/recombine
 	url = https://github.com/datasig-ac-uk/Recombine.git
+	branch = master
 [submodule "external/libalgebra-lite"]
 	path = external/libalgebra-lite
 	url = git@github.com:datasig-ac-uk/libalgebra-lite.git
