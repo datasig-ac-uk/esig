@@ -248,7 +248,7 @@ template<typename OutType>
 OutType lite_context<Coefficients>::constructImpl(const vector_construction_data &data,
                                                   const std::shared_ptr<const typename OutType::basis_type>& basis,
                                                   const std::shared_ptr<const typename OutType::multiplication_type>& mul) const {
-    OutType result(basis, mul);
+    OutType result(basis);
 
     if (data.data.is_null()) {
         return result;
