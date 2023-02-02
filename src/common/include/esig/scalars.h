@@ -409,7 +409,7 @@ public:
 
     const key_type* keys() const noexcept { return p_keys; }
     key_type* keys();
-    bool has_keys() const noexcept { return p_keys == nullptr; }
+    bool has_keys() const noexcept { return p_keys != nullptr; }
 
     void allocate_scalars(idimn_t count = -1);
     void allocate_keys(idimn_t count = -1);
