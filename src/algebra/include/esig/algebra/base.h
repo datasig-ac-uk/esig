@@ -877,11 +877,11 @@ scalars::scalar algebra_implementation<Interface, Impl>::get_mut(key_type key) {
 }
 template<typename Interface, typename Impl>
 algebra_iterator algebra_implementation<Interface, Impl>::begin() const {
-    return algebra_iterator(m_data.begin(), p_ctx);
+    return algebra_iterator(&algebra_info<Impl>::basis(m_data), m_data.begin(), p_ctx);
 }
 template<typename Interface, typename Impl>
 algebra_iterator algebra_implementation<Interface, Impl>::end() const {
-    return algebra_iterator(m_data.end(), p_ctx);
+    return algebra_iterator(&algebra_info<Impl>::basis(m_data), m_data.end(), p_ctx);
 }
 //template<typename Interface, typename Impl>
 //dense_data_access_iterator algebra_implementation<Interface, Impl>::iterate_dense_components() const {
