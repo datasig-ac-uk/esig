@@ -682,6 +682,9 @@ struct algebra_info
     static deg_t max_depth(const Algebra* instance) noexcept
     { return instance->depth(); }
 
+    static const basis_type& basis(const Algebra& instance) noexcept
+    { return instance.basis(); }
+
     using this_key_type = key_type;
     static this_key_type convert_key(const Algebra* instance, esig::key_type key) noexcept
     { return basis_traits::convert_key(instance->basis(), key); }

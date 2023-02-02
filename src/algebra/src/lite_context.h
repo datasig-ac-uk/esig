@@ -605,7 +605,7 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::sparse_vector, lal::dtl::stand
     static deg_t max_depth(const algebra_type* instance) noexcept
     { return instance->basis().depth(); }
 
-
+    static const basis_type &basis(const algebra_type &instance) noexcept { return instance.basis(); }
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
 
@@ -662,7 +662,7 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::dense_vector, lal::dtl::standa
     static deg_t max_depth(const algebra_type* instance) noexcept
     { return instance->basis().depth(); }
 
-
+    static const basis_type &basis(const algebra_type &instance) noexcept { return instance.basis(); }
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
 
@@ -718,6 +718,7 @@ struct algebra_info<lal::lie<Coeffs, lal::sparse_vector, lal::dtl::standard_stor
     static deg_t max_depth(const algebra_type* instance) noexcept
     { return instance->basis().depth(); }
 
+    static const basis_type &basis(const algebra_type &instance) noexcept { return instance.basis(); }
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
@@ -776,6 +777,8 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
     static deg_t max_depth(const algebra_type* instance) noexcept
     { return instance->basis().depth(); }
 
+    static const basis_type& basis(const algebra_type& instance) noexcept
+    { return instance.basis(); }
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
