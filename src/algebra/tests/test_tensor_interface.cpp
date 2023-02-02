@@ -28,7 +28,7 @@ public:
     MOCK_METHOD(scalars::scalar, get, (key_type), (const, override));
     MOCK_METHOD(scalars::scalar, get_mut, (key_type), (override));
 
-    MOCK_METHOD(dense_data_access_iterator, iterate_dense_components, (), (const, override));
+//    MOCK_METHOD(dense_data_access_iterator, iterate_dense_components, (), (const, override));
 
     MOCK_METHOD(algebra_iterator, begin, (), (const, override));
     MOCK_METHOD(algebra_iterator, end, (), (const, override));

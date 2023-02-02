@@ -15,32 +15,33 @@
 #include <utility>
 #include <vector>
 
-#include <boost/container/small_vector.hpp>
 
 namespace esig {
 namespace algebra {
+namespace dtl {
 
-
-
-template <typename Algebra>
-struct dense_data_access
+template <typename Basis>
+struct basis_info
 {
-    // Should be defined in specialisations.
-    std::pair<const void*, const void*> starting_at(const Algebra& alg, key_type k)
-    {
-        return {nullptr, nullptr};
-    }
+    using this_key_type = typename Basis::key_type;
+
+
+    static this_key_type convert_key(const Basis& basis, esig::key_type key);
+    static esig::key_type convert_key(const Basis& basis, const this_key_type& key);
+
+    static esig::key_type first_key(const Basis& basis);
+    static esig::key_type last_key(const Basis& basis);
+
+    static deg_t native_degree(const Basis& basis, const this_key_type& key);
+    static deg_t degree(const Basis& basis, esig::key_type key);
+
+
+
 };
 
 
 
-namespace dtl {
-
-
 } // namespace dtl
-
-
-
 } // namespace algebra
 } // namespace esig
 

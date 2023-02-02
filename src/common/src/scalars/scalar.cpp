@@ -20,6 +20,11 @@ scalar::scalar(scalar_interface *other, interface_pointer)
         throw std::runtime_error("non-zero scalars must have a type");
     }
 }
+scalar::scalar(scalar_interface *other)
+    : scalar_pointer(other, other->type(), other->is_const() ? IsConst : IsMutable),
+      m_pointer_type(InterfacePointer)
+{
+}
 scalar::scalar(scalar_pointer ptr)
     : scalar_pointer(ptr),
       m_pointer_type(BorrowedPointer) {

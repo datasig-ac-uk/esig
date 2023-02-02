@@ -22,6 +22,9 @@
 #include <libalgebra_lite/tensor_basis.h>
 #include <libalgebra_lite/registry.h>
 
+
+#include "esig/algebra/algebra_traits.h"
+
 namespace esig {
 namespace algebra {
 
@@ -41,7 +44,7 @@ struct vector_type_selector<vector_type::dense>
     using free_tensor = lal::free_tensor<C, lal::dense_vector, storage_type>;
 
     template <typename C>
-    using lie = lal::free_tensor<C, lal::dense_vector, storage_type>;
+    using lie = lal::lie<C, lal::dense_vector, storage_type>;
 };
 
 template <>
@@ -53,6 +56,9 @@ struct vector_type_selector<vector_type::sparse>
     template <typename C>
     using lie = lal::lie<C, lal::sparse_vector, storage_type>;
 };
+
+
+
 
 
 }
@@ -69,6 +75,9 @@ class lite_context : public context {
     std::shared_ptr<const lal::hall_basis> p_lie_basis;
     std::shared_ptr<const lal::tensor_basis> p_tensor_basis;
 
+    std::shared_ptr<const lal::free_tensor_multiplication> p_ftmul;
+    std::shared_ptr<const lal::lie_multiplication> p_liemul;
+
     template <vector_type VType>
     using free_tensor_t = typename dtl::vector_type_selector<VType>::template free_tensor<Coefficients>;
 
@@ -83,11 +92,15 @@ class lite_context : public context {
     lal::maps m_maps;
 
 
-    template <typename OutType, typename InType, typename Basis>
-    OutType convertImpl(const InType& arg, Basis basis) const;
+    template <typename OutType, typename InType>
+    OutType convertImpl(const InType& arg,
+                        const std::shared_ptr<const typename OutType::basis_type>& basis,
+                        const std::shared_ptr<const typename OutType::multiplication_type>& mul) const;
 
-    template <typename OutType, typename Basis>
-    OutType constructImpl(const vector_construction_data& data, const std::shared_ptr<const Basis>& basis) const;
+    template <typename OutType>
+    OutType constructImpl(const vector_construction_data& data,
+                          const std::shared_ptr<const typename OutType::basis_type>& basis,
+                          const std::shared_ptr<const typename OutType::multiplication_type>& mul) const;
 
     template <vector_type VType>
     free_tensor_t<VType> lie_to_tensor_impl(const lie& arg) const;
@@ -101,14 +114,14 @@ class lite_context : public context {
     template <vector_type VType>
     free_tensor_t<VType> compute_signature(const signature_data& data) const;
 
-    template <typename Tensor>
-    Tensor Ad_x_n(deg_t d, const Tensor& x, const Tensor& y) const;
+    template <vector_type VType>
+    free_tensor_t<VType> Ad_x_n(deg_t d, const free_tensor_t<VType>& x, const free_tensor_t<VType>& y) const;
 
-    template <typename Tensor>
-    Tensor derive_series_compute(const Tensor& increment, const Tensor& perturbation) const;
+    template <vector_type VType>
+    free_tensor_t <VType> derive_series_compute(const free_tensor_t<VType>& increment, const free_tensor_t<VType>& perturbation) const;
 
-    template <typename Tensor>
-    Tensor sig_derivative_single(const Tensor& signature, const Tensor& tincr, const Tensor& perturbation);
+    template <vector_type VType>
+    free_tensor_t<VType> sig_derivative_single(const free_tensor_t<VType>& signature, const free_tensor_t<VType>& tincr, const free_tensor_t<VType>& perturbation) const;
 
     template <vector_type VType>
     free_tensor_t<VType> sig_derivative_impl(const std::vector<derivative_compute_info>& info) const;
@@ -202,27 +215,22 @@ bool lite_context<Coefficients>::check_compatible(const context &other) const no
 }
 
 template<typename Coefficients>
-template<typename OutType, typename InType, typename Basis>
-OutType lite_context<Coefficients>::convertImpl(const InType &arg, Basis basis) const {
-    OutType result(basis);
-
-    if (arg.basis() == basis) {
-        throw std::invalid_argument("invalid conversion");
-    }
-
-
+template<typename OutType, typename InType>
+OutType lite_context<Coefficients>::convertImpl(const InType &arg,
+                                                const std::shared_ptr<const typename OutType::basis_type> &basis,
+                                                const std::shared_ptr<const typename OutType::multiplication_type> &mul) const {
+    OutType result(basis, mul);
     return result;
 }
-
 template<typename Coefficients>
 free_tensor lite_context<Coefficients>::convert(const free_tensor &arg, vector_type new_vec_type) const {
-#define ESIG_SWITCH_FN(VTYPE) free_tensor(convertImpl<free_tensor_t<(VTYPE)>>(arg, p_tensor_basis), this)
+#define ESIG_SWITCH_FN(VTYPE) free_tensor(convertImpl<free_tensor_t<(VTYPE)>>(arg, p_tensor_basis, p_ftmul), this)
     ESIG_MAKE_VTYPE_SWITCH(new_vec_type)
 #undef ESIG_SWITCH_FN
 }
 template<typename Coefficients>
 lie lite_context<Coefficients>::convert(const lie &arg, vector_type new_vec_type) const {
-#define ESIG_SWITCH_FN(VTYPE) lie(convertImpl<lie_t<(VTYPE)>>(arg, p_lie_basis), this)
+#define ESIG_SWITCH_FN(VTYPE) lie(convertImpl<lie_t<(VTYPE)>>(arg, p_lie_basis, p_liemul), this)
     ESIG_MAKE_VTYPE_SWITCH(new_vec_type)
 #undef ESIG_SWITCH_FN
 }
@@ -236,16 +244,19 @@ basis lite_context<Coefficients>::get_lie_basis() const {
 }
 
 template<typename Coefficients>
-template<typename OutType, typename Basis>
+template<typename OutType>
 OutType lite_context<Coefficients>::constructImpl(const vector_construction_data &data,
-                                                  const std::shared_ptr<const Basis>& basis) const {
-    OutType result(basis);
+                                                  const std::shared_ptr<const typename OutType::basis_type>& basis,
+                                                  const std::shared_ptr<const typename OutType::multiplication_type>& mul) const {
+    OutType result(basis, mul);
 
     if (data.data.is_null()) {
-        return Wrapper(std::move(result), this);
+        return result;
     }
 
     const scalar_type* data_ptr;
+
+
     const auto size = data.data.size();
     std::vector<scalar_type> tmp;
     if (data.data.type() != ctype()) {
@@ -261,7 +272,7 @@ OutType lite_context<Coefficients>::constructImpl(const vector_construction_data
         const auto* keys = data.data.keys();
 
         for (dimn_t i=0; i<size; ++i) {
-            result[basis->key_of_index(keys[i])] = data_ptr[i];
+            result[basis->index_to_key(keys[i])] = data_ptr[i];
         }
 
     } else {
@@ -269,7 +280,7 @@ OutType lite_context<Coefficients>::constructImpl(const vector_construction_data
 
         for (dimn_t i=0; i<size; ++i) {
             // Replace this with a more efficient method once it's implemented at the lower level
-            result[basis->key_of_index(i)] = data_ptr[i];
+            result[basis->index_to_key(i)] = data_ptr[i];
         }
     }
 
@@ -278,13 +289,13 @@ OutType lite_context<Coefficients>::constructImpl(const vector_construction_data
 
 template<typename Coefficients>
 free_tensor lite_context<Coefficients>::construct_tensor(const vector_construction_data &data) const {
-#define ESIG_SWITCH_FN(VTYPE) free_tensor(constructImpl<free_tensor_t<(VTYPE)>>(data, p_tensor_basis), this)
+#define ESIG_SWITCH_FN(VTYPE) free_tensor(constructImpl<free_tensor_t<(VTYPE)>>(data, p_tensor_basis, p_ftmul), this)
     ESIG_MAKE_VTYPE_SWITCH(data.vect_type)
 #undef ESIG_SWITCH_FN
 }
 template<typename Coefficients>
 lie lite_context<Coefficients>::construct_lie(const vector_construction_data &data) const {
-#define ESIG_SWITCH_FN(VTYPE) lie(constructImpl<lie_t<(VTYPE)>>(data, p_lie_basis), this)
+#define ESIG_SWITCH_FN(VTYPE) lie(constructImpl<lie_t<(VTYPE)>>(data, p_lie_basis, p_liemul), this)
     ESIG_MAKE_VTYPE_SWITCH(data.vect_type)
 #undef ESIG_SWITCH_FN
 }
@@ -299,9 +310,9 @@ lite_context<Coefficients>::lie_to_tensor_impl(const lie &arg) const {
         return m_maps.template lie_to_tensor(algebra_access<lie_interface>::template get<lie_t<VType>>(arg));
     }
 
-    free_tensor tmp(free_tensor_t<VType>(p_tensor_basis), this);
-    context::lie_to_tensor_fallback(tmp, arg);
-    return algebra_access<free_tensor_interface>::template get<free_tensor_t<VType>>(tmp);
+    free_tensor tmp_tensor(free_tensor_t<VType>(p_tensor_basis, p_ftmul), this);
+    context::lie_to_tensor_fallback(tmp_tensor, arg);
+    return algebra_access<free_tensor_interface>::template get<free_tensor_t<VType>>(tmp_tensor);
 }
 
 
@@ -322,7 +333,7 @@ lite_context<Coefficients>::tensor_to_lie_impl(const free_tensor &arg) const {
         return m_maps.template tensor_to_lie(algebra_access<free_tensor_interface>::template get<free_tensor_t<VType>>(arg));
     }
 
-    lie tmp(lie_t<VType>(p_lie_basis), this);
+    lie tmp(lie_t<VType>(p_lie_basis, p_liemul), this);
     context::tensor_to_lie_fallback(tmp, arg);
     return algebra_access<lie_interface>::template get<lie_t<VType>>(tmp);
 }
@@ -337,7 +348,7 @@ lie lite_context<Coefficients>::tensor_to_lie(const free_tensor &arg) const {
 template<typename Coefficients>
 template<vector_type VType>
 lie lite_context<Coefficients>::cbhImpl(const std::vector<lie> &lies) const {
-    free_tensor tmp(free_tensor_t<VType>(p_tensor_basis), this);
+    free_tensor tmp(free_tensor_t<VType>(p_tensor_basis, p_ftmul), this);
     context::cbh_fallback(tmp, lies);
     return tensor_to_lie(tmp.log());
 }
@@ -354,7 +365,7 @@ template<vector_type VType>
 typename lite_context<Coefficients>::template free_tensor_t<VType>
 lite_context<Coefficients>::compute_signature(const signature_data &data) const {
 
-    free_tensor_t<VType> result(p_tensor_basis);
+    free_tensor_t<VType> result(p_tensor_basis, p_ftmul);
     result[typename lal::tensor_basis::key_type()] = scalar_type(1);
     const auto nrows = data.data_stream.row_count();
 
@@ -363,9 +374,11 @@ lite_context<Coefficients>::compute_signature(const signature_data &data) const 
         const auto* keys = data.key_stream.empty() ? nullptr : data.key_stream[i];
         vector_construction_data row_cdata { scalars::key_scalar_array(row, keys), VType };
 
-        auto lie_row = constructImpl<lie_t<VType>>(row_cdata, p_lie_basis);
+        auto lie_row = constructImpl<lie_t<VType>>(row_cdata, p_lie_basis, p_liemul);
 
+#if 0
         result.fmexp_inplace(m_maps.lie_to_tensor(lie_row));
+#endif
     }
 
     return result;
@@ -383,8 +396,9 @@ lie lite_context<Coefficients>::log_signature(const signature_data &data) const 
 }
 
 template<typename Coefficients>
-template<typename Tensor>
-Tensor lite_context<Coefficients>::Ad_x_n(deg_t d, const Tensor &x, const Tensor &y) const
+template<vector_type VType>
+typename lite_context<Coefficients>::template free_tensor_t<VType>
+lite_context<Coefficients>::Ad_x_n(deg_t d, const free_tensor_t<VType>& x, const free_tensor_t<VType>& y) const
 {
     auto tmp = x * y - y * x;
     while (--d) {
@@ -394,26 +408,28 @@ Tensor lite_context<Coefficients>::Ad_x_n(deg_t d, const Tensor &x, const Tensor
 }
 
 template<typename Coefficients>
-template<typename Tensor>
-Tensor lite_context<Coefficients>::derive_series_compute(const Tensor &increment, const Tensor &perturbation) const {
-    Tensor result(algebra_access<free_tensor_interface>::template get<Tensor>(lie_to_tensor(perturbation)));
+template<vector_type VType>
+typename lite_context<Coefficients>::template free_tensor_t<VType>
+lite_context<Coefficients>::derive_series_compute(const free_tensor_t<VType> &increment, const free_tensor_t<VType>& perturbation) const {
+    free_tensor_t<VType> result(perturbation);
 
-    typename Tensor::scalar_type factor(1);
+    typename Coefficients::scalar_type factor(1);
     for (deg_t d=1; d <= m_depth; ++d) {
-        factor *= typename Tensor::scalar_type(d+1);
+        factor *= typename Coefficients::scalar_type(d+1);
         if (d % 2 == 0) {
-            result.add_scal_div(Ad_x_n(d, increment, perturbation), factor);
+            result.add_scal_div(Ad_x_n<VType>(d, increment, perturbation), factor);
         } else {
-            result.sub_scal_div(Ad_x_n(d, increment, perturbation), factor);
+            result.sub_scal_div(Ad_x_n<VType>(d, increment, perturbation), factor);
         }
     }
     return result;
 };
 
 template<typename Coefficients>
-template<typename Tensor>
-Tensor lite_context<Coefficients>::sig_derivative_single(const Tensor &signature, const Tensor &tincr, const Tensor &perturbation) {
-    return signature * derive_series_compute<Tensor>(tincr, perturbation);
+template<vector_type VType>
+typename lite_context<Coefficients>::template free_tensor_t<VType>
+lite_context<Coefficients>::sig_derivative_single(const free_tensor_t<VType>& signature, const free_tensor_t<VType>& tincr, const free_tensor_t<VType>& perturbation) const {
+    return signature * derive_series_compute<VType>(tincr, perturbation);
 }
 
 template<typename Coefficients>
@@ -424,12 +440,12 @@ lite_context<Coefficients>::sig_derivative_impl(const std::vector<derivative_com
     using lie_type = lie_t<VType>;
 
     if (info.empty()) {
-        return tensor_type(p_tensor_basis);
+        return tensor_type(p_tensor_basis, p_ftmul);
     }
 
     using access = algebra_access<lie_interface>;
 
-    tensor_type result(p_tensor_basis);
+    tensor_type result(p_tensor_basis, p_ftmul);
 
     for (const auto& data : info) {
         auto tincr = lie_to_tensor_impl<VType>(data.logsig_of_interval);
@@ -437,7 +453,7 @@ lite_context<Coefficients>::sig_derivative_impl(const std::vector<derivative_com
         auto signature = exp(tincr);
 
         result *= signature;
-        result += sig_derivative_single(signature, tincr, tperturb);
+        result += sig_derivative_single<VType>(signature, tincr, tperturb);
     }
 
 }
@@ -472,10 +488,10 @@ public:
     using rational_type = value_type;
     using reference = lal::dtl::sparse_mutable_reference<MapType, KeyType>;
 
-    const scalar_type* get_type() noexcept { return scalar_type_holder<value_type>::get_type(); }
+    static const scalar_type* get_type() noexcept { return scalar_type_holder<value_type>::get_type(); }
 
     static scalar make(reference val) {
-        return scalar (new scalar_implementation<reference>(std::move(val)), typename scalar::interface_pointer{});
+        return scalar (new scalar_implementation<reference>(std::move(val)));
     }
 };
 
@@ -493,6 +509,8 @@ public:
     using value_type = typename MapType::mapped_type;
     using rational_type = typename trait::rational_type;
 
+    explicit scalar_implementation(data_type&& d) : m_data(std::move(d))
+    {}
 
     const scalar_type* type() const noexcept override { return trait::get_type(); }
 
@@ -582,16 +600,17 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::sparse_vector, lal::dtl::stand
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
     static deg_t width(const algebra_type* instance) noexcept
-    { return instance->width(); }
+    { return instance->basis().width(); }
     static deg_t max_depth(const algebra_type* instance) noexcept
-    { return instance->depth(); }
+    { return instance->basis().depth(); }
 
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
 
     static deg_t degree(const algebra_type& instance) noexcept
-    { return instance.degree(); }
+//    { return instance.degree(); }
+    { return 0; }
     static deg_t degree(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().degree(convert_key(instance, key)); }
     static deg_t native_degree(const algebra_type* instance, this_key_type key)
@@ -609,7 +628,10 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::sparse_vector, lal::dtl::stand
         static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
         return null;
     }
-
+    static const key_prod_container &key_product(const algebra_type *instance, const this_key_type &k1, const this_key_type &k2) {
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
+        return null;
+    }
     static algebra_type create_like(const algebra_type& instance)
     {
         return algebra_type(instance.get_basis());
@@ -635,16 +657,16 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::dense_vector, lal::dtl::standa
     static constexpr vector_type vtype() noexcept
     { return vector_type::dense; }
     static deg_t width(const algebra_type* instance) noexcept
-    { return instance->width(); }
+    { return instance->basis().width(); }
     static deg_t max_depth(const algebra_type* instance) noexcept
-    { return instance->depth(); }
+    { return instance->basis().depth(); }
 
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
 
     static deg_t degree(const algebra_type& instance) noexcept
-    { return instance.degree(); }
+    { return /*instance.degree()*/ 0; }
     static deg_t degree(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().degree(convert_key(instance, key)); }
     static deg_t native_degree(const algebra_type* instance, this_key_type key)
@@ -662,10 +684,14 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::dense_vector, lal::dtl::standa
         static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
         return null;
     }
-
+    static const key_prod_container &key_product(const algebra_type *instance, const this_key_type &k1, const this_key_type &k2) {
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
+        return null;
+    }
     static algebra_type create_like(const algebra_type& instance)
     {
         return algebra_type(instance.get_basis());
+//        return algebra_type();
     }
 
 };
@@ -687,16 +713,16 @@ struct algebra_info<lal::lie<Coeffs, lal::sparse_vector, lal::dtl::standard_stor
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
     static deg_t width(const algebra_type* instance) noexcept
-    { return instance->width(); }
+    { return instance->basis().width(); }
     static deg_t max_depth(const algebra_type* instance) noexcept
-    { return instance->depth(); }
+    { return instance->basis().depth(); }
 
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
 
     static deg_t degree(const algebra_type& instance) noexcept
-    { return instance.degree(); }
+    { return /*instance.degree()*/ 0; }
     static deg_t degree(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().degree(convert_key(instance, key)); }
     static deg_t native_degree(const algebra_type* instance, this_key_type key)
@@ -710,6 +736,11 @@ struct algebra_info<lal::lie<Coeffs, lal::sparse_vector, lal::dtl::standard_stor
 
     using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
     static const key_prod_container& key_product(const algebra_type* instance, key_type k1, key_type k2)
+    {
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
+        return null;
+    }
+    static const key_prod_container& key_product(const algebra_type* instance, const this_key_type& k1, const this_key_type& k2)
     {
         static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
         return null;
@@ -726,7 +757,7 @@ struct algebra_info<lal::lie<Coeffs, lal::sparse_vector, lal::dtl::standard_stor
 template <typename Coeffs>
 struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_storage>>
 {
-    using algebra_type = lal::lie<Coeffs, lal::sparse_vector, lal::dtl::standard_storage>;
+    using algebra_type = lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_storage>;
     using basis_type = lal::hall_basis;
     using this_key_type = typename basis_type::key_type;
 
@@ -740,16 +771,16 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
     static constexpr vector_type vtype() noexcept
     { return vector_type::dense; }
     static deg_t width(const algebra_type* instance) noexcept
-    { return instance->width(); }
+    { return instance->basis().width(); }
     static deg_t max_depth(const algebra_type* instance) noexcept
-    { return instance->depth(); }
+    { return instance->basis().depth(); }
 
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
 
     static deg_t degree(const algebra_type& instance) noexcept
-    { return instance.degree(); }
+    { return /*instance.degree()*/ 0; }
     static deg_t degree(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().degree(convert_key(instance, key)); }
     static deg_t native_degree(const algebra_type* instance, this_key_type key)
@@ -767,6 +798,10 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
         static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
         return null;
     }
+    static const key_prod_container &key_product(const algebra_type *instance, const this_key_type &k1, const this_key_type &k2) {
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
+        return null;
+    }
 
     static algebra_type create_like(const algebra_type& instance)
     {
@@ -776,6 +811,115 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
 };
 
 
+
+
+namespace dtl {
+
+template <>
+typename lal::tensor_basis::key_type
+basis_info<lal::tensor_basis>::convert_key(const lal::tensor_basis &basis, esig::key_type key)
+{
+    return basis.index_to_key(key);
+}
+template <>
+esig::key_type
+basis_info<lal::tensor_basis>::convert_key(const lal::tensor_basis &basis, const this_key_type& key)
+{
+    return basis.key_to_index(key);
+}
+template <>
+esig::key_type
+basis_info<lal::tensor_basis>::first_key(const lal::tensor_basis &basis) { return 0; }
+template <>
+esig::key_type
+basis_info<lal::tensor_basis>::last_key(const lal::tensor_basis &basis) { return basis.size(-1); }
+
+template <>
+deg_t
+basis_info<lal::tensor_basis>::native_degree(const lal::tensor_basis &basis, const this_key_type &key) {
+    return static_cast<deg_t>(key.degree());
+}
+template <>
+deg_t
+basis_info<lal::tensor_basis>::degree(const lal::tensor_basis &basis, esig::key_type key) {
+    return native_degree(basis, convert_key(basis, key));
+}
+
+
+template <>
+typename lal::hall_basis::key_type
+basis_info<lal::hall_basis>::convert_key(const lal::hall_basis &basis, esig::key_type key)
+{
+    return basis.index_to_key(key-1);
+}
+template <>
+esig::key_type
+basis_info<lal::hall_basis>::convert_key(const lal::hall_basis &basis, const this_key_type &key) {
+    return 1 + basis.key_to_index(key);
+}
+template <>
+esig::key_type
+basis_info<lal::hall_basis>::first_key(const lal::hall_basis &basis) { return 1; }
+template <>
+esig::key_type
+basis_info<lal::hall_basis>::last_key(const lal::hall_basis &basis) { return basis.size(-1) + 1; }
+template <>
+deg_t
+basis_info<lal::hall_basis>::native_degree(const lal::hall_basis &basis, const this_key_type &key) {
+    return static_cast<deg_t>(key.degree());
+}
+template <>
+deg_t
+basis_info<lal::hall_basis>::degree(const lal::hall_basis &basis, esig::key_type key) {
+    return native_degree(basis, convert_key(basis, key));
+}
+
+
+template <typename MapType, typename Iterator>
+struct iterator_traits<lal::dtl::sparse_iterator<MapType, Iterator>>
+{
+    using iterator = lal::dtl::sparse_iterator<MapType, Iterator>;
+
+    static auto key(iterator it) noexcept -> decltype(it->key())
+    {
+        return it->key();
+    }
+    static auto value(iterator it) noexcept -> decltype(it->value())
+    {
+        return it->value();
+    }
+};
+
+template <typename Basis, typename Coefficients, typename Iterator>
+struct iterator_traits<lal::dtl::dense_vector_iterator<Basis, Coefficients, Iterator>>
+{
+    using iterator = lal::dtl::dense_vector_iterator<Basis, Coefficients, Iterator>;
+    static auto key(iterator it) noexcept -> decltype(it->key())
+    {
+        return it->key();
+    }
+    static auto value(iterator it) noexcept -> decltype(it->value())
+    {
+        return it->value();
+    }
+};
+template <typename Basis, typename Coefficients, typename Iterator>
+struct iterator_traits<lal::dtl::dense_vector_const_iterator<Basis, Coefficients, Iterator>>
+{
+    using iterator = lal::dtl::dense_vector_const_iterator<Basis, Coefficients, Iterator>;
+    static auto key(iterator it) noexcept -> decltype(it->key())
+    {
+        return it->key();
+    }
+    static auto value(iterator it) noexcept -> decltype(it->value())
+    {
+        return it->value();
+    }
+};
+
+
+
+}
 
 
 } // namespace algebra

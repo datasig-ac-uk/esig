@@ -135,10 +135,10 @@ namespace dtl {
 
 template<typename Iterator>
 struct iterator_traits {
-    static decltype(auto) key(Iterator it) noexcept
+    static auto key(Iterator it) noexcept -> decltype(it->first)
     { return it->first; }
-    static typename std::iterator_traits<Iterator>::value_type::second_type
-    value(Iterator it) noexcept
+    static auto
+    value(Iterator it) noexcept -> decltype(it->second)
     { return it->second; }
 };
 

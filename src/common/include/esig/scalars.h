@@ -215,8 +215,8 @@ public:
     scalar_pointer operator+(dimn_t index) const noexcept;
     scalar_pointer &operator+=(dimn_t index) noexcept;
 
-    scalar operator[](dimn_t index);
     scalar operator[](dimn_t index) const noexcept;
+    scalar operator[](dimn_t index);
 
     bool operator==(const scalar_pointer &other) const noexcept { return p_type == other.p_type && p_data == other.p_data; }
     bool operator!=(const scalar_pointer &other) const noexcept { return p_type != other.p_type || p_data != other.p_data; }
@@ -263,6 +263,7 @@ public:
     explicit scalar(scalar_t);
     scalar(scalar_t, const scalar_type *);
     explicit scalar(scalar_pointer ptr);
+    explicit scalar(scalar_interface* other);
 
     template<typename I,
              typename J,
@@ -350,14 +351,14 @@ public:
     template<typename Int>
     scalar operator[](Int index) {
         auto uindex = static_cast<dimn_t>(index);
-        assert(0 <= uindex && uindex <= m_size);
+        assert(0 <= uindex && uindex < m_size);
         return scalar_pointer::operator[](uindex);
     }
 
     template<typename Int>
     scalar operator[](Int index) const {
         auto uindex = static_cast<dimn_t>(index);
-        assert(0 <= uindex && uindex <= m_size);
+        assert(0 <= uindex && uindex < m_size);
         return scalar_pointer::operator[](uindex);
     }
 

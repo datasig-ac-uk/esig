@@ -69,6 +69,7 @@ template <typename Impl>
 class basis_implementation : public basis_interface
 {
     std::shared_ptr<const Impl> p_basis;
+    using traits = basis_info<Impl>;
 
 public:
 
@@ -83,10 +84,12 @@ public:
         return p_basis->depth();
     }
     boost::optional<deg_t> degree(key_type key) const noexcept override {
-        return p_basis->degree(key);
+        return traits::degree(*p_basis, key);
     }
     std::string key_to_string(key_type key) const noexcept override {
-        return p_basis->key_to_string(key);
+        std::stringstream ss;
+        p_basis->print_key(ss, traits::convert_key(*p_basis, key));
+        return ss.str();
     }
     dimn_t size(int i) const noexcept override {
         return p_basis->size(i);
@@ -95,25 +98,25 @@ public:
         return p_basis->start_of_degree(i);
     }
     boost::optional<key_type> lparent(key_type key) const noexcept override {
-        return p_basis->lparent(key);
+        return traits::convert_key(*p_basis, p_basis->lparent(traits::convert_key(*p_basis, key)));
     }
     boost::optional<key_type> rparent(key_type key) const noexcept override {
-        return p_basis->rparent(key);
+        return traits::convert_key(*p_basis, p_basis->rparent(traits::convert_key(*p_basis, key)));
     }
     key_type index_to_key(dimn_t idx) const noexcept override {
-        return key_type(idx);
+        return traits::convert_key(*p_basis, p_basis->index_to_key(idx));
     }
     dimn_t key_to_index(key_type key) const noexcept override {
-        return dimn_t(key);
+        return dimn_t(p_basis->key_to_index(traits::convert_key(*p_basis, key)));
     }
     let_t first_letter(key_type key) const noexcept override {
-        return p_basis->first_letter(key);
+        return p_basis->first_letter(traits::convert_key(*p_basis, key));
     }
     key_type key_of_letter(let_t letter) const noexcept override {
-        return p_basis->key_of_letter(letter);
+        return traits::convert_key(*p_basis, p_basis->key_of_letter(letter));
     }
     bool letter(key_type key) const noexcept override {
-        return p_basis->letter(key);
+        return p_basis->letter(traits::convert_key(*p_basis, key));
     }
 };
 
@@ -180,7 +183,7 @@ struct algebra_interface
     virtual algebra_iterator begin() const = 0;
     virtual algebra_iterator end() const = 0;
 
-    virtual dense_data_access_iterator iterate_dense_components() const = 0;
+//    virtual dense_data_access_iterator iterate_dense_components() const = 0;
 
     // Arithmetic
     virtual Algebra uminus() const = 0;
@@ -365,7 +368,7 @@ public:
     scalars::scalar get_mut(key_type key) override;
     algebra_iterator begin() const override;
     algebra_iterator end() const override;
-    dense_data_access_iterator iterate_dense_components() const override;
+//    dense_data_access_iterator iterate_dense_components() const override;
     algebra_t uminus() const override;
     algebra_t add(const algebra_interface_t &other) const override;
     algebra_t sub(const algebra_interface_t &other) const override;
@@ -428,7 +431,7 @@ public:
     scalars::scalar get_mut(key_type key) override;
     algebra_iterator begin() const override;
     algebra_iterator end() const override;
-    dense_data_access_iterator iterate_dense_components() const override;
+//    dense_data_access_iterator iterate_dense_components() const override;
     algebra_t uminus() const override;
     algebra_t add(const algebra_interface_t &other) const override;
     algebra_t sub(const algebra_interface_t &other) const override;
@@ -590,7 +593,7 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
-    dense_data_access_iterator iterate_dense_components() const noexcept;
+//    dense_data_access_iterator iterate_dense_components() const noexcept;
 
     // Binary operations
     algebra_t uminus() const;
@@ -661,6 +664,8 @@ public:
 template <typename Algebra>
 struct algebra_info
 {
+    using basis_type = typename Algebra::basis_type;
+    using basis_traits = dtl::basis_info<basis_type>;
     using scalar_type = typename Algebra::scalar_type;
     using rational_type = scalar_type;
     using reference = scalar_type&;
@@ -679,7 +684,7 @@ struct algebra_info
 
     using this_key_type = key_type;
     static this_key_type convert_key(const Algebra* instance, esig::key_type key) noexcept
-    { return key; }
+    { return basis_traits::convert_key(instance->basis(), key); }
 
     static deg_t degree(const Algebra& instance) noexcept
     { return instance.degree(); }
@@ -694,7 +699,11 @@ struct algebra_info
     { return instance->basis().size(); }
 
     using key_prod_container = boost::container::small_vector_base<std::pair<key_type, int>>;
-    static const key_prod_container& key_product(const Algebra* inst, key_type k1, key_type k2)
+    static const key_prod_container& key_product(const Algebra* inst, key_type k1, key_type k2) {
+        static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
+        return null;
+    }
+    static const key_prod_container& key_product(const Algebra* inst, const this_key_type& k1, const this_key_type& k2)
     {
         static const boost::container::small_vector<std::pair<key_type, int>, 0> null;
         return null;
@@ -871,12 +880,12 @@ template<typename Interface, typename Impl>
 algebra_iterator algebra_implementation<Interface, Impl>::end() const {
     return algebra_iterator(m_data.end(), p_ctx);
 }
-template<typename Interface, typename Impl>
-dense_data_access_iterator algebra_implementation<Interface, Impl>::iterate_dense_components() const {
-    return dense_data_access_iterator(
-        dtl::dense_data_access_implementation<Impl>(m_data, algebra_info<Impl>::first_key(&m_data))
-        );
-}
+//template<typename Interface, typename Impl>
+//dense_data_access_iterator algebra_implementation<Interface, Impl>::iterate_dense_components() const {
+//    return dense_data_access_iterator(
+////        dtl::dense_data_access_implementation<Impl>(m_data, algebra_info<Impl>::first_key(&m_data))
+//        );
+//}
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::uminus() const {
     return algebra_t(-m_data, p_ctx);
@@ -1052,12 +1061,12 @@ template<typename Interface, typename Impl>
 algebra_iterator borrowed_algebra_implementation<Interface, Impl>::end() const {
     return algebra_iterator(p_impl->end(), p_ctx);
 }
-template<typename Interface, typename Impl>
-dense_data_access_iterator borrowed_algebra_implementation<Interface, Impl>::iterate_dense_components() const {
-    return dense_data_access_iterator(
-        dtl::dense_data_access_implementation<Impl>(*p_impl, algebra_info<Impl>::first_key(p_impl))
-        );
-}
+//template<typename Interface, typename Impl>
+//dense_data_access_iterator borrowed_algebra_implementation<Interface, Impl>::iterate_dense_components() const {
+//    return dense_data_access_iterator(
+//        dtl::dense_data_access_implementation<Impl>(*p_impl, algebra_info<Impl>::first_key(p_impl))
+//        );
+//}
 template<typename Interface, typename Impl>
 typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
  borrowed_algebra_implementation<Interface, Impl>::uminus() const {
@@ -1206,10 +1215,10 @@ template<typename Interface>
 typename algebra_base<Interface>::const_iterator algebra_base<Interface>::end() const {
     return p_impl->end();
 }
-template<typename Interface>
-dense_data_access_iterator algebra_base<Interface>::iterate_dense_components() const noexcept {
-    return p_impl->iterate_dense_components();
-}
+//template<typename Interface>
+//dense_data_access_iterator algebra_base<Interface>::iterate_dense_components() const noexcept {
+//    return p_impl->iterate_dense_components();
+//}
 template<typename Interface>
 typename algebra_base<Interface>::algebra_t algebra_base<Interface>::uminus() const {
     return p_impl->uminus();
@@ -1383,7 +1392,7 @@ void fallback_multiplication_impl(Algebra &result,
                 for (auto rit = rhs.degree_ranges[rhs_d]; rit != rhs.degree_ranges[rhs_d + 1]; ++rit) {
                     auto val = op(litraits::value(lit) * ritraits::value(rit));
                     for (auto prd : product(lit, rit)) {
-                        result[prd.first] += prd.second*val;
+                        result[info::convert_key(&result, prd.first)] += prd.second*val;
                     }
                 }
             }
@@ -1535,7 +1544,7 @@ void fallback_inplace_binary_op(Impl &lhs, const Interface &rhs, Fn op) {
     using scalar_type = typename algebra_info<Impl>::scalar_type;
 
     for (const auto& item : rhs) {
-        op(lhs[item.key()], scalars::scalar_cast<scalar_type>(item.value()));
+        op(lhs[algebra_info<Impl>::convert_key(&lhs, item.key())], scalars::scalar_cast<scalar_type>(item.value()));
     }
 }
 
