@@ -15,5 +15,5 @@
 	branch = master
 [submodule "external/libalgebra-lite"]
 	path = external/libalgebra-lite
-	url = https://github.com/datasig-ac-uk/libalgebra-lite.git
+	url = https://github.com/datasig-ac-uk/libalgebra-lite
 	branch = main
