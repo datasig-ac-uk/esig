@@ -272,7 +272,7 @@ OutType lite_context<Coefficients>::constructImpl(const vector_construction_data
         const auto* keys = data.data.keys();
 
         for (dimn_t i=0; i<size; ++i) {
-            result[basis->index_to_key(keys[i])] = data_ptr[i];
+            result[basis->index_to_key(i)] = data_ptr[i];
         }
 
     } else {
