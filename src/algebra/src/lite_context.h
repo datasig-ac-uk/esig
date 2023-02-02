@@ -721,7 +721,7 @@ struct algebra_info<lal::lie<Coeffs, lal::sparse_vector, lal::dtl::standard_stor
     static const basis_type &basis(const algebra_type &instance) noexcept { return instance.basis(); }
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
-    { return instance->basis().index_to_key(key); }
+    { return instance->basis().index_to_key(key-1); }
 
     static deg_t degree(const algebra_type& instance) noexcept
     { return /*instance.degree()*/ 0; }
@@ -781,7 +781,7 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
     { return instance.basis(); }
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
-    { return instance->basis().index_to_key(key); }
+    { return instance->basis().index_to_key(key-1); }
 
     static deg_t degree(const algebra_type& instance) noexcept
     { return /*instance.degree()*/ 0; }
