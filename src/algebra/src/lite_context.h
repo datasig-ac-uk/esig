@@ -456,6 +456,7 @@ lite_context<Coefficients>::sig_derivative_impl(const std::vector<derivative_com
         result += sig_derivative_single<VType>(signature, tincr, tperturb);
     }
 
+    return result;
 }
 
 template<typename Coefficients>
