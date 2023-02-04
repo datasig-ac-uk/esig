@@ -369,6 +369,7 @@ class ESIG_EXPORT owned_scalar_array : public scalar_array {
 public:
     owned_scalar_array() = default;
 
+    owned_scalar_array(const owned_scalar_array& other);
     owned_scalar_array(owned_scalar_array &&other) noexcept;
 
     explicit owned_scalar_array(const scalar_type *type);

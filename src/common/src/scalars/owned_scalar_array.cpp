@@ -18,6 +18,13 @@ owned_scalar_array::owned_scalar_array(const scalar_array &other)
                          scalar_pointer(other),
                          other.size());
 }
+owned_scalar_array::owned_scalar_array(const owned_scalar_array &other)
+    : scalar_array(other.type()->allocate(other.size()), other.size())
+{
+    p_type->convert_copy(const_cast<void*>(p_data),
+                         scalar_pointer(other),
+                         other.size());
+}
 
 owned_scalar_array::owned_scalar_array(const scalar_type *type, dimn_t size)
     : scalar_array(type->allocate(size), size)

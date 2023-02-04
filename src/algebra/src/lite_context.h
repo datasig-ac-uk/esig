@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <memory>
+#include <vector>
 #include <ostream>
 
 #include <boost/move/utility.hpp>

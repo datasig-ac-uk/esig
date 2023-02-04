@@ -154,6 +154,7 @@ void esig::python::init_lie(py::module_ &m) {
     klass.def("__neq__", [](const lie& lhs, const lie& rhs) { return lhs != rhs; });
 
 #ifndef ESIG_NO_NUMPY
+#if 0
     klass.def("__array__", [](const lie& arg) {
         py::dtype dtype = esig::python::ctype_to_npy_dtype(arg.coeff_type());
 
@@ -167,5 +168,6 @@ void esig::python::init_lie(py::module_ &m) {
         }
         return py::array(dtype);
     });
+#endif
 #endif
 }
