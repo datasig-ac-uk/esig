@@ -57,16 +57,16 @@ public:
     algebra_iterator(algebra_iterator&&) noexcept;
 
 
-    template <typename Iter, typename=std::enable_if_t<
+    template <typename Basis, typename Iter, typename=std::enable_if_t<
                 !std::is_same<
                         std::remove_cv_t<std::remove_reference_t<Iter>>,
                         algebra_iterator>::value>>
-    explicit algebra_iterator(Iter&& iter, const context* ctx);
-    template <typename Iter, typename=std::enable_if_t<
+    explicit algebra_iterator(const Basis* basis, Iter&& iter, const context* ctx);
+    template <typename Basis, typename Iter, typename=std::enable_if_t<
                 !std::is_same<
                         std::remove_cv_t<std::remove_reference_t<Iter>>,
                         algebra_iterator>::value>>
-    explicit algebra_iterator(Iter&& iter);
+    explicit algebra_iterator(const Basis* basis, Iter&& iter);
 
     const context* get_context() const noexcept;
     algebra_iterator& operator++();
@@ -143,39 +143,60 @@ struct iterator_traits {
 };
 
 
-template <typename Iter>
+template <typename Basis, typename Iter>
 class algebra_iterator_implementation : public algebra_iterator_interface, public algebra_iterator_item
 {
     Iter m_current;
+    const Basis* p_basis;
+
+    using basis_traits = basis_info<Basis>;
+    using iter_traits = iterator_traits<Iter>;
 
 public:
 
-    algebra_iterator_implementation(const algebra_iterator_implementation& arg);
-    algebra_iterator_implementation(algebra_iterator_implementation&& arg) noexcept;
+    algebra_iterator_implementation(const algebra_iterator_implementation& arg)
+        : m_current(arg.m_current), p_basis(arg.p_basis)
+    {
+    }
+    algebra_iterator_implementation(algebra_iterator_implementation&& arg) noexcept
+        : m_current(std::move(arg.m_current)), p_basis(arg.p_basis)
+    {
+    }
 
-    explicit algebra_iterator_implementation(Iter&& iter);
-    void advance() override;
-    const algebra_iterator_item &get() const override;
-    pointer get_ptr() const override;
-    bool equals(const algebra_iterator_interface &other) const noexcept override;
-    key_type key() const noexcept override;
-    scalars::scalar value() const noexcept override;
+    explicit algebra_iterator_implementation(const Basis* basis, Iter&& iter)
+        : m_current(std::move(iter)), p_basis(basis)
+    {}
+
+    void advance() override { ++m_current; }
+    const algebra_iterator_item &get() const override { return *this; }
+    pointer get_ptr() const override { return this; };
+    bool equals(const algebra_iterator_interface &other) const noexcept override
+    { return m_current == static_cast<const algebra_iterator_implementation&>(other).m_current; }
+    key_type key() const noexcept override
+    {
+        return basis_traits::convert_key(*p_basis, iter_traits::key(m_current));
+    }
+    scalars::scalar value() const noexcept override
+    {
+        using trait = ::esig::scalars::dtl::scalar_type_trait<decltype(iter_traits::value(m_current))>;
+        return trait::make(iter_traits::value(m_current));
+    }
 };
 } // namespace dtl
 
 
 
 
-template<typename Iter, typename>
-algebra_iterator::algebra_iterator(Iter &&iter, const context* ctx)
-  : p_impl(new dtl::algebra_iterator_implementation<Iter>(std::forward<Iter>(iter))),
+template<typename Basis, typename Iter, typename>
+algebra_iterator::algebra_iterator(const Basis* basis, Iter &&iter, const context* ctx)
+  : p_impl(new dtl::algebra_iterator_implementation<Basis, Iter>(basis, std::forward<Iter>(iter))),
       p_ctx(ctx)
 {
 }
 
-template<typename Iter, typename>
-algebra_iterator::algebra_iterator(Iter &&iter)
-  : p_impl(new dtl::algebra_iterator_implementation<Iter>(std::forward<Iter>(iter))),
+template<typename Basis, typename Iter, typename>
+algebra_iterator::algebra_iterator(const Basis* basis, Iter &&iter)
+  : p_impl(new dtl::algebra_iterator_implementation<Basis, Iter>(basis, std::forward<Iter>(iter))),
       p_ctx(nullptr)
 {
 }
@@ -183,75 +204,6 @@ algebra_iterator::algebra_iterator(Iter &&iter)
 
 namespace dtl {
 
-template <typename Iter>
-struct iterator_helper
-{
-    static void advance(Iter& iter)
-    {
-        ++iter;
-    }
-    static key_type key(const Iter& iter)
-    {
-        return iter->key();
-    }
-    static scalars::scalar value(const Iter& iter)
-    {
-        using trait = ::esig::scalars::dtl::scalar_type_trait<decltype(iter->value())>;
-        return trait::make(iter->value());
-    }
-    static bool equals(const Iter& iter1, const Iter& iter2)
-    {
-        return iter1 == iter2;
-    }
-};
-
-
-template<typename Iter>
-algebra_iterator_implementation<Iter>::algebra_iterator_implementation(const algebra_iterator_implementation &arg)
-    : m_current(arg.m_current)
-{
-}
-template<typename Iter>
-algebra_iterator_implementation<Iter>::algebra_iterator_implementation(algebra_iterator_implementation &&arg) noexcept
-    : m_current(std::move(arg.m_current))
-{
-}
-
-template<typename Iter>
-algebra_iterator_implementation<Iter>::algebra_iterator_implementation(Iter &&iter)
-    : m_current(std::forward<Iter>(iter))
-{
-}
-template<typename Iter>
-void algebra_iterator_implementation<Iter>::advance()
-{
-    iterator_helper<Iter>::advance(m_current);
-}
-template<typename Iter>
-const algebra_iterator_item &algebra_iterator_implementation<Iter>::get() const
-{
-    return *this;
-}
-template<typename Iter>
-algebra_iterator_interface::pointer algebra_iterator_implementation<Iter>::get_ptr() const
-{
-  return this;
-}
-template<typename Iter>
-bool algebra_iterator_implementation<Iter>::equals(const algebra_iterator_interface &other) const noexcept
-{
-  return iterator_helper<Iter>::equals(m_current, dynamic_cast<const algebra_iterator_implementation&>(other).m_current);
-}
-template<typename Iter>
-key_type algebra_iterator_implementation<Iter>::key() const noexcept
-{
-    return iterator_helper<Iter>::key(m_current);
-}
-template<typename Iter>
-scalars::scalar algebra_iterator_implementation<Iter>::value() const noexcept
-{
-    return iterator_helper<Iter>::value(m_current);
-}
 
 template <typename Algebra>
 class dense_data_access_implementation;

@@ -49,14 +49,12 @@ TEST_P(TensorFixture, TestTensorAdditionDenseData) {
 
     const auto l1 = make_dense_free_tensor();
     const auto l2 = make_dense_free_tensor();
-
     auto expected = ctx->zero_tensor(std::get<3>(params));
     for (esig::key_type k=0; k<tensor_size; ++k) {
         expected[k] = l1[k] + l2[k];
     }
 
     auto result = l1.add(l2);
-//    std::cout << result << '\n' << expected << '\n';
     ASSERT_EQ(expected, result);
 }
 

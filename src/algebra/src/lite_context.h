@@ -9,6 +9,7 @@
 
 #include <functional>
 #include <memory>
+#include <vector>
 #include <ostream>
 
 #include <boost/move/utility.hpp>
@@ -248,7 +249,7 @@ template<typename OutType>
 OutType lite_context<Coefficients>::constructImpl(const vector_construction_data &data,
                                                   const std::shared_ptr<const typename OutType::basis_type>& basis,
                                                   const std::shared_ptr<const typename OutType::multiplication_type>& mul) const {
-    OutType result(basis, mul);
+    OutType result(basis);
 
     if (data.data.is_null()) {
         return result;
@@ -261,7 +262,7 @@ OutType lite_context<Coefficients>::constructImpl(const vector_construction_data
     std::vector<scalar_type> tmp;
     if (data.data.type() != ctype()) {
         tmp.resize(data.data.size());
-        data.data.type()->convert_copy(tmp.data(), data.data, size);
+        ctype()->convert_copy(tmp.data(), data.data, size);
         data_ptr = tmp.data();
     } else {
         data_ptr = data.data.raw_cast<const scalar_type>();
@@ -272,7 +273,7 @@ OutType lite_context<Coefficients>::constructImpl(const vector_construction_data
         const auto* keys = data.data.keys();
 
         for (dimn_t i=0; i<size; ++i) {
-            result[basis->index_to_key(keys[i])] = data_ptr[i];
+            result[basis->index_to_key(i)] = data_ptr[i];
         }
 
     } else {
@@ -456,6 +457,7 @@ lite_context<Coefficients>::sig_derivative_impl(const std::vector<derivative_com
         result += sig_derivative_single<VType>(signature, tincr, tperturb);
     }
 
+    return result;
 }
 
 template<typename Coefficients>
@@ -604,7 +606,7 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::sparse_vector, lal::dtl::stand
     static deg_t max_depth(const algebra_type* instance) noexcept
     { return instance->basis().depth(); }
 
-
+    static const basis_type &basis(const algebra_type &instance) noexcept { return instance.basis(); }
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
 
@@ -661,7 +663,7 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::dense_vector, lal::dtl::standa
     static deg_t max_depth(const algebra_type* instance) noexcept
     { return instance->basis().depth(); }
 
-
+    static const basis_type &basis(const algebra_type &instance) noexcept { return instance.basis(); }
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
     { return instance->basis().index_to_key(key); }
 
@@ -717,9 +719,10 @@ struct algebra_info<lal::lie<Coeffs, lal::sparse_vector, lal::dtl::standard_stor
     static deg_t max_depth(const algebra_type* instance) noexcept
     { return instance->basis().depth(); }
 
+    static const basis_type &basis(const algebra_type &instance) noexcept { return instance.basis(); }
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
-    { return instance->basis().index_to_key(key); }
+    { return instance->basis().index_to_key(key-1); }
 
     static deg_t degree(const algebra_type& instance) noexcept
     { return /*instance.degree()*/ 0; }
@@ -775,9 +778,11 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
     static deg_t max_depth(const algebra_type* instance) noexcept
     { return instance->basis().depth(); }
 
+    static const basis_type& basis(const algebra_type& instance) noexcept
+    { return instance.basis(); }
 
     static this_key_type convert_key(const algebra_type* instance, esig::key_type key) noexcept
-    { return instance->basis().index_to_key(key); }
+    { return instance->basis().index_to_key(key-1); }
 
     static deg_t degree(const algebra_type& instance) noexcept
     { return /*instance.degree()*/ 0; }

@@ -171,6 +171,7 @@ void esig::python::init_free_tensor(py::module_ &m) {
     klass.def("__neq__", [](const free_tensor& lhs, const free_tensor& rhs) { return lhs != rhs; });
 
 #ifndef ESIG_NO_NUMPY
+#if 0
     klass.def("__array__", [](const free_tensor& self) {
 //        py::dtype dtype = dtype_from(self.coeff_type());
         py::dtype dtype = esig::python::ctype_to_npy_dtype(self.coeff_type());
@@ -185,6 +186,7 @@ void esig::python::init_free_tensor(py::module_ &m) {
         }
         return py::array(dtype);
     });
+#endif
 #endif
 
 }

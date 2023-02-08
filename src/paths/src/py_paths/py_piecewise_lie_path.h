@@ -5,7 +5,7 @@
 #ifndef ESIG_SRC_PATHS_SRC_PY_PATHS_PY_PIECEWISE_LIE_PATH_H_
 #define ESIG_SRC_PATHS_SRC_PY_PATHS_PY_PIECEWISE_LIE_PATH_H_
 
-#include "../piecewise_lie_path.h"
+#include "piecewise_lie_path.h"
 
 #include <pybind11/pybind11.h>
 

@@ -369,6 +369,7 @@ class ESIG_EXPORT owned_scalar_array : public scalar_array {
 public:
     owned_scalar_array() = default;
 
+    owned_scalar_array(const owned_scalar_array& other);
     owned_scalar_array(owned_scalar_array &&other) noexcept;
 
     explicit owned_scalar_array(const scalar_type *type);
@@ -409,7 +410,7 @@ public:
 
     const key_type* keys() const noexcept { return p_keys; }
     key_type* keys();
-    bool has_keys() const noexcept { return p_keys == nullptr; }
+    bool has_keys() const noexcept { return p_keys != nullptr; }
 
     void allocate_scalars(idimn_t count = -1);
     void allocate_keys(idimn_t count = -1);
