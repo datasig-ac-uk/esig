@@ -9,7 +9,8 @@ add_executable(esig_paths_tests)
 target_link_libraries(esig_paths_tests PRIVATE
         GTest::gtest_main
         esig_common
-        esig_paths)
+        esig_paths
+        Libalgebra_lite::Libalgebra_lite)
 
 target_sources(esig_paths_tests PRIVATE
             test_path_wrapper.cpp

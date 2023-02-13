@@ -32,6 +32,7 @@ set(esig_common_HEADERS
 
 set_target_properties(esig_common PROPERTIES
         PUBLIC_HEADER "${esig_common_HEADERS}"
+        LIBRARY_OUTPUT_DIRECTORY ${ESIG_BUILD_PYMODULE}
         )
 
 target_sources(esig_common

@@ -10,6 +10,7 @@ find_package(Boost CONFIG REQUIRED)
 pybind11_add_module(esig_py_module MODULE WITH_SOABI)
 set_target_properties(esig_py_module PROPERTIES
         LIBRARY_OUTPUT_NAME _esig
+        LIBRARY_OUTPUT_DIRECTORY "${ESIG_BUILD_PYMODULE}"
         )
 
 
@@ -70,6 +71,10 @@ target_sources(esig_py_module PRIVATE
         py_lie_key_iterator.h
         scalar_meta.h
         scalar_meta.cpp
+        py_context.cpp
+        py_context.h
+        kwargs_to_path_metadata.cpp
+        kwargs_to_path_metadata.h
         )
 
 target_link_libraries(esig_py_module PRIVATE

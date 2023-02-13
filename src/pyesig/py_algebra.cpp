@@ -10,6 +10,7 @@
 #include "py_lie_key_iterator.h"
 #include "py_tensor_key.h"
 #include "py_tensor_key_iterator.h"
+#include "py_context.h"
 
 
 void esig::python::init_algebra(py::module_ &m) {
@@ -21,5 +22,6 @@ void esig::python::init_algebra(py::module_ &m) {
 
     init_lie(m);
     init_free_tensor(m);
+    init_context(m);
 
 }

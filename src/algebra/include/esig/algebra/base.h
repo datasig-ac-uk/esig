@@ -68,13 +68,12 @@ namespace dtl {
 template <typename Impl>
 class basis_implementation : public basis_interface
 {
-    std::shared_ptr<const Impl> p_basis;
+    const Impl* p_basis;
     using traits = basis_info<Impl>;
 
 public:
 
-    explicit basis_implementation(std::shared_ptr<const Impl> basis)
-        : p_basis(std::move(basis))
+    basis_implementation(const Impl* arg) : p_basis(arg)
     {}
 
     boost::optional<deg_t> width() const noexcept override {
@@ -130,11 +129,7 @@ class ESIG_ALGEBRA_EXPORT basis
 public:
 
     template <typename T>
-    explicit basis(T arg) : p_impl(new dtl::basis_implementation<T>(std::move(arg)))
-    {}
-
-    template <typename T>
-    explicit basis(std::shared_ptr<const T> arg) : p_impl(new dtl::basis_implementation<T>(std::move(arg)))
+    basis(const T* arg) : p_impl(new dtl::basis_implementation<T>(arg))
     {}
 
     const basis_interface& operator*() const noexcept
@@ -629,9 +624,9 @@ public:
 
     std::ostream& print(std::ostream& os) const;
 
-    friend std::ostream& operator<<(std::ostream& os, const algebra_base& rhs)
+    std::ostream& operator<<(std::ostream& os) const
     {
-        return rhs.print(os);
+        return this->print(os);
     }
 
     bool operator==(const algebra_t& other) const;

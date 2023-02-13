@@ -9,13 +9,13 @@ warnings.warn("Importing functions from \"esig.tosig\" is deprecated and will be
 from esig._esig import recombine, get_context, Stream, LieIncrementPath
 
 __all__ = [
-    "recombine",
+    # "recombine",
     "stream2sig",
     "stream2logsig",
     "sigdim",
     "logsigdim",
-    "sigkeys",
-    "logsigkeys"
+    # "sigkeys",
+    # "logsigkeys"
 ]
 
 
@@ -27,7 +27,8 @@ def stream2sig(stream, signature_degree):
     a numpy vector containing the signature of the vector
     series up to given signature degree.
     """
-    path = Stream(np.diff(stream, axis=0), depth=signature_degree, type=LieIncrementPath)
+    # path = Stream(, depth=signature_degree, type=LieIncrementPath)
+    path = LieIncrementPath.from_increments(np.diff(stream, axis=0), width=stream.shape[1], depth=signature_degree)
     sig = path.signature(0.0, stream.shape[0]+1, 0.1)
     return np.array(sig)
 
@@ -40,7 +41,8 @@ def stream2logsig(stream, signature_degree):
     a numpy vector containing the log signature of the
     vector series up to given log signature degree
     """
-    path = Stream(np.diff(stream, axis=0), depth=signature_degree, type=LieIncrementPath)
+    # path = Stream(np.diff(stream, axis=0), depth=signature_degree, type=LieIncrementPath)
+    path = LieIncrementPath.from_increments(np.diff(stream, axis=0), width=stream.shape[1], depth=signature_degree)
     m = stream.shape[0] + 1
     lsig = path.log_signature(0.0, float(m), 0.1)
     return np.array(lsig)
@@ -64,23 +66,23 @@ def logsigdim(signal_dimension, signature_degree):
     return get_context(signal_dimension, signature_degree, esig.algebra.DPReal).lie_size(signature_degree)
 
 
-def logsigkeys(signal_dimension, signature_degree):
-    """
-    logsigkeys(signal_dimension, signature_degree) returns,
-    in the order used by stream2logsig, a space separated ascii
-    string containing the keys associated the entries in the
-    log signature returned by stream2logsig
-    """
-    ctx = get_context(signal_dimension, signature_degree, esig.algebra.DPReal)
-    return " " + " ".join(map(lambda k: str(k).strip("()"), ctx.iterator_lie_keys()))
+# def logsigkeys(signal_dimension, signature_degree):
+#     """
+#     logsigkeys(signal_dimension, signature_degree) returns,
+#     in the order used by stream2logsig, a space separated ascii
+#     string containing the keys associated the entries in the
+#     log signature returned by stream2logsig
+#     """
+#     ctx = get_context(signal_dimension, signature_degree, esig.algebra.DPReal)
+#     return " " + " ".join(map(lambda k: str(k).strip("()"), ctx.iterator_lie_keys()))
 
 
-def sigkeys(signal_dimension, signature_degree):
-    """
-    sigkeys(signal_dimension, signature_degree) returns,
-    in the order used by stream2sig, a space separated ascii
-    string containing the keys associated the entries in
-    the signature returned by stream2sig
-    """
-    ctx = get_context(signal_dimension, signature_degree, esig.algebra.DPReal)
-    return " " + " ".join(map(str, ctx.iterate_tensor_keys()))
+# def sigkeys(signal_dimension, signature_degree):
+#     """
+#     sigkeys(signal_dimension, signature_degree) returns,
+#     in the order used by stream2sig, a space separated ascii
+#     string containing the keys associated the entries in
+#     the signature returned by stream2sig
+#     """
+#     ctx = get_context(signal_dimension, signature_degree, esig.algebra.DPReal)
+#     return " " + " ".join(map(str, ctx.iterate_tensor_keys()))

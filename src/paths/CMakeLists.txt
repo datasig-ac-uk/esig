@@ -47,7 +47,7 @@ target_include_directories(esig_paths PUBLIC
 target_sources(esig_paths
         PRIVATE
             src/path.cpp
-            src/lie_increment_path.h
+        include/esig/paths/lie_increment_path.h
             src/lie_increment_path.cpp
             src/dynamically_generated_path.h
             src/dynamically_generated_path.cpp
@@ -59,6 +59,8 @@ target_sources(esig_paths
             ${esig_paths_HEADERS}
         )
 
+set_target_properties(esig_paths PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY "${ESIG_BUILD_PYMODULE}")
 
 #pybind11_add_module(py_esig_paths MODULE WITH_SOABI)
 #set_target_properties(py_esig_paths PROPERTIES

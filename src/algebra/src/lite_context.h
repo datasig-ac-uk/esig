@@ -14,6 +14,8 @@
 
 #include <boost/move/utility.hpp>
 #include <boost/move/utility_core.hpp>
+
+#include <libalgebra_lite/basis.h>
 #include <libalgebra_lite/dense_vector.h>
 #include <libalgebra_lite/free_tensor.h>
 #include <libalgebra_lite/hall_set.h>
@@ -73,8 +75,8 @@ class lite_context : public context {
     deg_t m_depth;
     using coefficients_type = Coefficients;
 
-    std::shared_ptr<const lal::hall_basis> p_lie_basis;
-    std::shared_ptr<const lal::tensor_basis> p_tensor_basis;
+    lal::basis_pointer<lal::hall_basis> p_lie_basis;
+    lal::basis_pointer<lal::tensor_basis> p_tensor_basis;
 
     std::shared_ptr<const lal::free_tensor_multiplication> p_ftmul;
     std::shared_ptr<const lal::lie_multiplication> p_liemul;
@@ -95,12 +97,12 @@ class lite_context : public context {
 
     template <typename OutType, typename InType>
     OutType convertImpl(const InType& arg,
-                        const std::shared_ptr<const typename OutType::basis_type>& basis,
+                        const lal::basis_pointer<typename OutType::basis_type>& basis,
                         const std::shared_ptr<const typename OutType::multiplication_type>& mul) const;
 
     template <typename OutType>
     OutType constructImpl(const vector_construction_data& data,
-                          const std::shared_ptr<const typename OutType::basis_type>& basis,
+                          const lal::basis_pointer<typename OutType::basis_type>& basis,
                           const std::shared_ptr<const typename OutType::multiplication_type>& mul) const;
 
     template <vector_type VType>
@@ -170,6 +172,8 @@ lite_context<Coefficients>::lite_context(deg_t width, deg_t depth)
       m_width(width), m_depth(depth),
       p_lie_basis(lal::basis_registry<lal::hall_basis>::get(lal::deg_t(width), lal::deg_t(depth))),
       p_tensor_basis(lal::basis_registry<lal::tensor_basis>::get(lal::deg_t(width), lal::deg_t(depth))),
+      p_ftmul(lal::multiplication_registry<lal::free_tensor_multiplication>::get(*p_tensor_basis)),
+      p_liemul(lal::multiplication_registry<lal::lie_multiplication>::get(*p_lie_basis)),
       m_maps(p_tensor_basis, p_lie_basis)
 {
 }
@@ -218,7 +222,7 @@ bool lite_context<Coefficients>::check_compatible(const context &other) const no
 template<typename Coefficients>
 template<typename OutType, typename InType>
 OutType lite_context<Coefficients>::convertImpl(const InType &arg,
-                                                const std::shared_ptr<const typename OutType::basis_type> &basis,
+                                                const lal::basis_pointer<typename OutType::basis_type> &basis,
                                                 const std::shared_ptr<const typename OutType::multiplication_type> &mul) const {
     OutType result(basis, mul);
     return result;
@@ -237,17 +241,17 @@ lie lite_context<Coefficients>::convert(const lie &arg, vector_type new_vec_type
 }
 template<typename Coefficients>
 basis lite_context<Coefficients>::get_tensor_basis() const {
-    return basis(p_tensor_basis);
+    return basis(static_cast<const lal::tensor_basis*>(p_tensor_basis));
 }
 template<typename Coefficients>
 basis lite_context<Coefficients>::get_lie_basis() const {
-    return basis(p_lie_basis);
+    return basis(static_cast<const lal::hall_basis*>(p_lie_basis));
 }
 
 template<typename Coefficients>
 template<typename OutType>
 OutType lite_context<Coefficients>::constructImpl(const vector_construction_data &data,
-                                                  const std::shared_ptr<const typename OutType::basis_type>& basis,
+                                                  const lal::basis_pointer<typename OutType::basis_type>& basis,
                                                   const std::shared_ptr<const typename OutType::multiplication_type>& mul) const {
     OutType result(basis);
 
@@ -349,7 +353,7 @@ lie lite_context<Coefficients>::tensor_to_lie(const free_tensor &arg) const {
 template<typename Coefficients>
 template<vector_type VType>
 lie lite_context<Coefficients>::cbhImpl(const std::vector<lie> &lies) const {
-    free_tensor tmp(free_tensor_t<VType>(p_tensor_basis, p_ftmul), this);
+    free_tensor tmp(free_tensor_t<VType>(p_tensor_basis, p_ftmul, scalar_type(1)), this);
     context::cbh_fallback(tmp, lies);
     return tensor_to_lie(tmp.log());
 }
@@ -377,9 +381,9 @@ lite_context<Coefficients>::compute_signature(const signature_data &data) const 
 
         auto lie_row = constructImpl<lie_t<VType>>(row_cdata, p_lie_basis, p_liemul);
 
-#if 0
+//#if 0
         result.fmexp_inplace(m_maps.lie_to_tensor(lie_row));
-#endif
+//#endif
     }
 
     return result;

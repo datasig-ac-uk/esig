@@ -8,8 +8,10 @@
 #include <esig/implementation_types.h>
 
 #include <pybind11/pybind11.h>
+#include <pybind11/pytypes.h>
 
 #include <esig/scalars.h>
+
 
 
 namespace esig { namespace python {
@@ -22,11 +24,9 @@ inline pybind11::handle get_scalar_metaclass() {
 }
 
 inline void make_scalar_type(pybind11::module_& m, const scalars::scalar_type* type) {
-    auto mcls = get_scalar_metaclass();
-
-
-
-
+    const auto* name = type->info().name.c_str();
+    pybind11::capsule holder(type, name);
+    m.add_object(name, holder);
 }
 
 pybind11::handle init_scalar_metaclass(pybind11::module_& m);

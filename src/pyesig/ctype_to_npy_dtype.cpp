@@ -5,7 +5,7 @@
 #include "ctype_to_npy_dtype.h"
 
 py::dtype esig::python::ctype_to_npy_dtype(const esig::scalars::scalar_type *type) {
-
+    return py::dtype();
 }
 
 #endif

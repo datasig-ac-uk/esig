@@ -2,7 +2,7 @@
 // Created by user on 31/03/2022.
 //
 
-#include "lie_increment_path.h"
+#include "esig/paths/lie_increment_path.h"
 
 namespace esig {
 namespace paths {

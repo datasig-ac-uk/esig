@@ -47,7 +47,9 @@ key_scalar_array::key_scalar_array(key_scalar_array &&other) noexcept
     other.p_data = nullptr;
     assert(other.p_data == nullptr);
 }
-key_scalar_array::key_scalar_array(owned_scalar_array &&sa) noexcept {
+key_scalar_array::key_scalar_array(owned_scalar_array &&sa) noexcept
+    : scalar_array(std::move(sa)), m_scalars_owned(true)
+{
 }
 key_scalar_array::key_scalar_array(scalar_array base, const key_type *keys)
     : scalar_array(base), p_keys(keys), m_keys_owned(false)

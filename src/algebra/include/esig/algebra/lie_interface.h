@@ -12,7 +12,7 @@
 #include <esig/implementation_types.h>
 #include <esig/algebra/base.h>
 
-#include <iosfwd>
+#include <ostream>
 #include <memory>
 #include <type_traits>
 
@@ -55,6 +55,12 @@ public:
     using base::base;
 
 };
+
+//
+//inline std::ostream& operator<<(std::ostream& os, const lie& arg)
+//{
+//    return os << static_cast<const algebra_base<lie_interface>&>(arg);
+//}
 
 
 }// namespace algebra

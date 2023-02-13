@@ -50,7 +50,9 @@ set(esig_algebra_HEADERS
         "include/esig/algebra/context_fwd.h"
         )
 
-set_target_properties(esig_algebra PROPERTIES PUBLIC_HEADER "${esig_algebra_HEADERS}")
+set_target_properties(esig_algebra PROPERTIES
+        PUBLIC_HEADER "${esig_algebra_HEADERS}"
+        LIBRARY_OUTPUT_DIRECTORY "${ESIG_BUILD_PYMODULE}")
 
 target_sources(esig_algebra
         PRIVATE

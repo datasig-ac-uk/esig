@@ -14,7 +14,7 @@
 
 #include <memory>
 #include <type_traits>
-#include <iosfwd>
+#include <ostream>
 
 namespace esig {
 namespace algebra {
@@ -130,10 +130,7 @@ public:
 
 };
 
-inline std::ostream& operator<<(std::ostream& os, const free_tensor& ft)
-{
-    return os << static_cast<const algebra_base<free_tensor_interface>&>(ft);
-}
+
 
 
 extern template class ESIG_ALGEBRA_EXPORT algebra_base<shuffle_tensor_interface>;
@@ -144,8 +141,6 @@ class shuffle_tensor : public algebra_base<shuffle_tensor_interface>
 public:
     using base::base;
 };
-
-
 
 
 //// We have to define the template constructor here too.

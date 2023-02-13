@@ -2,12 +2,27 @@
 // Created by user on 01/04/2022.
 //
 
-#include "../src/lie_increment_path.h"
+#include "esig/paths/lie_increment_path.h"
 
 #include <esig/algebra/context.h>
 #include <esig/implementation_types.h>
+
+#include <esig/algebra/tensor_interface.h>
+#include <esig/algebra/lie_interface.h>
 #include <gtest/gtest.h>
 #include <random>
+
+namespace esig {
+namespace algebra {
+
+inline void PrintTo(const lie& arg, std::ostream* os)
+{ arg.print(*os); }
+
+inline void PrintTo(const free_tensor& arg, std::ostream* os)
+{ arg.print(*os); }
+
+}
+}
 
 #include "RandomScalarsFixture.h"
 
@@ -67,50 +82,47 @@ TEST_F(LieIncrementPathTestsFixture, TestLogSignatureSingleIncrement)
         esig::algebra::vector_type::dense
     };
     auto idx = indices(1);
-    const esig::paths::lie_increment_path path(std::move(data), std::move(idx), md);
+    const esig::paths::lie_increment_path path(std::move(data), idx, md);
 
 
-    auto lsig = path.log_signature(esig::real_interval(0.0, 1.0), 1, *ctx);
+    auto lsig = path.log_signature(esig::real_interval(0.0, 1.0), 1, *ctx->get_alike(1));
 
     auto expected = ctx->construct_lie(edata);
 
     ASSERT_EQ(lsig, expected);
 }
-//TEST_F(LieIncrementPathTestsFixture, TestLogSignatureTwoIncrementsDepth1)
-//{
-//
-//    esig::paths::path_metadata md{
-//        width,
-//        depth,
-//        esig::real_interval(0.0, 1.0),
-//        ctx,
-//        ctx->ctype(),
-//        esig::algebra::vector_type::dense};
-//
-//    auto data = random_dense_data(2);
-//    esig::algebra::vector_construction_data edata{
-//        esig::scalars::key_scalar_array(esig::scalars::owned_scalar_array(data)),
-//        esig::algebra::vector_type::dense};
-//    auto idx = indices(2);
-//    const esig::paths::lie_increment_path path(std::move(data), std::move(idx), md);
-//
-//    auto ctx2 = ctx->get_alike(1);
-//
-//    auto lsig = path.log_signature(esig::real_interval(0.0, 2.0), 1, *ctx2);
-//
-//    std::vector<float> new_data;
-//    new_data.reserve(width);
-//    for (int i=0; i<width; ++i) {
-//        new_data.push_back(ptr[i] + ptr[i+width]);
-//    }
-//
-//    esig::algebra::vector_construction_data edata(
-//            reinterpret_cast<const float*>(new_data.data()),
-//            reinterpret_cast<const float*>(new_data.data() + new_data.size()),
-//            esig::algebra::vector_type::dense
-//            );
-//
-//    auto expected = ctx->construct_lie(edata);
-//
-//    ASSERT_EQ(lsig, expected);
-//}
+TEST_F(LieIncrementPathTestsFixture, TestLogSignatureTwoIncrementsDepth1)
+{
+
+    esig::paths::path_metadata md{
+        width,
+        depth,
+        esig::real_interval(0.0, 1.0),
+        ctx,
+        ctx->ctype(),
+        esig::algebra::vector_type::dense};
+
+    auto data = random_dense_data(2);
+
+    esig::algebra::vector_construction_data edata {
+        esig::scalars::key_scalar_array(ctx->ctype()),
+        esig::algebra::vector_type::dense
+    };
+    edata.data.allocate_scalars(width);
+    edata.data.type()->convert_copy(edata.data.ptr(), data, width);
+    for (int i=0; i<width; ++i) {
+        edata.data[i] += data[i + width];
+    }
+
+
+    auto idx = indices(2);
+    const esig::paths::lie_increment_path path(std::move(data), std::move(idx), md);
+
+    auto ctx2 = ctx->get_alike(1);
+
+    auto lsig = path.log_signature(esig::real_interval(0.0, 2.0), 1, *ctx2);
+
+    auto expected = ctx->construct_lie(edata);
+
+    ASSERT_EQ(lsig, expected);
+}

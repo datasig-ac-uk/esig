@@ -175,10 +175,10 @@ namespace algebra {
 //    return !p_impl->equals(*other.p_impl);
 //}
 //
-std::ostream &operator<<(std::ostream &os, const lie &arg)
-{
-    return arg.print(os);
-}
+//std::ostream &operator<<(std::ostream &os, const lie &arg)
+//{
+//    return arg.print(os);
+//}
 
 } // namespace algebra
 } // namespace esig

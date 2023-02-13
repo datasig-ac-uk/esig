@@ -5,8 +5,8 @@
 #ifndef ESIG_PATHS_SRC_PATHS_SRC_LIE_INCREMENT_PATH_H_
 #define ESIG_PATHS_SRC_PATHS_SRC_LIE_INCREMENT_PATH_H_
 
-#include <esig/implementation_types.h>
-#include <esig/paths/path.h>
+#include "esig/implementation_types.h"
+#include "path.h"
 
 #include <boost/container/flat_map.hpp>
 
@@ -14,7 +14,7 @@ namespace esig {
 namespace paths {
 
 
-class lie_increment_path : public dyadic_caching_layer
+class ESIG_PATHS_EXPORT lie_increment_path : public dyadic_caching_layer
 {
     scalars::owned_scalar_array m_buffer;
     std::vector<key_type> m_keys;

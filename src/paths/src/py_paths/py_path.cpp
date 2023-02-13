@@ -4,12 +4,12 @@
 
 #include "esig/paths/python_interface.h"
 
-#include "../lie_increment_path.h"
+#include "esig/paths/lie_increment_path.h"
 #include "py_function_path.h"
 #include "py_lie_increment_path.h"
-#include "py_tick_path.h"
 #include "py_path.h"
 #include "py_piecewise_lie_path.h"
+#include "py_tick_path.h"
 
 #include <mutex>
 

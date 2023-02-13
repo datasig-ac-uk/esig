@@ -5,7 +5,7 @@
 #ifndef ESIG_PY_LIE_INCREMENT_PATH_H
 #define ESIG_PY_LIE_INCREMENT_PATH_H
 
-#include "../lie_increment_path.h"
+#include "esig/paths/lie_increment_path.h"
 #include "esig/paths/path.h"
 
 #include <pybind11/pybind11.h>
