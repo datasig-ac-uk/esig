@@ -673,14 +673,14 @@ struct algebra_info
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
     static deg_t width(const Algebra* instance) noexcept
-    { return instance->width(); }
+    { return instance->basis().width(); }
     static deg_t max_depth(const Algebra* instance) noexcept
-    { return instance->depth(); }
+    { return instance->basis().depth(); }
 
     static const basis_type& basis(const Algebra& instance) noexcept
     { return instance.basis(); }
 
-    using this_key_type = key_type;
+    using this_key_type = typename Algebra::key_type;
     static this_key_type convert_key(const Algebra* instance, esig::key_type key) noexcept
     { return basis_traits::convert_key(instance->basis(), key); }
 

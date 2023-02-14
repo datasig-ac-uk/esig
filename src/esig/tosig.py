@@ -6,7 +6,9 @@ warnings.warn("Importing functions from \"esig.tosig\" is deprecated and will be
               " removed in version 1.2. Import the functions from the main \"esig\" "
               "package instead.", DeprecationWarning)
 
-from esig._esig import recombine, get_context, Stream, LieIncrementPath
+# from esig._esig import recombine, get_context, Stream, LieIncrementPath
+from esig._esig import get_context
+from esig import _esig
 
 __all__ = [
     # "recombine",
@@ -28,8 +30,11 @@ def stream2sig(stream, signature_degree):
     series up to given signature degree.
     """
     # path = Stream(, depth=signature_degree, type=LieIncrementPath)
-    path = LieIncrementPath.from_increments(np.diff(stream, axis=0), width=stream.shape[1], depth=signature_degree)
-    sig = path.signature(0.0, stream.shape[0]+1, 0.1)
+    # path = LieIncrementPath.from_increments(np.diff(stream, axis=0), width=stream.shape[1], depth=signature_degree)
+    # sig = path.signature(0.0, stream.shape[0]+1, 0.1)
+    ctx = get_context(stream.shape[1], signature_degree, _esig.double, [])
+    sig = ctx.compute_signature(np.diff(stream, axis=0))
+    print(np.diff(stream, axis=0), sig)
     return np.array(sig)
 
 
@@ -42,9 +47,12 @@ def stream2logsig(stream, signature_degree):
     vector series up to given log signature degree
     """
     # path = Stream(np.diff(stream, axis=0), depth=signature_degree, type=LieIncrementPath)
-    path = LieIncrementPath.from_increments(np.diff(stream, axis=0), width=stream.shape[1], depth=signature_degree)
-    m = stream.shape[0] + 1
-    lsig = path.log_signature(0.0, float(m), 0.1)
+    # path = LieIncrementPath.from_increments(np.diff(stream, axis=0), width=stream.shape[1], depth=signature_degree)
+    # m = stream.shape[0] + 1
+    # lsig = path.log_signature(0.0, float(m), 0.1)
+    ctx = get_context(stream.shape[1], signature_degree, _esig.double, [])
+    sig = ctx.compute_signature(np.diff(stream, axis=0))
+    lsig = ctx.to_logsignature(sig)
     return np.array(lsig)
 
 
@@ -54,7 +62,7 @@ def sigdim(signal_dimension, signature_degree):
     an integer giving the length of the
     signature vector returned by stream2sig
     """
-    return get_context(signal_dimension, signature_degree, esig.algebra.DPReal).tensor_size(signature_degree)
+    return get_context(signal_dimension, signature_degree, _esig.double).tensor_size(signature_degree)
 
 
 def logsigdim(signal_dimension, signature_degree):
@@ -63,7 +71,7 @@ def logsigdim(signal_dimension, signature_degree):
     a Py_ssize_t integer giving the dimension of the log
     signature vector returned by stream2logsig
     """
-    return get_context(signal_dimension, signature_degree, esig.algebra.DPReal).lie_size(signature_degree)
+    return get_context(signal_dimension, signature_degree, _esig.double).lie_size(signature_degree)
 
 
 # def logsigkeys(signal_dimension, signature_degree):

@@ -92,3 +92,8 @@ void scalar_stream::push_back(const scalar_array &data) {
         m_elts_per_row.push_back(data.size());
     }
 }
+
+void scalar_stream::set_ctype(const scalars::scalar_type *type) noexcept {
+    m_stream.clear();
+    p_type = type;
+}

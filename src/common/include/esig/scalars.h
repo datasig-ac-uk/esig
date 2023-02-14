@@ -450,6 +450,7 @@ public:
     scalar operator[](std::pair<dimn_t, dimn_t> index) const noexcept;
 
     void set_elts_per_row(dimn_t num_elts) noexcept;
+    void set_ctype(const scalars::scalar_type* type) noexcept;
 
     void reserve_size(dimn_t num_rows);
 

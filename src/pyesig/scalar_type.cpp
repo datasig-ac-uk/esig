@@ -11,7 +11,7 @@ using namespace esig::scalars;
 
 void esig::python::init_scalar_type(py::module_ &m) {
 
-//    auto mcls = init_scalar_metaclass(m);
+    init_scalar_metaclass(m);
 
     make_scalar_type(m, scalars::dtl::scalar_type_holder<float>::get_type());
     make_scalar_type(m, scalars::dtl::scalar_type_holder<double>::get_type());
