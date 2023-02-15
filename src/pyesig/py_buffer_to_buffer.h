@@ -12,7 +12,7 @@
 namespace esig { namespace python {
 
 scalars::owned_scalar_array
-py_buffer_to_buffer(const py::buffer_info& buf, const scalars::scalar_type* type);
+py_buffer_to_buffer(const py::buffer_info& buf, const scalars::scalar_type*& type);
 
 
 }}

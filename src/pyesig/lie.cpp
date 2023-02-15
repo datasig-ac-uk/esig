@@ -154,20 +154,14 @@ void esig::python::init_lie(py::module_ &m) {
     klass.def("__neq__", [](const lie& lhs, const lie& rhs) { return lhs != rhs; });
 
 #ifndef ESIG_NO_NUMPY
-#if 0
     klass.def("__array__", [](const lie& arg) {
         py::dtype dtype = esig::python::ctype_to_npy_dtype(arg.coeff_type());
 
         if (arg.storage_type() == vector_type::dense) {
-            auto it = arg.iterate_dense_components().next();
-            if (!it) {
-                throw std::runtime_error("dense data should be valid");
-            }
-            const auto *ptr = it.begin();
-            return py::array(dtype, {arg.size()}, {}, ptr);
+            auto dense_data = arg.dense_data();
+            return py::array(dtype, {dense_data.size()}, {}, dense_data.ptr());
         }
         return py::array(dtype);
     });
-#endif
 #endif
 }

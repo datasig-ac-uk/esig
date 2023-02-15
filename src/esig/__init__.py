@@ -29,7 +29,26 @@ from esig.backends import get_backend, set_backend, list_backends
 from esig import _esig
 
 
-from esig._esig import recombine
+from esig._esig import (
+    recombine,
+    FreeTensor,
+    Lie,
+    RealInterval,
+    Interval,
+    IntervalType,
+    Dyadic,
+    DyadicInterval,
+    TensorKey,
+    TensorKeyIterator,
+    LieKey,
+    LieKeyIterator,
+    float as SPReal,
+    double as DPReal,
+    rational as Rational,
+    get_context,
+    Stream,
+    LieIncrementPath
+)
 
 __all__ = [
     "get_version",
@@ -45,7 +64,23 @@ __all__ = [
     "get_backend",
     "set_backend",
     "list_backends",
-    "backends"
+    "backends",
+    "FreeTensor",
+    "Lie",
+    "RealInterval",
+    "Interval",
+    "Dyadic",
+    "DyadicInterval",
+    "TensorKey",
+    "TensorKeyIterator",
+    "LieKey",
+    "LieKeyIterator"
+    "SPReal",
+    "DPReal",
+    "Rational",
+    "get_context",
+    "Stream",
+    "LieIncrementPath",
 ]
 
 

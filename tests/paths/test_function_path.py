@@ -7,13 +7,18 @@ import pytest
 import numpy as np
 from numpy.testing import assert_array_almost_equal
 
-from esig.common import RealInterval
-from esig.algebra import FreeTensor, Lie
-from esig.paths import Stream, DenseFunctionPath
+try:
+    from esig.common import RealInterval
+    from esig.algebra import FreeTensor, Lie
+    from esig.paths import Stream, DenseFunctionPath
+    skip = False
+except ImportError:
+    skip = True
 
 def path(*args, **kwargs):
     return Stream(*args, **kwargs, type=DenseFunctionPath)
 
+@pytest.mark.skipif(skip, reason="path type not available")
 def test_function_path_signature_calc_accuracy():
     def func(t):
         if t >= 0.5:
@@ -55,6 +60,7 @@ def solution_signature(width, depth, tensor_size):
     return sig_func
 
 
+@pytest.mark.skipif(skip, reason="path type not available")
 def test_fpath_known_signature_calc(width, depth, solution_signature):
     p = path(lambda t: np.arange(1.0, width + 1) * t, width=width, depth=depth)
 
@@ -72,6 +78,7 @@ def deriv_function_path():
     return func
 
 
+@pytest.mark.skipif(skip, reason="path type not available")
 def test_func_sig_deriv_s_width_3_depth_1_let_2_perturb(deriv_function_path):
     p = path(deriv_function_path, width=3, depth=1)
     perturbation = Lie(np.array([0.0, 1.0, 0.0]), width=3, depth=1)
@@ -84,6 +91,7 @@ def test_func_sig_deriv_s_width_3_depth_1_let_2_perturb(deriv_function_path):
     assert d == expected
 
 
+@pytest.mark.skipif(skip, reason="path type not available")
 def test_func_sig_deriv_s_width_3_depth_2_let_2_perturb(deriv_function_path):
     p = path(deriv_function_path, width=3, depth=2)
     perturbation = Lie(np.array([0.0, 1.0, 0.0]), width=3, depth=2)
@@ -101,6 +109,7 @@ def test_func_sig_deriv_s_width_3_depth_2_let_2_perturb(deriv_function_path):
     assert_array_almost_equal(d, expected)
 
 
+@pytest.mark.skipif(skip, reason="path type not available")
 def test_func_sig_deriv_m_width_3_depth_1_let_2_perturb(deriv_function_path):
     p = path(deriv_function_path, width=3, depth=1)
     perturbation = Lie(np.array([0.0, 1.0, 0.0]), width=3, depth=1)
@@ -114,6 +123,7 @@ def test_func_sig_deriv_m_width_3_depth_1_let_2_perturb(deriv_function_path):
     # assert d == expected
 
 
+@pytest.mark.skipif(skip, reason="path type not available")
 def test_func_sig_deriv_m_width_3_depth_2_let_2_perturb(deriv_function_path):
     p = path(deriv_function_path, width=3, depth=2)
     perturbation = Lie(np.array([0.0, 1.0, 0.0]), width=3, depth=2)

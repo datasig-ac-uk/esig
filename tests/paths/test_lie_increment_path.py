@@ -8,9 +8,7 @@ from numpy.testing import assert_array_almost_equal
 
 import esig
 from esig.paths import Stream, LieIncrementPath
-from esig.algebra import FreeTensor, Lie
-from esig.common import RealInterval
-
+from esig import FreeTensor, Lie, RealInterval
 
 def path(*args, **kwargs):
     return Stream(*args, **kwargs, type=LieIncrementPath)

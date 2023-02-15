@@ -9,7 +9,7 @@
 #include <esig/paths/lie_increment_path.h>
 
 #include "kwargs_to_path_metadata.h"
-
+#include "py_buffer_to_buffer.h"
 
 using namespace esig;
 using namespace esig::python;
@@ -55,6 +55,9 @@ void esig::python::init_paths(py::module_ &m) {
 
     py::class_<stream> klass(m, "Stream");
 
+    klass.def_property_readonly("width", [](const stream& stream) { return stream.metadata().width; });
+    klass.def_property_readonly("depth", [](const stream& stream) { return stream.metadata().depth; });
+
     klass.def("signature", static_cast<sig_fn>(&stream::signature), "accuracy"_a);
     klass.def("signature", static_cast<ctx_sig_fn>(&stream::signature), "accuracy"_a, "context"_a);
     klass.def("signature", static_cast<ivl_sig_fn>(&stream::signature), "domain"_a, "accuracy"_a);
@@ -78,9 +81,33 @@ void esig::python::init_paths(py::module_ &m) {
 
     py::class_<esig::paths::lie_increment_path> LieIncrementPath(m, "LieIncrementPath");
 
-    LieIncrementPath.def_static("from_increments", [](py::args args, py::kwargs kwargs) {
+    LieIncrementPath.def_static("from_increments", [](py::object data, py::kwargs kwargs) {
+        auto md = kwargs_to_metadata(kwargs);
 
-    });
+        std::vector<param_t> indices;
+        scalars::owned_scalar_array buffer;
+
+        if (py::isinstance<py::buffer>(data)) {
+            auto info = py::reinterpret_borrow<py::buffer>(data).request();
+            buffer = py_buffer_to_buffer(info, md.ctype);
+            auto nrows = info.shape[0];
+            indices.reserve(nrows);
+            for (dimn_t i=0; i<nrows; ++i) {
+                indices.emplace_back(i);
+            }
+        }
+
+        assert(md.ctype != nullptr);
+        if (!md.ctx) {
+            if (md.width == 0 || md.depth == 0) {
+                throw py::value_error("either ctx or both width and depth must be specified");
+            }
+            md.ctx = algebra::get_context(md.width, md.depth, md.ctype);
+        }
+
+        return stream(paths::lie_increment_path(std::move(buffer), indices, md));
+
+    }, "data"_a);
     LieIncrementPath.def_static("from_values", [](py::args args, py::kwargs kwargs) {
 
         return stream();

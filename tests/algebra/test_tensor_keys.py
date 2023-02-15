@@ -4,7 +4,7 @@ import numpy as np
 from numpy.testing import assert_array_equal
 
 
-from esig.algebra import TensorKey
+from esig import TensorKey
 
 
 def tensor_size_impl(width, depth):

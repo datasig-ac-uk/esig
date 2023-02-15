@@ -1,7 +1,7 @@
 
 import pytest
 
-from esig.common import RealInterval, IntervalType
+from esig import RealInterval, IntervalType
 
 
 

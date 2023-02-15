@@ -10,8 +10,9 @@
 
 #include <esig/algebra/tensor_interface.h>
 
-
 #include "ctype_to_npy_dtype.h"
+#include "kwargs_to_vector_construction.h"
+
 
 using namespace esig;
 using namespace esig::algebra;
@@ -58,12 +59,17 @@ tensor algebra_old up to a given degree.
 )eadoc";
 
 
+static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
+
+}
+
+
+
 class py_free_tensor_iterator;
 
 static void init_free_tensor_iterator(py::module_& m)
 {
 //    py::class_<py_free_tensor_iterator> klass(m, "FreeTensorIterator");
-
 //    klass.def("__next__", &py_free_tensor_iterator::next);
 }
 
@@ -171,22 +177,16 @@ void esig::python::init_free_tensor(py::module_ &m) {
     klass.def("__neq__", [](const free_tensor& lhs, const free_tensor& rhs) { return lhs != rhs; });
 
 #ifndef ESIG_NO_NUMPY
-#if 0
     klass.def("__array__", [](const free_tensor& self) {
 //        py::dtype dtype = dtype_from(self.coeff_type());
         py::dtype dtype = esig::python::ctype_to_npy_dtype(self.coeff_type());
 
         if (self.storage_type() == vector_type::dense) {
-            auto it = self.iterate_dense_components().next();
-            if (!it) {
-                throw std::runtime_error("dense data should be valid");
-            }
-            const auto* ptr = it.begin();
-            return py::array(dtype, {self.size()}, {}, ptr);
+            auto dense_data = self.dense_data();
+            return py::array(dtype, {dense_data.size()}, {}, dense_data.ptr());
         }
         return py::array(dtype);
     });
-#endif
 #endif
 
 }

@@ -6,7 +6,5 @@
 
 
 std::string esig::python::ctype_to_py_fmt(const esig::scalars::scalar_type *type) {
-
-
-
+    return "f64";
 }

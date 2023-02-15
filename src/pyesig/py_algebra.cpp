@@ -15,6 +15,11 @@
 
 void esig::python::init_algebra(py::module_ &m) {
 
+    py::enum_<esig::algebra::vector_type>(m, "VectorType")
+        .value("DenseVector", algebra::vector_type::dense)
+        .value("SparseVector", algebra::vector_type::sparse)
+        .export_values();
+
     init_py_lie_key(m);
     init_py_tensor_key(m);
     init_lie_key_iterator(m);

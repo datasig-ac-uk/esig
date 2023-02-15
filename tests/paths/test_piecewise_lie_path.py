@@ -3,9 +3,14 @@ import math
 import pytest
 import numpy as np
 
-from esig.paths import Stream, PiecewiseLiePath
-from esig.common import RealInterval
-from esig.algebra import Lie, FreeTensor, CoefficientType, VectorType, get_context
+try:
+    from esig.paths import Stream, PiecewiseLiePath
+    from esig.common import RealInterval
+    from esig.algebra import Lie, FreeTensor, CoefficientType, VectorType, get_context
+    skip = False
+except ImportError:
+    skip = True
+
 
 WIDTH = 5
 DEPTH = 3
@@ -33,7 +38,7 @@ def piecewise_lie_data(piecewise_intervals, rng):
 def piecewise_lie(piecewise_lie_data):
     return Stream(piecewise_lie_data, type=PiecewiseLiePath, width=WIDTH, depth=DEPTH)
 
-
+@pytest.mark.skipif(skip, reason="path type not available")
 def test_log_signature_full_data(piecewise_lie_data):
     ctx = get_context(WIDTH, DEPTH, CoefficientType.DPReal)
     piecewise_lie = Stream(piecewise_lie_data, type=PiecewiseLiePath, width=WIDTH, depth=DEPTH)

@@ -384,7 +384,6 @@ def Logsigastensor(array, degree):
 def tensoraslevels(tensor, dimension, degree):
     
     sum = [np.zeros(dimension ** m) for m in range(1,degree + 1)]
-    
     counter=0
     for i in range(1, degree+1):
         
@@ -575,4 +574,3 @@ def shuffles (a_list, b_list):
         shuffled.append(x_vals)
 
     return shuffled
-

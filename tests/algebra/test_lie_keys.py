@@ -1,6 +1,6 @@
 import pytest
 
-from esig.algebra import LieKey
+from esig import LieKey
 
 
 def test_construct_int():

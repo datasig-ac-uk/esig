@@ -1,8 +1,7 @@
 import pytest
 import numpy as np
 
-from esig.common import RealInterval
-from esig.algebra import FreeTensor
+from esig import RealInterval, FreeTensor
 from esig.paths import StreamCloud
 
 

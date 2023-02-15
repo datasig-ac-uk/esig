@@ -4,7 +4,7 @@ import itertools
 import numpy as np
 import pytest
 
-from esig.algebra import FreeTensor, TensorKey
+from esig import FreeTensor, TensorKey
 
 
 @pytest.fixture

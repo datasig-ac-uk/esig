@@ -3,7 +3,7 @@ import pytest
 import numpy as np
 from numpy.testing import assert_array_equal, assert_array_almost_equal
 
-from esig.algebra import Lie, get_context, DPReal
+from esig import Lie, get_context, DPReal
 
 
 @pytest.fixture

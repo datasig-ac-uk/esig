@@ -382,11 +382,7 @@ lite_context<Coefficients>::compute_signature(const signature_data &data) const 
         auto lie_row = constructImpl<lie_t<VType>>(row_cdata, p_lie_basis, p_liemul);
 
 //#if 0
-        auto tmp = m_maps.lie_to_tensor(lie_row);
-        std::cout << "tmp " << tmp << '\n';
-        std::cout << "result " << result << '\n';
-        result.fmexp_inplace(tmp);
-//        result.fmexp_inplace(m_maps.lie_to_tensor(lie_row));
+        result.fmexp_inplace(m_maps.lie_to_tensor(lie_row));
 //#endif
     }
 

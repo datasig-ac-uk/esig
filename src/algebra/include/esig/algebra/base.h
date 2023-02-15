@@ -18,6 +18,7 @@
 #include <boost/optional.hpp>
 #include <boost/type_traits/copy_cv.hpp>
 #include <boost/type_traits/copy_cv_ref.hpp>
+#include <boost/type_traits/is_detected.hpp>
 
 #include <esig/scalars.h>
 #include "esig/algebra/esig_algebra_export.h"
@@ -178,6 +179,7 @@ struct algebra_interface
     virtual algebra_iterator begin() const = 0;
     virtual algebra_iterator end() const = 0;
 
+    virtual scalars::scalar_array dense_data() const;
 //    virtual dense_data_access_iterator iterate_dense_components() const = 0;
 
     // Arithmetic
@@ -363,6 +365,26 @@ public:
     scalars::scalar get_mut(key_type key) override;
     algebra_iterator begin() const override;
     algebra_iterator end() const override;
+
+private:
+
+    template <typename T>
+    using has_as_ptr_t = decltype(std::declval<const T&>().as_ptr());
+
+    template <typename B, typename=std::enable_if_t<boost::is_detected<has_as_ptr_t, B>::value>>
+    scalars::scalar_array dense_data_impl(const B& data) const {
+        return {data.as_ptr(), coeff_type(), data.dimension()};
+    }
+
+    scalars::scalar_array dense_data_impl(...) const {
+        return Interface::dense_data();
+    }
+
+public:
+
+    scalars::scalar_array dense_data() const override {
+        return dense_data_impl(m_data.base_vector());
+    }
 //    dense_data_access_iterator iterate_dense_components() const override;
     algebra_t uminus() const override;
     algebra_t add(const algebra_interface_t &other) const override;
@@ -588,6 +610,7 @@ public:
     const_iterator begin() const;
     const_iterator end() const;
 
+    scalars::scalar_array dense_data() const { return p_impl->dense_data(); }
 //    dense_data_access_iterator iterate_dense_components() const noexcept;
 
     // Binary operations
@@ -737,6 +760,10 @@ template<typename Algebra>
 deg_t algebra_interface<Algebra>::depth() const {
     return 0;
 }
+template<typename Algebra>
+scalars::scalar_array algebra_interface<Algebra>::dense_data() const {
+    throw std::runtime_error("cannot retrieve dense data");
+}
 
 template<typename Algebra>
 std::uintptr_t algebra_interface<Algebra>::id() const noexcept {
@@ -884,6 +911,8 @@ algebra_iterator algebra_implementation<Interface, Impl>::end() const {
 ////        dtl::dense_data_access_implementation<Impl>(m_data, algebra_info<Impl>::first_key(&m_data))
 //        );
 //}
+
+
 template<typename Interface, typename Impl>
 typename Interface::algebra_t algebra_implementation<Interface, Impl>::uminus() const {
     return algebra_t(-m_data, p_ctx);

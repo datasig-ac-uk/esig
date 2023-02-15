@@ -4,7 +4,7 @@ import numpy as np
 from numpy.testing import assert_array_equal
 
 import esig
-from esig.algebra import get_context as _get_context, FreeTensor, Lie, DPReal
+from esig import get_context as _get_context, FreeTensor, Lie, DPReal
 
 
 def get_context(width, depth):

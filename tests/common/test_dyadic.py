@@ -2,7 +2,7 @@ import math
 import itertools
 import pytest
 
-from esig.common import Dyadic
+from esig import Dyadic
 
 
 @pytest.mark.parametrize("k, n", itertools.product(range(-10, 10), range(0, 10)))

@@ -1,8 +1,8 @@
 
 import pytest
 from numpy.random import default_rng
-from esig.algebra import DPReal, SPReal, DenseVector, SparseVector
 
+from esig import _esig
 
 @pytest.fixture(params=range(2, 6))
 def width(request):
@@ -30,11 +30,11 @@ def tensor_size(width, depth):
     return r
 
 
-@pytest.fixture(params=[DenseVector, SparseVector])
+@pytest.fixture(params=[_esig.DenseVector, _esig.SparseVector])
 def vec_type(request):
     return request.param
 
 
-@pytest.fixture(params=[DPReal, SPReal])
+@pytest.fixture(params=[_esig.double, _esig.float])
 def coeff_type(request):
     return request.param

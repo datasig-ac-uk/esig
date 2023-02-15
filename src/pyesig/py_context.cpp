@@ -9,37 +9,21 @@
 #endif
 #include <pybind11/stl.h>
 
-#include <esig/algebra/context.h>
+
 
 #include "scalar_meta.h"
+#include "py_lie_key_iterator.h"
+#include "py_tensor_key_iterator.h"
+
 
 using namespace esig;
 using namespace esig::algebra;
+using namespace esig::python;
 
 namespace py = pybind11;
 using namespace py::literals;
 
 
-namespace {
-
-class py_context
-{
-    std::shared_ptr<const context> p_ctx;
-
-public:
-
-    py_context(std::shared_ptr<const context> ctx) : p_ctx(ctx) {}
-
-
-    operator const std::shared_ptr<const context>& () const noexcept { return p_ctx; }
-
-    const context& operator*() const noexcept { return *p_ctx; }
-    const context* operator->() const noexcept { return p_ctx.get(); }
-
-};
-
-
-}
 
 #ifndef ESIG_NO_NUMPY
 static free_tensor context_compute_signature_numpy_darray(const py_context &ctx, const py::array_t<double, py::array::forcecast> &array) {
@@ -68,6 +52,13 @@ static free_tensor context_compute_signature_numpy_darray(const py_context &ctx,
 #endif
 
 
+static py_context py_get_context(deg_t width, deg_t depth, const py::object& ctype, const py::kwargs& kwargs)
+{
+    //TODO: Make this accept extra arguments.
+    return get_context(width, depth, esig::python::to_stype_ptr(ctype), {});
+}
+
+
 void esig::python::init_context(py::module_& m) {
 
     py::class_<py_context> klass(m, "Context");
@@ -85,15 +76,22 @@ void esig::python::init_context(py::module_& m) {
     klass.def("compute_signature", context_compute_signature_numpy_darray, "data"_a);
 #endif
     klass.def(
-        "to_logsig", [](const py_context &ctx, const free_tensor &sig) {
+        "to_logsignature", [](const py_context &ctx, const free_tensor &sig) {
             return ctx->tensor_to_lie(sig.log());
         },
         "signature"_a);
 
-    m.def("get_context",
-        [](deg_t width, deg_t depth, const py::object& ctype_c, std::vector<std::string> other) {
-            return py_context(get_context(width, depth, to_stype_ptr(ctype_c), other));
-        }, "width"_a, "depth"_a, "coeffs"_a, "other"_a);
+
+    klass.def("iterate_lie_keys", [](const py_context& ctx) {
+        return esig::python::py_lie_key_iterator(&*ctx);
+    });
+    klass.def("iterate_tensor_keys", [](const py_context& ctx) {
+        return esig::python::py_tensor_key_iterator(ctx->width(), ctx->depth());
+    });
+
+
+    m.def("get_context", py_get_context, "width"_a, "depth"_a, "coeffs"_a=py::none());
+
 
 
 }

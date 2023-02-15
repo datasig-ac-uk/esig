@@ -3,9 +3,9 @@ from concurrent.futures import ThreadPoolExecutor
 
 import numpy as np
 
-from esig.common import Interval, RealInterval
-from esig.algebra import get_context, Lie, FreeTensor
-from esig._paths import Stream, LieIncrementPath
+from esig import Interval, RealInterval
+from esig import get_context, Lie, FreeTensor
+from esig import Stream, LieIncrementPath
 
 
 class StreamCloud:
@@ -20,7 +20,9 @@ class StreamCloud:
             assert data.ndim == 3
             self.width = width or data.shape[1]
             self.num_streams = data.shape[2]
-            self.streams = [Stream(data[:, :, i], depth=self.default_depth, width=width, type=LieIncrementPath, **path_kwargs)
+            self.streams = [
+                LieIncrementPath.from_increments(np.diff(data[:, :, i], axis=0), width=self.width, depth=self.default_depth)
+                # Stream(data[:, :, i], depth=self.default_depth, width=width, type=LieIncrementPath, **path_kwargs)
                             for i in range(self.num_streams)]
 
         else:
