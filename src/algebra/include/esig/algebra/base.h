@@ -1446,7 +1446,7 @@ void impl_to_buffer(key_value_buffer<Impl>& buffer,
         return lpair.first < rpair.first;
     });
 
-    degree_ranges = degree_range_buffer<Impl>(algebra_info<Impl>::max_depth(&arg)+1, buffer.end());
+    degree_ranges = degree_range_buffer<Impl>(algebra_info<Impl>::max_depth(&arg)+2, buffer.end());
     deg_t deg = 0;
     for (auto it = buffer.begin(); it != buffer.end() && deg < degree_ranges.size(); ++it) {
         deg_t d = algebra_info<Impl>::native_degree(&arg, it->first);
@@ -1476,7 +1476,7 @@ void interface_to_buffer(key_value_buffer<Impl>& buffer,
               [](auto lhs, auto rhs) { return lhs.first < rhs.first; });
 
 
-    degree_ranges = degree_range_buffer<Impl>(arg.depth() + 1, buffer.end());
+    degree_ranges = degree_range_buffer<Impl>(arg.depth() + 2, buffer.end());
     deg_t deg = 0;
     for (auto it = buffer.begin(); it != buffer.end() && deg < degree_ranges.size(); ++it) {
         deg_t d = info::native_degree(rptr, it->first);
