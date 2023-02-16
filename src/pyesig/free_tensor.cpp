@@ -10,8 +10,10 @@
 
 #include <esig/algebra/tensor_interface.h>
 
+#include "scalar_meta.h"
 #include "ctype_to_npy_dtype.h"
 #include "kwargs_to_vector_construction.h"
+#include "get_vector_construction_data.h"
 
 
 using namespace esig;
@@ -102,7 +104,8 @@ void esig::python::init_free_tensor(py::module_ &m) {
 
     klass.def_property_readonly("width", &free_tensor::width);
     klass.def_property_readonly("max_degree", &free_tensor::depth);
-    klass.def_property_readonly("dtype", &free_tensor::coeff_type);
+    klass.def_property_readonly("dtype", [](const free_tensor& arg)
+                                { return esig::python::to_ctype_type(arg.coeff_type()); });
     klass.def_property_readonly("storage_type", &free_tensor::storage_type);
 
     klass.def("size", &free_tensor::size);
