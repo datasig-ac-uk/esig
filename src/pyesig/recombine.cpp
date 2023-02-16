@@ -38,7 +38,7 @@ static void recombine_wrapper(dimn_t stCubatureDimension,
                               dimn_t* pno_kept_locations,
                               const void** ppLocationBuffer,
                               scalar_t* pdWeightBuffer,
-                              dimn_t* pKeptLocations,
+                              idimn_t* pKeptLocations,
                               scalar_t* pNewWeights)
 {
     auto& no_kept_locations = *pno_kept_locations;
@@ -68,7 +68,7 @@ static void recombine_wrapper(dimn_t stCubatureDimension,
     sRCloudInfo out {
         iNoDimensionsToCubature,
         pNewWeights,
-        pKeptLocations,
+        (dimn_t*) pKeptLocations,
         nullptr
     };
 
@@ -98,17 +98,17 @@ static py::tuple py_recombine(const py::array_t<scalar_t>& data,
     auto no_data_points = data.shape(0);
     auto point_dimension = data.shape(1);
 
-    py::array_t<std::size_t> src_locs;
+    py::array_t<dimn_t> src_locs;
     if (!src_locations.is_none()) {
-        src_locs = py::array_t<std::size_t>::ensure(src_locations);
+        src_locs = py::array_t<dimn_t>::ensure(src_locations);
 
         if (src_locs.ndim() != 1 || src_locs.shape(0) == 0) {
             throw py::value_error("source locations badly formed");
         }
     } else {
-        src_locs = py::array_t<std::size_t>(py::array::ShapeContainer {data.shape(0)});
+        src_locs = py::array_t<dimn_t>(py::array::ShapeContainer {data.shape(0)});
         auto* sloc_p = src_locs.mutable_data();
-        for (std::size_t i=0;i<data.shape(0); ++i) {
+        for (dimn_t i=0;i<data.shape(0); ++i) {
             *(sloc_p++) = i;
         }
     }
@@ -162,7 +162,7 @@ static py::tuple py_recombine(const py::array_t<scalar_t>& data,
                       nullptr);
 
     auto no_kept_locations = no_dimension_to_cubature;
-    py::array_t<dimn_t> kept_locations(py::array::ShapeContainer {no_kept_locations});
+    py::array_t<idimn_t> kept_locations(py::array::ShapeContainer {no_kept_locations});
     py::array_t<scalar_t> new_weights(py::array::ShapeContainer {no_kept_locations});
 
     {
@@ -190,7 +190,7 @@ static py::tuple py_recombine(const py::array_t<scalar_t>& data,
                           &no_kept_locations,
                           locations_map.data(),
                           src_wghts.mutable_data(),
-                          static_cast<dimn_t*>(kept_locations.mutable_data()),
+                          kept_locations.mutable_data(),
                           new_weights.mutable_data());
 
         kept_locations.resize(py::array::ShapeContainer {no_kept_locations});
@@ -215,9 +215,9 @@ void python::init_recombine(py::module_ &m) {
     m.def("recombine",
           &py_recombine,
           "data"_a,
-          "src_locations"_a,
-          "src_weights"_a,
-          "cubature_degree"_a,
+          "src_locations"_a=py::none(),
+          "src_weights"_a=py::none(),
+          "degree"_a=1,
           RECOMBINE_DOC);
 
 }
