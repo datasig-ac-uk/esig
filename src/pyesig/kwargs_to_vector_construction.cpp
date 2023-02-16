@@ -21,20 +21,21 @@ esig::python::py_vector_construction_helper esig::python::kwargs_to_construction
         helper.ctype_requested = true;
     }
 
-    if (!helper.ctx && kwargs.contains("ctype")) {
-        helper.ctype = py_arg_to_ctype(kwargs["ctype"]);
-        helper.ctype_requested = true;
-    }
+    if (!static_cast<bool>(helper.ctx)) {
+        if (kwargs.contains("ctype")) {
+            helper.ctype = py_arg_to_ctype(kwargs["ctype"]);
+            helper.ctype_requested = true;
+        }
 
-    if (!helper.ctx && kwargs.contains("depth")) {
-        helper.depth = kwargs["depth"].cast<deg_t>();
-    } else {
-        helper.depth = 2;
-    }
+        if (kwargs.contains("depth")) {
+            helper.depth = kwargs["depth"].cast<deg_t>();
+        } else {
+            helper.depth = 2;
+        }
 
-    if (!helper.ctx && kwargs.contains("width")) {
-        helper.width = kwargs["width"].cast<deg_t>();
-
+        if (kwargs.contains("width")) {
+            helper.width = kwargs["width"].cast<deg_t>();
+        }
     }
 
     if (kwargs.contains("vector_type")) {
