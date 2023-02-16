@@ -60,7 +60,26 @@ tensor algebra_old up to a given degree.
 
 
 static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
+    auto helper = esig::python::kwargs_to_construction_data(kwargs);
 
+    auto vcd = esig::python::get_vector_construction_data(data, kwargs, helper);
+
+    if (helper.ctype == nullptr) {
+        throw py::value_error("could not deduce appropriate scalar type");
+    }
+
+    if (helper.width == 0 && vcd.data.size() > 0) {
+        helper.width = static_cast<deg_t>(vcd.data.size()) - 1;
+    }
+
+    if (!helper.ctx) {
+        if (helper.width == 0 || helper.depth == 0) {
+            throw py::value_error("most provide either context or both width and depth");
+        }
+        helper.ctx = get_context(helper.width, helper.depth, helper.ctype, {});
+    }
+
+    return helper.ctx->construct_tensor(vcd);
 }
 
 
@@ -79,7 +98,7 @@ void esig::python::init_free_tensor(py::module_ &m) {
     init_free_tensor_iterator(m);
 
     pybind11::class_<free_tensor> klass(m, "FreeTensor", FREE_TENSOR_DOC);
-
+    klass.def(py::init(&construct_free_tensor), "data"_a);
 
     klass.def_property_readonly("width", &free_tensor::width);
     klass.def_property_readonly("max_degree", &free_tensor::depth);
