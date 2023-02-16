@@ -76,7 +76,7 @@ static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
 
     if (!helper.ctx) {
         if (helper.width == 0 || helper.depth == 0) {
-            throw py::value_error("most provide either context or both width and depth");
+            throw py::value_error("you must provide either context or both width and depth");
         }
         helper.ctx = get_context(helper.width, helper.depth, helper.ctype, {});
     }
@@ -86,18 +86,10 @@ static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
 
 
 
-class py_free_tensor_iterator;
-
-static void init_free_tensor_iterator(py::module_& m)
-{
-//    py::class_<py_free_tensor_iterator> klass(m, "FreeTensorIterator");
-//    klass.def("__next__", &py_free_tensor_iterator::next);
-}
 
 void esig::python::init_free_tensor(py::module_ &m) {
     py::options options;
     options.disable_function_signatures();
-    init_free_tensor_iterator(m);
 
     pybind11::class_<free_tensor> klass(m, "FreeTensor", FREE_TENSOR_DOC);
     klass.def(py::init(&construct_free_tensor), "data"_a);
