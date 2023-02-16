@@ -114,9 +114,9 @@ void esig::python::init_free_tensor(py::module_ &m) {
     klass.def("__getitem__", [](const free_tensor& self, key_type key) {
         return self[key];
     });
-//    klass.def("__iter__", [](const free_tensor& self) {
-//             return py_free_tensor_iterator(self.begin(), self.end());
-//         });
+    klass.def("__iter__", [](const free_tensor& self) {
+             return py::make_iterator(self.begin(), self.end());
+         }, py::keep_alive<0, 1>());
 
 
     klass.def("__neg__", &free_tensor::uminus, py::is_operator());
