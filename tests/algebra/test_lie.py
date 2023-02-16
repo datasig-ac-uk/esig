@@ -54,7 +54,7 @@ def test_Lie_array_roundtrip(width, depth, data1):
 
 def test_Lie_repr(width, depth, data1, lie_size):
     l = Lie(data1, width=width, depth=depth)
-    assert repr(l) == f"Lie({width=}, depth={depth}, ctype=1)"
+    assert repr(l) == f"Lie({width=}, depth={depth}, ctype=double)"
 
 
 def test_Lie_str():
