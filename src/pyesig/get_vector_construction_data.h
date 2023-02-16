@@ -9,9 +9,11 @@
 
 #include <esig/algebra/context.h>
 
+#include "kwargs_to_vector_construction.h"
+
 namespace esig { namespace python {
 
-algebra::vector_construction_data get_vector_construction_data(const py::object& data, const py::kwargs& kwargs);
+algebra::vector_construction_data get_vector_construction_data(const py::object& data, const py::kwargs& kwargs, py_vector_construction_helper& helper);
 
 } // namespace python
 } // namespace esig

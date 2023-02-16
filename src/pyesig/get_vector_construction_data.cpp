@@ -15,20 +15,15 @@ using namespace esig::algebra;
 using namespace pybind11::literals;
 
 vector_construction_data
-esig::python::get_vector_construction_data(const py::object &data, const py::kwargs &kwargs) {
+esig::python::get_vector_construction_data(const py::object &data, const py::kwargs &kwargs, python::py_vector_construction_helper& helper) {
 
-    auto helper = python::kwargs_to_construction_data(kwargs);
 
     scalars::key_scalar_array data_buffer;
 
     if (py::isinstance<py::buffer>(data)) {
         auto info = py::reinterpret_borrow<py::buffer>(data).request();
-
-        
-
-
+        data_buffer = esig::python::py_buffer_to_buffer(info, helper.ctype);
     }
 
-
-
+    return { std::move(data_buffer), helper.vtype };
 }
