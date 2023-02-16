@@ -60,7 +60,7 @@ def test_Lie_repr(width, depth, data1, lie_size):
 def test_Lie_str():
     width = depth = 2
 
-    l = Lie([1.0, 2.0, 3.0], width=width, depth=depth)
+    l = Lie(np.array([1.0, 2.0, 3.0]), width=width, depth=depth)
     terms = [
         "1(1)", "2(2)",
         "3([1,2])"
@@ -102,8 +102,8 @@ def test_Lie_sdiv(width, depth, data1):
 
 def test_Lie_mul(width):
     ctx = get_context(width, 2, DPReal)
-    l1 = Lie([1.0] + [0.0]*(width-1), width=width)
-    l2 = Lie([0.0, 1.0] + [0.0]*(width-2), width=width)
+    l1 = Lie(np.array([1.0] + [0.0]*(width-1)), width=width)
+    l2 = Lie(np.array([0.0, 1.0] + [0.0]*(width-2)), width=width)
 
     exp_data = np.zeros(ctx.lie_size(2))
     exp_data[width] = 1.0
@@ -148,8 +148,8 @@ def test_Lie_isdiv(width, depth, data1):
 
 def test_Lie_imul(width):
     ctx = get_context(width, 2, DPReal)
-    l1 = Lie([1.0] + [0.0]*(width-1), width=width)
-    l2 = Lie([0.0, 1.0] + [0.0]*(width-2), width=width)
+    l1 = Lie(np.array([1.0] + [0.0]*(width-1)), width=width)
+    l2 = Lie(np.array([0.0, 1.0] + [0.0]*(width-2)), width=width)
 
     exp_data = np.zeros(ctx.lie_size(2))
     exp_data[width] = 1.0
