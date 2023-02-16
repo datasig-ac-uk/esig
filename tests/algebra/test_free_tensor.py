@@ -62,7 +62,10 @@ def test_create_FreeTensor_specified_width_incomplete_degree_range(rng, width):
 
     assert tens.width == width
     assert tens.degree() == 2
-    assert tens.size() == 1+width*(1+width)
+    assert tens.size() == data.size()
+
+    atens = np.array(tens)
+    assert atens.size == 1 + width*(1+width)
     assert_array_almost_equal(tens, np.concatenate((data, np.zeros(width**2 - 1))))
 
 
@@ -75,7 +78,7 @@ def test_FreeTensor_repr(rng, width, depth, tensor_size):
     data = rng.uniform(0.0, 1.0, size=tensor_size)
     t = FreeTensor(data, width=width, depth=depth)
 
-    assert repr(t) == f"FreeTensor({width=}, depth={depth}, ctype=1)"
+    assert repr(t) == f"FreeTensor({width=}, depth={depth}, ctype=double)"
 
 
 def test_FreeTensor_str():
