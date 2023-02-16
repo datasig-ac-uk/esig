@@ -4,6 +4,9 @@
 
 #include "py_arg_to_ctype.h"
 
+
+#include "scalar_meta.h"
+
 const esig::scalars::scalar_type *esig::python::py_arg_to_ctype(const py::object &arg) {
-    return nullptr;
+    return esig::python::to_stype_ptr(arg);
 }
