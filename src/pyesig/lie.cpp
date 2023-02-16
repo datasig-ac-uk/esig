@@ -14,6 +14,8 @@
 #include <esig/algebra/lie_interface.h>
 
 #include "ctype_to_npy_dtype.h"
+#include "get_vector_construction_data.h"
+#include "kwargs_to_vector_construction.h"
 #include "py_lie_key.h"
 
 using namespace esig;
@@ -27,33 +29,29 @@ Element of the free Lie algebra.
 )edoc";
 
 
+static lie construct_lie(py::object data, py::kwargs kwargs) {
+    auto helper = esig::python::kwargs_to_construction_data(kwargs);
 
-class py_lie_iterator
-{
-    algebra_iterator m_it;
-    algebra_iterator m_end;
+    auto vcd = esig::python::get_vector_construction_data(data, kwargs, helper);
 
-public:
-    py_lie_iterator(algebra_iterator it, algebra_iterator end);
-    std::pair<py_lie_key, scalars::scalar> next();
-
-};
-
-py_lie_iterator::py_lie_iterator(algebra_iterator it, algebra_iterator end) {
-}
-std::pair<py_lie_key, scalars::scalar> py_lie_iterator::next() {
-    if (m_it == m_end) {
-        throw py::stop_iteration();
+    if (helper.ctype == nullptr) {
+        throw py::value_error("could not deduce an appropriate scalar_type");
     }
-    return {{m_it.get_context(), m_it->key()}, m_it->value()};
+
+    if (helper.width == 0 && vcd.data.size() > 0) {
+        helper.width = static_cast<deg_t>(vcd.data.size());
+    }
+
+    if (!helper.ctx) {
+        if (helper.width == 0 || helper.depth == 0) {
+            throw py::value_error("you must provide either context or both width and depth");
+        }
+        helper.ctx = get_context(helper.width, helper.depth, helper.ctype, {});
+    }
+
+    return helper.ctx->construct_lie(vcd);
 }
 
-static void init_py_lie_iterator(py::module_& m)
-{
-
-    py::class_<py_lie_iterator> klass(m, "PyLieIterator");
-//    klass.def("__next__", &py_lie_iterator::next);
-}
 
 
 void esig::python::init_lie(py::module_ &m) {
@@ -61,8 +59,8 @@ void esig::python::init_lie(py::module_ &m) {
     py::options options;
     options.disable_function_signatures();
 
-    init_py_lie_iterator(m);
     pybind11::class_<lie> klass(m, "Lie", LIE_DOC);
+    klass.def(py::init(&construct_lie), "data"_a);
 
     klass.def_property_readonly("width", &lie::width);
     klass.def_property_readonly("depth", &lie::depth);
@@ -76,7 +74,7 @@ void esig::python::init_lie(py::module_ &m) {
         return self[key];
     });
     klass.def("__iter__", [](const lie& self) {
-             return py_lie_iterator(self.begin(), self.end());
+             return py::make_iterator(self.begin(), self.end());
          });
 
     klass.def("__neg__", &lie::uminus, py::is_operator());
