@@ -62,7 +62,7 @@ def test_create_FreeTensor_specified_width_incomplete_degree_range(rng, width):
 
     assert tens.width == width
     assert tens.degree() == 2
-    assert tens.size() == data.size()
+    assert tens.size() == data.size
 
     atens = np.array(tens)
     assert atens.size == 1 + width*(1+width)
