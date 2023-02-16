@@ -65,9 +65,18 @@ key_scalar_array::key_scalar_array(const scalar_type *type, const void *begin, d
 {
 }
 key_scalar_array &key_scalar_array::operator=(key_scalar_array &&other) noexcept {
+    if (&other != this) {
+        m_scalars_owned = other.m_scalars_owned;
+        m_keys_owned = other.m_keys_owned;
+        p_keys = other.p_keys;
+        scalar_array::operator=(std::move(other));
+        other.p_keys = nullptr;
+    }
     return *this;
 }
 key_scalar_array &key_scalar_array::operator=(owned_scalar_array &&other) noexcept {
+    m_scalars_owned = true;
+    scalar_array::operator=(std::move(other));
     return *this;
 }
 void key_scalar_array::allocate_scalars(idimn_t count)
