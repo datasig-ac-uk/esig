@@ -4,14 +4,11 @@
 
 #include "free_tensor.h"
 
-#ifndef ESIG_NO_NUMPY
-#include <pybind11/numpy.h>
-#endif
 
 #include <esig/algebra/tensor_interface.h>
 
+#include "numpy.h"
 #include "scalar_meta.h"
-#include "ctype_to_npy_dtype.h"
 #include "kwargs_to_vector_construction.h"
 #include "get_vector_construction_data.h"
 

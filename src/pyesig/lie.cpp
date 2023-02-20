@@ -6,16 +6,12 @@
 
 #include <pybind11/operators.h>
 
-#ifndef ESIG_NO_NUMPY
-#include <pybind11/numpy.h>
-#endif
 
 #include <esig/scalars.h>
 #include <esig/algebra/lie_interface.h>
 
-#include "ctype_to_npy_dtype.h"
+#include "numpy.h"
 #include "get_vector_construction_data.h"
-#include "kwargs_to_vector_construction.h"
 #include "py_lie_key.h"
 
 using namespace esig;
