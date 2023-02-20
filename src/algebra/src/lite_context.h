@@ -418,7 +418,7 @@ typename lite_context<Coefficients>::template free_tensor_t<VType>
 lite_context<Coefficients>::derive_series_compute(const free_tensor_t<VType> &increment, const free_tensor_t<VType>& perturbation) const {
     free_tensor_t<VType> result(perturbation);
 
-    typename Coefficients::scalar_type factor(1);
+    typename Coefficients::rational_type factor(1);
     for (deg_t d=1; d <= m_depth; ++d) {
         factor *= typename Coefficients::scalar_type(d+1);
         if (d % 2 == 0) {
