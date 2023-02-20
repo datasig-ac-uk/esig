@@ -158,6 +158,15 @@ inline bool operator!=(const scalar_type &lhs, const scalar_type &rhs) noexcept 
 
 inline std::size_t hash_value(const scalar_type &arg) noexcept { return reinterpret_cast<std::size_t>(&arg); }
 
+
+using conversion_function = void (*)(void*, const void*, dimn_t);
+
+ESIG_EXPORT
+conversion_function get_conversion(const std::string& src_type, const std::string& dst_type);
+ESIG_EXPORT
+void register_conversion(const std::string& src_type, const std::string& dst_type, conversion_function func);
+
+
 class ESIG_EXPORT scalar_pointer {
 
     friend class scalar_type;
@@ -427,7 +436,8 @@ class ESIG_EXPORT scalar_stream_row_iterator;
 
 class ESIG_EXPORT scalar_stream {
     std::vector<const void *> m_stream;
-    boost::container::small_vector<dimn_t, 1> m_elts_per_row;
+//    boost::container::small_vector<dimn_t, 1> m_elts_per_row;
+    std::vector<dimn_t> m_elts_per_row;
     const scalar_type *p_type;
 
 public:

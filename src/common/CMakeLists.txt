@@ -13,7 +13,7 @@ include(GenerateExportHeader)
 find_package(Boost CONFIG REQUIRED)
 find_package(Bignum QUIET)
 
-add_library(esig_common SHARED )
+add_library(esig_common SHARED src/scalars/conversion_functions.cpp)
 #add_library(esig_common SHARED )
 #pybind11_extension(esig_common)
 #target_link_libraries(esig_common PUBLIC
