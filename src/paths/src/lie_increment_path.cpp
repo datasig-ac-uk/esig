@@ -33,10 +33,12 @@ algebra::lie lie_increment_path::log_signature(const esig::interval &domain, con
     };
 
 
-    if (m_keys.empty()) {
-        data.data_stream.set_elts_per_row(m_data.size() == 1
-                                              ? m_buffer.size()
-                                              : m_data.begin()[1].second - m_data.begin()[0].second);
+    if (m_data.size() == 1) {
+        data.data_stream.set_elts_per_row(m_buffer.size());
+    } else if (m_data.size() > 1) {
+        auto row1 = (++m_data.begin())->second;
+        auto row0 = m_data.begin()->second;
+        data.data_stream.set_elts_per_row(row1 - row0);
     }
 
 
@@ -62,7 +64,7 @@ algebra::lie lie_increment_path::log_signature(const esig::interval &domain, con
     --end;
     data.data_stream.push_back({m_buffer[end->second].to_const_pointer(), m_buffer.size() - end->second});
 
-    if (m_keys.empty()) {
+    if (!m_keys.empty()) {
         data.key_stream.reserve(end - begin);
         ++end;
         for (auto it=begin; it!= end; ++it) {
