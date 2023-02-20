@@ -11,7 +11,8 @@ from esig.paths import Stream, LieIncrementPath
 from esig import FreeTensor, Lie, RealInterval
 
 def path(*args, **kwargs):
-    return Stream(*args, **kwargs, type=LieIncrementPath)
+    return LieIncrementPath.from_increments(*args, **kwargs)
+
 
 
 @pytest.fixture(params=[0, 1, 5, 10, 20, 50, 100])
