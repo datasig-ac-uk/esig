@@ -10,6 +10,8 @@
 
 namespace esig { namespace python {
 
+void buffer_to_indices(std::vector<param_t>& indices, const py::buffer_info& info);
+
 
 void init_paths(py::module_& m);
 

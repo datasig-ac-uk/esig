@@ -51,8 +51,6 @@ target_sources(esig_py_module PRIVATE
         py_arg_to_ctype.h
         ctype_to_py_fmt.cpp
         ctype_to_py_fmt.h
-        ctype_to_npy_dtype.cpp
-        ctype_to_npy_dtype.h
         py_tensor_key.cpp
         py_tensor_key.h
         py_lie_letter.cpp
@@ -75,6 +73,10 @@ target_sources(esig_py_module PRIVATE
         py_context.h
         kwargs_to_path_metadata.cpp
         kwargs_to_path_metadata.h
+        numpy.cpp
+        numpy.h
+        py_function_path.cpp
+        py_function_path.h
         )
 
 target_link_libraries(esig_py_module PRIVATE

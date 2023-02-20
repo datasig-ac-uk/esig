@@ -5,8 +5,8 @@
 #ifndef ESIG_SRC_PYESIG_PY_CONTEXT_H_
 #define ESIG_SRC_PYESIG_PY_CONTEXT_H_
 
+#include <memory>
 #include <pybind11/pybind11.h>
-
 #include <esig/algebra/context.h>
 
 namespace esig { namespace python {

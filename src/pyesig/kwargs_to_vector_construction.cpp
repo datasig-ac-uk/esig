@@ -4,7 +4,6 @@
 
 #include "kwargs_to_vector_construction.h"
 
-#include <memory>
 
 #include "py_context.h"
 #include "py_arg_to_ctype.h"
@@ -19,9 +18,7 @@ esig::python::py_vector_construction_helper esig::python::kwargs_to_construction
         helper.depth = helper.ctx->depth();
         helper.ctype = helper.ctx->ctype();
         helper.ctype_requested = true;
-    }
-
-    if (!static_cast<bool>(helper.ctx)) {
+    } else {
         if (kwargs.contains("ctype")) {
             helper.ctype = py_arg_to_ctype(kwargs["ctype"]);
             helper.ctype_requested = true;

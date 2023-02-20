@@ -4,6 +4,10 @@
 
 #include "kwargs_to_path_metadata.h"
 
+#include "py_context.h"
+#include "scalar_meta.h"
+#include "py_arg_to_ctype.h"
+#include "numpy.h"
 
 #include <esig/algebra/context.h>
 
@@ -18,35 +22,31 @@ esig::paths::path_metadata esig::python::kwargs_to_metadata(const py::kwargs &kw
     };
 
     if (kwargs.contains("ctx")) {
-        md.ctx = kwargs["ctx"].cast<std::shared_ptr<const algebra::context>>();
-    }
-    if (kwargs.contains("width")) {
-        md.width = kwargs["width"].cast<esig::deg_t>();
-        if (md.ctx && (md.width != md.ctx->width())) {
-            throw py::value_error("width mismatched with provided context");
-        }
-    } else if (md.ctx) {
+        md.ctx = kwargs["ctx"].cast<py_context>().get_pointer();
         md.width = md.ctx->width();
-    }
-
-    if (kwargs.contains("depth")) {
-        md.depth = kwargs["depth"].cast<esig::deg_t>();
-    } else if (md.ctx) {
         md.depth = md.ctx->depth();
-    }
-
-    if (kwargs.contains("ctype")) {
-        md.ctype = kwargs["ctype"].cast<py::capsule>().get_pointer<const scalars::scalar_type>();
-        if (md.ctx && md.ctype != md.ctx->ctype()) {
-            throw py::value_error("mismatch in ctype with provided context");
-        }
-    } else if (kwargs.contains("dtype")) {
-        md.ctype = kwargs["dtype"].cast<py::capsule>().get_pointer<const scalars::scalar_type>();
-        if (md.ctx && md.ctype != md.ctx->ctype()) {
-            throw py::value_error("mismatch in ctype with provided context");
-        }
-    } else if (md.ctx) {
         md.ctype = md.ctx->ctype();
+    } else {
+
+        if (kwargs.contains("width")) {
+            md.width = kwargs["width"].cast<esig::deg_t>();
+        }
+        if (kwargs.contains("depth")) {
+            md.depth = kwargs["depth"].cast<esig::deg_t>();
+        }
+        if (kwargs.contains("ctype")) {
+            md.ctype = esig::python::py_arg_to_ctype(kwargs["ctype"]);
+        }
+#ifndef ESIG_NO_NUMPY
+        else if (kwargs.contains("dtype")) {
+            auto dtype = kwargs["dtype"];
+            if (py::isinstance<py::dtype>(dtype)) {
+                md.ctype = npy_dtype_to_ctype(dtype);
+            } else {
+                md.ctype = py_arg_to_ctype(dtype);
+            }
+        }
+#endif
     }
 
     if (kwargs.contains("vtype")) {

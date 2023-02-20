@@ -4,12 +4,17 @@
 
 #include "py_paths.h"
 
+#include <pybind11/stl.h>
+
 #include <esig/algebra/context.h>
 #include <esig/paths/path.h>
 #include <esig/paths/lie_increment_path.h>
+#include <esig/paths/piecewise_lie_path.h>
+
 
 #include "kwargs_to_path_metadata.h"
 #include "py_buffer_to_buffer.h"
+#include "py_fmt_to_esig_fmt.h"
 
 using namespace esig;
 using namespace esig::python;
@@ -34,21 +39,98 @@ using sigder_fn = algebra::free_tensor (stream::*)(const typename paths::path::p
 using ctx_sigder_fn = algebra::free_tensor (stream::*)(const typename paths::path::perturbation_list_t&, accuracy_t, const context&) const;
 
 
-stream lie_increment_path_from_increments(const py::args& args, const py::kwargs& kwargs) {
-    auto md = kwargs_to_metadata(kwargs);
+void esig::python::buffer_to_indices(std::vector<param_t> &indices, const py::buffer_info &info) {
+    auto count = info.size;
+    const auto* ptr = info.ptr;
 
-    md.ctx = algebra::get_context(2, 2, scalars::dtl::scalar_type_holder<double>::get_type(), {});
-    md.width = 2;
-    md.depth = 2;
-    esig::paths::lie_increment_path impl(
-        scalars::owned_scalar_array(),
-        std::vector<param_t>(),
-        md);
+    indices.resize(count);
+    auto* dst = indices.data();
+    if (info.format[0] == 'd') {
+        memcpy(dst, ptr, count*sizeof(double));
+    } else {
+        auto conversion = scalars::get_conversion(py_fmt_to_esig_fmt(info.format), "f64");
+        conversion(dst, ptr, count);
+    }
 
-    return stream(std::move(impl));
 }
 
+stream lie_increment_path_from_increments(const py::object& data, const py::kwargs& kwargs) {
+    auto md = kwargs_to_metadata(kwargs);
 
+    std::vector<param_t> indices;
+    scalars::owned_scalar_array buffer;
+
+    idimn_t increment_size = 0;
+    idimn_t num_increments = 0;
+
+    if (py::isinstance<py::buffer>(data)) {
+        auto info = py::reinterpret_borrow<py::buffer>(data).request();
+        buffer = py_buffer_to_buffer(info, md.ctype);
+
+        if (info.ndim == 1) {
+            increment_size = info.shape[0];
+            num_increments = 1;
+        } else {
+            increment_size = info.shape[1];
+            num_increments = info.shape[0];
+        }
+
+        if (md.width == 0) {
+            md.width = increment_size;
+        }
+    }
+
+    assert(buffer.size() == increment_size*num_increments);
+    assert(md.ctype != nullptr);
+    if (!md.ctx) {
+        if (md.width == 0 || md.depth == 0) {
+            throw py::value_error("either ctx or both width and depth must be specified");
+        }
+        md.ctx = algebra::get_context(md.width, md.depth, md.ctype);
+    }
+
+    if (kwargs.contains("indices")) {
+        auto indices_arg = kwargs["indices"];
+
+        if (py::isinstance<py::buffer>(indices_arg)) {
+            auto info = py::reinterpret_borrow<py::buffer>(indices_arg).request();
+            esig::python::buffer_to_indices(indices, info);
+        } else if (py::isinstance<py::int_>(indices_arg)) {
+            // Interpret this as a column in the data;
+            auto icol = indices_arg.cast<idimn_t>();
+            if (icol < 0) {
+                icol += increment_size;
+            }
+            if (icol < 0 || icol >= increment_size) {
+                throw py::value_error("index out of bounds");
+            }
+
+            indices.reserve(num_increments);
+            for (idimn_t i=0; i<num_increments; ++i) {
+                indices.push_back(static_cast<param_t>(buffer[i*increment_size+icol].to_scalar_t()));
+            }
+        } else if (py::isinstance<py::sequence>(indices_arg)) {
+            indices = indices_arg.cast<std::vector<param_t>>();
+        }
+    }
+
+    if (indices.empty()) {
+        indices.reserve(num_increments);
+        for (dimn_t i = 0; i < num_increments; ++i) {
+            indices.emplace_back(i);
+        }
+    } else if (indices.size() != num_increments) {
+        throw py::value_error("mismatch between number of rows in data and number of indices");
+    }
+
+    return stream(paths::lie_increment_path(std::move(buffer), indices, md));
+}
+
+static stream lie_increment_path_from_values(py::object data, py::kwargs kwargs) {
+
+
+    return stream();
+}
 
 
 void esig::python::init_paths(py::module_ &m) {
@@ -68,6 +150,10 @@ void esig::python::init_paths(py::module_ &m) {
     klass.def("signature", [](const stream& self, param_t inf, param_t sup, accuracy_t accuracy, const context& ctx) {
              return self.signature(real_interval(inf, sup), accuracy, ctx);
          }, "inf"_a, "sup"_a, "accuracy"_a, "ctx"_a);
+    klass.def("signature", [](const stream& self, param_t inf, param_t sup, accuracy_t accuracy, deg_t depth) {
+             auto ctx = self.metadata().ctx->get_alike(depth);
+             return self.signature(real_interval(inf, sup), accuracy, *ctx);
+         }, "inf"_a, "sup"_a, "accuracy"_a, py::kw_only(), "depth"_a);
 
 
     klass.def("log_signature", static_cast<lsig_fn>(&stream::log_signature), "accuracy"_a);
@@ -78,39 +164,20 @@ void esig::python::init_paths(py::module_ &m) {
     klass.def("signature_derivative", static_cast<ivl_sigder_fn>(&stream::signature_derivative), "domain"_a, "perturbation"_a, "accuracy"_a);
     klass.def("signature_derivative", static_cast<sigder_fn>(&stream::signature_derivative), "perturbations"_a, "accuracy"_a);
     klass.def("signature_derivative", static_cast<ctx_sigder_fn>(&stream::signature_derivative), "perturbations"_a, "accuracy"_a, "context"_a);
+    klass.def("signature_derivative", [](const stream& self, const interval& domain, const algebra::lie& perturbation, accuracy_t accuracy, deg_t depth) {
+        auto ctx = self.metadata().ctx->get_alike(depth);
+        return self.signature_derivative(domain, perturbation, accuracy, *ctx);
+    }, "domain"_a, "perturbation"_a, "accuracy"_a, py::kw_only(), "depth"_a);
 
     py::class_<esig::paths::lie_increment_path> LieIncrementPath(m, "LieIncrementPath");
 
-    LieIncrementPath.def_static("from_increments", [](py::object data, py::kwargs kwargs) {
-        auto md = kwargs_to_metadata(kwargs);
+    LieIncrementPath.def_static("from_increments", &lie_increment_path_from_increments, "data"_a);
+    LieIncrementPath.def_static("from_values", &lie_increment_path_from_values, "data"_a);
 
-        std::vector<param_t> indices;
-        scalars::owned_scalar_array buffer;
 
-        if (py::isinstance<py::buffer>(data)) {
-            auto info = py::reinterpret_borrow<py::buffer>(data).request();
-            buffer = py_buffer_to_buffer(info, md.ctype);
-            auto nrows = info.shape[0];
-            indices.reserve(nrows);
-            for (dimn_t i=0; i<nrows; ++i) {
-                indices.emplace_back(i);
-            }
-        }
+    py::class_<esig::paths::piecewise_lie_path> PiecewiseLiePath(m, "PiecewiseLiePath");
 
-        assert(md.ctype != nullptr);
-        if (!md.ctx) {
-            if (md.width == 0 || md.depth == 0) {
-                throw py::value_error("either ctx or both width and depth must be specified");
-            }
-            md.ctx = algebra::get_context(md.width, md.depth, md.ctype);
-        }
 
-        return stream(paths::lie_increment_path(std::move(buffer), indices, md));
 
-    }, "data"_a);
-    LieIncrementPath.def_static("from_values", [](py::args args, py::kwargs kwargs) {
-
-        return stream();
-    });
 
 }
