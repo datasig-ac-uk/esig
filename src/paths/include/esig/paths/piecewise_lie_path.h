@@ -5,12 +5,12 @@
 #ifndef ESIG_SRC_PATHS_SRC_PIECEWISE_LIE_PATH_H_
 #define ESIG_SRC_PATHS_SRC_PIECEWISE_LIE_PATH_H_
 
-#include <esig/implementation_types.h>
-#include <esig/intervals.h>
-#include <esig/paths/path.h>
+#include "../../../../common/include/esig/implementation_types.h"
+#include "../../../../common/include/esig/intervals.h"
+#include "path.h"
 
-#include <esig/algebra/lie_interface.h>
-#include <esig/algebra/tensor_interface.h>
+#include "../../../../algebra/include/esig/algebra/lie_interface.h"
+#include "../../../../algebra/include/esig/algebra/tensor_interface.h"
 
 namespace esig {
 namespace paths {

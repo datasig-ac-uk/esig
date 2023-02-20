@@ -2,8 +2,7 @@
 // Created by user on 22/07/22.
 //
 
-#include "piecewise_lie_path.h"
-
+#include "esig/paths/piecewise_lie_path.h"
 
 #include <algorithm>
 #include <cmath>
