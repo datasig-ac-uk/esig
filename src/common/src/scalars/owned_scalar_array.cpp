@@ -41,6 +41,11 @@ owned_scalar_array::owned_scalar_array(const scalar &value, dimn_t count)
     }
 }
 
+owned_scalar_array::owned_scalar_array(const scalar_type *type, const void *data, dimn_t count) noexcept
+    : scalar_array(data, type, count)
+{
+}
+
 owned_scalar_array::~owned_scalar_array()
 {
     if (p_data != nullptr) {

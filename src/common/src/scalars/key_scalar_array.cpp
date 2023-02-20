@@ -95,3 +95,11 @@ key_type *key_scalar_array::keys() {
     }
     throw std::runtime_error("borrowed keys are not mutable");
 }
+
+key_scalar_array::operator owned_scalar_array() &&noexcept {
+    auto result = owned_scalar_array(p_type, p_data, m_size);
+    p_type = nullptr;
+    p_data = nullptr;
+    m_size = 0;
+    return result;
+}

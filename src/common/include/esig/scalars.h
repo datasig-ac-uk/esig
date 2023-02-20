@@ -386,6 +386,8 @@ public:
     owned_scalar_array(const scalar &value, dimn_t count);
     explicit owned_scalar_array(const scalar_array &other);
 
+    explicit owned_scalar_array(const scalar_type* type, const void* data, dimn_t count) noexcept;
+
     owned_scalar_array &operator=(const scalar_array &other);
     owned_scalar_array &operator=(owned_scalar_array &&other) noexcept;
 
@@ -413,6 +415,8 @@ public:
     explicit key_scalar_array(const scalar_type* type) noexcept;
     explicit key_scalar_array(const scalar_type* type, dimn_t n) noexcept;
     key_scalar_array(const scalar_type *type, const void *begin, dimn_t count) noexcept;
+
+    explicit operator owned_scalar_array() && noexcept;
 
     key_scalar_array& operator=(key_scalar_array&& other) noexcept;
     key_scalar_array& operator=(owned_scalar_array&& other) noexcept;
