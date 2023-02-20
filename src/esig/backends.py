@@ -122,12 +122,17 @@ class LibalgebraBackend(BackendBase):
         return "LibalgebraBackend"
 
     def compute_signature(self, stream, depth):
-        path = _esig.LieIncrementPath.from_increments(numpy.diff(stream, axis=0), width=stream.shape[1], depth=depth)
-        return numpy.array(path.signature(0.0, stream.shape[0]+1, 0.1))
+        if stream.ndim != 2:
+            stream = stream.reshape(-1, 1)
+        ctx = _esig.get_context(stream.shape[1], depth, _esig.double)
+        return numpy.array(ctx.compute_signature(numpy.diff(stream, axis=0)))
 
     def compute_log_signature(self, stream, depth):
-        path = _esig.LieIncrementPath.from_increments(numpy.diff(stream, axis=0), width=stream.shape[1], depth=depth)
-        return numpy.array(path.log_signature(0.0, stream.shape[0]+1, 0.1))
+        if stream.ndim != 2:
+            stream = stream.reshape(1, -1)
+        ctx = _esig.get_context(stream.shape[1], depth, _esig.double)
+        sig = ctx.compute_signature(numpy.diff(stream, axis=0))
+        return numpy.array(ctx.to_logsignature(sig))
 
     def log_sig_keys(self, dimension, depth):
         ctx = _esig.get_context(dimension, depth, _esig.double)

@@ -29,9 +29,8 @@ def stream2sig(stream, signature_degree):
     a numpy vector containing the signature of the vector
     series up to given signature degree.
     """
-    # path = Stream(, depth=signature_degree, type=LieIncrementPath)
-    # path = LieIncrementPath.from_increments(np.diff(stream, axis=0), width=stream.shape[1], depth=signature_degree)
-    # sig = path.signature(0.0, stream.shape[0]+1, 0.1)
+    if stream.ndim != 2:
+        stream = stream.reshape(1, -1)
     ctx = get_context(stream.shape[1], signature_degree, _esig.double)
     sig = ctx.compute_signature(np.diff(stream, axis=0))
     return np.array(sig)
@@ -45,10 +44,8 @@ def stream2logsig(stream, signature_degree):
     a numpy vector containing the log signature of the
     vector series up to given log signature degree
     """
-    # path = Stream(np.diff(stream, axis=0), depth=signature_degree, type=LieIncrementPath)
-    # path = LieIncrementPath.from_increments(np.diff(stream, axis=0), width=stream.shape[1], depth=signature_degree)
-    # m = stream.shape[0] + 1
-    # lsig = path.log_signature(0.0, float(m), 0.1)
+    if stream.ndim != 2:
+        stream = stream.reshape(1, -1)
     ctx = get_context(stream.shape[1], signature_degree, _esig.double)
     sig = ctx.compute_signature(np.diff(stream, axis=0))
     lsig = ctx.to_logsignature(sig)
