@@ -97,11 +97,11 @@ def test_tick_path_signature_calc_accuracy():
 
     r1 = p.signature(0.0, 0.8, 0.5)
     expected1 = FreeTensor(np.array([1.0]), width=2, depth=2)
-    assert r1 == expected1
+    assert r1 == expected1, f"expected {expected1} but was {r1}"
 
     r2 = p.signature(0.0, 0.8, 0.25)
     expected2 = FreeTensor(np.array([0.0, 1.0, 2.5]), width=2, depth=2).exp()
-    assert r2 == expected2
+    assert r2 == expected2, f"expected {expected2} but was {r2}"
 
 
 # def test_tick_path_with_time(tick_data_w_indices, width):
@@ -165,10 +165,12 @@ def test_tpath_known_signature_calc(width, depth, t_values, known_path_data, sol
 
 def test_tpath_known_signature_calc_with_context(width, depth, t_values, known_path_data,
                                         solution_signature):
-    p = path(known_path_data, indices=t_values, width=width)
+    p = path(known_path_data, indices=t_values, width=width, depth=2)
 
     expected = FreeTensor(solution_signature(0.0, 2.0), width=width, depth=depth)
-    assert_array_almost_equal(p.signature(0.0, 3.125, 0.0, depth=depth), expected)
+    assert_array_almost_equal(
+        np.array(p.signature(0.0, 3.125, 0.0, depth=depth)),
+        np.array(expected))
 
 
 def test_tick_sig_deriv_width_3_depth_1_let_2_perturb():
@@ -180,7 +182,7 @@ def test_tick_sig_deriv_width_3_depth_1_let_2_perturb():
 
     expected = FreeTensor(np.array([0.0, 0.0, 1.0, 0.0]), width=3, depth=1)
 
-    assert d == expected
+    assert d == expected, f"expected {expected} but got {d}"
 
 
 def test_tick_sig_deriv_width_3_depth_2_let_2_perturb():
@@ -196,11 +198,11 @@ def test_tick_sig_deriv_width_3_depth_2_let_2_perturb():
                                   0.0, 0.3, 0.0
                                   ]), width=3, depth=2)
 
-    assert d == expected
+    assert d == expected, f"expected {expected} but got {d}"
 
 
 def test_tick_sig_deriv_width_3_depth_2_let_2_perturb_with_context():
-    p = path(np.array([[0.2, 0.4, 0.6]]), indices=np.array([0.0]), width=3)
+    p = path(np.array([[0.2, 0.4, 0.6]]), indices=np.array([0.0]), width=3, depth=2)
     perturbation = Lie(np.array([0.0, 1.0, 0.0]), width=3, depth=2)
     interval = RealInterval(0.0, 1.0)
 
@@ -212,7 +214,7 @@ def test_tick_sig_deriv_width_3_depth_2_let_2_perturb_with_context():
                                   0.0, 0.3, 0.0
                                   ]), width=3, depth=2)
 
-    assert d == expected
+    assert d == expected, f"expected {expected} but got {d}"
 
 
 def test_tick_path_sig_derivative(width, depth, tick_data, tick_indices, rng):
