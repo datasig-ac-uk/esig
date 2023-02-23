@@ -5,9 +5,9 @@
 #ifndef ESIG_COEFFICIENTS_H_
 #define ESIG_COEFFICIENTS_H_
 
+#include "config.h"
 #include "esig_export.h"
 #include "implementation_types.h"
-#include "config.h"
 
 #include <cassert>
 #include <functional>
@@ -21,15 +21,26 @@
 #include <boost/container/small_vector.hpp>
 #include <boost/variant/variant.hpp>
 
-
 namespace esig {
 namespace scalars {
+
+
+struct device_info {
+    std::int32_t type;
+    std::int32_t device_id;
+};
 
 struct scalar_type_info {
     std::string id;
     std::string name;
     int size;
     int alignment;
+
+    std::uint8_t code;
+    std::uint8_t bits;
+    std::uint16_t lanes;
+
+    device_info device;
 };
 
 class scalar_type;
@@ -43,6 +54,13 @@ namespace dtl {
 template<typename T>
 class scalar_type_trait;
 }// namespace dtl
+
+template<typename T>
+struct type_id_of;
+
+
+struct unsigned_size_type_marker {};
+struct signed_size_type_marker {};
 
 class ESIG_EXPORT scalar_interface {
     friend class scalar;
@@ -58,16 +76,17 @@ public:
 
     virtual scalar_t as_scalar() const = 0;
     virtual void assign(scalar_pointer) = 0;
-    virtual void assign(const scalar& other) = 0;
+    virtual void assign(const scalar &other) = 0;
+    virtual void assign(const void* data, const std::string& type_id) = 0;
 
     virtual scalar_pointer to_pointer() = 0;
     virtual scalar_pointer to_pointer() const noexcept = 0;
     virtual scalar uminus() const;
 
-//    virtual scalar add(const scalar &other) const;
-//    virtual scalar sub(const scalar &other) const;
-//    virtual scalar mul(const scalar &other) const;
-//    virtual scalar div(const scalar &other) const;
+    //    virtual scalar add(const scalar &other) const;
+    //    virtual scalar sub(const scalar &other) const;
+    //    virtual scalar mul(const scalar &other) const;
+    //    virtual scalar div(const scalar &other) const;
 
     virtual void add_inplace(const scalar &other) = 0;
     virtual void sub_inplace(const scalar &other) = 0;
@@ -78,6 +97,9 @@ public:
 
     virtual std::ostream &print(std::ostream &os) const;
 };
+
+
+
 
 class ESIG_EXPORT scalar_type {
     const scalar_type_info m_info;
@@ -103,6 +125,12 @@ public:
     scalar_type &operator=(scalar_type &&) noexcept = delete;
 
     virtual ~scalar_type();
+
+    template <typename T>
+    static const scalar_type* of() noexcept
+    {
+        return dtl::scalar_type_holder<T>::get_type();
+    }
 
     virtual scalar from(int) const = 0;
     virtual scalar from(long long, long long) const = 0;
@@ -158,14 +186,12 @@ inline bool operator!=(const scalar_type &lhs, const scalar_type &rhs) noexcept 
 
 inline std::size_t hash_value(const scalar_type &arg) noexcept { return reinterpret_cast<std::size_t>(&arg); }
 
-
-using conversion_function = void (*)(void*, const void*, dimn_t);
+using conversion_function = void (*)(void *, const void *, dimn_t);
 
 ESIG_EXPORT
-conversion_function get_conversion(const std::string& src_type, const std::string& dst_type);
+conversion_function get_conversion(const std::string &src_type, const std::string &dst_type);
 ESIG_EXPORT
-void register_conversion(const std::string& src_type, const std::string& dst_type, conversion_function func);
-
+void register_conversion(const std::string &src_type, const std::string &dst_type, conversion_function func);
 
 class ESIG_EXPORT scalar_pointer {
 
@@ -185,6 +211,8 @@ protected:
     scalar_pointer(const void *, const scalar_type *, constness);
 
 public:
+    using difference_type = std::ptrdiff_t;
+
     const scalar_type *type() const noexcept { return p_type; }
 
     scalar_pointer() : p_data(nullptr), p_type(nullptr), m_constness(IsMutable) {}
@@ -195,14 +223,12 @@ public:
     scalar_pointer(const void *ptr, const scalar_type *type)
         : p_data(ptr), p_type(type), m_constness(IsConst) {}
 
-    template <typename T>
-    explicit scalar_pointer(T* ptr)
-        : p_data(ptr), p_type(dtl::scalar_type_trait<T>::get_type()), m_constness(IsMutable)
-    {}
-    template <typename T>
-    explicit scalar_pointer(const T* ptr)
-        : p_data(ptr), p_type(dtl::scalar_type_trait<T>::get_type()), m_constness(IsConst)
-    {}
+    template<typename T>
+    explicit scalar_pointer(T *ptr)
+        : p_data(ptr), p_type(dtl::scalar_type_trait<T>::get_type()), m_constness(IsMutable) {}
+    template<typename T>
+    explicit scalar_pointer(const T *ptr)
+        : p_data(ptr), p_type(dtl::scalar_type_trait<T>::get_type()), m_constness(IsConst) {}
 
     const void *ptr() const noexcept { return p_data; }
     void *ptr() noexcept { return const_cast<void *>(p_data); }
@@ -224,6 +250,11 @@ public:
     scalar_pointer operator+(dimn_t index) const noexcept;
     scalar_pointer &operator+=(dimn_t index) noexcept;
 
+    difference_type operator-(const scalar_pointer &other) const noexcept;
+
+    scalar_pointer &operator++() noexcept;
+    const scalar_pointer operator++(int) noexcept;
+
     scalar operator[](dimn_t index) const noexcept;
     scalar operator[](dimn_t index);
 
@@ -239,7 +270,7 @@ class ESIG_EXPORT scalar : private scalar_pointer {
     friend class scalar_pointer;
     friend class scalar_type;
 
-    template <typename T>
+    template<typename T>
     friend class dtl::scalar_type_trait;
 
     //    const void* p_impl;
@@ -258,7 +289,7 @@ class ESIG_EXPORT scalar : private scalar_pointer {
 
     enum pointer_type {
         OwnedPointer,   // A raw pointer to a scalar, onwed by this
-        BorrowedPointer,// A raw pointer to a scalar, borrowed fomr elsewhere
+        BorrowedPointer,// A raw pointer to a scalar, borrowed from elsewhere
         InterfacePointer// A pointer to a scalar_interface type
     } m_pointer_type = OwnedPointer;
 
@@ -272,7 +303,7 @@ public:
     explicit scalar(scalar_t);
     scalar(scalar_t, const scalar_type *);
     explicit scalar(scalar_pointer ptr);
-    explicit scalar(scalar_interface* other);
+    explicit scalar(scalar_interface *other);
 
     template<typename I,
              typename J,
@@ -300,6 +331,30 @@ public:
 
     scalar &operator=(const scalar &other);
     scalar &operator=(scalar &&other) noexcept;
+
+    template<typename T, typename = std::enable_if_t<!std::is_same<std::decay_t<T>, scalar>::value>>
+    scalar &operator=(T arg) {
+        if (m_constness == IsConst) {
+            throw std::runtime_error("attempting to assign to const value");
+        }
+
+        assert(p_type != nullptr);
+        if (p_data = nullptr) {
+            m_pointer_type = OwnedPointer;
+            p_data = p_type->allocate(1).ptr();
+        }
+
+        const auto &type_id = dtl::type_id_of<T>::get_id();
+        if (m_pointer_type == InterfacePointer) {
+            static_cast<scalar_interface*>(const_cast<void*>(p_data))
+                ->assign(std::addressof(arg), type_id);
+        } else {
+            auto ptr = to_pointer();
+            p_type->convert_copy(ptr, std::addressof(arg), 1, type_id);
+        }
+
+        return *this;
+    }
 
     using scalar_pointer::is_const;
     //    bool is_const() const noexcept;
@@ -333,8 +388,7 @@ public:
     friend std::ostream &operator<<(std::ostream &os, const scalar &arg);
 };
 
-
-ESIG_EXPORT std::ostream& operator<<(std::ostream& os, const scalar& arg);
+ESIG_EXPORT std::ostream &operator<<(std::ostream &os, const scalar &arg);
 
 class scalar_array : public scalar_pointer {
     friend class scalar_stream;
@@ -365,7 +419,7 @@ public:
     }
 
     template<typename Int>
-    scalar operator[](Int index) const {
+    scalar operator[](Int index) const noexcept {
         auto uindex = static_cast<dimn_t>(index);
         assert(0 <= uindex && uindex < m_size);
         return scalar_pointer::operator[](uindex);
@@ -378,7 +432,7 @@ class ESIG_EXPORT owned_scalar_array : public scalar_array {
 public:
     owned_scalar_array() = default;
 
-    owned_scalar_array(const owned_scalar_array& other);
+    owned_scalar_array(const owned_scalar_array &other);
     owned_scalar_array(owned_scalar_array &&other) noexcept;
 
     explicit owned_scalar_array(const scalar_type *type);
@@ -386,7 +440,7 @@ public:
     owned_scalar_array(const scalar &value, dimn_t count);
     explicit owned_scalar_array(const scalar_array &other);
 
-    explicit owned_scalar_array(const scalar_type* type, const void* data, dimn_t count) noexcept;
+    explicit owned_scalar_array(const scalar_type *type, const void *data, dimn_t count) noexcept;
 
     owned_scalar_array &operator=(const scalar_array &other);
     owned_scalar_array &operator=(owned_scalar_array &&other) noexcept;
@@ -394,43 +448,38 @@ public:
     ~owned_scalar_array();
 };
 
-
 class ESIG_EXPORT key_scalar_array : public scalar_array {
 
-    const key_type* p_keys = nullptr;
+    const key_type *p_keys = nullptr;
     bool m_scalars_owned = false;
     bool m_keys_owned = true;
 
 public:
-
     key_scalar_array() = default;
     ~key_scalar_array();
 
-    key_scalar_array(const key_scalar_array& other);
-    key_scalar_array(key_scalar_array&& other) noexcept;
+    key_scalar_array(const key_scalar_array &other);
+    key_scalar_array(key_scalar_array &&other) noexcept;
 
-    explicit key_scalar_array(owned_scalar_array&& sa) noexcept;
-    key_scalar_array(scalar_array base, const key_type* keys);
+    explicit key_scalar_array(owned_scalar_array &&sa) noexcept;
+    key_scalar_array(scalar_array base, const key_type *keys);
 
-    explicit key_scalar_array(const scalar_type* type) noexcept;
-    explicit key_scalar_array(const scalar_type* type, dimn_t n) noexcept;
+    explicit key_scalar_array(const scalar_type *type) noexcept;
+    explicit key_scalar_array(const scalar_type *type, dimn_t n) noexcept;
     key_scalar_array(const scalar_type *type, const void *begin, dimn_t count) noexcept;
 
-    explicit operator owned_scalar_array() && noexcept;
+    explicit operator owned_scalar_array() &&noexcept;
 
-    key_scalar_array& operator=(key_scalar_array&& other) noexcept;
-    key_scalar_array& operator=(owned_scalar_array&& other) noexcept;
+    key_scalar_array &operator=(key_scalar_array &&other) noexcept;
+    key_scalar_array &operator=(owned_scalar_array &&other) noexcept;
 
-    const key_type* keys() const noexcept { return p_keys; }
-    key_type* keys();
+    const key_type *keys() const noexcept { return p_keys; }
+    key_type *keys();
     bool has_keys() const noexcept { return p_keys != nullptr; }
 
     void allocate_scalars(idimn_t count = -1);
     void allocate_keys(idimn_t count = -1);
-
-
 };
-
 
 namespace dtl {
 
@@ -440,7 +489,7 @@ class ESIG_EXPORT scalar_stream_row_iterator;
 
 class ESIG_EXPORT scalar_stream {
     std::vector<const void *> m_stream;
-//    boost::container::small_vector<dimn_t, 1> m_elts_per_row;
+    //    boost::container::small_vector<dimn_t, 1> m_elts_per_row;
     std::vector<dimn_t> m_elts_per_row;
     const scalar_type *p_type;
 
@@ -464,13 +513,12 @@ public:
     scalar operator[](std::pair<dimn_t, dimn_t> index) const noexcept;
 
     void set_elts_per_row(dimn_t num_elts) noexcept;
-    void set_ctype(const scalars::scalar_type* type) noexcept;
+    void set_ctype(const scalars::scalar_type *type) noexcept;
 
     void reserve_size(dimn_t num_rows);
 
-    void push_back(const scalar_pointer& data);
-    void push_back(const scalar_array& data);
-
+    void push_back(const scalar_pointer &data);
+    void push_back(const scalar_array &data);
 };
 
 namespace dtl {
@@ -520,7 +568,6 @@ ESIG_EXPORT const scalar_type *scalar_type_holder<float>::get_type() noexcept;
 //    static const scalar_type *get_type() noexcept;
 //};
 
-
 // Explicit implementation for double defined in the library.
 template<>
 ESIG_EXPORT const scalar_type *scalar_type_holder<double>::get_type() noexcept;
@@ -534,9 +581,6 @@ ESIG_EXPORT const scalar_type *scalar_type_holder<double>::get_type() noexcept;
 template<>
 ESIG_EXPORT const scalar_type *scalar_type_holder<rational_scalar_type>::get_type() noexcept;
 
-
-
-
 template<typename Scalar>
 class scalar_implementation;
 
@@ -544,6 +588,7 @@ template<typename T>
 class scalar_type_trait {
     static_assert(!std::is_pointer<T>::value, "scalar cannot be pointer");
     static_assert(!std::is_reference<T>::value, "scalar cannot be reference");
+
 public:
     using value_type = T;
     using rational_type = T;
@@ -708,9 +753,44 @@ public:
 //    }
 //};
 
+
 }// namespace dtl
 
-} // namespace scalars
+
+#define ESIG_MAKE_TYPE_ID_OF(TYPE, NAME)           \
+    template<>                                        \
+    struct type_id_of<TYPE> {                       \
+        static const std::string &get_id() noexcept { \
+            static const std::string type_id(NAME);   \
+            return type_id;                           \
+        }                                             \
+    }
+
+ESIG_MAKE_TYPE_ID_OF(char, "i8");
+ESIG_MAKE_TYPE_ID_OF(unsigned char, "u8");
+ESIG_MAKE_TYPE_ID_OF(short, "i16");
+ESIG_MAKE_TYPE_ID_OF(unsigned short, "u16");
+ESIG_MAKE_TYPE_ID_OF(int, "i32");
+ESIG_MAKE_TYPE_ID_OF(unsigned int, "u32");
+ESIG_MAKE_TYPE_ID_OF(long long, "i64");
+ESIG_MAKE_TYPE_ID_OF(unsigned long long, "u64");
+ESIG_MAKE_TYPE_ID_OF(signed_size_type_marker, "isize");
+ESIG_MAKE_TYPE_ID_OF(unsigned_size_type_marker, "usize");
+
+ESIG_MAKE_TYPE_ID_OF(float, "f32");
+ESIG_MAKE_TYPE_ID_OF(double, "f64");
+
+// Long is silly. On Win64 it is 32 bits (because, Microsoft) on Unix, it is 64 bits
+template <>
+struct type_id_of<long>
+    : public std::conditional_t<(sizeof(long) == sizeof(int)),
+                                type_id_of<int>,
+                                type_id_of<long long>>
+{};
+
+#undef ESIG_MAKE_TYPE_ID_OF
+
+}// namespace scalars
 }// namespace esig
 
 #endif//ESIG_COEFFICIENTS_H_

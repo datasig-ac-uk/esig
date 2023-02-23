@@ -118,6 +118,9 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/recombine)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/pybind11)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra-lite)
 
+set(BUILD_MOCK OFF CACHE BOOL INTERNAL)
+add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/dlpack)
+
 enable_testing()
 # Add the actual source folders
 add_subdirectory(src)

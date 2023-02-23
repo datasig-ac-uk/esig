@@ -77,6 +77,8 @@ target_sources(esig_py_module PRIVATE
         numpy.h
         py_function_path.cpp
         py_function_path.h
+        py_to_buffer.cpp
+        py_to_buffer.h
         )
 
 target_link_libraries(esig_py_module PRIVATE
@@ -85,6 +87,7 @@ target_link_libraries(esig_py_module PRIVATE
         esig_paths
         recombine::recombine
         pybind11::pybind11
+        dlpack::dlpack
         )
 
 install(TARGETS esig_py_module

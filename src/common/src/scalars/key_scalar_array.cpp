@@ -57,7 +57,10 @@ key_scalar_array::key_scalar_array(scalar_array base, const key_type *keys)
 }
 key_scalar_array::key_scalar_array(const scalar_type *type) noexcept : scalar_array(type) {
 }
-key_scalar_array::key_scalar_array(const scalar_type *type, dimn_t n) noexcept {
+key_scalar_array::key_scalar_array(const scalar_type *type, dimn_t n) noexcept
+    : scalar_array(type)
+{
+    allocate_scalars(static_cast<idimn_t>(n));
 }
 
 key_scalar_array::key_scalar_array(const scalar_type *type, const void *begin, dimn_t count) noexcept
@@ -82,12 +85,18 @@ key_scalar_array &key_scalar_array::operator=(owned_scalar_array &&other) noexce
 void key_scalar_array::allocate_scalars(idimn_t count)
 {
     auto new_size = (count == -1) ? m_size : static_cast<dimn_t>(count);
-    scalar_array::operator=({p_type->allocate(new_size), new_size});
-    m_scalars_owned = true;
+    if (new_size != 0) {
+        scalar_array::operator=({p_type->allocate(new_size), new_size});
+        m_scalars_owned = true;
+    }
 }
 void key_scalar_array::allocate_keys(idimn_t count) {
     auto new_size = (count == -1) ? m_size : static_cast<dimn_t>(count);
-    p_keys = new key_type[new_size];
+    if (new_size != 0) {
+        p_keys = new key_type[new_size];
+    } else {
+        p_keys = nullptr;
+    }
 }
 key_type *key_scalar_array::keys() {
     if (m_keys_owned) {

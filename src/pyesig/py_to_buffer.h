@@ -1,16 +1,18 @@
 //
-// Created by user on 08/12/22.
+// Created by user on 20/02/23.
 //
 
-#ifndef ESIG_SRC_PYESIG_PY_SCALARS_H_
-#define ESIG_SRC_PYESIG_PY_SCALARS_H_
+#ifndef ESIG_SRC_PYESIG_PY_TO_BUFFER_H_
+#define ESIG_SRC_PYESIG_PY_TO_BUFFER_H_
 
 #include "py_esig.h"
 
+#include <vector>
+
 #include <esig/scalars.h>
 
-
 namespace esig { namespace python {
+
 
 struct py_to_buffer_options {
     /// Scalar type to use. If null, will be set to the resulting type
@@ -30,25 +32,25 @@ struct py_to_buffer_options {
     bool no_check_imported = false;
 };
 
-char format_to_type_char(const std::string& fmt);
+
 std::string py_buffer_to_type_id(const py::buffer_info& info);
+const scalars::scalar_type* py_buffer_fmt_to_stype(const std::string& fmt);
+
+const scalars::scalar_type* scalar_type_for_pytype(py::handle object);
+
+void assign_py_object_to_scalar(scalars::scalar_pointer p, py::handle object);
 
 
-const scalars::scalar_type* py_buffer_to_scalar_type(const py::buffer_info& info);
-const scalars::scalar_type* py_type_to_scalar_type(const py::type& type);
 
 
-py::type scalar_type_to_py_type(const scalars::scalar_type*);
 
+scalars::key_scalar_array py_to_buffer(py::handle arg, py_to_buffer_options& options);
 
-scalars::key_scalar_array
-py_to_buffer(const py::object& object, py_to_buffer_options& options);
-
-
-void init_scalars(py::module_& m);
 
 
 } // namespace python
 } // namespace esig
 
-#endif//ESIG_SRC_PYESIG_PY_SCALARS_H_
+
+
+#endif//ESIG_SRC_PYESIG_PY_TO_BUFFER_H_
