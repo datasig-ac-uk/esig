@@ -43,14 +43,6 @@ target_sources(esig_py_module PRIVATE
         lie.h
         free_tensor.cpp
         free_tensor.h
-        py_fmt_to_esig_fmt.cpp
-        py_fmt_to_esig_fmt.h
-        py_buffer_to_buffer.cpp
-        py_buffer_to_buffer.h
-        py_arg_to_ctype.cpp
-        py_arg_to_ctype.h
-        ctype_to_py_fmt.cpp
-        ctype_to_py_fmt.h
         py_tensor_key.cpp
         py_tensor_key.h
         py_lie_letter.cpp
@@ -59,8 +51,6 @@ target_sources(esig_py_module PRIVATE
         py_lie_key.h
         kwargs_to_vector_construction.cpp
         kwargs_to_vector_construction.h
-        list_to_buffer.cpp
-        list_to_buffer.h
         get_vector_construction_data.cpp
         get_vector_construction_data.h
         py_tensor_key_iterator.cpp
@@ -77,8 +67,6 @@ target_sources(esig_py_module PRIVATE
         numpy.h
         py_function_path.cpp
         py_function_path.h
-        py_to_buffer.cpp
-        py_to_buffer.h
         )
 
 target_link_libraries(esig_py_module PRIVATE

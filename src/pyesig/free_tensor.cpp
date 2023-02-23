@@ -4,14 +4,14 @@
 
 #include "free_tensor.h"
 
-
+#include <esig/algebra/context.h>
 #include <esig/algebra/tensor_interface.h>
 
 #include "numpy.h"
 #include "scalar_meta.h"
 #include "kwargs_to_vector_construction.h"
-#include "get_vector_construction_data.h"
 
+#include "py_scalars.h"
 
 using namespace esig;
 using namespace esig::algebra;
@@ -61,14 +61,17 @@ tensor algebra_old up to a given degree.
 static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
     auto helper = esig::python::kwargs_to_construction_data(kwargs);
 
-    auto vcd = esig::python::get_vector_construction_data(data, kwargs, helper);
+    python::py_to_buffer_options options;
+    options.type = helper.ctype;
+
+    auto buffer = python::py_to_buffer(data, options);
 
     if (helper.ctype == nullptr) {
         throw py::value_error("could not deduce appropriate scalar type");
     }
 
-    if (helper.width == 0 && vcd.data.size() > 0) {
-        helper.width = static_cast<deg_t>(vcd.data.size()) - 1;
+    if (helper.width == 0 && buffer.size() > 0) {
+        helper.width = static_cast<deg_t>(buffer.size()) - 1;
     }
 
     if (!helper.ctx) {
@@ -78,7 +81,13 @@ static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
         helper.ctx = get_context(helper.width, helper.depth, helper.ctype, {});
     }
 
-    return helper.ctx->construct_tensor(vcd);
+    auto result = helper.ctx->construct_tensor({std::move(buffer), helper.vtype});
+
+    if (options.cleanup) {
+        options.cleanup();
+    }
+
+    return result;
 }
 
 

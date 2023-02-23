@@ -13,6 +13,7 @@
 #include "numpy.h"
 #include "get_vector_construction_data.h"
 #include "py_lie_key.h"
+#include "py_scalars.h"
 
 using namespace esig;
 using namespace esig::algebra;
@@ -28,14 +29,19 @@ Element of the free Lie algebra.
 static lie construct_lie(py::object data, py::kwargs kwargs) {
     auto helper = esig::python::kwargs_to_construction_data(kwargs);
 
-    auto vcd = esig::python::get_vector_construction_data(data, kwargs, helper);
+    py_to_buffer_options options;
+    options.type = helper.ctype;
+    options.allow_scalar = false;
+
+    auto buffer = py_to_buffer(data, options);
+
 
     if (helper.ctype == nullptr) {
         throw py::value_error("could not deduce an appropriate scalar_type");
     }
 
-    if (helper.width == 0 && vcd.data.size() > 0) {
-        helper.width = static_cast<deg_t>(vcd.data.size());
+    if (helper.width == 0 && buffer.size() > 0) {
+        helper.width = static_cast<deg_t>(buffer.size());
     }
 
     if (!helper.ctx) {
@@ -45,7 +51,13 @@ static lie construct_lie(py::object data, py::kwargs kwargs) {
         helper.ctx = get_context(helper.width, helper.depth, helper.ctype, {});
     }
 
-    return helper.ctx->construct_lie(vcd);
+    auto result = helper.ctx->construct_lie({std::move(buffer), helper.vtype});
+
+    if (options.cleanup) {
+        options.cleanup();
+    }
+
+    return result;
 }
 
 

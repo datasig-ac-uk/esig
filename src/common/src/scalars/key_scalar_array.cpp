@@ -67,6 +67,15 @@ key_scalar_array::key_scalar_array(const scalar_type *type, const void *begin, d
     : scalar_array(begin, type, count), m_scalars_owned(false)
 {
 }
+key_scalar_array &key_scalar_array::operator=(const scalar_array &other) noexcept {
+    if (&other != this) {
+        this->~key_scalar_array();
+        scalar_array::operator=(other);
+        m_scalars_owned = false;
+        m_keys_owned = false;
+    }
+    return *this;
+}
 key_scalar_array &key_scalar_array::operator=(key_scalar_array &&other) noexcept {
     if (&other != this) {
         m_scalars_owned = other.m_scalars_owned;

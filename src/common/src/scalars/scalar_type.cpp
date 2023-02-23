@@ -24,6 +24,7 @@ std::pair<scalar, void *> scalar_type::new_owned_scalar() const {
 }
 const scalar_type* scalar_type::rational_type() const noexcept
 {
+
     return this;
 }
 
@@ -74,4 +75,39 @@ void scalar_type::div_inplace(void * lhs, scalar_pointer rhs) const {
 
 void scalar_type::print(const void * arg, std::ostream &os) const {
     os << to_scalar_t(arg);
+}
+
+const scalar_type *scalar_type::from_type_details(const scalar_type_details &details) {
+
+    switch (details.code) {
+        case 0U: // signed int
+        case 1U: // unsigned int
+            return scalar_type::of<double>();
+        case 2U: // float
+            switch (details.bits) {
+                case 32:
+                    return scalar_type::of<float>();
+                case 64:
+                    return scalar_type::of<double>();
+            }
+        case 3U: // Opaque handle
+        case 4U: // bfloat
+        case 5U: // Complex
+            throw std::invalid_argument("no matching type");
+        case 6U: // Bool
+            return scalar_type::of<double>();
+    }
+
+    throw std::invalid_argument("no matching type");
+}
+const scalar_type *scalar_type::for_id(const std::string &id) {
+
+    try {
+        return get_type(id);
+    } catch (...) {
+        return scalar_type::of<double>();
+    }
+
+}
+void scalar_type::convert_copy(scalar_pointer out, const void *in, dimn_t count, const scalar_type_details &details) const {
 }

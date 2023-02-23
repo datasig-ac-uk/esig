@@ -30,17 +30,20 @@ struct device_info {
     std::int32_t device_id;
 };
 
+struct scalar_type_details {
+    std::uint8_t code;
+    std::uint8_t bits;
+    std::uint16_t lanes;
+    device_info device;
+};
+
 struct scalar_type_info {
     std::string id;
     std::string name;
     int size;
     int alignment;
 
-    std::uint8_t code;
-    std::uint8_t bits;
-    std::uint16_t lanes;
-
-    device_info device;
+    scalar_type_details info;
 };
 
 class scalar_type;
@@ -53,10 +56,26 @@ class owned_scalar_array;
 namespace dtl {
 template<typename T>
 class scalar_type_trait;
-}// namespace dtl
 
 template<typename T>
-struct type_id_of;
+struct type_id_of_impl;
+
+template<typename Scalar>
+class ESIG_EXPORT scalar_type_holder {
+    static_assert(!std::is_pointer<Scalar>::value, "Scalar value cannot be a pointer");
+    static_assert(!std::is_reference<Scalar>::value, "Scalar value cannot be a reference");
+
+public:
+    static const scalar_type *get_type() noexcept;
+};
+}// namespace dtl
+
+template <typename T>
+constexpr const std::string& type_id_of() noexcept
+{
+    return dtl::type_id_of_impl<T>::get_id();
+}
+
 
 
 struct unsigned_size_type_marker {};
@@ -132,6 +151,9 @@ public:
         return dtl::scalar_type_holder<T>::get_type();
     }
 
+    static const scalar_type* from_type_details(const scalar_type_details& details);
+    static const scalar_type* for_id(const std::string& id);
+
     virtual scalar from(int) const = 0;
     virtual scalar from(long long, long long) const = 0;
 
@@ -146,6 +168,7 @@ public:
     virtual void deallocate(scalar_pointer, dimn_t) const = 0;
     virtual void convert_copy(void *out, scalar_pointer in, dimn_t count) const = 0;
     virtual void convert_copy(scalar_pointer &out, const void *in, dimn_t count, const std::string &type_id) const = 0;
+    virtual void convert_copy(scalar_pointer out, const void* in, dimn_t count, const scalar_type_details& details) const;
     virtual scalar convert(scalar_pointer other) const = 0;
 
     virtual scalar one() const;
@@ -177,6 +200,8 @@ public:
 
 ESIG_EXPORT void register_type(const std::string &identifier, const scalar_type *type);
 ESIG_EXPORT const scalar_type *get_type(const std::string &identifier);
+
+
 
 ESIG_EXPORT
 inline bool operator==(const scalar_type &lhs, const scalar_type &rhs) noexcept { return &lhs == &rhs; }
@@ -344,7 +369,7 @@ public:
             p_data = p_type->allocate(1).ptr();
         }
 
-        const auto &type_id = dtl::type_id_of<T>::get_id();
+        const auto &type_id = type_id_of<T>();
         if (m_pointer_type == InterfacePointer) {
             static_cast<scalar_interface*>(const_cast<void*>(p_data))
                 ->assign(std::addressof(arg), type_id);
@@ -470,6 +495,7 @@ public:
 
     explicit operator owned_scalar_array() &&noexcept;
 
+    key_scalar_array& operator=(const scalar_array& other) noexcept;
     key_scalar_array &operator=(key_scalar_array &&other) noexcept;
     key_scalar_array &operator=(owned_scalar_array &&other) noexcept;
 
@@ -551,14 +577,7 @@ scalar_cast(const scalar &arg) {
 
 namespace dtl {
 
-template<typename Scalar>
-class ESIG_EXPORT scalar_type_holder {
-    static_assert(!std::is_pointer<Scalar>::value, "Scalar value cannot be a pointer");
-    static_assert(!std::is_reference<Scalar>::value, "Scalar value cannot be a reference");
 
-public:
-    static const scalar_type *get_type() noexcept;
-};
 
 // Explicit implementation for float defined in the library
 template<>
@@ -754,12 +773,10 @@ public:
 //};
 
 
-}// namespace dtl
-
 
 #define ESIG_MAKE_TYPE_ID_OF(TYPE, NAME)           \
     template<>                                        \
-    struct type_id_of<TYPE> {                       \
+    struct type_id_of_impl<TYPE> {                       \
         static const std::string &get_id() noexcept { \
             static const std::string type_id(NAME);   \
             return type_id;                           \
@@ -782,14 +799,15 @@ ESIG_MAKE_TYPE_ID_OF(double, "f64");
 
 // Long is silly. On Win64 it is 32 bits (because, Microsoft) on Unix, it is 64 bits
 template <>
-struct type_id_of<long>
+struct type_id_of_impl<long>
     : public std::conditional_t<(sizeof(long) == sizeof(int)),
-                                type_id_of<int>,
-                                type_id_of<long long>>
+                                type_id_of_impl<int>,
+                                type_id_of_impl<long long>>
 {};
 
 #undef ESIG_MAKE_TYPE_ID_OF
 
+}// namespace dtl
 }// namespace scalars
 }// namespace esig
 

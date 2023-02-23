@@ -579,6 +579,9 @@ public:
     std::ostream &print(std::ostream &os) const override {
         return os << static_cast<const value_type&>(m_data);
     }
+
+    void assign(const void *data, const std::string &type_id) override {
+    }
 };
 
 

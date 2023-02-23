@@ -6,7 +6,7 @@
 
 #include "py_context.h"
 #include "scalar_meta.h"
-#include "py_arg_to_ctype.h"
+#include "py_scalars.h"
 #include "numpy.h"
 
 #include <esig/algebra/context.h>

@@ -7,8 +7,9 @@
 
 #include "py_esig.h"
 
-#include <esig/scalars.h>
+#include <functional>
 
+#include <esig/scalars.h>
 
 namespace esig { namespace python {
 
@@ -28,6 +29,9 @@ struct py_to_buffer_options {
     /// Do not check std library types or imported data types.
     /// All Python types will (try) to be converted to double.
     bool no_check_imported = false;
+
+    /// cleanup function to be called when we're finished with the data
+    std::function<void(void)> cleanup = nullptr;
 };
 
 char format_to_type_char(const std::string& fmt);
@@ -36,10 +40,10 @@ std::string py_buffer_to_type_id(const py::buffer_info& info);
 
 const scalars::scalar_type* py_buffer_to_scalar_type(const py::buffer_info& info);
 const scalars::scalar_type* py_type_to_scalar_type(const py::type& type);
-
+const scalars::scalar_type* py_arg_to_ctype(const py::object& object);
 
 py::type scalar_type_to_py_type(const scalars::scalar_type*);
-
+void assign_py_object_to_scalar(scalars::scalar_pointer ptr, py::handle object);
 
 scalars::key_scalar_array
 py_to_buffer(const py::object& object, py_to_buffer_options& options);
