@@ -230,7 +230,10 @@ public:
 
     partition(real_interval base, std::initializer_list<param_t> midpoints);
 
-    real_interval operator[](dimn_t index) noexcept;
+    real_interval operator[](dimn_t index) const noexcept;
+
+    dimn_t size() const noexcept { return m_midpoints.size(); }
+
 
 };
 

@@ -24,7 +24,7 @@ partition::partition(real_interval base, std::initializer_list<param_t> midpoint
     std::sort(m_midpoints.begin(), m_midpoints.end());
 }
 
-real_interval partition::operator[](dimn_t index) noexcept {
+real_interval partition::operator[](dimn_t index) const noexcept {
     assert(index < m_midpoints.size());
     if (m_midpoints.empty()) {
         return {*this};

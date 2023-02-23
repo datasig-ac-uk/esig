@@ -4,6 +4,7 @@
 
 #include <esig/paths/path.h>
 #include <cmath>
+#include "esig/paths/piecewise_lie_path.h"
 
 namespace esig {
 namespace paths {
@@ -148,6 +149,21 @@ const path_metadata& path::metadata() const noexcept {
 
 std::unique_ptr<const path_interface> path_base_access::take(path &&p) noexcept {
     return std::move(p.p_impl);
+}
+
+path path::simplify_path(const partition &part, accuracy_t accuracy) const {
+
+    auto md = metadata();
+
+    std::vector<typename piecewise_lie_path::lie_piece> parts;
+    parts.reserve(part.size());
+
+    for (dimn_t i=0; i<part.size(); ++i) {
+        auto ivl = part[i];
+        parts.emplace_back(ivl, log_signature(ivl, accuracy));
+    }
+
+    return path(piecewise_lie_path(std::move(parts), md));
 }
 
 }// namespace paths

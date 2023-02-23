@@ -249,6 +249,7 @@ public:
 // TODO: Add new interface that constructs a simplified path from a partition
 //    paths::path rough_simplified_path(partiton, deg_t depth)
 
+    path simplify_path(const partition& part, accuracy_t accuracy) const;
 };
 
 
