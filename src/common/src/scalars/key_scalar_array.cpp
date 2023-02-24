@@ -101,6 +101,9 @@ void key_scalar_array::allocate_scalars(idimn_t count)
 }
 void key_scalar_array::allocate_keys(idimn_t count) {
     auto new_size = (count == -1) ? m_size : static_cast<dimn_t>(count);
+    if (p_keys != nullptr && m_keys_owned) {
+        delete[] p_keys;
+    }
     if (new_size != 0) {
         p_keys = new key_type[new_size];
     } else {

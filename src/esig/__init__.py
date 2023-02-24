@@ -47,7 +47,8 @@ from esig._esig import (
     rational as Rational,
     get_context,
     Stream,
-    LieIncrementPath
+    LieIncrementPath,
+    VectorType
 )
 
 __all__ = [
@@ -81,6 +82,7 @@ __all__ = [
     "get_context",
     "Stream",
     "LieIncrementPath",
+    "VectorType"
 ]
 
 

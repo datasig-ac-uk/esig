@@ -31,6 +31,8 @@ public:
     explicit py_lie_key(deg_t width, const py_lie_key &left, const py_lie_key &right);
     py_lie_key(const algebra::context* ctx, key_type key);
 
+    deg_t width() const noexcept { return m_width; }
+
     bool is_letter() const noexcept;
     let_t as_letter() const;
     std::string to_string() const;

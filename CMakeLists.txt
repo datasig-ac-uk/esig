@@ -69,10 +69,17 @@ if (NOT PYTHON_FOUND AND SKBUILD)
 else()
     # Look for Virtual environments first
     set(Python_FIND_VIRTUALENV FIRST)
-    if (EXISTS ${CMAKE_SOURCE_DIR}/venv)
+    if (DEFINED ENV{VIRTUAL_ENV})
+        set(Python_ROOT_DIR "$ENV{VIRTUAL_ENV}")
+    elseif(EXISTS ${CMAKE_SOURCE_DIR}/venv)
         set(Python_ROOT_DIR "${CMAKE_SOURCE_DIR}/venv")
     endif()
+endif()
 
+if (DEFINED ENV{VIRTUAL_ENV})
+    # Put the venv/lib file on the prefix path so we can
+    # find MKL if it was pip-installed.
+    list(PREPEND CMAKE_PREFIX_PATH "$ENV{VIRTUAL_ENV}/lib")
 endif()
 
 message(STATUS "Python root: ${Python_ROOT_DIR}")
@@ -82,6 +89,8 @@ find_package(Python 3 REQUIRED
         Development.Module
         NumPy
         )
+
+
 
 message(STATUS "Found Python: ${Python_VERSION}")
 message(STATUS "Python executable: ${Python_EXECUTABLE}")
@@ -117,7 +126,8 @@ add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/recombine)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/pybind11)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/libalgebra-lite)
-
+# DLPACK has an annoying feature where it tries to build a demo
+# library. Disable this here
 set(BUILD_MOCK OFF CACHE BOOL INTERNAL)
 add_subdirectory(${CMAKE_CURRENT_LIST_DIR}/external/dlpack)
 

@@ -33,11 +33,16 @@ static lie construct_lie(py::object data, py::kwargs kwargs) {
     options.type = helper.ctype;
     options.allow_scalar = false;
 
+
+
     auto buffer = py_to_buffer(data, options);
 
 
     if (helper.ctype == nullptr) {
-        throw py::value_error("could not deduce an appropriate scalar_type");
+        if (options.type == nullptr) {
+            throw py::value_error("could not deduce an appropriate scalar_type");
+        }
+        helper.ctype = options.type;
     }
 
     if (helper.width == 0 && buffer.size() > 0) {
@@ -71,7 +76,7 @@ void esig::python::init_lie(py::module_ &m) {
     klass.def(py::init(&construct_lie), "data"_a);
 
     klass.def_property_readonly("width", &lie::width);
-    klass.def_property_readonly("depth", &lie::depth);
+    klass.def_property_readonly("max_degree", &lie::depth);
     klass.def_property_readonly("dtype", &lie::coeff_type);
     klass.def_property_readonly("storage_type", &lie::storage_type);
 

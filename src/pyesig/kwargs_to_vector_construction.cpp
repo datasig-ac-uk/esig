@@ -4,9 +4,9 @@
 
 #include "kwargs_to_vector_construction.h"
 
+#include "py_scalars.h"
 
 #include "py_context.h"
-#include "py_arg_to_ctype.h"
 
 esig::python::py_vector_construction_helper esig::python::kwargs_to_construction_data(const py::kwargs &kwargs) {
 

@@ -10,7 +10,7 @@
 #include "numpy.h"
 #include "scalar_meta.h"
 #include "kwargs_to_vector_construction.h"
-
+#include "py_tensor_key.h"
 #include "py_scalars.h"
 
 using namespace esig;
@@ -61,13 +61,27 @@ tensor algebra_old up to a given degree.
 static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
     auto helper = esig::python::kwargs_to_construction_data(kwargs);
 
+    auto py_key_type = py::type::of<python::py_tensor_key>();
+    python::alternative_key_type alt {
+        py_key_type,
+        [](py::handle py_key) -> key_type {
+            return static_cast<key_type>(py_key.cast<python::py_tensor_key>());
+     }};
+
     python::py_to_buffer_options options;
     options.type = helper.ctype;
+    options.alternative_key = &alt;
 
     auto buffer = python::py_to_buffer(data, options);
 
+
+
+
     if (helper.ctype == nullptr) {
-        throw py::value_error("could not deduce appropriate scalar type");
+        if (options.type == nullptr) {
+            throw py::value_error("could not deduce appropriate scalar type");
+        }
+        helper.ctype = options.type;
     }
 
     if (helper.width == 0 && buffer.size() > 0) {
@@ -79,6 +93,17 @@ static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
             throw py::value_error("you must provide either context or both width and depth");
         }
         helper.ctx = get_context(helper.width, helper.depth, helper.ctype, {});
+    }
+
+    if (!helper.vtype_requested) {
+        if (buffer.has_keys()) {
+            // if data comes and k-v pairs, then it is reasonable to assume
+            // the user wants a sparse tensor.
+            helper.vtype = algebra::vector_type::sparse;
+        } else {
+            // otherwise dense
+            helper.vtype = algebra::vector_type::dense;
+        }
     }
 
     auto result = helper.ctx->construct_tensor({std::move(buffer), helper.vtype});

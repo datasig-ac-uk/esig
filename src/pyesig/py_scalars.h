@@ -13,6 +13,12 @@
 
 namespace esig { namespace python {
 
+
+struct alternative_key_type {
+    py::handle py_key_type;
+    std::function<key_type(py::handle)> converter;
+};
+
 struct py_to_buffer_options {
     /// Scalar type to use. If null, will be set to the resulting type
     const scalars::scalar_type *type = nullptr;
@@ -31,7 +37,11 @@ struct py_to_buffer_options {
     bool no_check_imported = false;
 
     /// cleanup function to be called when we're finished with the data
-    std::function<void(void)> cleanup = nullptr;
+    std::function<void()> cleanup = nullptr;
+
+    /// Alternative acceptable key_type/conversion pair
+    alternative_key_type* alternative_key = nullptr;
+
 };
 
 char format_to_type_char(const std::string& fmt);

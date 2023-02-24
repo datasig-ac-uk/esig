@@ -73,7 +73,7 @@ stream lie_increment_path_from_increments(const py::object &data, const py::kwar
         num_increments = 1;
     } else {
         increment_size = options.shape[1];
-        num_increments = options.shape[1];
+        num_increments = options.shape[0];
     }
 
     if (md.ctype == nullptr) {
@@ -127,7 +127,7 @@ stream lie_increment_path_from_increments(const py::object &data, const py::kwar
         throw py::value_error("mismatch between number of rows in data and number of indices");
     }
 
-    auto result = stream(paths::lie_increment_path(static_cast<scalars::owned_scalar_array>(std::move(buffer)), indices, md));
+    auto result = stream(paths::lie_increment_path(scalars::owned_scalar_array(buffer), indices, md));
 
     if (options.cleanup) {
         options.cleanup();

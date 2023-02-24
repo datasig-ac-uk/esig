@@ -143,6 +143,7 @@ py_tensor_key construct_key(const py::args &args, const py::kwargs &kwargs) {
 
 }// namespace
 
+
 void esig::python::init_py_tensor_key(pybind11::module_ &m) {
     py::class_<py_tensor_key> klass(m, "TensorKey");
     klass.def(py::init(&construct_key));

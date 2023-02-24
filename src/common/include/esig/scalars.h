@@ -364,7 +364,7 @@ public:
         }
 
         assert(p_type != nullptr);
-        if (p_data = nullptr) {
+        if (p_data == nullptr) {
             m_pointer_type = OwnedPointer;
             p_data = p_type->allocate(1).ptr();
         }

@@ -253,7 +253,7 @@ template<typename OutType>
 OutType lite_context<Coefficients>::constructImpl(const vector_construction_data &data,
                                                   const lal::basis_pointer<typename OutType::basis_type>& basis,
                                                   const std::shared_ptr<const typename OutType::multiplication_type>& mul) const {
-    OutType result(basis);
+    OutType result(basis, mul);
 
     if (data.data.is_null()) {
         return result;
@@ -277,7 +277,7 @@ OutType lite_context<Coefficients>::constructImpl(const vector_construction_data
         const auto* keys = data.data.keys();
 
         for (dimn_t i=0; i<size; ++i) {
-            result[basis->index_to_key(i)] = data_ptr[i];
+            result[basis->index_to_key(keys[i])] = data_ptr[i];
         }
 
     } else {
