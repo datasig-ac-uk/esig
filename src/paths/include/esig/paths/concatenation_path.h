@@ -5,7 +5,7 @@
 #ifndef ESIG_SRC_PATHS_SRC_CONCATENATION_PATH_H_
 #define ESIG_SRC_PATHS_SRC_CONCATENATION_PATH_H_
 
-#include <esig/paths/path.h>
+#include "path.h"
 
 namespace esig {
 namespace paths {

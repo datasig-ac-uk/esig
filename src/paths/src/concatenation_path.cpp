@@ -2,7 +2,7 @@
 // Created by sam on 19/08/22.
 //
 
-#include "concatenation_path.h"
+#include "esig/paths/concatenation_path.h"
 
 namespace esig {
 namespace paths {

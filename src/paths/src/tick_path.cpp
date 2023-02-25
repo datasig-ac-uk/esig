@@ -2,7 +2,7 @@
 // Created by user on 24/05/22.
 //
 
-#include "tick_path.h"
+#include "esig/paths/tick_path.h"
 
 #include <cassert>
 #include <algorithm>

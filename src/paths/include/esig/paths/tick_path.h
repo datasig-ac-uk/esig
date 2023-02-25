@@ -5,8 +5,8 @@
 #ifndef ESIG_SRC_PATHS_SRC_TICK_PATH_H_
 #define ESIG_SRC_PATHS_SRC_TICK_PATH_H_
 
-#include <esig/implementation_types.h>
-#include <esig/paths/path.h>
+#include "esig/implementation_types.h"
+#include "path.h"
 
 #include <boost/container/flat_map.hpp>
 

@@ -10,7 +10,7 @@ include(GenerateExportHeader)
 
 
 
-add_library(esig_paths SHARED src/concatenation_path.cpp src/concatenation_path.h src/concatenate.cpp)
+add_library(esig_paths SHARED src/concatenation_path.cpp include/esig/paths/concatenation_path.h src/concatenate.cpp)
 
 #add_library(esig_paths SHARED )
 #pybind11_extension(esig_paths)

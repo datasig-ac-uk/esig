@@ -1,7 +1,7 @@
 //
 // Created by user on 24/05/22.
 //
-#include "../src/tick_path.h"
+#include "esig/paths/tick_path.h"
 
 #include <esig/algebra/context.h>
 #include <esig/implementation_types.h>

@@ -8,6 +8,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include <sstream>
 
 #include <dlpack/dlpack.h>
 #include <pybind11/operators.h>
@@ -179,7 +180,7 @@ const scalars::scalar_type *python::py_type_to_scalar_type(const py::type &type)
 py::type python::scalar_type_to_py_type(const scalars::scalar_type *type) {
 
     if (type == scalars::scalar_type::of<float>() || type == scalars::scalar_type::of<double>()) {
-        return py::reinterpret_borrow<py::type>((PyObject *)&PyFloat_Type);
+        return py::reinterpret_borrow<py::type>((PyObject*) &PyFloat_Type);
     }
 
     throw py::type_error("no matching type for type " + type->info().name);
@@ -303,6 +304,7 @@ static inline bool is_key(py::handle arg, python::alternative_key_type *alternat
     } else if (py::isinstance<py::int_>(arg)) {
         return true;
     }
+    return false;
 }
 
 static inline bool is_kv_pair(py::handle arg, python::alternative_key_type *alternative) {
@@ -626,4 +628,43 @@ void esig::python::init_scalars(py::module_ &m) {
     init_scalar_type(m);
 
     py::class_<scalar> klass(m, "Scalar", SCALAR_DOC);
+
+    klass.def("scalar_type", [](const scalar& self) {
+             return scalar_type_to_py_type(self.type());
+         });
+
+    klass.def(-py::self);
+    klass.def(py::self + py::self);
+    klass.def(py::self - py::self);
+    klass.def(py::self * py::self);
+    klass.def(py::self / py::self);
+
+    klass.def(py::self += py::self);
+    klass.def(py::self -= py::self);
+    klass.def(py::self *= py::self);
+    klass.def(py::self /= py::self);
+
+    klass.def(py::self == py::self);
+    klass.def(py::self != py::self);
+
+    klass.def("__eq__", [](const scalar& self, scalar_t other) {
+            return self.to_scalar_t() == other;
+         });
+    klass.def("__eq__", [](scalar_t other, const scalar& self) {
+            return self.to_scalar_t() == other;
+         });
+
+
+    klass.def("__str__", [](const scalar& self) {
+        std::stringstream ss;
+        ss << self;
+        return ss.str();
+    });
+    klass.def("__repr__", [](const scalar& self) {
+        std::stringstream ss;
+        ss << "Scalar(type=" << self.type()->info().name
+           << ", value approx " << self.to_scalar_t()
+           << ")";
+        return ss.str();
+    });
 }
