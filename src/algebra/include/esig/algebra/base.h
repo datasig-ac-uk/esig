@@ -227,12 +227,11 @@ struct AlgebraBundleInterface : public Base
 };
 
 template <typename Argument, typename Result=Argument>
-struct operator_interface
-{
+struct OperatorInterface {
     using argument_type = Argument;
     using result_type = Result;
 
-    virtual ~operator_interface() = default;
+    virtual ~OperatorInterface() = default;
 
     virtual result_type apply(const argument_type& argument) const = 0;
 };
@@ -502,7 +501,7 @@ public:
 template <typename Interface, typename Impl>
 class operator_implementation : public Interface
 {
-    using base_interface = operator_interface<
+    using base_interface = OperatorInterface<
         typename Interface::argument_type,
         typename Interface::result_type>;
 
