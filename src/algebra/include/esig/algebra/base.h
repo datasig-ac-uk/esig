@@ -545,12 +545,12 @@ struct implementation_wrapper_selection<Interface, Impl, std::true_type>
     using type = borrowed_algebra_implementation<Interface, Impl>;
 };
 
-template <typename AlgebraInterface, typename Fibre, typename Impl, typename Options>
+template <typename BaseInterface, typename Fibre, typename Impl, typename Options>
 struct implementation_wrapper_selection<
-    AlgebraBundleInterface<AlgebraInterface, Fibre>,
+    AlgebraBundleInterface<BaseInterface, Fibre>,
     Impl, Options>
 {
-    using type = algebra_bundle_implementation<AlgebraInterface, Impl, AlgebraInterface<Fibre>>;
+    using type = algebra_bundle_implementation<BaseInterface, Impl, AlgebraInterface<Fibre>>;
 };
 
 template <typename Interface, typename Impl>
