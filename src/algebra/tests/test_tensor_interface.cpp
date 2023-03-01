@@ -14,7 +14,7 @@ class MockFreeTensor : public free_tensor_interface
 {
 public:
     using interface_t = free_tensor_interface;
-    using algebra_interface_t = algebra_interface<free_tensor>;
+    using algebra_interface_t = AlgebraInterface<free_tensor>;
 
 //    MOCK_METHOD(algebra_iterator, begin, (), (const, override));
 //    MOCK_METHOD(algebra_iterator, end, (), (const, override));

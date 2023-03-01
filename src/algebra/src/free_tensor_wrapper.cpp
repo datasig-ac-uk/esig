@@ -7,7 +7,7 @@ namespace esig {
 namespace algebra {
 
 
-template class algebra_interface<free_tensor>;
+template class AlgebraInterface<free_tensor>;
 template class algebra_base<free_tensor_interface>;
 
 

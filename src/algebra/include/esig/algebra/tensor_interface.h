@@ -23,9 +23,9 @@ class free_tensor;
 class shuffle_tensor;
 
 
-extern template class ESIG_ALGEBRA_EXPORT algebra_interface<free_tensor>;
+extern template class ESIG_ALGEBRA_EXPORT AlgebraInterface<free_tensor>;
 
-class ESIG_ALGEBRA_EXPORT free_tensor_interface : public algebra_interface<free_tensor>
+class ESIG_ALGEBRA_EXPORT free_tensor_interface : public AlgebraInterface<free_tensor>
 {
 public:
     // Special functions
@@ -37,10 +37,10 @@ public:
 
 
 
-extern template class ESIG_ALGEBRA_EXPORT algebra_interface<shuffle_tensor>;
+extern template class ESIG_ALGEBRA_EXPORT AlgebraInterface<shuffle_tensor>;
 
 
-using shuffle_tensor_interface = algebra_interface<shuffle_tensor>;
+using shuffle_tensor_interface = AlgebraInterface<shuffle_tensor>;
 
 
 
@@ -57,7 +57,7 @@ class free_tensor_implementation : public algebra_implementation<free_tensor_int
 {
     using base = algebra_implementation<free_tensor_interface, Impl>;
     friend class algebra_access<free_tensor_interface>;
-    friend class algebra_access<algebra_interface<free_tensor>>;
+    friend class algebra_access<AlgebraInterface<free_tensor>>;
 
 public:
 
@@ -74,7 +74,7 @@ class borrowed_free_tensor_implementation : public borrowed_algebra_implementati
 {
     using base = borrowed_algebra_implementation<free_tensor_interface, Impl>;
     friend class ::esig::algebra::algebra_access<free_tensor_interface>;
-    friend class ::esig::algebra::algebra_access<algebra_interface<free_tensor>>;
+    friend class ::esig::algebra::algebra_access<AlgebraInterface<free_tensor>>;
 
 
 public:

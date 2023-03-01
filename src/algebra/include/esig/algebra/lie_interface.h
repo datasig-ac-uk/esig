@@ -21,7 +21,7 @@ namespace algebra {
 
 class lie;
 
-using lie_interface = algebra_interface<lie>;
+using lie_interface = AlgebraInterface<lie>;
 
 
 namespace dtl {

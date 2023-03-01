@@ -154,12 +154,11 @@ public:
 
 
 template <typename Algebra>
-struct algebra_interface
-{
+struct AlgebraInterface {
     using algebra_t = Algebra;
     using const_iterator = algebra_iterator;
 
-    virtual ~algebra_interface() = default;
+    virtual ~AlgebraInterface() = default;
 
     virtual dimn_t size() const = 0;
     virtual deg_t degree() const;
@@ -181,38 +180,38 @@ struct algebra_interface
 
     // Arithmetic
     virtual Algebra uminus() const = 0;
-    virtual Algebra add(const algebra_interface& other) const = 0;
-    virtual Algebra sub(const algebra_interface& other) const = 0;
+    virtual Algebra add(const AlgebraInterface & other) const = 0;
+    virtual Algebra sub(const AlgebraInterface & other) const = 0;
     virtual Algebra smul(const scalars::Scalar & other) const = 0;
 //    virtual Algebra left_smul(const coefficient& other) const = 0;
 //    virtual Algebra right_smul(const coefficient& other) const = 0;
     virtual Algebra sdiv(const scalars::Scalar & other) const = 0;
-    virtual Algebra mul(const algebra_interface& other) const = 0;
+    virtual Algebra mul(const AlgebraInterface & other) const = 0;
 
     // Inplace Arithmetic
-    virtual void add_inplace(const algebra_interface& other) = 0;
-    virtual void sub_inplace(const algebra_interface& other) = 0;
+    virtual void add_inplace(const AlgebraInterface & other) = 0;
+    virtual void sub_inplace(const AlgebraInterface & other) = 0;
     virtual void smul_inplace(const scalars::Scalar & other) = 0;
 //    virtual void left_smul_inplace(const coefficient& other) = 0;
 //    virtual void right_smul_inplace(const coefficient& other) = 0;
     virtual void sdiv_inplace(const scalars::Scalar & other) = 0;
-    virtual void mul_inplace(const algebra_interface& other) = 0;
+    virtual void mul_inplace(const AlgebraInterface & other) = 0;
 
     // Hybrid inplace arithmetic
-    virtual void add_scal_mul(const algebra_interface& rhs, const scalars::Scalar & coeff);
-    virtual void sub_scal_mul(const algebra_interface& rhs, const scalars::Scalar & coeff);
-    virtual void add_scal_div(const algebra_interface& rhs, const scalars::Scalar & coeff);
-    virtual void sub_scal_div(const algebra_interface& rhs, const scalars::Scalar & coeff);
-    virtual void add_mul(const algebra_interface& lhs, const algebra_interface& rhs);
-    virtual void sub_mul(const algebra_interface& lhs, const algebra_interface& rhs);
-    virtual void mul_smul(const algebra_interface& rhs, const scalars::Scalar & coeff);
-    virtual void mul_sdiv(const algebra_interface& rhs, const scalars::Scalar & coeff);
+    virtual void add_scal_mul(const AlgebraInterface & rhs, const scalars::Scalar & coeff);
+    virtual void sub_scal_mul(const AlgebraInterface & rhs, const scalars::Scalar & coeff);
+    virtual void add_scal_div(const AlgebraInterface & rhs, const scalars::Scalar & coeff);
+    virtual void sub_scal_div(const AlgebraInterface & rhs, const scalars::Scalar & coeff);
+    virtual void add_mul(const AlgebraInterface & lhs, const AlgebraInterface & rhs);
+    virtual void sub_mul(const AlgebraInterface & lhs, const AlgebraInterface & rhs);
+    virtual void mul_smul(const AlgebraInterface & rhs, const scalars::Scalar & coeff);
+    virtual void mul_sdiv(const AlgebraInterface & rhs, const scalars::Scalar & coeff);
 
     // Display methods
     virtual std::ostream& print(std::ostream& os) const = 0;
 
     // Equality testing
-    virtual bool equals(const algebra_interface& other) const = 0;
+    virtual bool equals(const AlgebraInterface & other) const = 0;
 
 
     virtual std::uintptr_t id() const noexcept;
@@ -317,13 +316,13 @@ protected:
     context_p p_ctx;
 
 
-    static_assert(std::is_base_of<algebra_interface<typename Interface::algebra_t>, Interface>::value,
+    static_assert(std::is_base_of<AlgebraInterface<typename Interface::algebra_t>, Interface>::value,
                   "algebra_interface must be an accessible base of Interface");
 public:
 
     using interface_t = Interface;
     using algebra_t = typename Interface::algebra_t;
-    using algebra_interface_t = algebra_interface<algebra_t>;
+    using algebra_interface_t = AlgebraInterface<algebra_t>;
 
     friend class ::esig::algebra::algebra_access<Interface>;
     friend class ::esig::algebra::algebra_access<algebra_interface_t>;
@@ -416,7 +415,7 @@ class borrowed_algebra_implementation : public Interface
 public:
     using interface_t = Interface;
     using algebra_t = typename Interface::algebra_t;
-    using algebra_interface_t = algebra_interface<algebra_t>;
+    using algebra_interface_t = AlgebraInterface<algebra_t>;
 
 private:
     friend class ::esig::algebra::algebra_access<Interface>;
@@ -552,7 +551,7 @@ struct implementation_wrapper_selection<
     algebra_bundle_interface<AlgebraInterface, Fibre>,
     Impl, Options>
 {
-    using type = algebra_bundle_implementation<AlgebraInterface, Impl, algebra_interface<Fibre>>;
+    using type = algebra_bundle_implementation<AlgebraInterface, Impl, AlgebraInterface<Fibre>>;
 };
 
 template <typename Interface, typename Impl>
@@ -570,7 +569,7 @@ protected:
     friend class algebra_base_access;
 
     friend class algebra_access<Interface>;
-    friend class algebra_access<algebra_interface<typename Interface::algebra_t>>;
+    friend class algebra_access<AlgebraInterface<typename Interface::algebra_t>>;
 
 public:
     using interface_t = Interface;
@@ -746,28 +745,28 @@ std::ostream& operator<<(std::ostream& os, const algebra_base<Interface>& arg)
 
 
 template<typename Algebra>
-deg_t algebra_interface<Algebra>::degree() const {
+deg_t AlgebraInterface<Algebra>::degree() const {
     return 0;
 }
 template<typename Algebra>
-deg_t algebra_interface<Algebra>::width() const {
+deg_t AlgebraInterface<Algebra>::width() const {
     return 0;
 }
 template<typename Algebra>
-deg_t algebra_interface<Algebra>::depth() const {
+deg_t AlgebraInterface<Algebra>::depth() const {
     return 0;
 }
 template<typename Algebra>
-scalars::ScalarArray algebra_interface<Algebra>::dense_data() const {
+scalars::ScalarArray AlgebraInterface<Algebra>::dense_data() const {
     throw std::runtime_error("cannot retrieve dense data");
 }
 
 template<typename Algebra>
-std::uintptr_t algebra_interface<Algebra>::id() const noexcept {
+std::uintptr_t AlgebraInterface<Algebra>::id() const noexcept {
     return 0;
 }
 template<typename Algebra>
-ImplementationType algebra_interface<Algebra>::type() const noexcept {
+ImplementationType AlgebraInterface<Algebra>::type() const noexcept {
     return ImplementationType::owned;
 }
 
@@ -789,42 +788,42 @@ typename algebra_base<Interface>::algebra_t algebra_base<Interface>::from_args(A
 }
 
 template<typename Algebra>
-void algebra_interface<Algebra>::add_scal_mul(const algebra_interface &rhs, const scalars::Scalar &coeff) {
+void AlgebraInterface<Algebra>::add_scal_mul(const AlgebraInterface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.smul(coeff);
     this->add_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::sub_scal_mul(const algebra_interface &rhs, const scalars::Scalar &coeff) {
+void AlgebraInterface<Algebra>::sub_scal_mul(const AlgebraInterface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.smul(coeff);
     this->sub_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::add_scal_div(const algebra_interface &rhs, const scalars::Scalar &coeff) {
+void AlgebraInterface<Algebra>::add_scal_div(const AlgebraInterface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.sdiv(coeff);
     this->add_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::sub_scal_div(const algebra_interface &rhs, const scalars::Scalar &coeff) {
+void AlgebraInterface<Algebra>::sub_scal_div(const AlgebraInterface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.sdiv(coeff);
     this->sub_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::add_mul(const algebra_interface &lhs, const algebra_interface &rhs) {
+void AlgebraInterface<Algebra>::add_mul(const AlgebraInterface &lhs, const AlgebraInterface &rhs) {
     auto tmp = lhs.mul(rhs);
     this->add_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::sub_mul(const algebra_interface &lhs, const algebra_interface &rhs) {
+void AlgebraInterface<Algebra>::sub_mul(const AlgebraInterface &lhs, const AlgebraInterface &rhs) {
     auto tmp = lhs.mul(rhs);
     this->sub_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::mul_smul(const algebra_interface &rhs, const scalars::Scalar &coeff) {
+void AlgebraInterface<Algebra>::mul_smul(const AlgebraInterface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.smul(coeff);
     this->mul_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::mul_sdiv(const algebra_interface &rhs, const scalars::Scalar &coeff) {
+void AlgebraInterface<Algebra>::mul_sdiv(const AlgebraInterface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.sdiv(coeff);
     this->mul_inplace(*tmp);
 }
