@@ -108,16 +108,16 @@ using shuffle_tensor_implementation = algebra_implementation<shuffle_tensor_inte
 } // namespace dtl
 
 
-extern template class ESIG_ALGEBRA_EXPORT algebra_base<free_tensor_interface>;
+extern template class ESIG_ALGEBRA_EXPORT AlgebraBase<free_tensor_interface>;
 
 /**
  * @brief Wrapper class for free tensor objects.
  */
-class ESIG_ALGEBRA_EXPORT free_tensor : public algebra_base<free_tensor_interface>
+class ESIG_ALGEBRA_EXPORT free_tensor : public AlgebraBase<free_tensor_interface>
 {
     friend class algebra_base_access;
 
-    using base = algebra_base<free_tensor_interface>;
+    using base = AlgebraBase<free_tensor_interface>;
 
 public:
 
@@ -133,11 +133,11 @@ public:
 
 
 
-extern template class ESIG_ALGEBRA_EXPORT algebra_base<shuffle_tensor_interface>;
+extern template class ESIG_ALGEBRA_EXPORT AlgebraBase<shuffle_tensor_interface>;
 
-class shuffle_tensor : public algebra_base<shuffle_tensor_interface>
+class shuffle_tensor : public AlgebraBase<shuffle_tensor_interface>
 {
-    using base = algebra_base<shuffle_tensor_interface>;
+    using base = AlgebraBase<shuffle_tensor_interface>;
 public:
     using base::base;
 };

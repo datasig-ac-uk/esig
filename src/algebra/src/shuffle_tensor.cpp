@@ -5,7 +5,7 @@
 #include <iostream>
 
 template class esig::algebra::AlgebraInterface<esig::algebra::shuffle_tensor>;
-template class esig::algebra::algebra_base<esig::algebra::shuffle_tensor_interface>;
+template class esig::algebra::AlgebraBase<esig::algebra::shuffle_tensor_interface>;
 
 
 

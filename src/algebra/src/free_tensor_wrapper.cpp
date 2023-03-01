@@ -8,7 +8,7 @@ namespace algebra {
 
 
 template class AlgebraInterface<free_tensor>;
-template class algebra_base<free_tensor_interface>;
+template class AlgebraBase<free_tensor_interface>;
 
 
 //free_tensor::free_tensor(std::shared_ptr<free_tensor_interface> p)

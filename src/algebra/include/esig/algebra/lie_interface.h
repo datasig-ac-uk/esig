@@ -47,9 +47,9 @@ struct implementation_wrapper_selection<lie_interface, Impl>
 /**
  * @brief Wrapper class for lie objects
  */
-class ESIG_ALGEBRA_EXPORT lie : public algebra_base<lie_interface>
+class ESIG_ALGEBRA_EXPORT lie : public AlgebraBase<lie_interface>
 {
-    using base = algebra_base<lie_interface>;
+    using base = AlgebraBase<lie_interface>;
 
 public:
     using base::base;
