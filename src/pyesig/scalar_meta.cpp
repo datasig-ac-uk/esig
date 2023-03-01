@@ -72,10 +72,10 @@ pybind11::handle esig::python::get_scalar_baseclass() {
     return pybind11::handle(reinterpret_cast<PyObject*>(&PyScalarTypeBase_type));
 }
 
-static std::unordered_map<const scalars::scalar_type*, py::object> ctype_type_cache;
+static std::unordered_map<const scalars::ScalarType *, py::object> ctype_type_cache;
 //static std::mutex ctype_type_lock;
 
-void esig::python::register_scalar_type(const scalars::scalar_type *ctype, pybind11::handle py_type) {
+void esig::python::register_scalar_type(const scalars::ScalarType *ctype, pybind11::handle py_type) {
     auto& found = ctype_type_cache[ctype];
     if (static_cast<bool>(found)) {
         throw std::runtime_error("ctype already registered");
@@ -84,7 +84,7 @@ void esig::python::register_scalar_type(const scalars::scalar_type *ctype, pybin
     found = py::reinterpret_borrow<py::object>(py_type);
 }
 
-pybind11::object esig::python::to_ctype_type(const scalars::scalar_type *type) {
+pybind11::object esig::python::to_ctype_type(const scalars::ScalarType *type) {
     // The GIL must be held because we're working with Python objects anyway.
     const auto found = ctype_type_cache.find(type);
     if (found != ctype_type_cache.end()) {

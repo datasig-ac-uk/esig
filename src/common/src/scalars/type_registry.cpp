@@ -36,10 +36,10 @@ static const std::string reserved[] = {
 //    "O"                 // Object
 };
 static std::mutex scalar_type_cache_lock;
-static std::unordered_map<std::string, const scalar_type*> scalar_type_cache;
+static std::unordered_map<std::string, const ScalarType *> scalar_type_cache;
 
 
-void esig::scalars::register_type(const std::string& identifier, const scalar_type* type)
+void esig::scalars::register_type(const std::string& identifier, const ScalarType * type)
 {
     std::lock_guard<std::mutex> access(scalar_type_cache_lock);
 
@@ -56,7 +56,7 @@ void esig::scalars::register_type(const std::string& identifier, const scalar_ty
     entry = type;
 }
 
-const scalar_type* esig::scalars::get_type(const std::string& identifier)
+const ScalarType * esig::scalars::get_type(const std::string& identifier)
 {
     std::lock_guard<std::mutex> access(scalar_type_cache_lock);
     auto found = scalar_type_cache.find(identifier);

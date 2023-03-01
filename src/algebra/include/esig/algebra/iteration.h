@@ -23,7 +23,7 @@ struct ESIG_ALGEBRA_EXPORT algebra_iterator_item
     virtual ~algebra_iterator_item() = default;
 
     virtual key_type key() const noexcept = 0;
-    virtual scalars::scalar value() const noexcept = 0;
+    virtual scalars::Scalar value() const noexcept = 0;
 };
 
 
@@ -176,7 +176,7 @@ public:
     {
         return basis_traits::convert_key(*p_basis, iter_traits::key(m_current));
     }
-    scalars::scalar value() const noexcept override
+    scalars::Scalar value() const noexcept override
     {
         using trait = ::esig::scalars::dtl::scalar_type_trait<decltype(iter_traits::value(m_current))>;
         return trait::make(iter_traits::value(m_current));

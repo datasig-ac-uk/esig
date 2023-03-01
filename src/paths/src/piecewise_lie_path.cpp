@@ -13,7 +13,7 @@ namespace paths {
 algebra::lie piecewise_lie_path::compute_lie_piece(const piecewise_lie_path::lie_piece &arg, const interval &domain)
 {
     auto sf = (domain.sup() - domain.inf()) / (arg.first.sup() - arg.first.inf());
-    return arg.second.smul(scalars::scalar(sf));
+    return arg.second.smul(scalars::Scalar(sf));
 }
 
 piecewise_lie_path::piecewise_lie_path(std::vector<lie_piece> data, path_metadata metadata)

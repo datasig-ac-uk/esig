@@ -10,7 +10,7 @@
 namespace esig {
 namespace scalars {
 
-class double_type : public standard_scalar_type<double> {
+class double_type : public StandardScalarType<double> {
 public:
     double_type();
 };

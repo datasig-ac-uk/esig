@@ -1,20 +1,23 @@
 //
 // Created by user on 16/11/22.
 //
-#include "esig/scalars.h"
+
+#include "esig/scalar_stream.h"
+#include "esig/scalar.h"
+#include "esig/scalar_array.h"
 
 using namespace esig;
 using namespace esig::scalars;
 
-scalar_stream::scalar_stream() : m_stream(), m_elts_per_row(0), p_type(nullptr)
+ScalarStream::ScalarStream() : m_stream(), m_elts_per_row(0), p_type(nullptr)
 {
 }
 
-scalar_stream::scalar_stream(const scalar_type *type)
+ScalarStream::ScalarStream(const ScalarType *type)
     : m_stream(), m_elts_per_row(0), p_type(type)
 {
 }
-scalar_stream::scalar_stream(scalar_pointer base, std::vector<dimn_t> shape)
+ScalarStream::ScalarStream(ScalarPointer base, std::vector<dimn_t> shape)
 {
     if (!base.is_null()) {
         p_type = base.type();
@@ -43,7 +46,7 @@ scalar_stream::scalar_stream(scalar_pointer base, std::vector<dimn_t> shape)
     }
 }
 
-dimn_t scalar_stream::col_count(esig::dimn_t i) const noexcept
+dimn_t ScalarStream::col_count(esig::dimn_t i) const noexcept
 {
     if (m_elts_per_row.size() == 1) {
         return m_elts_per_row[0];
@@ -54,15 +57,15 @@ dimn_t scalar_stream::col_count(esig::dimn_t i) const noexcept
     return m_elts_per_row[i];
 }
 
-scalar_array scalar_stream::operator[](dimn_t row) const noexcept {
-    return { scalar_pointer(m_stream[row], p_type), col_count(row) };
+ScalarArray ScalarStream::operator[](dimn_t row) const noexcept {
+    return {ScalarPointer(m_stream[row], p_type), col_count(row) };
 }
-scalar scalar_stream::operator[](std::pair<dimn_t, dimn_t> index) const noexcept {
+Scalar ScalarStream::operator[](std::pair<dimn_t, dimn_t> index) const noexcept {
     auto first = operator[](index.first);
     return first[index.second];
 }
 
-void scalar_stream::set_elts_per_row(dimn_t num_elts) noexcept {
+void ScalarStream::set_elts_per_row(dimn_t num_elts) noexcept {
     if (m_elts_per_row.size() > 1) {
         m_elts_per_row.clear();
         m_elts_per_row.push_back(num_elts);
@@ -72,14 +75,14 @@ void scalar_stream::set_elts_per_row(dimn_t num_elts) noexcept {
         m_elts_per_row.push_back(num_elts);
     }
 }
-void scalar_stream::reserve_size(dimn_t num_rows) {
+void ScalarStream::reserve_size(dimn_t num_rows) {
     m_stream.reserve(num_rows);
 }
-void scalar_stream::push_back(const scalar_pointer &data) {
+void ScalarStream::push_back(const ScalarPointer &data) {
     assert(m_elts_per_row.size() == 1 && m_elts_per_row[0] > 0);
     m_stream.push_back(data.ptr());
 }
-void scalar_stream::push_back(const scalar_array &data) {
+void ScalarStream::push_back(const ScalarArray &data) {
     if (m_elts_per_row.size() == 1) {
         m_stream.push_back(data.ptr());
         if (data.size() != m_elts_per_row[0]) {
@@ -93,7 +96,7 @@ void scalar_stream::push_back(const scalar_array &data) {
     }
 }
 
-void scalar_stream::set_ctype(const scalars::scalar_type *type) noexcept {
+void ScalarStream::set_ctype(const scalars::ScalarType *type) noexcept {
     m_stream.clear();
     p_type = type;
 }

@@ -75,7 +75,7 @@ TEST_P(LieFixture, TestLieSubtractionDenseData) {
     }
 
     auto result = l1.sub(l2);
-    ASSERT_EQ(expected, result);
+    ASSERT_EQ(expected, result) << expected << result;
 }
 
 //TEST_P(LieFixture, TestLieSMulDenseData) {

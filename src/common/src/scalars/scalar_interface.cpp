@@ -2,13 +2,15 @@
 // Created by user on 03/11/22.
 //
 
-#include "esig/scalars.h"
+#include "esig/scalar_interface.h"
+#include "esig/scalar_type.h"
+#include "esig/scalar.h"
 #include <ostream>
 
 using namespace esig;
 using namespace esig::scalars;
 
-scalar scalar_interface::uminus() const {
+Scalar ScalarInterface::uminus() const {
     return type()->uminus(to_pointer());
 }
 //scalar scalar_interface::add(const scalar& other) const {
@@ -23,12 +25,12 @@ scalar scalar_interface::uminus() const {
 //scalar scalar_interface::div(const scalar& other) const {
 //    return type()->div(to_pointer().ptr(), other.to_const_pointer());
 //}
-bool scalar_interface::equals(const scalar& other) const noexcept {
+bool ScalarInterface::equals(const Scalar & other) const noexcept {
     return type()->are_equal(to_pointer().ptr(), other.to_const_pointer());
 }
 
 
-std::ostream &scalar_interface::print(std::ostream &os) const {
+std::ostream &ScalarInterface::print(std::ostream &os) const {
     os << this->as_scalar();
     return os;
 }

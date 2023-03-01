@@ -8,7 +8,7 @@ project(esig_algebra VERSION 0.1)
 include(GNUInstallDirs)
 include(GenerateExportHeader)
 
-add_library(esig_algebra SHARED )
+add_library(esig_algebra SHARED)
 # Use add_library because it works better with the IDE
 #add_library(esig_algebra SHARED)
 #pybind11_extension(esig_algebra)
@@ -52,7 +52,9 @@ set(esig_algebra_HEADERS
 
 set_target_properties(esig_algebra PROPERTIES
         PUBLIC_HEADER "${esig_algebra_HEADERS}"
-        LIBRARY_OUTPUT_DIRECTORY "${ESIG_BUILD_PYMODULE}")
+        LIBRARY_OUTPUT_DIRECTORY "${ESIG_BUILD_PYMODULE}"
+        POSITION_INDEPENDENT_CODE ON
+        )
 
 target_sources(esig_algebra
         PRIVATE

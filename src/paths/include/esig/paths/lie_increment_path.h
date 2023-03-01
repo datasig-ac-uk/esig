@@ -16,14 +16,14 @@ namespace paths {
 
 class ESIG_PATHS_EXPORT lie_increment_path : public dyadic_caching_layer
 {
-    scalars::owned_scalar_array m_buffer;
+    scalars::OwnedScalarArray m_buffer;
     std::vector<key_type> m_keys;
     boost::container::flat_map<param_t, dimn_t> m_data;
 
 
 public:
     lie_increment_path(
-            scalars::owned_scalar_array&& buffer,
+            scalars::OwnedScalarArray && buffer,
             const std::vector<param_t>& indices,
             path_metadata metadata
             );

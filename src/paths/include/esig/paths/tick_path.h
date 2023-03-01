@@ -14,7 +14,7 @@ namespace esig {
 namespace paths {
 
 struct tick_entry {
-    scalars::scalar_array data_ptr;
+    scalars::ScalarArray data_ptr;
     const key_type* key_ptr;
 };
 
@@ -40,14 +40,14 @@ struct tick_entry {
  */
 class tick_path : public dyadic_caching_layer
 {
-    scalars::key_scalar_array m_data;
+    scalars::KeyScalarArray m_data;
     boost::container::flat_map<param_t, tick_entry> m_index;
 
 public:
 
     tick_path(path_metadata&& md,
               std::vector<std::pair<param_t, std::vector<key_type>>>&& index_data,
-              scalars::owned_scalar_array&& data);
+              scalars::OwnedScalarArray && data);
     algebra::lie log_signature(const interval &domain, const algebra::context &ctx) const override;
 };
 

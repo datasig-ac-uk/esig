@@ -111,19 +111,19 @@ void make_py_wrapper(pybind11::module_& m, const char* name, const char* doc_str
     klass.def("__rmul__", &algebra_type::smul, py::is_operator());
 
     klass.def("__mul__", [](const algebra_type& self, scalar_t arg) {
-        return self.smul(scalars::scalar(arg));
+        return self.smul(scalars::Scalar(arg));
     }, py::is_operator());
     klass.def("__mul__", [](const algebra_type& self, long long arg) {
         return self.smul(scalar(arg, 1LL, self.coeff_type()));
     }, py::is_operator());
     klass.def("__rmul__", [](const algebra_type& self, scalar_t arg) {
-         return self.smul(scalars::scalar(arg));
+         return self.smul(scalars::Scalar(arg));
     }, py::is_operator());
     klass.def("__rmul__", [](const algebra_type& self, long long arg) {
       return self.smul(scalar(arg, 1LL, self.coeff_type()));
     }, py::is_operator());
     klass.def("__truediv__", [](const algebra_type& self, scalar_t arg) {
-             return self.sdiv(scalars::scalar(arg));
+             return self.sdiv(scalars::Scalar(arg));
          }, py::is_operator());
     klass.def("__truediv__", [](const algebra_type& self, scalar_t arg) {
              return self.sdiv(scalar(arg, 1LL, self.coeff_type()));
@@ -136,13 +136,13 @@ void make_py_wrapper(pybind11::module_& m, const char* name, const char* doc_str
     klass.def("__imul__", &algebra_type::mul_inplace, py::is_operator());
 
     klass.def("__imul__", [](algebra_type& self, scalar_t arg) {
-             return self.smul_inplacei(scalars::scalar(arg));
+             return self.smul_inplacei(scalars::Scalar(arg));
          }, py::is_operator());
     klass.def("__imul__", [](algebra_type& self, long long arg) {
              return self.smul_inplace(scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__itruediv__", [](algebra_type& self, scalar_t arg) {
-             return self.sdiv_inplace(scalars::scalar(arg));
+             return self.sdiv_inplace(scalars::Scalar(arg));
          }, py::is_operator());
     klass.def("__itruediv__", [](algebra_type& self, long long arg) {
              return self.sdiv_inplace(scalar(arg, 1LL, self.coeff_type()));

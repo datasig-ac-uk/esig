@@ -7,11 +7,10 @@
 
 #include "standard_scalar_type.h"
 
-
 namespace esig {
 namespace scalars {
 
-class float_type : public standard_scalar_type<float> {
+class float_type : public StandardScalarType<float> {
 public:
     float_type();
 };

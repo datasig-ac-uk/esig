@@ -26,7 +26,7 @@ public:
     RandomScalars(float lower, float upper) : dist(lower, upper), rng(std::random_device()())
     {}
 
-    scalars::owned_scalar_array random_data(const scalars::scalar_type* ctype, std::size_t count);
+    scalars::OwnedScalarArray random_data(const scalars::ScalarType * ctype, std::size_t count);
 
 
 };

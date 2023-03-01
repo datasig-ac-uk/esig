@@ -40,7 +40,7 @@ static free_tensor context_compute_signature_numpy_darray(const py_context &ctx,
     request.data_stream.set_elts_per_row(width);
     request.data_stream.reserve_size(n_increments);
     for (dimn_t i = 0; i < n_increments; ++i) {
-        request.data_stream.push_back(scalars::scalar_pointer(array.data(i, 0)));
+        request.data_stream.push_back(scalars::ScalarPointer(array.data(i, 0)));
     }
     request.vect_type = vector_type::dense;
 

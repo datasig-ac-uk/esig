@@ -9,7 +9,7 @@ namespace paths {
 
 
 lie_increment_path::lie_increment_path(
-        scalars::owned_scalar_array&& buffer,
+        scalars::OwnedScalarArray && buffer,
         const std::vector<param_t>& indices,
         esig::paths::path_metadata metadata)
     : dyadic_caching_layer(std::move(metadata)), m_buffer(std::move(buffer)), m_data()
@@ -29,7 +29,7 @@ algebra::lie lie_increment_path::log_signature(const esig::interval &domain, con
     }
 
     esig::algebra::signature_data data {
-        scalars::scalar_stream(ctx.ctype()), {}, md.result_vec_type
+        scalars::ScalarStream(ctx.ctype()), {}, md.result_vec_type
     };
 
 

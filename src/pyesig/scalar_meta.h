@@ -19,7 +19,7 @@ namespace esig { namespace python {
 struct PyScalarMetaType {
     PyHeapTypeObject tp_hto;
     char* ht_name;
-    const scalars::scalar_type* tp_ctype;
+    const scalars::ScalarType * tp_ctype;
 };
 
 
@@ -59,10 +59,10 @@ struct new_scalar_type_temps_manager {
 
 } // namespace dtl
 
-void register_scalar_type(const scalars::scalar_type* ctype, pybind11::handle py_type);
+void register_scalar_type(const scalars::ScalarType * ctype, pybind11::handle py_type);
 
 
-inline void make_scalar_type(pybind11::module_& m, const scalars::scalar_type* ctype) {
+inline void make_scalar_type(pybind11::module_& m, const scalars::ScalarType * ctype) {
     namespace py = pybind11;
 
     py::object mcs = py::reinterpret_borrow<py::object>(get_scalar_metaclass());
@@ -135,14 +135,14 @@ inline void make_scalar_type(pybind11::module_& m, const scalars::scalar_type* c
 }
 
 
-inline const scalars::scalar_type* to_stype_ptr(const pybind11::handle& arg) {
+inline const scalars::ScalarType * to_stype_ptr(const pybind11::handle& arg) {
     if (!pybind11::isinstance(arg, get_scalar_metaclass())) {
         throw pybind11::type_error("argument is not a valid scalar type");
     }
     return reinterpret_cast<PyScalarMetaType*>(arg.ptr())->tp_ctype;
 }
 
-PYBIND11_EXPORT pybind11::object to_ctype_type(const scalars::scalar_type* type);
+PYBIND11_EXPORT pybind11::object to_ctype_type(const scalars::ScalarType * type);
 
 
 void init_scalar_metaclass(pybind11::module_& m);

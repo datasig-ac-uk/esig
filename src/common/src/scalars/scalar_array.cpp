@@ -2,46 +2,46 @@
 // Created by sam on 10/11/22.
 //
 
-#include "esig/scalars.h"
+#include "esig/scalar_array.h"
 
 using namespace esig;
 using namespace scalars;
 
-scalar_array::scalar_array(const scalar_array &other) noexcept
-    : scalar_pointer(other), m_size(other.m_size)
+ScalarArray::ScalarArray(const ScalarArray &other) noexcept
+    : ScalarPointer(other), m_size(other.m_size)
 {
 }
-scalar_array::scalar_array(scalar_array &&other) noexcept
-    : scalar_pointer(other), m_size(other.m_size)
+ScalarArray::ScalarArray(ScalarArray &&other) noexcept
+    : ScalarPointer(other), m_size(other.m_size)
 {
     other.p_data = nullptr;
     other.p_type = nullptr;
     other.m_size = 0;
 }
 
-scalar_array::scalar_array(const scalar_type* type)
-    : scalar_pointer(type), m_size(0)
+ScalarArray::ScalarArray(const ScalarType * type)
+    : ScalarPointer(type), m_size(0)
 {}
 
-scalar_array::scalar_array(void *data, const scalar_type *type, dimn_t size)
-    : scalar_pointer(data, type), m_size(size)
+ScalarArray::ScalarArray(void *data, const ScalarType *type, dimn_t size)
+    : ScalarPointer(data, type), m_size(size)
 {
 }
-scalar_array::scalar_array(const void *data, const scalar_type *type, dimn_t size)
-    : scalar_pointer(data, type), m_size(size)
+ScalarArray::ScalarArray(const void *data, const ScalarType *type, dimn_t size)
+    : ScalarPointer(data, type), m_size(size)
 {
 }
 
-scalar_array &scalar_array::operator=(const scalar_array &other) noexcept {
+ScalarArray &ScalarArray::operator=(const ScalarArray &other) noexcept {
     if (&other != this) {
-        scalar_pointer::operator=(other);
+        ScalarPointer::operator=(other);
         m_size = other.m_size;
     }
     return *this;
 }
-scalar_array &scalar_array::operator=(scalar_array &&other) noexcept {
+ScalarArray &ScalarArray::operator=(ScalarArray &&other) noexcept {
     if (&other != this) {
-        scalar_pointer::operator=(other);
+        ScalarPointer::operator=(other);
         m_size = other.m_size;
         other.p_data = nullptr;
         other.p_type = nullptr;

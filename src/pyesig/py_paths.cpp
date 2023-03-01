@@ -46,7 +46,7 @@ void esig::python::buffer_to_indices(std::vector<param_t> &indices, const py::bu
         memcpy(dst, ptr, count * sizeof(double));
     } else {
         auto conversion = scalars::get_conversion(py_buffer_to_type_id(info), "f64");
-        conversion(dst, ptr, count);
+        conversion(scalars::ScalarPointer{dst, nullptr}, scalars::ScalarPointer{ptr, nullptr}, count);
     }
 }
 
@@ -127,7 +127,7 @@ stream lie_increment_path_from_increments(const py::object &data, const py::kwar
         throw py::value_error("mismatch between number of rows in data and number of indices");
     }
 
-    auto result = stream(paths::lie_increment_path(scalars::owned_scalar_array(buffer), indices, md));
+    auto result = stream(paths::lie_increment_path(scalars::OwnedScalarArray(buffer), indices, md));
 
     if (options.cleanup) {
         options.cleanup();

@@ -169,47 +169,47 @@ struct algebra_interface
     virtual deg_t width() const;
     virtual deg_t depth() const;
     virtual vector_type storage_type() const noexcept = 0;
-    virtual const esig::scalars::scalar_type* coeff_type() const noexcept = 0;
+    virtual const esig::scalars::ScalarType * coeff_type() const noexcept = 0;
 
     // Element access
-    virtual scalars::scalar get(key_type key) const = 0;
-    virtual scalars::scalar get_mut(key_type key) = 0;
+    virtual scalars::Scalar get(key_type key) const = 0;
+    virtual scalars::Scalar get_mut(key_type key) = 0;
 
      // Iteration
     virtual algebra_iterator begin() const = 0;
     virtual algebra_iterator end() const = 0;
 
-    virtual scalars::scalar_array dense_data() const;
+    virtual scalars::ScalarArray dense_data() const;
 //    virtual dense_data_access_iterator iterate_dense_components() const = 0;
 
     // Arithmetic
     virtual Algebra uminus() const = 0;
     virtual Algebra add(const algebra_interface& other) const = 0;
     virtual Algebra sub(const algebra_interface& other) const = 0;
-    virtual Algebra smul(const scalars::scalar& other) const = 0;
+    virtual Algebra smul(const scalars::Scalar & other) const = 0;
 //    virtual Algebra left_smul(const coefficient& other) const = 0;
 //    virtual Algebra right_smul(const coefficient& other) const = 0;
-    virtual Algebra sdiv(const scalars::scalar& other) const = 0;
+    virtual Algebra sdiv(const scalars::Scalar & other) const = 0;
     virtual Algebra mul(const algebra_interface& other) const = 0;
 
     // Inplace Arithmetic
     virtual void add_inplace(const algebra_interface& other) = 0;
     virtual void sub_inplace(const algebra_interface& other) = 0;
-    virtual void smul_inplace(const scalars::scalar& other) = 0;
+    virtual void smul_inplace(const scalars::Scalar & other) = 0;
 //    virtual void left_smul_inplace(const coefficient& other) = 0;
 //    virtual void right_smul_inplace(const coefficient& other) = 0;
-    virtual void sdiv_inplace(const scalars::scalar& other) = 0;
+    virtual void sdiv_inplace(const scalars::Scalar & other) = 0;
     virtual void mul_inplace(const algebra_interface& other) = 0;
 
     // Hybrid inplace arithmetic
-    virtual void add_scal_mul(const algebra_interface& rhs, const scalars::scalar& coeff);
-    virtual void sub_scal_mul(const algebra_interface& rhs, const scalars::scalar& coeff);
-    virtual void add_scal_div(const algebra_interface& rhs, const scalars::scalar& coeff);
-    virtual void sub_scal_div(const algebra_interface& rhs, const scalars::scalar& coeff);
+    virtual void add_scal_mul(const algebra_interface& rhs, const scalars::Scalar & coeff);
+    virtual void sub_scal_mul(const algebra_interface& rhs, const scalars::Scalar & coeff);
+    virtual void add_scal_div(const algebra_interface& rhs, const scalars::Scalar & coeff);
+    virtual void sub_scal_div(const algebra_interface& rhs, const scalars::Scalar & coeff);
     virtual void add_mul(const algebra_interface& lhs, const algebra_interface& rhs);
     virtual void sub_mul(const algebra_interface& lhs, const algebra_interface& rhs);
-    virtual void mul_smul(const algebra_interface& rhs, const scalars::scalar& coeff);
-    virtual void mul_sdiv(const algebra_interface& rhs, const scalars::scalar& coeff);
+    virtual void mul_smul(const algebra_interface& rhs, const scalars::Scalar & coeff);
+    virtual void mul_sdiv(const algebra_interface& rhs, const scalars::Scalar & coeff);
 
     // Display methods
     virtual std::ostream& print(std::ostream& os) const = 0;
@@ -360,9 +360,9 @@ public:
     deg_t width() const override;
     deg_t depth() const override;
     vector_type storage_type() const noexcept override;
-    const esig::scalars::scalar_type *coeff_type() const noexcept override;
-    scalars::scalar get(key_type key) const override;
-    scalars::scalar get_mut(key_type key) override;
+    const esig::scalars::ScalarType *coeff_type() const noexcept override;
+    scalars::Scalar get(key_type key) const override;
+    scalars::Scalar get_mut(key_type key) override;
     algebra_iterator begin() const override;
     algebra_iterator end() const override;
 
@@ -372,34 +372,34 @@ private:
     using has_as_ptr_t = decltype(std::declval<const T&>().as_ptr());
 
     template <typename B, typename=std::enable_if_t<boost::is_detected<has_as_ptr_t, B>::value>>
-    scalars::scalar_array dense_data_impl(const B& data) const {
+    scalars::ScalarArray dense_data_impl(const B& data) const {
         return {data.as_ptr(), coeff_type(), data.dimension()};
     }
 
-    scalars::scalar_array dense_data_impl(...) const {
+    scalars::ScalarArray dense_data_impl(...) const {
         return Interface::dense_data();
     }
 
 public:
 
-    scalars::scalar_array dense_data() const override {
+    scalars::ScalarArray dense_data() const override {
         return dense_data_impl(m_data.base_vector());
     }
 //    dense_data_access_iterator iterate_dense_components() const override;
     algebra_t uminus() const override;
     algebra_t add(const algebra_interface_t &other) const override;
     algebra_t sub(const algebra_interface_t &other) const override;
-    algebra_t smul(const scalars::scalar& scal) const override;
+    algebra_t smul(const scalars::Scalar & scal) const override;
 //    algebra_t left_smul(const coefficient &other) const override;
 //    algebra_t right_smul(const coefficient &other) const override;
-    algebra_t sdiv(const scalars::scalar &other) const override;
+    algebra_t sdiv(const scalars::Scalar &other) const override;
     algebra_t mul(const algebra_interface_t &other) const override;
     void add_inplace(const algebra_interface_t &other) override;
     void sub_inplace(const algebra_interface_t &other) override;
-    void smul_inplace(const scalars::scalar& other) override;
+    void smul_inplace(const scalars::Scalar & other) override;
 //    void left_smul_inplace(const coefficient &other) override;
 //    void right_smul_inplace(const coefficient &other) override;
-    void sdiv_inplace(const scalars::scalar &other) override;
+    void sdiv_inplace(const scalars::Scalar &other) override;
     void mul_inplace(const algebra_interface_t &other) override;
     std::ostream &print(std::ostream &os) const override;
     bool equals(const algebra_interface_t &other) const override;
@@ -443,26 +443,26 @@ public:
     deg_t width() const override;
     deg_t depth() const override;
     vector_type storage_type() const noexcept override;
-    const esig::scalars::scalar_type *coeff_type() const noexcept override;
-    scalars::scalar get(key_type key) const override;
-    scalars::scalar get_mut(key_type key) override;
+    const esig::scalars::ScalarType *coeff_type() const noexcept override;
+    scalars::Scalar get(key_type key) const override;
+    scalars::Scalar get_mut(key_type key) override;
     algebra_iterator begin() const override;
     algebra_iterator end() const override;
 //    dense_data_access_iterator iterate_dense_components() const override;
     algebra_t uminus() const override;
     algebra_t add(const algebra_interface_t &other) const override;
     algebra_t sub(const algebra_interface_t &other) const override;
-    algebra_t smul(const scalars::scalar& scal) const override;
+    algebra_t smul(const scalars::Scalar & scal) const override;
 //    algebra_t left_smul(const coefficient &other) const override;
 //    algebra_t right_smul(const coefficient &other) const override;
-    algebra_t sdiv(const scalars::scalar &other) const override;
+    algebra_t sdiv(const scalars::Scalar &other) const override;
     algebra_t mul(const algebra_interface_t &other) const override;
     void add_inplace(const algebra_interface_t &other) override;
     void sub_inplace(const algebra_interface_t &other) override;
-    void smul_inplace(const scalars::scalar& other) override;
+    void smul_inplace(const scalars::Scalar & other) override;
 //    void left_smul_inplace(const coefficient &other) override;
 //    void right_smul_inplace(const coefficient &other) override;
-    void sdiv_inplace(const scalars::scalar &other) override;
+    void sdiv_inplace(const scalars::Scalar &other) override;
     void mul_inplace(const algebra_interface_t &other) override;
     std::ostream &print(std::ostream &os) const override;
     bool equals(const algebra_interface_t &other) const override;
@@ -602,47 +602,47 @@ public:
     deg_t depth() const;
     deg_t degree() const;
     vector_type storage_type() const noexcept;
-    const scalars::scalar_type* coeff_type() const noexcept;
+    const scalars::ScalarType * coeff_type() const noexcept;
 
-    scalars::scalar operator[](key_type k) const;
-    scalars::scalar operator[](key_type k);
+    scalars::Scalar operator[](key_type k) const;
+    scalars::Scalar operator[](key_type k);
 
     const_iterator begin() const;
     const_iterator end() const;
 
-    scalars::scalar_array dense_data() const { return p_impl->dense_data(); }
+    scalars::ScalarArray dense_data() const { return p_impl->dense_data(); }
 //    dense_data_access_iterator iterate_dense_components() const noexcept;
 
     // Binary operations
     algebra_t uminus() const;
     algebra_t add(const algebra_t& rhs) const;
     algebra_t sub(const algebra_t& rhs) const;
-    algebra_t smul(const scalars::scalar& rhs) const;
+    algebra_t smul(const scalars::Scalar & rhs) const;
 //    algebra_t left_smul(const coefficient& scal) const;
 //    algebra_t right_smul(const coefficient& scal) const;
-    algebra_t sdiv(const scalars::scalar& scal) const;
+    algebra_t sdiv(const scalars::Scalar & scal) const;
     algebra_t mul(const algebra_t& rhs) const;
 
     // In-place binary operations
     algebra_t& add_inplace(const algebra_t& rhs);
     algebra_t& sub_inplace(const algebra_t& rhs);
-    algebra_t& smul_inplace(const scalars::scalar& scal);
+    algebra_t& smul_inplace(const scalars::Scalar & scal);
 //    algebra_base& left_smul_inplace(const coefficient& rhs);
 //    algebra_base& right_smul_inplace(const coefficient& rhs);
-    algebra_t& sdiv_inplace(const scalars::scalar& rhs);
+    algebra_t& sdiv_inplace(const scalars::Scalar & rhs);
     algebra_t& mul_inplace(const algebra_t& rhs);
 
     // Hybrid in-place operations
-    algebra_t& add_scal_mul(const algebra_t& arg, const scalars::scalar& scal);
-    algebra_t& add_scal_div(const algebra_t& arg, const scalars::scalar& scal);
-    algebra_t& sub_scal_mul(const algebra_t& arg, const scalars::scalar& scal);
-    algebra_t& sub_scal_div(const algebra_t& arg, const scalars::scalar& scal);
+    algebra_t& add_scal_mul(const algebra_t& arg, const scalars::Scalar & scal);
+    algebra_t& add_scal_div(const algebra_t& arg, const scalars::Scalar & scal);
+    algebra_t& sub_scal_mul(const algebra_t& arg, const scalars::Scalar & scal);
+    algebra_t& sub_scal_div(const algebra_t& arg, const scalars::Scalar & scal);
     algebra_t& add_mul(const algebra_t& lhs, const algebra_t& rhs);
     algebra_t& sub_mul(const algebra_t& lhs, const algebra_t& rhs);
 //    algebra_base& mul_left_smul(const algebra_base& arg, const coefficient& scal);
 //    algebra_base& mul_right_smul(const algebra_base& arg, const coefficient& scal);
-    algebra_t& mul_smul(const algebra_t& arg, const scalars::scalar& scal);
-    algebra_t& mul_sdiv(const algebra_t& arg, const scalars::scalar& scal);
+    algebra_t& mul_smul(const algebra_t& arg, const scalars::Scalar & scal);
+    algebra_t& mul_sdiv(const algebra_t& arg, const scalars::Scalar & scal);
 
 
     std::ostream& print(std::ostream& os) const;
@@ -691,7 +691,7 @@ struct algebra_info
     using pointer = scalar_type*;
     using const_pointer = const scalar_type*;
 
-    static const scalars::scalar_type* ctype() noexcept
+    static const scalars::ScalarType * ctype() noexcept
     { return ::esig::scalars::dtl::scalar_type_holder<scalar_type>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
@@ -761,7 +761,7 @@ deg_t algebra_interface<Algebra>::depth() const {
     return 0;
 }
 template<typename Algebra>
-scalars::scalar_array algebra_interface<Algebra>::dense_data() const {
+scalars::ScalarArray algebra_interface<Algebra>::dense_data() const {
     throw std::runtime_error("cannot retrieve dense data");
 }
 
@@ -792,22 +792,22 @@ typename algebra_base<Interface>::algebra_t algebra_base<Interface>::from_args(A
 }
 
 template<typename Algebra>
-void algebra_interface<Algebra>::add_scal_mul(const algebra_interface &rhs, const scalars::scalar &coeff) {
+void algebra_interface<Algebra>::add_scal_mul(const algebra_interface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.smul(coeff);
     this->add_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::sub_scal_mul(const algebra_interface &rhs, const scalars::scalar &coeff) {
+void algebra_interface<Algebra>::sub_scal_mul(const algebra_interface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.smul(coeff);
     this->sub_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::add_scal_div(const algebra_interface &rhs, const scalars::scalar &coeff) {
+void algebra_interface<Algebra>::add_scal_div(const algebra_interface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.sdiv(coeff);
     this->add_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::sub_scal_div(const algebra_interface &rhs, const scalars::scalar &coeff) {
+void algebra_interface<Algebra>::sub_scal_div(const algebra_interface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.sdiv(coeff);
     this->sub_inplace(*tmp);
 }
@@ -822,12 +822,12 @@ void algebra_interface<Algebra>::sub_mul(const algebra_interface &lhs, const alg
     this->sub_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::mul_smul(const algebra_interface &rhs, const scalars::scalar &coeff) {
+void algebra_interface<Algebra>::mul_smul(const algebra_interface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.smul(coeff);
     this->mul_inplace(*tmp);
 }
 template<typename Algebra>
-void algebra_interface<Algebra>::mul_sdiv(const algebra_interface &rhs, const scalars::scalar &coeff) {
+void algebra_interface<Algebra>::mul_sdiv(const algebra_interface &rhs, const scalars::Scalar &coeff) {
     auto tmp = rhs.sdiv(coeff);
     this->mul_inplace(*tmp);
 }
@@ -878,11 +878,11 @@ vector_type algebra_implementation<Interface, Impl>::storage_type() const noexce
     return algebra_info<Impl>::vtype();
 }
 template<typename Interface, typename Impl>
-const scalars::scalar_type *algebra_implementation<Interface, Impl>::coeff_type() const noexcept {
+const scalars::ScalarType *algebra_implementation<Interface, Impl>::coeff_type() const noexcept {
     return algebra_info<Impl>::ctype();
 }
 template<typename Interface, typename Impl>
-scalars::scalar algebra_implementation<Interface, Impl>::get(key_type key) const {
+scalars::Scalar algebra_implementation<Interface, Impl>::get(key_type key) const {
     using info_t = algebra_info<Impl>;
     auto akey = info_t::convert_key(&m_data, key);
     using ref_t = decltype(m_data[akey]);
@@ -890,7 +890,7 @@ scalars::scalar algebra_implementation<Interface, Impl>::get(key_type key) const
     return trait::make(m_data[akey]);
 }
 template<typename Interface, typename Impl>
-scalars::scalar algebra_implementation<Interface, Impl>::get_mut(key_type key) {
+scalars::Scalar algebra_implementation<Interface, Impl>::get_mut(key_type key) {
     using info_t = algebra_info<Impl>;
     auto akey = info_t::convert_key(&m_data, key);
     using ref_t = decltype(m_data[akey]);
@@ -940,7 +940,7 @@ typename Interface::algebra_t algebra_implementation<Interface, Impl>::sub(const
                                         [](ref_type lhs, cref_type rhs) { lhs -= rhs; }), p_ctx);
 }
 template<typename Interface, typename Impl>
-typename Interface::algebra_t algebra_implementation<Interface, Impl>::smul(const scalars::scalar &scal) const {
+typename Interface::algebra_t algebra_implementation<Interface, Impl>::smul(const scalars::Scalar &scal) const {
     return algebra_t(m_data * scalars::scalar_cast<this_scalar_type>(scal), p_ctx);
 }
 //template<typename Interface, typename Impl>
@@ -952,7 +952,7 @@ typename Interface::algebra_t algebra_implementation<Interface, Impl>::smul(cons
 //    return algebra_t(m_data*coefficient_cast<scalar_type>(other), p_ctx);
 //}
 template<typename Interface, typename Impl>
-typename Interface::algebra_t algebra_implementation<Interface, Impl>::sdiv(const scalars::scalar &other) const {
+typename Interface::algebra_t algebra_implementation<Interface, Impl>::sdiv(const scalars::Scalar &other) const {
     return algebra_t(m_data/scalars::scalar_cast<rational_type>(other), p_ctx);
 }
 template<typename Interface, typename Impl>
@@ -992,7 +992,7 @@ void algebra_implementation<Interface, Impl>::sub_inplace(const algebra_interfac
 
 }
 template<typename Interface, typename Impl>
-void algebra_implementation<Interface, Impl>::smul_inplace(const scalars::scalar &other) {
+void algebra_implementation<Interface, Impl>::smul_inplace(const scalars::Scalar &other) {
     m_data *= scalars::scalar_cast<this_scalar_type>(other);
 }
 //template<typename Interface, typename Impl>
@@ -1004,7 +1004,7 @@ void algebra_implementation<Interface, Impl>::smul_inplace(const scalars::scalar
 //    m_data *= coefficient_cast<scalar_type>(other);
 //}
 template<typename Interface, typename Impl>
-void algebra_implementation<Interface, Impl>::sdiv_inplace(const scalars::scalar &other) {
+void algebra_implementation<Interface, Impl>::sdiv_inplace(const scalars::Scalar &other) {
     m_data /= scalars::scalar_cast<rational_type>(other);
 }
 template<typename Interface, typename Impl>
@@ -1063,18 +1063,18 @@ vector_type borrowed_algebra_implementation<Interface, Impl>::storage_type() con
     return algebra_info<Impl>::vtype();
 }
 template<typename Interface, typename Impl>
-const scalars::scalar_type *borrowed_algebra_implementation<Interface, Impl>::coeff_type() const noexcept {
+const scalars::ScalarType *borrowed_algebra_implementation<Interface, Impl>::coeff_type() const noexcept {
     return algebra_info<Impl>::ctype();
 }
 template<typename Interface, typename Impl>
-scalars::scalar borrowed_algebra_implementation<Interface, Impl>::get(key_type key) const {
+scalars::Scalar borrowed_algebra_implementation<Interface, Impl>::get(key_type key) const {
     using info_t = algebra_info<Impl>;
     using ref_t = decltype((*p_impl)[info_t::convert_key(p_impl, key)]);
     using trait = ::esig::scalars::dtl::scalar_type_trait<ref_t>;
     return trait::make((*p_impl)[info_t::convert_key(p_impl, key)]);
 }
 template<typename Interface, typename Impl>
-scalars::scalar borrowed_algebra_implementation<Interface, Impl>::get_mut(key_type key) {
+scalars::Scalar borrowed_algebra_implementation<Interface, Impl>::get_mut(key_type key) {
     using info_t = algebra_info<Impl>;
     using ref_t = decltype((*p_impl)[info_t::convert_key(p_impl, key)]);
     using trait = ::esig::scalars::dtl::scalar_type_trait<ref_t>;
@@ -1123,12 +1123,12 @@ typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
 }
 template<typename Interface, typename Impl>
 typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
- borrowed_algebra_implementation<Interface, Impl>::smul(const scalars::scalar &scal) const {
+ borrowed_algebra_implementation<Interface, Impl>::smul(const scalars::Scalar &scal) const {
     return algebra_t((*p_impl) * scalars::scalar_cast<this_scalar_type>(scal), p_ctx);
 }
 template<typename Interface, typename Impl>
 typename borrowed_algebra_implementation<Interface, Impl>::algebra_t
- borrowed_algebra_implementation<Interface, Impl>::sdiv(const scalars::scalar &other) const {
+ borrowed_algebra_implementation<Interface, Impl>::sdiv(const scalars::Scalar &other) const {
     return algebra_t((*p_impl) / scalars::scalar_cast<rational_type>(other), p_ctx);
 }
 template<typename Interface, typename Impl>
@@ -1146,11 +1146,11 @@ void borrowed_algebra_implementation<Interface, Impl>::sub_inplace(const borrowe
     (*p_impl) -= alg_impl_t::cast(other);
 }
 template<typename Interface, typename Impl>
-void borrowed_algebra_implementation<Interface, Impl>::smul_inplace(const scalars::scalar &other) {
+void borrowed_algebra_implementation<Interface, Impl>::smul_inplace(const scalars::Scalar &other) {
     (*p_impl) *= scalars::scalar_cast<this_scalar_type>(other);
 }
 template<typename Interface, typename Impl>
-void borrowed_algebra_implementation<Interface, Impl>::sdiv_inplace(const scalars::scalar &other) {
+void borrowed_algebra_implementation<Interface, Impl>::sdiv_inplace(const scalars::Scalar &other) {
     (*p_impl) /= scalars::scalar_cast<rational_type>(other);
 }
 template<typename Interface, typename Impl>
@@ -1223,15 +1223,15 @@ vector_type algebra_base<Interface>::storage_type() const noexcept {
     return p_impl->storage_type();
 }
 template<typename Interface>
-const scalars::scalar_type* algebra_base<Interface>::coeff_type() const noexcept {
+const scalars::ScalarType * algebra_base<Interface>::coeff_type() const noexcept {
     return p_impl->coeff_type();
 }
 template<typename Interface>
-scalars::scalar algebra_base<Interface>::operator[](key_type k) const {
+scalars::Scalar algebra_base<Interface>::operator[](key_type k) const {
     return p_impl->get(k);
 }
 template<typename Interface>
-scalars::scalar algebra_base<Interface>::operator[](key_type k) {
+scalars::Scalar algebra_base<Interface>::operator[](key_type k) {
     return p_impl->get_mut(k);
 }
 template<typename Interface>
@@ -1259,7 +1259,7 @@ typename algebra_base<Interface>::algebra_t algebra_base<Interface>::sub(const a
     return p_impl->sub(*rhs.p_impl);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t algebra_base<Interface>::smul(const scalars::scalar &rhs) const {
+typename algebra_base<Interface>::algebra_t algebra_base<Interface>::smul(const scalars::Scalar &rhs) const {
     return p_impl->smul(rhs);
 }
 //template<typename Interface>
@@ -1271,7 +1271,7 @@ typename algebra_base<Interface>::algebra_t algebra_base<Interface>::smul(const 
 //    return p_impl->right_smul(scal);
 //}
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t algebra_base<Interface>::sdiv(const scalars::scalar &scal) const {
+typename algebra_base<Interface>::algebra_t algebra_base<Interface>::sdiv(const scalars::Scalar &scal) const {
     return p_impl->sdiv(scal);
 }
 template<typename Interface>
@@ -1289,7 +1289,7 @@ typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_inplac
     return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::smul_inplace(const scalars::scalar &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::smul_inplace(const scalars::Scalar &scal) {
     p_impl->smul_inplace(scal);
     return static_cast<algebra_t&>(*this);
 }
@@ -1304,7 +1304,7 @@ typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::smul_inpla
 //    return *this;
 //}
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sdiv_inplace(const scalars::scalar& rhs) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sdiv_inplace(const scalars::Scalar & rhs) {
     p_impl->sdiv_inplace(rhs);
     return static_cast<algebra_t&>(*this);
 }
@@ -1314,22 +1314,22 @@ typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_inplac
     return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::add_scal_mul(const algebra_t &arg, const scalars::scalar &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::add_scal_mul(const algebra_t &arg, const scalars::Scalar &scal) {
     p_impl->add_scal_mul(*arg.p_impl, scal);
     return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::add_scal_div(const algebra_t &arg, const scalars::scalar &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::add_scal_div(const algebra_t &arg, const scalars::Scalar &scal) {
     p_impl->add_scal_div(*arg.p_impl, scal);
     return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_scal_mul(const algebra_t &arg, const scalars::scalar &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_scal_mul(const algebra_t &arg, const scalars::Scalar &scal) {
     p_impl->sub_scal_mul(*arg.p_impl, scal);
     return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_scal_div(const algebra_t &arg, const scalars::scalar &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_scal_div(const algebra_t &arg, const scalars::Scalar &scal) {
     p_impl->sub_scal_div(*arg.p_impl, scal);
     return static_cast<algebra_t&>(*this);
 }
@@ -1344,7 +1344,7 @@ typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::sub_mul(co
     return static_cast<algebra_t&>(*this);
 }
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_smul(const algebra_t &arg, const scalars::scalar &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_smul(const algebra_t &arg, const scalars::Scalar &scal) {
     p_impl->mul_smul(*arg.p_impl, scal);
     return static_cast<algebra_t&>(*this);
 }
@@ -1359,7 +1359,7 @@ typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_smul(c
 //    return *this;
 //}
 template<typename Interface>
-typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_sdiv(const algebra_t &arg, const scalars::scalar &scal) {
+typename algebra_base<Interface>::algebra_t &algebra_base<Interface>::mul_sdiv(const algebra_t &arg, const scalars::Scalar &scal) {
     p_impl->mul_sdiv(*arg.p_impl, scal);
     return static_cast<algebra_t&>(*this);
 }

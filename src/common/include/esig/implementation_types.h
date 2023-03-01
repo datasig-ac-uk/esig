@@ -6,7 +6,7 @@
 #define ESIG_IMPLEMENTATION_TYPES_H_
 
 #include <cstdint>
-
+#include <cassert>
 
 namespace esig {
 using deg_t = unsigned;

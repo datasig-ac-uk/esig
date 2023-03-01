@@ -22,9 +22,6 @@ static void double_to_rational(void* dst, const void* src)
 
 
 rational_type::rational_type()
-    : standard_scalar_type<rational_scalar_type>("rational", "rational")
+    : StandardScalarType<rational_scalar_type>("rational", "rational")
 {
-    rational_type::register_converter("f32", &float_to_rational);
-    rational_type::register_converter("f64", &double_to_rational);
-
 }

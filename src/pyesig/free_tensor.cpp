@@ -149,26 +149,26 @@ void esig::python::init_free_tensor(py::module_ &m) {
     klass.def("__mul__", &free_tensor::smul, py::is_operator());
     klass.def("__truediv__", &free_tensor::smul, py::is_operator());
     klass.def("__mul__", &free_tensor::mul, py::is_operator());
-    klass.def("__rmul__", [](const free_tensor& self, const scalars::scalar& other) { return self.smul(other); },
+    klass.def("__rmul__", [](const free_tensor& self, const scalars::Scalar & other) { return self.smul(other); },
             py::is_operator());
 
     klass.def("__mul__", [](const free_tensor& self, scalar_t arg) {
-             return self.smul( scalars::scalar(arg));
+             return self.smul( scalars::Scalar(arg));
          }, py::is_operator());
     klass.def("__rmul__", [](const free_tensor& self, scalar_t arg) {
-             return self.smul( scalars::scalar(arg));
+             return self.smul( scalars::Scalar(arg));
          }, py::is_operator());
     klass.def("__mul__", [](const free_tensor& self, long long arg) {
-             return self.smul( scalars::scalar(arg, 1LL, self.coeff_type()));
+             return self.smul( scalars::Scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__rmul__", [](const free_tensor& self, long long arg) {
-             return self.smul( scalars::scalar(arg, 1LL, self.coeff_type()));
+             return self.smul( scalars::Scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__truediv__", [](const free_tensor& self, scalar_t arg) {
-             return self.sdiv( scalars::scalar(arg));
+             return self.sdiv( scalars::Scalar(arg));
          }, py::is_operator());
     klass.def("__truediv__", [](const free_tensor& self, long long arg) {
-             return self.sdiv( scalars::scalar(arg, 1LL, self.coeff_type()));
+             return self.sdiv( scalars::Scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
 
     klass.def("__iadd__", &free_tensor::add_inplace, py::is_operator());
@@ -178,16 +178,16 @@ void esig::python::init_free_tensor(py::module_ &m) {
     klass.def("__imul__", &free_tensor::mul_inplace, py::is_operator());
 
     klass.def("__imul__", [](free_tensor& self, scalar_t arg) {
-             return self.smul_inplace( scalars::scalar(arg));
+             return self.smul_inplace( scalars::Scalar(arg));
          }, py::is_operator());
     klass.def("__imul__", [](free_tensor& self, long long arg) {
-             return self.smul_inplace( scalars::scalar(arg, 1LL, self.coeff_type()));
+             return self.smul_inplace( scalars::Scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
     klass.def("__itruediv__", [](free_tensor& self, scalar_t arg) {
-             return self.sdiv_inplace( scalars::scalar(arg));
+             return self.sdiv_inplace( scalars::Scalar(arg));
          }, py::is_operator());
     klass.def("__itruediv__", [](free_tensor& self, long long arg) {
-             return self.sdiv_inplace( scalars::scalar(arg, 1LL, self.coeff_type()));
+             return self.sdiv_inplace( scalars::Scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
 
     klass.def("add_scal_mul", &free_tensor::add_scal_mul, "other"_a, "scalar"_a);

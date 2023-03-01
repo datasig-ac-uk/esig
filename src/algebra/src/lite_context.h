@@ -136,9 +136,9 @@ public:
     deg_t width() const noexcept override;
     deg_t depth() const noexcept override;
     std::shared_ptr<const context> get_alike(deg_t new_depth) const override;
-    std::shared_ptr<const context> get_alike(const scalars::scalar_type *new_coeff) const override;
-    std::shared_ptr<const context> get_alike(deg_t new_depth, const scalars::scalar_type *new_coeff) const override;
-    std::shared_ptr<const context> get_alike(deg_t new_width, deg_t new_depth, const scalars::scalar_type *new_coeff) const override;
+    std::shared_ptr<const context> get_alike(const scalars::ScalarType *new_coeff) const override;
+    std::shared_ptr<const context> get_alike(deg_t new_depth, const scalars::ScalarType *new_coeff) const override;
+    std::shared_ptr<const context> get_alike(deg_t new_width, deg_t new_depth, const scalars::ScalarType *new_coeff) const override;
     dimn_t lie_size(deg_t d) const noexcept override;
     dimn_t tensor_size(deg_t d) const noexcept override;
     bool check_compatible(const context &other) const noexcept override;
@@ -159,9 +159,9 @@ public:
 
 class lite_context_maker : public context_maker {
 public:
-    bool can_get(deg_t deg, deg_t deg_1, const scalars::scalar_type *type) const noexcept override;
+    bool can_get(deg_t deg, deg_t deg_1, const scalars::ScalarType *type) const noexcept override;
     int get_priority(const std::vector<std::string> &preferences) const noexcept override;
-    std::shared_ptr<const context> get_context(deg_t deg, deg_t deg_1, const scalars::scalar_type *type) const override;
+    std::shared_ptr<const context> get_context(deg_t deg, deg_t deg_1, const scalars::ScalarType *type) const override;
 };
 
 
@@ -192,17 +192,17 @@ std::shared_ptr<const context> lite_context<Coefficients>::get_alike(deg_t new_d
     return maker.get_context(m_width, new_depth, context::ctype());
 }
 template<typename Coefficients>
-std::shared_ptr<const context> lite_context<Coefficients>::get_alike(const scalars::scalar_type *new_coeff) const {
+std::shared_ptr<const context> lite_context<Coefficients>::get_alike(const scalars::ScalarType *new_coeff) const {
     lite_context_maker maker;
     return maker.get_context(m_width, m_depth, new_coeff);
 }
 template<typename Coefficients>
-std::shared_ptr<const context> lite_context<Coefficients>::get_alike(deg_t new_depth, const scalars::scalar_type *new_coeff) const {
+std::shared_ptr<const context> lite_context<Coefficients>::get_alike(deg_t new_depth, const scalars::ScalarType *new_coeff) const {
     lite_context_maker maker;
     return maker.get_context(m_width, new_depth, new_coeff);
 }
 template<typename Coefficients>
-std::shared_ptr<const context> lite_context<Coefficients>::get_alike(deg_t new_width, deg_t new_depth, const scalars::scalar_type *new_coeff) const {
+std::shared_ptr<const context> lite_context<Coefficients>::get_alike(deg_t new_width, deg_t new_depth, const scalars::ScalarType *new_coeff) const {
     lite_context_maker maker;
     return maker.get_context(new_width, new_depth, new_coeff);
 }
@@ -377,7 +377,7 @@ lite_context<Coefficients>::compute_signature(const signature_data &data) const 
     for (dimn_t i=0; i<nrows; ++i) {
         auto row = data.data_stream[i];
         const auto* keys = data.key_stream.empty() ? nullptr : data.key_stream[i];
-        vector_construction_data row_cdata { scalars::key_scalar_array(row, keys), VType };
+        vector_construction_data row_cdata { scalars::KeyScalarArray(row, keys), VType };
 
         auto lie_row = constructImpl<lie_t<VType>>(row_cdata, p_lie_basis, p_liemul);
 
@@ -494,18 +494,17 @@ public:
     using rational_type = value_type;
     using reference = lal::dtl::sparse_mutable_reference<MapType, KeyType>;
 
-    static const scalar_type* get_type() noexcept { return scalar_type_holder<value_type>::get_type(); }
+    static const ScalarType * get_type() noexcept { return scalar_type_holder<value_type>::get_type(); }
 
-    static scalar make(reference val) {
-        return scalar (new scalar_implementation<reference>(std::move(val)));
+    static Scalar make(reference val) {
+        return Scalar(new ScalarImplementation<reference>(std::move(val)));
     }
 };
 
 
 template <typename MapType, typename KeyType>
-class scalar_implementation<lal::dtl::sparse_mutable_reference<MapType, KeyType>>
-    : public scalar_interface
-{
+class ScalarImplementation<lal::dtl::sparse_mutable_reference<MapType, KeyType>>
+    : public ScalarInterface {
     using data_type = lal::dtl::sparse_mutable_reference<MapType, KeyType>;
     using trait = scalar_type_trait<data_type>;
 
@@ -515,10 +514,10 @@ public:
     using value_type = typename MapType::mapped_type;
     using rational_type = typename trait::rational_type;
 
-    explicit scalar_implementation(data_type&& d) : m_data(std::move(d))
+    explicit ScalarImplementation(data_type&& d) : m_data(std::move(d))
     {}
 
-    const scalar_type* type() const noexcept override { return trait::get_type(); }
+    const ScalarType * type() const noexcept override { return trait::get_type(); }
 
     bool is_const() const noexcept override { return false; }
     bool is_value() const noexcept override { return false; }
@@ -528,28 +527,28 @@ public:
     scalar_t as_scalar() const override {
         return scalar_t(static_cast<const value_type&>(m_data));
     }
-    void assign(scalar_pointer other) override {
+    void assign(ScalarPointer other) override {
         value_type tmp = static_cast<const value_type&>(m_data);
         this->type()->convert_copy(&tmp, other, 1);
         m_data = tmp;
     }
-    void assign(const scalar &other) override {
+    void assign(const Scalar &other) override {
         this->assign(other.to_const_pointer());
     }
-    scalar_pointer to_pointer() override {
+    ScalarPointer to_pointer() override {
         throw std::runtime_error("cannot get non-const pointer to proxy reference type");
     }
-    scalar_pointer to_pointer() const noexcept override {
-        return scalar_pointer(&static_cast<const value_type&>(m_data), this->type());
+    ScalarPointer to_pointer() const noexcept override {
+        return ScalarPointer(&static_cast<const value_type&>(m_data), this->type());
     }
-    scalar uminus() const override {
-        return scalar(-static_cast<const value_type&>(m_data), this->type());
+    Scalar uminus() const override {
+        return Scalar(-static_cast<const value_type&>(m_data), this->type());
     }
 
 private:
 
     template <typename Fn>
-    void inplace_function(const scalar& other, Fn f)
+    void inplace_function(const Scalar & other, Fn f)
     {
         value_type tmp(0);
         this->type()->convert_copy(&tmp, other.to_const_pointer(), 1);
@@ -557,21 +556,21 @@ private:
     }
 
 public:
-    void add_inplace(const scalar &other) override {
+    void add_inplace(const Scalar &other) override {
         inplace_function(other, std::plus<value_type>());
     }
-    void sub_inplace(const scalar &other) override {
+    void sub_inplace(const Scalar &other) override {
         inplace_function(other, std::minus<value_type>());
     }
-    void mul_inplace(const scalar &other) override {
+    void mul_inplace(const Scalar &other) override {
         inplace_function(other, std::multiplies<value_type>());
     }
-    void div_inplace(const scalar &other) override {
+    void div_inplace(const Scalar &other) override {
         rational_type tmp(1);
         this->type()->rational_type()->convert_copy(&tmp, other.to_const_pointer(), 1);
         m_data /= tmp;
     }
-    bool equals(const scalar &other) const noexcept override {
+    bool equals(const Scalar &other) const noexcept override {
         value_type tmp(0);
         this->type()->convert_copy(&tmp, other.to_const_pointer(), 1);
         return static_cast<const value_type&>(m_data) == tmp;
@@ -581,6 +580,9 @@ public:
     }
 
     void assign(const void *data, const std::string &type_id) override {
+        ScalarPointer tmp {&static_cast<const value_type &>(m_data), this->type()};
+        this->type()->convert_copy(tmp, data, 1, type_id);
+        m_data = *tmp.raw_cast<value_type>();
     }
 };
 
@@ -604,7 +606,7 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::sparse_vector, lal::dtl::stand
     using reference = decltype(std::declval<algebra_type>()[std::declval<this_key_type>()]);
     using const_reference = const scalar_type&;
 
-    static const scalars::scalar_type* ctype() noexcept
+    static const scalars::ScalarType * ctype() noexcept
     { return scalars::dtl::scalar_type_holder<scalar_type>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
@@ -661,7 +663,7 @@ struct algebra_info<lal::free_tensor<Coeffs, lal::dense_vector, lal::dtl::standa
     using reference = decltype(std::declval<algebra_type>()[std::declval<this_key_type>()]);
     using const_reference = const scalar_type&;
 
-    static const scalars::scalar_type* ctype() noexcept
+    static const scalars::ScalarType * ctype() noexcept
     { return scalars::dtl::scalar_type_holder<scalar_type>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::dense; }
@@ -717,7 +719,7 @@ struct algebra_info<lal::lie<Coeffs, lal::sparse_vector, lal::dtl::standard_stor
     using reference = decltype(std::declval<algebra_type>()[std::declval<this_key_type>()]);
     using const_reference = const scalar_type&;
 
-    static const scalars::scalar_type* ctype() noexcept
+    static const scalars::ScalarType * ctype() noexcept
     { return scalars::dtl::scalar_type_holder<scalar_type>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::sparse; }
@@ -776,7 +778,7 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
     using reference = decltype(std::declval<algebra_type>()[std::declval<this_key_type>()]);
     using const_reference = const scalar_type&;
 
-    static const scalars::scalar_type* ctype() noexcept
+    static const scalars::ScalarType * ctype() noexcept
     { return scalars::dtl::scalar_type_holder<scalar_type>::get_type(); }
     static constexpr vector_type vtype() noexcept
     { return vector_type::dense; }
@@ -828,60 +830,60 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
 namespace dtl {
 
 template <>
-typename lal::tensor_basis::key_type
+inline typename lal::tensor_basis::key_type
 basis_info<lal::tensor_basis>::convert_key(const lal::tensor_basis &basis, esig::key_type key)
 {
     return basis.index_to_key(key);
 }
 template <>
-esig::key_type
+inline esig::key_type
 basis_info<lal::tensor_basis>::convert_key(const lal::tensor_basis &basis, const this_key_type& key)
 {
     return basis.key_to_index(key);
 }
 template <>
-esig::key_type
+inline esig::key_type
 basis_info<lal::tensor_basis>::first_key(const lal::tensor_basis &basis) { return 0; }
 template <>
-esig::key_type
+inline esig::key_type
 basis_info<lal::tensor_basis>::last_key(const lal::tensor_basis &basis) { return basis.size(-1); }
 
 template <>
-deg_t
+inline deg_t
 basis_info<lal::tensor_basis>::native_degree(const lal::tensor_basis &basis, const this_key_type &key) {
     return static_cast<deg_t>(key.degree());
 }
 template <>
-deg_t
+inline deg_t
 basis_info<lal::tensor_basis>::degree(const lal::tensor_basis &basis, esig::key_type key) {
     return native_degree(basis, convert_key(basis, key));
 }
 
 
 template <>
-typename lal::hall_basis::key_type
+inline typename lal::hall_basis::key_type
 basis_info<lal::hall_basis>::convert_key(const lal::hall_basis &basis, esig::key_type key)
 {
     return basis.index_to_key(key-1);
 }
 template <>
-esig::key_type
+inline esig::key_type
 basis_info<lal::hall_basis>::convert_key(const lal::hall_basis &basis, const this_key_type &key) {
     return 1 + basis.key_to_index(key);
 }
 template <>
-esig::key_type
+inline esig::key_type
 basis_info<lal::hall_basis>::first_key(const lal::hall_basis &basis) { return 1; }
 template <>
-esig::key_type
+inline esig::key_type
 basis_info<lal::hall_basis>::last_key(const lal::hall_basis &basis) { return basis.size(-1) + 1; }
 template <>
-deg_t
+inline deg_t
 basis_info<lal::hall_basis>::native_degree(const lal::hall_basis &basis, const this_key_type &key) {
     return static_cast<deg_t>(key.degree());
 }
 template <>
-deg_t
+inline deg_t
 basis_info<lal::hall_basis>::degree(const lal::hall_basis &basis, esig::key_type key) {
     return native_degree(basis, convert_key(basis, key));
 }

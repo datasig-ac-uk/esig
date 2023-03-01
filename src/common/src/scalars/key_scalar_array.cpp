@@ -2,18 +2,19 @@
 // Created by sam on 13/12/22.
 //
 
-#include "esig/scalars.h"
-
+#include "esig/key_scalar_array.h"
+#include "esig/scalar_type.h"
+#include "esig/scalar_array.h"
+#include "esig/owned_scalar_array.h"
 
 using namespace esig;
 using namespace esig::scalars;
 
-
-key_scalar_array::~key_scalar_array()
+KeyScalarArray::~KeyScalarArray()
 {
     if (p_type != nullptr && m_scalars_owned) {
-        auto size = scalar_array::size();
-        const auto* tp = scalar_array::type();
+        auto size = ScalarArray::size();
+        const auto* tp = ScalarArray::type();
         tp->deallocate(*this, size);
     }
     if (m_keys_owned ){
@@ -21,8 +22,8 @@ key_scalar_array::~key_scalar_array()
     }
 }
 
-key_scalar_array::key_scalar_array(const key_scalar_array &other)
-    : scalar_array(other.type()->allocate(other.size()), other.size()),
+KeyScalarArray::KeyScalarArray(const KeyScalarArray &other)
+    : ScalarArray(other.type()->allocate(other.size()), other.size()),
       m_scalars_owned(true)
 {
     if (other.p_data != nullptr) {
@@ -36,8 +37,8 @@ key_scalar_array::key_scalar_array(const key_scalar_array &other)
         assert(other.p_keys == nullptr);
     }
 }
-key_scalar_array::key_scalar_array(key_scalar_array &&other) noexcept
-    : scalar_array(other),
+KeyScalarArray::KeyScalarArray(KeyScalarArray &&other) noexcept
+    : ScalarArray(other),
       p_keys(other.p_keys),
       m_scalars_owned(other.m_scalars_owned),
       m_keys_owned(other.m_keys_owned)
@@ -47,59 +48,59 @@ key_scalar_array::key_scalar_array(key_scalar_array &&other) noexcept
     other.p_data = nullptr;
     assert(other.p_data == nullptr);
 }
-key_scalar_array::key_scalar_array(owned_scalar_array &&sa) noexcept
-    : scalar_array(std::move(sa)), m_scalars_owned(true)
+KeyScalarArray::KeyScalarArray(OwnedScalarArray &&sa) noexcept
+    : ScalarArray(std::move(sa)), m_scalars_owned(true)
 {
 }
-key_scalar_array::key_scalar_array(scalar_array base, const key_type *keys)
-    : scalar_array(base), p_keys(keys), m_keys_owned(false)
+KeyScalarArray::KeyScalarArray(ScalarArray base, const key_type *keys)
+    : ScalarArray(base), p_keys(keys), m_keys_owned(false)
 {
 }
-key_scalar_array::key_scalar_array(const scalar_type *type) noexcept : scalar_array(type) {
+KeyScalarArray::KeyScalarArray(const ScalarType *type) noexcept : ScalarArray(type) {
 }
-key_scalar_array::key_scalar_array(const scalar_type *type, dimn_t n) noexcept
-    : scalar_array(type)
+KeyScalarArray::KeyScalarArray(const ScalarType *type, dimn_t n) noexcept
+    : ScalarArray(type)
 {
     allocate_scalars(static_cast<idimn_t>(n));
 }
 
-key_scalar_array::key_scalar_array(const scalar_type *type, const void *begin, dimn_t count) noexcept
-    : scalar_array(begin, type, count), m_scalars_owned(false)
+KeyScalarArray::KeyScalarArray(const ScalarType *type, const void *begin, dimn_t count) noexcept
+    : ScalarArray(begin, type, count), m_scalars_owned(false)
 {
 }
-key_scalar_array &key_scalar_array::operator=(const scalar_array &other) noexcept {
+KeyScalarArray &KeyScalarArray::operator=(const ScalarArray &other) noexcept {
     if (&other != this) {
-        this->~key_scalar_array();
-        scalar_array::operator=(other);
+        this->~KeyScalarArray();
+        ScalarArray::operator=(other);
         m_scalars_owned = false;
         m_keys_owned = false;
     }
     return *this;
 }
-key_scalar_array &key_scalar_array::operator=(key_scalar_array &&other) noexcept {
+KeyScalarArray &KeyScalarArray::operator=(KeyScalarArray &&other) noexcept {
     if (&other != this) {
         m_scalars_owned = other.m_scalars_owned;
         m_keys_owned = other.m_keys_owned;
         p_keys = other.p_keys;
-        scalar_array::operator=(std::move(other));
+        ScalarArray::operator=(std::move(other));
         other.p_keys = nullptr;
     }
     return *this;
 }
-key_scalar_array &key_scalar_array::operator=(owned_scalar_array &&other) noexcept {
+KeyScalarArray &KeyScalarArray::operator=(OwnedScalarArray &&other) noexcept {
     m_scalars_owned = true;
-    scalar_array::operator=(std::move(other));
+    ScalarArray::operator=(std::move(other));
     return *this;
 }
-void key_scalar_array::allocate_scalars(idimn_t count)
+void KeyScalarArray::allocate_scalars(idimn_t count)
 {
     auto new_size = (count == -1) ? m_size : static_cast<dimn_t>(count);
     if (new_size != 0) {
-        scalar_array::operator=({p_type->allocate(new_size), new_size});
+        ScalarArray::operator=({p_type->allocate(new_size), new_size});
         m_scalars_owned = true;
     }
 }
-void key_scalar_array::allocate_keys(idimn_t count) {
+void KeyScalarArray::allocate_keys(idimn_t count) {
     auto new_size = (count == -1) ? m_size : static_cast<dimn_t>(count);
     if (p_keys != nullptr && m_keys_owned) {
         delete[] p_keys;
@@ -110,15 +111,15 @@ void key_scalar_array::allocate_keys(idimn_t count) {
         p_keys = nullptr;
     }
 }
-key_type *key_scalar_array::keys() {
+key_type *KeyScalarArray::keys() {
     if (m_keys_owned) {
         return const_cast<key_type*>(p_keys);
     }
     throw std::runtime_error("borrowed keys are not mutable");
 }
 
-key_scalar_array::operator owned_scalar_array() &&noexcept {
-    auto result = owned_scalar_array(p_type, p_data, m_size);
+KeyScalarArray::operator OwnedScalarArray() &&noexcept {
+    auto result = OwnedScalarArray(p_type, p_data, m_size);
     p_type = nullptr;
     p_data = nullptr;
     m_size = 0;

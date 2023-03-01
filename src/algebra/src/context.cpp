@@ -9,6 +9,7 @@
 #include <utility>
 #include <vector>
 
+#include "lite_context.h"
 
 namespace esig {
 namespace algebra {
@@ -40,7 +41,7 @@ free_tensor context::zero_tensor(vector_type vtype) const
 }
 lie context::zero_lie(vector_type vtype) const
 {
-    return construct_lie({ scalars::key_scalar_array(), vtype });
+    return construct_lie({ scalars::KeyScalarArray(), vtype });
 }
 int context_maker::get_priority(const std::vector<std::string> &preferences) const noexcept
 {
@@ -53,11 +54,16 @@ static std::mutex s_context_lock;
 
 static std::vector<std::unique_ptr<context_maker>>& get_context_maker_list() noexcept
 {
-    static std::vector<std::unique_ptr<context_maker>> list;
+    static std::vector<std::unique_ptr<context_maker>> list = []() {
+        std::vector<std::unique_ptr<context_maker>> tmp;
+        tmp.reserve(1);
+        tmp.emplace_back(new esig::algebra::lite_context_maker());
+        return tmp;
+    }();
     return list;
 }
 
-std::shared_ptr<const context> get_context(deg_t width, deg_t depth, const scalars::scalar_type* ctype, const std::vector<std::string>& preferences)
+std::shared_ptr<const context> get_context(deg_t width, deg_t depth, const scalars::ScalarType * ctype, const std::vector<std::string>& preferences)
 {
     std::lock_guard<std::mutex> access(s_context_lock);
     std::vector<std::pair<int, const context_maker*>> found;

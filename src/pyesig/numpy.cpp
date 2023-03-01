@@ -47,8 +47,8 @@ enum npy_dtypes : int {
 
 } // namespace
 
-const esig::scalars::scalar_type *esig::python::npy_dtype_to_ctype(py::dtype dtype) {
-    const esig::scalars::scalar_type* type = nullptr;
+const esig::scalars::ScalarType *esig::python::npy_dtype_to_ctype(py::dtype dtype) {
+    const esig::scalars::ScalarType * type = nullptr;
 
     switch (dtype.num()) {
         case NPY_FLOAT:
@@ -66,7 +66,7 @@ const esig::scalars::scalar_type *esig::python::npy_dtype_to_ctype(py::dtype dty
     return type;
 }
 
-py::dtype esig::python::ctype_to_npy_dtype(const esig::scalars::scalar_type *type) {
+py::dtype esig::python::ctype_to_npy_dtype(const esig::scalars::ScalarType *type) {
     if (type == scalars::dtl::scalar_type_holder<double>::get_type()) {
         return py::dtype("d");
     }

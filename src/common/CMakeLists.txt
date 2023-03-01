@@ -13,7 +13,7 @@ include(GenerateExportHeader)
 find_package(Boost CONFIG REQUIRED)
 find_package(Bignum QUIET)
 
-add_library(esig_common SHARED src/scalars/conversion_functions.cpp)
+add_library(esig_common SHARED)
 #add_library(esig_common SHARED )
 #pybind11_extension(esig_common)
 #target_link_libraries(esig_common PUBLIC
@@ -26,13 +26,26 @@ generate_export_header(esig_common
 set(esig_common_HEADERS
         "include/esig/implementation_types.h"
         "include/esig/intervals.h"
+        "include/esig/scalar_fwd.h"
+        "include/esig/scalar_pointer.h"
+        "include/esig/scalar_type.h"
+        "include/esig/scalar.h"
+        "include/esig/scalar_array.h"
+        "include/esig/scalar_interface.h"
+        "include/esig/owned_scalar_array.h"
+        "include/esig/key_scalar_array.h"
+        "include/esig/scalar_stream.h"
+        "include/esig/scalar_traits.h"
         "include/esig/scalars.h"
-        "${CMAKE_CURRENT_BINARY_DIR}/esig_export.h")
+        "${CMAKE_CURRENT_BINARY_DIR}/esig_export.h"
+        "${CMAKE_CURRENT_BINARY_DIR}/config.h"
+        )
 
 
 set_target_properties(esig_common PROPERTIES
         PUBLIC_HEADER "${esig_common_HEADERS}"
         LIBRARY_OUTPUT_DIRECTORY ${ESIG_BUILD_PYMODULE}
+        POSITION_INDEPENDENT_CODE ON
         )
 
 target_sources(esig_common
@@ -64,6 +77,7 @@ target_sources(esig_common
             src/scalars/rational_type.h
             src/scalars/ratonal_scalar_type_holder.cpp
             src/scalars/key_scalar_array.cpp
+            src/scalars/conversion_functions.cpp
             ${esig_common_HEADERS}
         )
 

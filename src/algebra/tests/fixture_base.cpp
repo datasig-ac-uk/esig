@@ -27,7 +27,7 @@ algebra::vector_construction_data fixture_base::get_construction_data(dimn_t siz
     std::vector<float> tmp_data;
     tmp_data.reserve(size);
 
-    scalars::key_scalar_array ksa(std::get<2>(GetParam()));
+    scalars::KeyScalarArray ksa(std::get<2>(GetParam()));
     if (data_type == algebra::vector_type::sparse) {
         ksa.allocate_keys(idimn_t(size));
         auto* keys = ksa.keys();
@@ -42,7 +42,7 @@ algebra::vector_construction_data fixture_base::get_construction_data(dimn_t siz
     }
 
     ksa.allocate_scalars(idimn_t(size));
-    scalars::scalar_pointer in_ptr(tmp_data.data());
+    scalars::ScalarPointer in_ptr(tmp_data.data());
     ksa.type()->convert_copy(ksa.ptr(), in_ptr, size);
 
     return {std::move(ksa), std::get<3>(GetParam())};

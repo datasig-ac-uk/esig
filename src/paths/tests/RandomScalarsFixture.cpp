@@ -10,7 +10,7 @@
 namespace esig {
 namespace testing {
 
-scalars::owned_scalar_array RandomScalars::random_data(const scalars::scalar_type *ctype, std::size_t count) {
+scalars::OwnedScalarArray RandomScalars::random_data(const scalars::ScalarType *ctype, std::size_t count) {
     std::vector<float> tmp_data;
 
     tmp_data.reserve(count);
@@ -18,8 +18,8 @@ scalars::owned_scalar_array RandomScalars::random_data(const scalars::scalar_typ
         tmp_data.push_back(dist(rng));
     }
 
-    scalars::owned_scalar_array result(ctype, count);
-    scalars::scalar_pointer src(tmp_data.data());
+    scalars::OwnedScalarArray result(ctype, count);
+    scalars::ScalarPointer src(tmp_data.data());
     ctype->convert_copy(result.ptr(), src, count);
 
     return result;

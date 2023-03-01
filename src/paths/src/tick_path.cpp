@@ -12,7 +12,7 @@ namespace paths {
 tick_path::tick_path(
         path_metadata &&md,
         std::vector<std::pair<param_t, std::vector<key_type>>> &&index_data,
-        scalars::owned_scalar_array &&data)
+        scalars::OwnedScalarArray &&data)
     : dyadic_caching_layer(std::move(md)),
       m_data(std::move(data)),
       m_index()
@@ -26,7 +26,7 @@ algebra::lie tick_path::log_signature(const interval &domain, const algebra::con
     const auto& md = metadata();
 
     algebra::signature_data data {
-        scalars::scalar_stream(ctx.ctype()), {}, md.result_vec_type
+        scalars::ScalarStream(ctx.ctype()), {}, md.result_vec_type
     };
 
     auto begin = (domain.get_type() == interval_type::clopen)

@@ -2,40 +2,43 @@
 // Created by user on 15/11/22.
 //
 
-#include "esig/scalars.h"
-
+#include "esig/owned_scalar_array.h"
+#include "esig/scalar_pointer.h"
+#include "esig/scalar_type.h"
+#include "esig/scalar.h"
+#include "esig/scalar_array.h"
 
 using namespace esig;
 using namespace scalars;
 
-owned_scalar_array::owned_scalar_array(const scalar_type *type)
-    : scalar_array(type) {
+OwnedScalarArray::OwnedScalarArray(const ScalarType *type)
+    : ScalarArray(type) {
 }
-owned_scalar_array::owned_scalar_array(const scalar_array &other)
-    : scalar_array(other.type()->allocate(other.size()), other.size())
+OwnedScalarArray::OwnedScalarArray(const ScalarArray &other)
+    : ScalarArray(other.type()->allocate(other.size()), other.size())
 {
     if (other.ptr() != nullptr) {
         p_type->convert_copy(const_cast<void*>(p_data),
-                             scalar_pointer(other),
+                             ScalarPointer(other),
                              other.size());
     }
 }
-owned_scalar_array::owned_scalar_array(const owned_scalar_array &other)
-    : scalar_array(other.type()->allocate(other.size()), other.size())
+OwnedScalarArray::OwnedScalarArray(const OwnedScalarArray &other)
+    : ScalarArray(other.type()->allocate(other.size()), other.size())
 {
     p_type->convert_copy(const_cast<void*>(p_data),
-                         scalar_pointer(other),
+                         ScalarPointer(other),
                          other.size());
 }
 
-owned_scalar_array::owned_scalar_array(const scalar_type *type, dimn_t size)
-    : scalar_array(type->allocate(size), size)
+OwnedScalarArray::OwnedScalarArray(const ScalarType *type, dimn_t size)
+    : ScalarArray(type->allocate(size), size)
 {}
 
-owned_scalar_array::owned_scalar_array(const scalar &value, dimn_t count)
-    : scalar_array((value.type() != nullptr
+OwnedScalarArray::OwnedScalarArray(const Scalar &value, dimn_t count)
+    : ScalarArray((value.type() != nullptr
                     ? value.type()->allocate(count)
-                    : scalar_pointer()),
+                    : ScalarPointer()),
                    count)
 {
     if (p_data != nullptr && p_type != nullptr) {
@@ -43,29 +46,29 @@ owned_scalar_array::owned_scalar_array(const scalar &value, dimn_t count)
     }
 }
 
-owned_scalar_array::owned_scalar_array(const scalar_type *type, const void *data, dimn_t count) noexcept
-    : scalar_array(data, type, count)
+OwnedScalarArray::OwnedScalarArray(const ScalarType *type, const void *data, dimn_t count) noexcept
+    : ScalarArray(data, type, count)
 {
 }
 
-owned_scalar_array::~owned_scalar_array()
+OwnedScalarArray::~OwnedScalarArray()
 {
     if (p_data != nullptr) {
-        owned_scalar_array::p_type->deallocate(
+        OwnedScalarArray::p_type->deallocate(
             *this,
-            owned_scalar_array::m_size);
+            OwnedScalarArray::m_size);
     }
 }
 
-owned_scalar_array::owned_scalar_array(owned_scalar_array &&other) noexcept
-    : scalar_array(std::move(other))
+OwnedScalarArray::OwnedScalarArray(OwnedScalarArray &&other) noexcept
+    : ScalarArray(std::move(other))
 {
 }
-owned_scalar_array &owned_scalar_array::operator=(const scalar_array &other) {
+OwnedScalarArray &OwnedScalarArray::operator=(const ScalarArray &other) {
     if (&other != this) {
-        this->~owned_scalar_array();
+        this->~OwnedScalarArray();
         if (other.size() > 0) {
-            scalar_pointer::operator=(other.type()->allocate(other.size()));
+            ScalarPointer::operator=(other.type()->allocate(other.size()));
             m_size = other.size();
             p_type->convert_copy(const_cast<void*>(p_data), other, m_size);
         } else {
@@ -76,10 +79,10 @@ owned_scalar_array &owned_scalar_array::operator=(const scalar_array &other) {
     }
     return *this;
 }
-owned_scalar_array &owned_scalar_array::operator=(owned_scalar_array &&other) noexcept
+OwnedScalarArray &OwnedScalarArray::operator=(OwnedScalarArray &&other) noexcept
 {
     if (&other != this) {
-        scalar_pointer::operator=(other);
+        ScalarPointer::operator=(other);
         m_size = other.m_size;
         other.p_data = nullptr;
         other.p_type = nullptr;

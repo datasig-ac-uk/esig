@@ -39,33 +39,33 @@ public:
     MOCK_METHOD(deg_t, width, (), (const, override));
     MOCK_METHOD(deg_t, depth, (), (const, override));
     MOCK_METHOD(vector_type, storage_type, (), (const, noexcept, override));
-    MOCK_METHOD(const scalars::scalar_type*, coeff_type, (), (const, noexcept, override));
+    MOCK_METHOD(const scalars::ScalarType *, coeff_type, (), (const, noexcept, override));
 
 //    MOCK_METHOD(dense_data_access_iterator, iterate_dense_components, (), (const, override));
-    MOCK_METHOD(scalars::scalar, get, (key_type), (const, override));
-    MOCK_METHOD(scalars::scalar, get_mut, (key_type), (override));
+    MOCK_METHOD(scalars::Scalar, get, (key_type), (const, override));
+    MOCK_METHOD(scalars::Scalar, get_mut, (key_type), (override));
 
     MOCK_METHOD(lie, uminus, (), (const, override));
     MOCK_METHOD(lie, add, (const lie_interface&), (const, override));
     MOCK_METHOD(lie, sub, (const lie_interface&), (const, override));
-    MOCK_METHOD(lie, smul, (const scalars::scalar&), (const, override));
-    MOCK_METHOD(lie, sdiv, (const scalars::scalar&), (const, override));
+    MOCK_METHOD(lie, smul, (const scalars::Scalar&), (const, override));
+    MOCK_METHOD(lie, sdiv, (const scalars::Scalar&), (const, override));
     MOCK_METHOD(lie, mul, (const lie_interface&), (const, override));
 
     MOCK_METHOD(void, add_inplace, (const lie_interface&), (override));
     MOCK_METHOD(void, sub_inplace, (const lie_interface&), (override));
-    MOCK_METHOD(void, smul_inplace, (const scalars::scalar&), (override));
-    MOCK_METHOD(void, sdiv_inplace, (const scalars::scalar&), (override));
+    MOCK_METHOD(void, smul_inplace, (const scalars::Scalar&), (override));
+    MOCK_METHOD(void, sdiv_inplace, (const scalars::Scalar&), (override));
     MOCK_METHOD(void, mul_inplace, (const lie_interface&), (override));
 
-    MOCK_METHOD(void, add_scal_mul, (const lie_interface&, const scalars::scalar&), (override));
-    MOCK_METHOD(void, sub_scal_mul, (const lie_interface&, const scalars::scalar&), (override));
-    MOCK_METHOD(void, add_scal_div, (const lie_interface&, const scalars::scalar&), (override));
-    MOCK_METHOD(void, sub_scal_div, (const lie_interface&, const scalars::scalar&), (override));
+    MOCK_METHOD(void, add_scal_mul, (const lie_interface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, sub_scal_mul, (const lie_interface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, add_scal_div, (const lie_interface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, sub_scal_div, (const lie_interface&, const scalars::Scalar&), (override));
     MOCK_METHOD(void, add_mul, (const lie_interface&, const lie_interface&), (override));
     MOCK_METHOD(void, sub_mul, (const lie_interface&, const lie_interface&), (override));
-    MOCK_METHOD(void, mul_smul, (const lie_interface&, const scalars::scalar&), (override));
-    MOCK_METHOD(void, mul_sdiv, (const lie_interface&, const scalars::scalar&), (override));
+    MOCK_METHOD(void, mul_smul, (const lie_interface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, mul_sdiv, (const lie_interface&, const scalars::Scalar&), (override));
 
     MOCK_METHOD(std::ostream&, print, (std::ostream&), (const, override));
 
@@ -194,12 +194,12 @@ TEST_F(LieWrapperFixture, TestLieInterfaceMul)
 TEST_F(LieWrapperFixture, TestLieInterfaceSmul)
 {
     EXPECT_CALL(mocked(lieobj), smul(_)).Times(1);
-    auto v = lieobj.smul(scalars::scalar(1.0));
+    auto v = lieobj.smul(scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfaceSdiv)
 {
     EXPECT_CALL(mocked(lieobj), sdiv(_)).Times(1);
-    auto v = lieobj.sdiv(scalars::scalar(1.0));
+    auto v = lieobj.sdiv(scalars::Scalar(1.0));
 }
 
 TEST_F(LieWrapperFixture, TestLieInterfaceAddInplace)
@@ -222,32 +222,32 @@ TEST_F(LieWrapperFixture, TestLieInterfaceMulInplace)
 TEST_F(LieWrapperFixture, TestLieInterfaceSMulInplace)
 {
     EXPECT_CALL(mocked(lieobj), smul_inplace(_)).Times(1);
-    auto v = lieobj.smul_inplace(scalars::scalar(1.0));
+    auto v = lieobj.smul_inplace(scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfaceSDivInplace)
 {
     EXPECT_CALL(mocked(lieobj), sdiv_inplace(_)).Times(1);
-    auto v = lieobj.sdiv_inplace(scalars::scalar(1.0));
+    auto v = lieobj.sdiv_inplace(scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfaceAddScalMul)
 {
     EXPECT_CALL(mocked(lieobj), add_scal_mul(_, _)).Times(1);
-    auto v = lieobj.add_scal_mul(otherlie,scalars::scalar(1.0));
+    auto v = lieobj.add_scal_mul(otherlie,scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfaceSubScalMul)
 {
     EXPECT_CALL(mocked(lieobj), add_scal_mul(_, _)).Times(1);
-    auto v = lieobj.add_scal_mul(otherlie,scalars::scalar(1.0));
+    auto v = lieobj.add_scal_mul(otherlie,scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfaceAddScalDiv)
 {
     EXPECT_CALL(mocked(lieobj), add_scal_div(_, _)).Times(1);
-    auto v = lieobj.add_scal_div(otherlie,scalars::scalar(1.0));
+    auto v = lieobj.add_scal_div(otherlie,scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfaceSubScalDiv)
 {
     EXPECT_CALL(mocked(lieobj), add_scal_div(_, _)).Times(1);
-    auto v = lieobj.add_scal_div(otherlie,scalars::scalar(1.0));
+    auto v = lieobj.add_scal_div(otherlie,scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfaceAddMul)
 {
@@ -264,12 +264,12 @@ TEST_F(LieWrapperFixture, TestLieInterfaceSubMul)
 TEST_F(LieWrapperFixture, TestLieInterfaceMulSMul)
 {
     EXPECT_CALL(mocked(lieobj), mul_smul(_, _)).Times(1);
-    auto v = lieobj.mul_smul(otherlie,scalars::scalar(1.0));
+    auto v = lieobj.mul_smul(otherlie,scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfaceMulSDiv)
 {
     EXPECT_CALL(mocked(lieobj), mul_sdiv(_, _)).Times(1);
-    auto v = lieobj.mul_sdiv(otherlie,scalars::scalar(1.0));
+    auto v = lieobj.mul_sdiv(otherlie,scalars::Scalar(1.0));
 }
 TEST_F(LieWrapperFixture, TestLieInterfacePrint)
 {

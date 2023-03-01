@@ -8,18 +8,18 @@
 
 namespace esig {
 namespace algebra {
-bool lite_context_maker::can_get(deg_t deg, deg_t deg_1, const scalars::scalar_type *type) const noexcept {
+bool lite_context_maker::can_get(deg_t deg, deg_t deg_1, const scalars::ScalarType *type) const noexcept {
     return true;
 }
 int lite_context_maker::get_priority(const std::vector<std::string> &preferences) const noexcept {
     return 0;
 }
 
-static std::unordered_map<std::tuple<deg_t, deg_t, const scalars::scalar_type*>, std::shared_ptr<const context>,
-    boost::hash<std::tuple<deg_t, deg_t, const scalars::scalar_type*>>> s_lite_context_cache;
+static std::unordered_map<std::tuple<deg_t, deg_t, const scalars::ScalarType *>, std::shared_ptr<const context>,
+    boost::hash<std::tuple<deg_t, deg_t, const scalars::ScalarType *>>> s_lite_context_cache;
 
 
-std::shared_ptr<const context> lite_context_maker::get_context(deg_t width, deg_t depth, const scalars::scalar_type *type) const {
+std::shared_ptr<const context> lite_context_maker::get_context(deg_t width, deg_t depth, const scalars::ScalarType *type) const {
     // We should already behind a mutex lock
     auto& found = s_lite_context_cache[std::make_tuple(width, depth, type)];
     if (!static_cast<bool>(found)) {
@@ -37,7 +37,6 @@ std::shared_ptr<const context> lite_context_maker::get_context(deg_t width, deg_
 }
 
 
-static register_maker_helper<lite_context_maker> lite_maker_helper;
 
 }// namespace algebra
 }// namespace esig

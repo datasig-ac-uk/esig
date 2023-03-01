@@ -17,8 +17,6 @@ static void rational_to_double(void* dst, const void* src)
     ::new (dst) double(*static_cast<const rational_scalar_type*>(src));
 }
 
-double_type::double_type() : standard_scalar_type<double>("f64", "double")
+double_type::double_type() : StandardScalarType<double>("f64", "double")
 {
-    standard_scalar_type<double>::register_converter("f32", &float_to_double);
-    double_type::register_converter("rational", &rational_to_double);
 }

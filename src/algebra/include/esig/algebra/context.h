@@ -17,7 +17,7 @@ namespace algebra {
 
 struct signature_data
 {
-    scalars::scalar_stream data_stream;
+    scalars::ScalarStream data_stream;
     std::vector<const key_type*> key_stream;
     vector_type vect_type;
 };
@@ -31,7 +31,7 @@ struct derivative_compute_info {
 
 struct vector_construction_data
 {
-    scalars::key_scalar_array data;
+    scalars::KeyScalarArray data;
     vector_type vect_type = vector_type::sparse;
 };
 
@@ -43,11 +43,11 @@ struct vector_construction_data
  */
 class ESIG_ALGEBRA_EXPORT context
 {
-    const scalars::scalar_type* p_ctype;
+    const scalars::ScalarType * p_ctype;
 
 protected:
 
-    explicit context(const scalars::scalar_type* ctype) : p_ctype(ctype)
+    explicit context(const scalars::ScalarType * ctype) : p_ctype(ctype)
     {}
 
 public:
@@ -62,13 +62,13 @@ public:
     // Get information about the context
     virtual deg_t width() const noexcept = 0;
     virtual deg_t depth() const noexcept = 0;
-    const scalars::scalar_type* ctype() const noexcept { return p_ctype; }
+    const scalars::ScalarType * ctype() const noexcept { return p_ctype; }
 
     // Get related contexts
     virtual std::shared_ptr<const context> get_alike(deg_t new_depth) const = 0;
-    virtual std::shared_ptr<const context> get_alike(const scalars::scalar_type* new_coeff) const = 0;
-    virtual std::shared_ptr<const context> get_alike(deg_t new_depth, const scalars::scalar_type* new_coeff) const = 0;
-    virtual std::shared_ptr<const context> get_alike(deg_t new_width, deg_t new_depth, const scalars::scalar_type* new_coeff) const = 0;
+    virtual std::shared_ptr<const context> get_alike(const scalars::ScalarType * new_coeff) const = 0;
+    virtual std::shared_ptr<const context> get_alike(deg_t new_depth, const scalars::ScalarType * new_coeff) const = 0;
+    virtual std::shared_ptr<const context> get_alike(deg_t new_width, deg_t new_depth, const scalars::ScalarType * new_coeff) const = 0;
 
     // Get information about the tensor and lie types
     virtual dimn_t lie_size(deg_t d) const noexcept = 0;
@@ -130,15 +130,15 @@ ESIG_ALGEBRA_EXPORT
 std::shared_ptr<const context> get_context(
         deg_t width,
         deg_t depth,
-        const scalars::scalar_type* ctype,
+        const scalars::ScalarType * ctype,
         const std::vector<std::string> &preferences = {});
 
 
 struct ESIG_ALGEBRA_EXPORT context_maker {
     virtual ~context_maker() = default;
-    virtual bool can_get(deg_t, deg_t, const scalars::scalar_type*) const noexcept = 0;
+    virtual bool can_get(deg_t, deg_t, const scalars::ScalarType *) const noexcept = 0;
     virtual int get_priority(const std::vector<std::string> &preferences) const noexcept;
-    virtual std::shared_ptr<const context> get_context(deg_t, deg_t, const scalars::scalar_type*) const = 0;
+    virtual std::shared_ptr<const context> get_context(deg_t, deg_t, const scalars::ScalarType *) const = 0;
 };
 
 ESIG_ALGEBRA_EXPORT

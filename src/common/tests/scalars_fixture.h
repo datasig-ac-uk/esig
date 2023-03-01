@@ -15,10 +15,10 @@ class EsigScalarFixture : public ::testing::Test
 {
 public:
     using underlying_type = double;
-    const scalars::scalar_type* type;
+    const scalars::ScalarType * type;
 
-    const scalars::scalar_type* ftype;
-    const scalars::scalar_type* dtype;
+    const scalars::ScalarType * ftype;
+    const scalars::ScalarType * dtype;
 
     EsigScalarFixture()
         : type(scalars::dtl::scalar_type_trait<double>::get_type()),

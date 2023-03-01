@@ -140,61 +140,61 @@ static inline std::string pytype_name(const py::type &type) {
     return std::string(reinterpret_cast<PyTypeObject *>(type.ptr())->tp_name);
 }
 
-const scalars::scalar_type *python::py_buffer_to_scalar_type(const py::buffer_info &info) {
-    using scalars::scalar_type;
+const scalars::ScalarType *python::py_buffer_to_scalar_type(const py::buffer_info &info) {
+    using scalars::ScalarType;
 
     auto python_format = format_to_type_char(info.format);
 
     switch (python_format) {
         case 'f':
-            return scalar_type::of<float>();
+            return ScalarType::of<float>();
         case 'd':
-            return scalar_type::of<double>();
+            return ScalarType::of<double>();
         default:
             throw py::type_error("no matching type for buffer type " + std::string(&python_format));
     }
     // TODO: Add custom type handling
 
-    return scalar_type::of<double>();
+    return ScalarType::of<double>();
 }
 
-const scalars::scalar_type *python::py_arg_to_ctype(const py::object &object) {
+const scalars::ScalarType *python::py_arg_to_ctype(const py::object &object) {
     if (py::isinstance(object, python::get_scalar_metaclass())) {
         return reinterpret_cast<python::PyScalarMetaType *>(object.ptr())->tp_ctype;
     }
     if (py::isinstance<py::str>(object)) {
-        return scalars::scalar_type::for_id(object.cast<std::string>());
+        return scalars::ScalarType::for_id(object.cast<std::string>());
     }
     return nullptr;
 }
 
-const scalars::scalar_type *python::py_type_to_scalar_type(const py::type &type) {
+const scalars::ScalarType *python::py_type_to_scalar_type(const py::type &type) {
     if (Py_Is(type.ptr(), (PyObject *)&PyFloat_Type)) {
-        return scalars::scalar_type::of<double>();
+        return scalars::ScalarType::of<double>();
     } else if (Py_Is(type.ptr(), (PyObject *)&PyLong_Type)) {
-        return scalars::scalar_type::of<double>();
+        return scalars::ScalarType::of<double>();
     }
 
     throw py::type_error("no matching scalar type for type " + pytype_name(type));
 }
-py::type python::scalar_type_to_py_type(const scalars::scalar_type *type) {
+py::type python::scalar_type_to_py_type(const scalars::ScalarType *type) {
 
-    if (type == scalars::scalar_type::of<float>() || type == scalars::scalar_type::of<double>()) {
+    if (type == scalars::ScalarType::of<float>() || type == scalars::ScalarType::of<double>()) {
         return py::reinterpret_borrow<py::type>((PyObject*) &PyFloat_Type);
     }
 
     throw py::type_error("no matching type for type " + type->info().name);
 }
 
-static const scalars::scalar_type *dlpack_dtype_to_scalar_type(DLDataType dtype, DLDevice device) {
-    return scalars::scalar_type::from_type_details({dtype.code, dtype.bits, dtype.lanes, {device.device_type, device.device_id}});
+static const scalars::ScalarType *dlpack_dtype_to_scalar_type(DLDataType dtype, DLDevice device) {
+    return scalars::ScalarType::from_type_details({dtype.code, dtype.bits, dtype.lanes, {device.device_type, device.device_id}});
 }
 
 static inline void dl_copy_strided(std::int32_t ndim,
                                    std::int64_t *shape,
                                    std::int64_t *strides,
-                                   scalars::scalar_pointer src,
-                                   scalars::scalar_pointer dst) {
+                                   scalars::ScalarPointer src,
+                                   scalars::ScalarPointer dst) {
     if (ndim == 1) {
         if (strides[0] == 1) {
             dst.type()->convert_copy(dst.ptr(), src, shape[0]);
@@ -216,14 +216,14 @@ static inline void dl_copy_strided(std::int32_t ndim,
 static inline void buffer_copy_strided(py::ssize_t ndim,
                                        py::ssize_t *shape,
                                        py::ssize_t *strides,
-                                       scalars::scalar_pointer src,
-                                       scalars::scalar_pointer dst) {
+                                       scalars::ScalarPointer src,
+                                       scalars::ScalarPointer dst) {
 }
 
-static inline void update_dtype_and_allocate(scalars::key_scalar_array &result, python::py_to_buffer_options &options, idimn_t no_values, idimn_t no_keys) {
+static inline void update_dtype_and_allocate(scalars::KeyScalarArray &result, python::py_to_buffer_options &options, idimn_t no_values, idimn_t no_keys) {
 
     if (options.type != nullptr) {
-        result = scalars::key_scalar_array(options.type);
+        result = scalars::KeyScalarArray(options.type);
         result.allocate_scalars(no_values);
         result.allocate_keys(no_keys);
     } else if (no_values > 0) {
@@ -231,7 +231,7 @@ static inline void update_dtype_and_allocate(scalars::key_scalar_array &result, 
     }
 }
 
-static bool try_fill_buffer_dlpack(scalars::key_scalar_array &buffer,
+static bool try_fill_buffer_dlpack(scalars::KeyScalarArray &buffer,
                                    python::py_to_buffer_options &options,
                                    const py::object &object) {
     py::capsule dlpack;
@@ -253,7 +253,7 @@ static bool try_fill_buffer_dlpack(scalars::key_scalar_array &buffer,
     const auto *tensor_stype = dlpack_dtype_to_scalar_type(dltensor.dtype, dltensor.device);
     if (options.type == nullptr) {
         options.type = tensor_stype;
-        buffer = scalars::key_scalar_array(options.type);
+        buffer = scalars::KeyScalarArray(options.type);
     }
 
     if (data == nullptr) {
@@ -267,10 +267,10 @@ static bool try_fill_buffer_dlpack(scalars::key_scalar_array &buffer,
     }
 
     if (strides == nullptr) {
-        buffer = scalars::scalar_array(data, options.type, size);
+        buffer = scalars::ScalarArray(data, options.type, size);
     } else {
         buffer.allocate_scalars(size);
-        scalars::scalar_pointer p(data, tensor_stype);
+        scalars::ScalarPointer p(data, tensor_stype);
         dl_copy_strided(ndim, shape, strides, p, buffer + 0);
     }
 
@@ -476,7 +476,7 @@ static arg_size_info compute_size_and_type(
     return info;
 }
 
-void python::assign_py_object_to_scalar(scalars::scalar_pointer p, py::handle object) {
+void python::assign_py_object_to_scalar(scalars::ScalarPointer p, py::handle object) {
 
     if (py::isinstance<py::float_>(object)) {
         *p = object.cast<double>();
@@ -490,7 +490,7 @@ void python::assign_py_object_to_scalar(scalars::scalar_pointer p, py::handle ob
     }
 }
 
-static void handle_sequence_tuple(scalars::scalar_pointer scalar_ptr, key_type *key_ptr, py::handle tpl_o, python::py_to_buffer_options &options) {
+static void handle_sequence_tuple(scalars::ScalarPointer scalar_ptr, key_type *key_ptr, py::handle tpl_o, python::py_to_buffer_options &options) {
     auto tpl = py::reinterpret_borrow<py::tuple>(tpl_o);
     auto key = tpl[0];
     if (options.alternative_key != nullptr && py::isinstance(key, options.alternative_key->py_key_type)) {
@@ -502,7 +502,7 @@ static void handle_sequence_tuple(scalars::scalar_pointer scalar_ptr, key_type *
     python::assign_py_object_to_scalar(scalar_ptr, tpl[1]);
 }
 
-static void handle_dict(scalars::scalar_pointer &scalar_ptr,
+static void handle_dict(scalars::ScalarPointer &scalar_ptr,
                         key_type *&key_ptr,
                         python::py_to_buffer_options &options,
                         py::handle dict_o) {
@@ -521,8 +521,8 @@ static void handle_dict(scalars::scalar_pointer &scalar_ptr,
     }
 }
 
-scalars::key_scalar_array python::py_to_buffer(const py::object &object, python::py_to_buffer_options &options) {
-    scalars::key_scalar_array result(options.type);
+scalars::KeyScalarArray python::py_to_buffer(const py::object &object, python::py_to_buffer_options &options) {
+    scalars::KeyScalarArray result(options.type);
 
     // First handle the single number cases
     if (py::isinstance<py::float_>(object) || py::isinstance<py::int_>(object)) {
@@ -556,8 +556,8 @@ scalars::key_scalar_array python::py_to_buffer(const py::object &object, python:
         auto type_id = py_buffer_to_type_id(info);
 
         if (options.type == nullptr) {
-            options.type = scalars::scalar_type::for_id(type_id);
-            result = scalars::key_scalar_array(options.type);
+            options.type = scalars::ScalarType::for_id(type_id);
+            result = scalars::KeyScalarArray(options.type);
         }
 
         update_dtype_and_allocate(result, options, info.size, 0);
@@ -579,7 +579,7 @@ scalars::key_scalar_array python::py_to_buffer(const py::object &object, python:
 
             update_dtype_and_allocate(result, options, options.shape[0], options.shape[0]);
 
-            scalars::scalar_pointer ptr(result);
+            scalars::ScalarPointer ptr(result);
             key_type *key_ptr = result.keys();
 
             handle_dict(ptr, key_ptr, options, dict_arg);
@@ -590,7 +590,7 @@ scalars::key_scalar_array python::py_to_buffer(const py::object &object, python:
 
         update_dtype_and_allocate(result, options, size_info.num_values, size_info.num_keys);
 
-        scalars::scalar_pointer scalar_ptr(result);
+        scalars::ScalarPointer scalar_ptr(result);
 
         if (size_info.num_keys == 0) {
             // Scalar info only.
@@ -627,9 +627,9 @@ void esig::python::init_scalars(py::module_ &m) {
 
     init_scalar_type(m);
 
-    py::class_<scalar> klass(m, "Scalar", SCALAR_DOC);
+    py::class_<Scalar> klass(m, "Scalar", SCALAR_DOC);
 
-    klass.def("scalar_type", [](const scalar& self) {
+    klass.def("scalar_type", [](const Scalar & self) {
              return scalar_type_to_py_type(self.type());
          });
 
@@ -647,20 +647,20 @@ void esig::python::init_scalars(py::module_ &m) {
     klass.def(py::self == py::self);
     klass.def(py::self != py::self);
 
-    klass.def("__eq__", [](const scalar& self, scalar_t other) {
+    klass.def("__eq__", [](const Scalar & self, scalar_t other) {
             return self.to_scalar_t() == other;
          });
-    klass.def("__eq__", [](scalar_t other, const scalar& self) {
+    klass.def("__eq__", [](scalar_t other, const Scalar & self) {
             return self.to_scalar_t() == other;
          });
 
 
-    klass.def("__str__", [](const scalar& self) {
+    klass.def("__str__", [](const Scalar & self) {
         std::stringstream ss;
         ss << self;
         return ss.str();
     });
-    klass.def("__repr__", [](const scalar& self) {
+    klass.def("__repr__", [](const Scalar & self) {
         std::stringstream ss;
         ss << "Scalar(type=" << self.type()->info().name
            << ", value approx " << self.to_scalar_t()

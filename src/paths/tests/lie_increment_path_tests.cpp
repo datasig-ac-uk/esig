@@ -41,7 +41,7 @@ protected:
 
 
 protected:
-    esig::scalars::owned_scalar_array random_dense_data(esig::dimn_t num_increments)
+    esig::scalars::OwnedScalarArray random_dense_data(esig::dimn_t num_increments)
     {
          return esig::testing::RandomScalars::random_data(ctx->ctype(), num_increments*width);
     }
@@ -78,7 +78,7 @@ TEST_F(LieIncrementPathTestsFixture, TestLogSignatureSingleIncrement)
 
     auto data = random_dense_data(1);
     esig::algebra::vector_construction_data edata {
-        esig::scalars::key_scalar_array(esig::scalars::owned_scalar_array(data)),
+        esig::scalars::KeyScalarArray(esig::scalars::OwnedScalarArray(data)),
         esig::algebra::vector_type::dense
     };
     auto idx = indices(1);
@@ -105,7 +105,7 @@ TEST_F(LieIncrementPathTestsFixture, TestLogSignatureTwoIncrementsDepth1)
     auto data = random_dense_data(2);
 
     esig::algebra::vector_construction_data edata {
-        esig::scalars::key_scalar_array(ctx->ctype()),
+        esig::scalars::KeyScalarArray(ctx->ctype()),
         esig::algebra::vector_type::dense
     };
     edata.data.allocate_scalars(width);

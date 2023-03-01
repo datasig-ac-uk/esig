@@ -21,7 +21,7 @@ struct alternative_key_type {
 
 struct py_to_buffer_options {
     /// Scalar type to use. If null, will be set to the resulting type
-    const scalars::scalar_type *type = nullptr;
+    const scalars::ScalarType *type = nullptr;
 
     /// Maximum number of nested objects to search. Set to 0 for no recursion.
     dimn_t max_nested = 0;
@@ -48,14 +48,14 @@ char format_to_type_char(const std::string& fmt);
 std::string py_buffer_to_type_id(const py::buffer_info& info);
 
 
-const scalars::scalar_type* py_buffer_to_scalar_type(const py::buffer_info& info);
-const scalars::scalar_type* py_type_to_scalar_type(const py::type& type);
-const scalars::scalar_type* py_arg_to_ctype(const py::object& object);
+const scalars::ScalarType * py_buffer_to_scalar_type(const py::buffer_info& info);
+const scalars::ScalarType * py_type_to_scalar_type(const py::type& type);
+const scalars::ScalarType * py_arg_to_ctype(const py::object& object);
 
-py::type scalar_type_to_py_type(const scalars::scalar_type*);
-void assign_py_object_to_scalar(scalars::scalar_pointer ptr, py::handle object);
+py::type scalar_type_to_py_type(const scalars::ScalarType *);
+void assign_py_object_to_scalar(scalars::ScalarPointer ptr, py::handle object);
 
-scalars::key_scalar_array
+scalars::KeyScalarArray
 py_to_buffer(const py::object& object, py_to_buffer_options& options);
 
 

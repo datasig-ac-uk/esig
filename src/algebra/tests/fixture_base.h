@@ -19,7 +19,7 @@
 namespace esig {
 namespace testing {
 
-using param_type = std::tuple<deg_t, deg_t, const scalars::scalar_type*, algebra::vector_type>;
+using param_type = std::tuple<deg_t, deg_t, const scalars::ScalarType *, algebra::vector_type>;
 
 class fixture_base : public ::testing::TestWithParam<param_type>
 {

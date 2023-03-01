@@ -14,8 +14,8 @@
 
 namespace esig { namespace python {
 
-const scalars::scalar_type* npy_dtype_to_ctype(py::dtype dtype);
-py::dtype ctype_to_npy_dtype(const scalars::scalar_type*);
+const scalars::ScalarType * npy_dtype_to_ctype(py::dtype dtype);
+py::dtype ctype_to_npy_dtype(const scalars::ScalarType *);
 
 std::string npy_dtype_to_identifier(py::dtype dtype);
 

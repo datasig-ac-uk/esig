@@ -7,11 +7,10 @@
 
 #include "standard_scalar_type.h"
 
-
 namespace esig {
 namespace scalars {
 
-class rational_type : public standard_scalar_type<rational_scalar_type> {
+class rational_type : public StandardScalarType<rational_scalar_type> {
 public:
     rational_type();
 };

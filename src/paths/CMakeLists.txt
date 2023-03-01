@@ -60,7 +60,8 @@ target_sources(esig_paths
         )
 
 set_target_properties(esig_paths PROPERTIES
-        LIBRARY_OUTPUT_DIRECTORY "${ESIG_BUILD_PYMODULE}")
+        LIBRARY_OUTPUT_DIRECTORY "${ESIG_BUILD_PYMODULE}"
+        POSITION_INDEPENDENT_CODE ON)
 
 #pybind11_add_module(py_esig_paths MODULE WITH_SOABI)
 #set_target_properties(py_esig_paths PROPERTIES
