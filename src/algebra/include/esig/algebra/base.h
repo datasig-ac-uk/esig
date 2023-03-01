@@ -221,7 +221,7 @@ struct AlgebraInterface {
 
 
 template <typename Base, typename Fibre>
-struct algebra_bundle_interface : public Base
+struct AlgebraBundleInterface : public Base
 {
     virtual Fibre fibre() = 0;
 };
@@ -473,10 +473,10 @@ template <typename AlgebraInterface,
          template <typename, typename> class AlgebraWrapper=algebra_implementation,
          template <typename, typename> class FibreWrapper=borrowed_algebra_implementation>
 class algebra_bundle_implementation
-    : public AlgebraWrapper<algebra_bundle_interface<AlgebraInterface,
+    : public AlgebraWrapper<AlgebraBundleInterface<AlgebraInterface,
                                  typename FibreInterface::algebra_t>, Impl>
 {
-    using wrapped_alg_interface = algebra_bundle_interface<
+    using wrapped_alg_interface = AlgebraBundleInterface<
         AlgebraInterface, typename FibreInterface::algebra_t>;
 
     using fibre_impl_type = decltype(std::declval<Impl>().fibre());
@@ -548,7 +548,7 @@ struct implementation_wrapper_selection<Interface, Impl, std::true_type>
 
 template <typename AlgebraInterface, typename Fibre, typename Impl, typename Options>
 struct implementation_wrapper_selection<
-    algebra_bundle_interface<AlgebraInterface, Fibre>,
+    AlgebraBundleInterface<AlgebraInterface, Fibre>,
     Impl, Options>
 {
     using type = algebra_bundle_implementation<AlgebraInterface, Impl, AlgebraInterface<Fibre>>;
