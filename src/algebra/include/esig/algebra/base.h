@@ -29,12 +29,12 @@
 namespace esig {
 namespace algebra {
 
-enum class implementation_type {
+enum class ImplementationType {
     borrowed,
     owned
 };
 
-enum class vector_type {
+enum class VectorType {
     sparse,
     dense
 };
@@ -43,10 +43,10 @@ template <typename Algebra>
 struct algebra_info;
 
 
-class ESIG_ALGEBRA_EXPORT basis_interface {
+class ESIG_ALGEBRA_EXPORT BasisInterface {
 public:
 
-    virtual ~basis_interface() = default;
+    virtual ~BasisInterface() = default;
 
     virtual boost::optional<deg_t> width() const noexcept;
     virtual boost::optional<deg_t> depth() const noexcept;
@@ -67,14 +67,12 @@ public:
 namespace dtl {
 
 template <typename Impl>
-class basis_implementation : public basis_interface
-{
+class BasisImplementation : public BasisInterface {
     const Impl* p_basis;
     using traits = basis_info<Impl>;
 
 public:
-
-    basis_implementation(const Impl* arg) : p_basis(arg)
+    BasisImplementation(const Impl* arg) : p_basis(arg)
     {}
 
     boost::optional<deg_t> width() const noexcept override {
@@ -123,17 +121,16 @@ public:
 } // namespace dtl
 
 
-class ESIG_ALGEBRA_EXPORT basis
-{
-    std::unique_ptr<const basis_interface> p_impl;
+class ESIG_ALGEBRA_EXPORT Basis {
+    std::unique_ptr<const BasisInterface> p_impl;
 
 public:
 
     template <typename T>
-    basis(const T* arg) : p_impl(new dtl::basis_implementation<T>(arg))
+    Basis(const T* arg) : p_impl(new dtl::BasisImplementation<T>(arg))
     {}
 
-    const basis_interface& operator*() const noexcept
+    const BasisInterface & operator*() const noexcept
     {
         return *p_impl;
     }
@@ -168,7 +165,7 @@ struct algebra_interface
     virtual deg_t degree() const;
     virtual deg_t width() const;
     virtual deg_t depth() const;
-    virtual vector_type storage_type() const noexcept = 0;
+    virtual VectorType storage_type() const noexcept = 0;
     virtual const esig::scalars::ScalarType * coeff_type() const noexcept = 0;
 
     // Element access
@@ -219,7 +216,7 @@ struct algebra_interface
 
 
     virtual std::uintptr_t id() const noexcept;
-    virtual implementation_type type() const noexcept;
+    virtual ImplementationType type() const noexcept;
 
 };
 
@@ -341,7 +338,7 @@ protected:
     template <typename T>
     static T cast(const algebra_interface_t& arg) noexcept
     {
-        if (arg.type() == implementation_type::owned) {
+        if (arg.type() == ImplementationType::owned) {
             return static_cast<boost::copy_cv_t<algebra_implementation, std::remove_reference_t<T>>&>(arg).m_data;
         } else {
             return *static_cast<boost::copy_cv_t<borrowed_alg_impl_t, std::remove_reference_t<T>>&>(arg).p_impl;
@@ -359,7 +356,7 @@ public:
     deg_t degree() const override;
     deg_t width() const override;
     deg_t depth() const override;
-    vector_type storage_type() const noexcept override;
+    VectorType storage_type() const noexcept override;
     const esig::scalars::ScalarType *coeff_type() const noexcept override;
     scalars::Scalar get(key_type key) const override;
     scalars::Scalar get_mut(key_type key) override;
@@ -430,7 +427,7 @@ private:
 public:
 
     std::uintptr_t id() const noexcept override;
-    implementation_type type() const noexcept override;
+    ImplementationType type() const noexcept override;
 
 
     using this_scalar_type = typename algebra_info<impl_base_type>::scalar_type;
@@ -442,7 +439,7 @@ public:
     deg_t degree() const override;
     deg_t width() const override;
     deg_t depth() const override;
-    vector_type storage_type() const noexcept override;
+    VectorType storage_type() const noexcept override;
     const esig::scalars::ScalarType *coeff_type() const noexcept override;
     scalars::Scalar get(key_type key) const override;
     scalars::Scalar get_mut(key_type key) override;
@@ -601,7 +598,7 @@ public:
     deg_t width() const;
     deg_t depth() const;
     deg_t degree() const;
-    vector_type storage_type() const noexcept;
+    VectorType storage_type() const noexcept;
     const scalars::ScalarType * coeff_type() const noexcept;
 
     scalars::Scalar operator[](key_type k) const;
@@ -693,8 +690,8 @@ struct algebra_info
 
     static const scalars::ScalarType * ctype() noexcept
     { return ::esig::scalars::dtl::scalar_type_holder<scalar_type>::get_type(); }
-    static constexpr vector_type vtype() noexcept
-    { return vector_type::sparse; }
+    static constexpr VectorType vtype() noexcept
+    { return VectorType::sparse; }
     static deg_t width(const Algebra* instance) noexcept
     { return instance->basis().width(); }
     static deg_t max_depth(const Algebra* instance) noexcept
@@ -770,8 +767,8 @@ std::uintptr_t algebra_interface<Algebra>::id() const noexcept {
     return 0;
 }
 template<typename Algebra>
-implementation_type algebra_interface<Algebra>::type() const noexcept {
-    return implementation_type::owned;
+ImplementationType algebra_interface<Algebra>::type() const noexcept {
+    return ImplementationType::owned;
 }
 
 template<typename Interface>
@@ -874,7 +871,7 @@ deg_t algebra_implementation<Interface, Impl>::depth() const {
     return algebra_info<Impl>::max_depth(&m_data);
 }
 template<typename Interface, typename Impl>
-vector_type algebra_implementation<Interface, Impl>::storage_type() const noexcept {
+VectorType algebra_implementation<Interface, Impl>::storage_type() const noexcept {
     return algebra_info<Impl>::vtype();
 }
 template<typename Interface, typename Impl>
@@ -1059,7 +1056,7 @@ deg_t borrowed_algebra_implementation<Interface, Impl>::depth() const {
     return algebra_info<Impl>::max_depth(p_impl);
 }
 template<typename Interface, typename Impl>
-vector_type borrowed_algebra_implementation<Interface, Impl>::storage_type() const noexcept {
+VectorType borrowed_algebra_implementation<Interface, Impl>::storage_type() const noexcept {
     return algebra_info<Impl>::vtype();
 }
 template<typename Interface, typename Impl>
@@ -1171,8 +1168,8 @@ std::uintptr_t borrowed_algebra_implementation<Interface, Impl>::id() const noex
     return (std::uintptr_t) p_ctx;
 }
 template<typename Interface, typename Impl>
-implementation_type borrowed_algebra_implementation<Interface, Impl>::type() const noexcept {
-    return implementation_type::borrowed;
+ImplementationType borrowed_algebra_implementation<Interface, Impl>::type() const noexcept {
+    return ImplementationType::borrowed;
 }
 
 template<typename AlgebraInterface,
@@ -1219,7 +1216,7 @@ deg_t algebra_base<Interface>::degree() const {
     return p_impl->degree();
 }
 template<typename Interface>
-vector_type algebra_base<Interface>::storage_type() const noexcept {
+VectorType algebra_base<Interface>::storage_type() const noexcept {
     return p_impl->storage_type();
 }
 template<typename Interface>
@@ -1595,7 +1592,7 @@ struct algebra_access
     template <typename Impl>
     static const Impl& get(const interface_type& arg)
     {
-        if (arg.type() == implementation_type::owned) {
+        if (arg.type() == ImplementationType::owned) {
             return static_cast<const wrapper_t<Impl>&>(arg).m_data;
         } else {
             return *static_cast<const borrowed_wrapper_t<Impl>&>(arg).p_impl;
@@ -1605,7 +1602,7 @@ struct algebra_access
     template <typename Impl>
     static Impl& get(interface_type& arg)
     {
-        if (arg.type() == implementation_type::owned) {
+        if (arg.type() == ImplementationType::owned) {
             return static_cast<wrapper_t<Impl>&>(arg).m_data;
         } else {
             return *static_cast<borrowed_wrapper_t<Impl>&>(arg).p_impl;

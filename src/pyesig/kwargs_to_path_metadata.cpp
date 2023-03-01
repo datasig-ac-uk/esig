@@ -18,7 +18,7 @@ esig::paths::path_metadata esig::python::kwargs_to_metadata(const py::kwargs &kw
         real_interval {0.0, 1.0}, // Effective domain
         nullptr, // context
         nullptr, // scalar type
-        algebra::vector_type::dense // vector type
+        algebra::VectorType::dense // vector type
     };
 
     if (kwargs.contains("ctx")) {
@@ -50,7 +50,7 @@ esig::paths::path_metadata esig::python::kwargs_to_metadata(const py::kwargs &kw
     }
 
     if (kwargs.contains("vtype")) {
-        md.result_vec_type = kwargs["vtype"].cast<algebra::vector_type>();
+        md.result_vec_type = kwargs["vtype"].cast<algebra::VectorType>();
     }
 
     return md;

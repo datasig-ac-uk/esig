@@ -27,13 +27,13 @@ public:
     algebra::free_tensor make_sparse_free_tensor(idimn_t size=-1)
     {
         auto make_size = (size == -1) ? ctx->tensor_size(std::get<1>(GetParam())) : dimn_t(size);
-        return ctx->construct_tensor(get_construction_data(make_size, algebra::vector_type::sparse));
+        return ctx->construct_tensor(get_construction_data(make_size, algebra::VectorType::sparse));
     }
 
     algebra::free_tensor make_dense_free_tensor(idimn_t size=-1)
     {
         auto make_size = (size == -1) ? ctx->tensor_size(std::get<1>(GetParam())) : dimn_t(size);
-        auto cons_data = get_construction_data(make_size, algebra::vector_type::dense);
+        auto cons_data = get_construction_data(make_size, algebra::VectorType::dense);
         return ctx->construct_tensor(cons_data);
     }
 
@@ -106,7 +106,7 @@ INSTANTIATE_TEST_SUITE_P(TensorTests, TensorFixture,
                                 ::testing::Values(2, 5, 10),
                                 ::testing::Values(2, 5),
                                 ::testing::Values(esig::scalars::dtl::scalar_type_holder<float>::get_type(), esig::scalars::dtl::scalar_type_holder<double>::get_type()),
-                                ::testing::Values(esig::algebra::vector_type::sparse, esig::algebra::vector_type::dense)
+                                ::testing::Values(esig::algebra::VectorType::sparse, esig::algebra::VectorType::dense)
                                 ),
                         esig::testing::get_param_test_name
                         );

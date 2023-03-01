@@ -99,10 +99,10 @@ static free_tensor construct_free_tensor(py::object data, py::kwargs kwargs) {
         if (buffer.has_keys()) {
             // if data comes and k-v pairs, then it is reasonable to assume
             // the user wants a sparse tensor.
-            helper.vtype = algebra::vector_type::sparse;
+            helper.vtype = algebra::VectorType::sparse;
         } else {
             // otherwise dense
-            helper.vtype = algebra::vector_type::dense;
+            helper.vtype = algebra::VectorType::dense;
         }
     }
 
@@ -226,7 +226,7 @@ void esig::python::init_free_tensor(py::module_ &m) {
 //        py::dtype dtype = dtype_from(self.coeff_type());
         py::dtype dtype = esig::python::ctype_to_npy_dtype(self.coeff_type());
 
-        if (self.storage_type() == vector_type::dense) {
+        if (self.storage_type() == VectorType::dense) {
             auto dense_data = self.dense_data();
             return py::array(dtype, {dense_data.size()}, {}, dense_data.ptr());
         }

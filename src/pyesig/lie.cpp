@@ -168,7 +168,7 @@ void esig::python::init_lie(py::module_ &m) {
     klass.def("__array__", [](const lie& arg) {
         py::dtype dtype = esig::python::ctype_to_npy_dtype(arg.coeff_type());
 
-        if (arg.storage_type() == vector_type::dense) {
+        if (arg.storage_type() == VectorType::dense) {
             auto dense_data = arg.dense_data();
             return py::array(dtype, {dense_data.size()}, {}, dense_data.ptr());
         }

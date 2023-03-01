@@ -60,7 +60,7 @@ struct path_metadata {
     std::shared_ptr<const algebra::context> ctx;
 
     const scalars::ScalarType * ctype;
-    algebra::vector_type result_vec_type;
+    algebra::VectorType result_vec_type;
 };
 
 /**

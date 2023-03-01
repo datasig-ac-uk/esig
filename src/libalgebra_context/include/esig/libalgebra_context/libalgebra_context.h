@@ -51,8 +51,8 @@ struct vtype_helper<vector_type::sparse> {
 };
 
 template<deg_t Width, deg_t Depth>
-class basis_implementation<alg::free_tensor_basis<Width, Depth>>
-    : public basis_interface {
+class BasisImplementation<alg::free_tensor_basis<Width, Depth>>
+    : public BasisInterface {
     using basis_type = alg::free_tensor_basis<Width, Depth>;
     const basis_type &m_basis;
 

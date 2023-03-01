@@ -19,7 +19,7 @@ struct signature_data
 {
     scalars::ScalarStream data_stream;
     std::vector<const key_type*> key_stream;
-    vector_type vect_type;
+    VectorType vect_type;
 };
 
 
@@ -32,7 +32,7 @@ struct derivative_compute_info {
 struct vector_construction_data
 {
     scalars::KeyScalarArray data;
-    vector_type vect_type = vector_type::sparse;
+    VectorType vect_type = VectorType::sparse;
 };
 
 
@@ -76,8 +76,8 @@ public:
 
     virtual bool check_compatible(const context& other) const noexcept;
 
-    virtual free_tensor convert(const free_tensor& arg, vector_type new_vec_type) const = 0;
-    virtual lie convert(const lie& arg, vector_type new_vec_type) const = 0;
+    virtual free_tensor convert(const free_tensor& arg, VectorType new_vec_type) const = 0;
+    virtual lie convert(const lie& arg, VectorType new_vec_type) const = 0;
 
     //TODO: needs more thought
 
@@ -87,15 +87,15 @@ public:
 //    virtual const algebra_basis &borrow_tbasis() const noexcept = 0;
 //    virtual const algebra_basis &borrow_lbasis() const noexcept = 0;
 
-    virtual basis get_tensor_basis() const = 0;
-    virtual basis get_lie_basis() const = 0;
+    virtual Basis get_tensor_basis() const = 0;
+    virtual Basis get_lie_basis() const = 0;
 
 
     // Construct new instances of tensors and lies
     virtual free_tensor construct_tensor(const vector_construction_data &) const = 0;
     virtual lie construct_lie(const vector_construction_data &) const = 0;
-    virtual free_tensor zero_tensor(vector_type vtype) const;
-    virtual lie zero_lie(vector_type vtype) const;
+    virtual free_tensor zero_tensor(VectorType vtype) const;
+    virtual lie zero_lie(VectorType vtype) const;
 
     // Conversions between Lie and Tensors
 protected:
@@ -111,7 +111,7 @@ protected:
     void cbh_fallback(free_tensor& collector, const std::vector<lie>& lies) const;
 
 public:
-    virtual lie cbh(const std::vector<lie> &lies, vector_type vtype) const = 0;
+    virtual lie cbh(const std::vector<lie> &lies, VectorType vtype) const = 0;
 
 
     // Methods for computing signatures
@@ -122,8 +122,8 @@ public:
     // Method for computing the derivative of a signature
     virtual free_tensor sig_derivative(
             const std::vector<derivative_compute_info> &info,
-            vector_type vtype,
-            vector_type) const = 0;
+        VectorType vtype,
+        VectorType) const = 0;
 };
 
 ESIG_ALGEBRA_EXPORT

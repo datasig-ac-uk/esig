@@ -35,11 +35,11 @@ bool context::check_compatible(const context &other) const noexcept {
     return other.width() == width();
 }
 
-free_tensor context::zero_tensor(vector_type vtype) const
+free_tensor context::zero_tensor(VectorType vtype) const
 {
     return construct_tensor({ .vect_type=vtype });
 }
-lie context::zero_lie(vector_type vtype) const
+lie context::zero_lie(VectorType vtype) const
 {
     return construct_lie({ scalars::KeyScalarArray(), vtype });
 }

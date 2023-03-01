@@ -21,7 +21,7 @@ struct py_vector_construction_helper {
     /// Coefficient type
     const scalars::ScalarType *ctype = nullptr;
     /// Vector type to be requested
-    algebra::vector_type vtype = algebra::vector_type::dense;
+    algebra::VectorType vtype = algebra::VectorType::dense;
     /// flags for saying if the user explicitly requested ctype and vtype
     bool ctype_requested = false;
     bool vtype_requested = false;

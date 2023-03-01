@@ -27,14 +27,14 @@ public:
     algebra::lie make_sparse_lie(idimn_t size=-1)
     {
         dimn_t make_size = (size == -1) ? ctx->lie_size(std::get<1>(GetParam())) : dimn_t(size);
-        return ctx->construct_lie(get_construction_data(make_size, algebra::vector_type::sparse));
+        return ctx->construct_lie(get_construction_data(make_size, algebra::VectorType::sparse));
     }
 
 
     algebra::lie make_dense_lie(idimn_t size=-1)
     {
         dimn_t make_size = (size == -1) ? ctx->lie_size(std::get<1>(GetParam())) : dimn_t(size);
-        return ctx->construct_lie(get_construction_data(make_size, algebra::vector_type::dense));
+        return ctx->construct_lie(get_construction_data(make_size, algebra::VectorType::dense));
     }
 
 
@@ -100,7 +100,7 @@ INSTANTIATE_TEST_SUITE_P(LieTests, LieFixture,
                                 ::testing::Values(2, 5, 10),
                                 ::testing::Values(2, 5),
                                 ::testing::Values(scalars::dtl::scalar_type_holder<float>::get_type(), scalars::dtl::scalar_type_holder<double>::get_type()),
-                                ::testing::Values(esig::algebra::vector_type::sparse, esig::algebra::vector_type::dense)
+                                ::testing::Values(esig::algebra::VectorType::sparse, esig::algebra::VectorType::dense)
                                 ),
                         esig::testing::get_param_test_name
                         );

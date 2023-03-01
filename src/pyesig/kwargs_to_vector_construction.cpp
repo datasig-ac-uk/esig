@@ -36,7 +36,7 @@ esig::python::py_vector_construction_helper esig::python::kwargs_to_construction
     }
 
     if (kwargs.contains("vector_type")) {
-        helper.vtype = kwargs["vector_type"].cast<algebra::vector_type>();
+        helper.vtype = kwargs["vector_type"].cast<algebra::VectorType>();
         helper.vtype_requested = true;
     }
 

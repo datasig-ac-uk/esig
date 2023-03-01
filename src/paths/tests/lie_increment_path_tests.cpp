@@ -73,13 +73,13 @@ TEST_F(LieIncrementPathTestsFixture, TestLogSignatureSingleIncrement)
             esig::real_interval(0.0, 1.0),
             ctx,
             ctx->ctype(),
-            esig::algebra::vector_type::dense
+            esig::algebra::VectorType::dense
     };
 
     auto data = random_dense_data(1);
     esig::algebra::vector_construction_data edata {
         esig::scalars::KeyScalarArray(esig::scalars::OwnedScalarArray(data)),
-        esig::algebra::vector_type::dense
+        esig::algebra::VectorType::dense
     };
     auto idx = indices(1);
     const esig::paths::lie_increment_path path(std::move(data), idx, md);
@@ -100,13 +100,13 @@ TEST_F(LieIncrementPathTestsFixture, TestLogSignatureTwoIncrementsDepth1)
         esig::real_interval(0.0, 1.0),
         ctx,
         ctx->ctype(),
-        esig::algebra::vector_type::dense};
+        esig::algebra::VectorType::dense};
 
     auto data = random_dense_data(2);
 
     esig::algebra::vector_construction_data edata {
         esig::scalars::KeyScalarArray(ctx->ctype()),
-        esig::algebra::vector_type::dense
+        esig::algebra::VectorType::dense
     };
     edata.data.allocate_scalars(width);
     edata.data.type()->convert_copy(edata.data.ptr(), data, width);

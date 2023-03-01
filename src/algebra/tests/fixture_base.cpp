@@ -23,12 +23,12 @@ fixture_base::fixture_base()
     ctx = algebra::get_context(width, depth, std::get<2>(params));
 }
 
-algebra::vector_construction_data fixture_base::get_construction_data(dimn_t size, algebra::vector_type data_type) {
+algebra::vector_construction_data fixture_base::get_construction_data(dimn_t size, algebra::VectorType data_type) {
     std::vector<float> tmp_data;
     tmp_data.reserve(size);
 
     scalars::KeyScalarArray ksa(std::get<2>(GetParam()));
-    if (data_type == algebra::vector_type::sparse) {
+    if (data_type == algebra::VectorType::sparse) {
         ksa.allocate_keys(idimn_t(size));
         auto* keys = ksa.keys();
 
@@ -56,10 +56,10 @@ std::string get_param_test_name(const ::testing::TestParamInfo<param_type> &info
        << std::get<2>(info.param)->info().name << "";
     ss << "";
     switch(std::get<3>(info.param)) {
-        case algebra::vector_type::sparse:
+        case algebra::VectorType::sparse:
             ss << "sparse";
             break;
-        case algebra::vector_type::dense:
+        case algebra::VectorType::dense:
             ss << "dense";
             break;
     }

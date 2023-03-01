@@ -144,7 +144,7 @@ py_lie_key::py_lie_key(deg_t width, const py_lie_key &left, const py_lie_key &ri
     m_data.assign(right.m_data.begin(), right.m_data.end());
 }
 
-static py_lie_key::container_type parse_key(const algebra::basis& lbasis, key_type key)
+static py_lie_key::container_type parse_key(const algebra::Basis & lbasis, key_type key)
 {
     if (lbasis.letter(key)) {
         return {py_lie_letter::from_letter(lbasis.first_letter(key))};

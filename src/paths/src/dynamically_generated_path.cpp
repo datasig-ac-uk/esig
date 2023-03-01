@@ -36,7 +36,7 @@ algebra::lie dynamically_constructed_path::log_signature(const interval &domain,
 
 //    auto result = ctx.log_signature(std::move(data));
 //    std::cout << result << '\n';
-    return ctx.zero_lie(algebra::vector_type::dense);
+    return ctx.zero_lie(algebra::VectorType::dense);
 }
 
 

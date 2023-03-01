@@ -18,10 +18,10 @@
 
 #define ESIG_MAKE_VTYPE_SWITCH(VTYPE)                          \
     switch (VTYPE) {                                           \
-        case vector_type::dense:                               \
-            return ESIG_SWITCH_FN(vector_type::dense);         \
-        case vector_type::sparse:                              \
-            return ESIG_SWITCH_FN(vector_type::sparse);        \
+        case VectorType::dense:                               \
+            return ESIG_SWITCH_FN(VectorType::dense);         \
+        case VectorType::sparse:                              \
+            return ESIG_SWITCH_FN(VectorType::sparse);        \
     }                                                          \
     throw std::invalid_argument("invalid vector type");
 

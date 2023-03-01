@@ -12,7 +12,7 @@ using namespace pybind11::literals;
 static const char *LKEY_ITERATOR_DOC = R"eadoc(Iterator over range of Hall set members.
 )eadoc";
 
-py_lie_key to_py_lie_key(key_type k, const algebra::basis_interface &lbasis) {
+py_lie_key to_py_lie_key(key_type k, const algebra::BasisInterface &lbasis) {
     auto width = lbasis.width().value();
 
     if (lbasis.letter(k)) {

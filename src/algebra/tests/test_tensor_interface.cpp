@@ -22,7 +22,7 @@ public:
     MOCK_METHOD(deg_t, degree, (), (const, override));
     MOCK_METHOD(deg_t, width, (), (const, override));
     MOCK_METHOD(deg_t, depth, (), (const, override));
-    MOCK_METHOD(vector_type, storage_type, (), (const, noexcept, override));
+    MOCK_METHOD(VectorType, storage_type, (), (const, noexcept, override));
     MOCK_METHOD(const scalars::ScalarType *, coeff_type, (), (const, noexcept, override));
 
     MOCK_METHOD(scalars::Scalar, get, (key_type), (const, override));
@@ -90,7 +90,7 @@ protected:
         ON_CALL(mtensor, degree()).WillByDefault(Return(0));
         ON_CALL(mtensor, width()).WillByDefault(Return(5));
         ON_CALL(mtensor, depth()).WillByDefault(Return(2));
-        ON_CALL(mtensor, storage_type()).WillByDefault(Return(vector_type::dense));
+        ON_CALL(mtensor, storage_type()).WillByDefault(Return(VectorType::dense));
         ON_CALL(mtensor, coeff_type()).WillByDefault(Return(scalars::dtl::scalar_type_trait<double>::get_type()));
         ON_CALL(mtensor, uminus()).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
         ON_CALL(mtensor, add(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));

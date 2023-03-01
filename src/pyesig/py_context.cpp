@@ -42,7 +42,7 @@ static free_tensor context_compute_signature_numpy_darray(const py_context &ctx,
     for (dimn_t i = 0; i < n_increments; ++i) {
         request.data_stream.push_back(scalars::ScalarPointer(array.data(i, 0)));
     }
-    request.vect_type = vector_type::dense;
+    request.vect_type = VectorType::dense;
 
     auto sig = ctx->signature(request);
 
@@ -68,7 +68,7 @@ void esig::python::init_context(py::module_& m) {
     klass.def_property_readonly("ctype", [](const py_context& ctx) { return to_ctype_type(ctx->ctype()); });
     klass.def("lie_size", [](const py_context& ctx, deg_t degree) { return ctx->lie_size(degree); }, "degree"_a);
     klass.def("tensor_size", [](const py_context& ctx, deg_t degree) { return ctx->tensor_size(degree); }, "degree"_a);
-    klass.def("cbh", [](const py_context& ctx, std::vector<lie> lies, algebra::vector_type vtype) {
+    klass.def("cbh", [](const py_context& ctx, std::vector<lie> lies, algebra::VectorType vtype) {
         return ctx->cbh(lies, vtype);
     }, "lies"_a, "vec_type"_a);
 

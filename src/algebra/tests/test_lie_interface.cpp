@@ -38,7 +38,7 @@ public:
     MOCK_METHOD(deg_t, degree, (), (const, override));
     MOCK_METHOD(deg_t, width, (), (const, override));
     MOCK_METHOD(deg_t, depth, (), (const, override));
-    MOCK_METHOD(vector_type, storage_type, (), (const, noexcept, override));
+    MOCK_METHOD(VectorType, storage_type, (), (const, noexcept, override));
     MOCK_METHOD(const scalars::ScalarType *, coeff_type, (), (const, noexcept, override));
 
 //    MOCK_METHOD(dense_data_access_iterator, iterate_dense_components, (), (const, override));
@@ -97,7 +97,7 @@ protected:
         ON_CALL(mlie, degree()).WillByDefault(Return(0));
         ON_CALL(mlie, width()).WillByDefault(Return(5));
         ON_CALL(mlie, depth()).WillByDefault(Return(2));
-        ON_CALL(mlie, storage_type()).WillByDefault(Return(vector_type::dense));
+        ON_CALL(mlie, storage_type()).WillByDefault(Return(VectorType::dense));
         ON_CALL(mlie, coeff_type()).WillByDefault(Return(scalars::dtl::scalar_type_trait<double>::get_type()));
         ON_CALL(mlie, uminus()).WillByDefault(Return(lie::from_args<MockLie>()));
         ON_CALL(mlie, add(_)).WillByDefault(Return(lie::from_args<MockLie>()));
