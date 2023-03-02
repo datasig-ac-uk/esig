@@ -1,11 +1,14 @@
 //
 // Created by user on 21/03/2022.
 //
-#include <esig/algebra/lie_interface.h>
-
+#include "esig/algebra/lie.h"
 
 namespace esig {
 namespace algebra {
+
+
+template class AlgebraInterface<Lie>;
+template class AlgebraBase<LieInterface>;
 
 //lie::lie(std::shared_ptr<lie_interface> p)
 //    : p_impl(std::move(p))

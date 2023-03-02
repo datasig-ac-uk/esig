@@ -10,7 +10,7 @@
 namespace esig {
 namespace paths {
 
-algebra::lie piecewise_lie_path::compute_lie_piece(const piecewise_lie_path::lie_piece &arg, const interval &domain)
+algebra::Lie piecewise_lie_path::compute_lie_piece(const piecewise_lie_path::lie_piece &arg, const interval &domain)
 {
     auto sf = (domain.sup() - domain.inf()) / (arg.first.sup() - arg.first.inf());
     return arg.second.smul(scalars::Scalar(sf));
@@ -103,8 +103,8 @@ piecewise_lie_path::piecewise_lie_path(std::vector<lie_piece> data, path_metadat
 bool piecewise_lie_path::empty(const interval &domain) const {
     return path_interface::empty(domain);
 }
-algebra::lie piecewise_lie_path::log_signature(const interval &domain, const algebra::context &ctx) const {
-    std::vector<algebra::lie> lies;
+algebra::Lie piecewise_lie_path::log_signature(const interval &domain, const algebra::context &ctx) const {
+    std::vector<algebra::Lie> lies;
     lies.reserve(4);
 
     auto a = domain.inf(), b = domain.sup();

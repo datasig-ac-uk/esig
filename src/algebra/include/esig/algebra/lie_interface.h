@@ -7,10 +7,10 @@
 
 
 #include <esig/algebra/algebra_traits.h>
-#include <esig/algebra/esig_algebra_export.h>
+#include "esig_algebra_export.h"
 #include <esig/algebra/iteration.h>
 #include <esig/implementation_types.h>
-#include <esig/algebra/base.h>
+#include "esig/algebra/algebra_base.h"
 
 #include <ostream>
 #include <memory>
@@ -23,25 +23,6 @@ class lie;
 
 using lie_interface = AlgebraInterface<lie>;
 
-
-namespace dtl {
-/*
- * Typically, the interface will be implemented via the following template wrapper
- * which takes the standard arithmetic operations to implement the arithmetic, and
- * uses traits to identify the properties.
- */
-
-template <typename Impl>
-using lie_implementation = algebra_implementation<lie_interface, Impl>;
-
-template <typename Impl>
-struct implementation_wrapper_selection<lie_interface, Impl>
-{
-    using type = lie_implementation<Impl>;
-};
-
-
-}// namespace dtl
 
 
 /**

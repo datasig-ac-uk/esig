@@ -15,10 +15,10 @@
 namespace esig {
 namespace algebra {
 
-inline void PrintTo(const lie& arg, std::ostream* os)
+inline void PrintTo(const Lie& arg, std::ostream* os)
 { arg.print(*os); }
 
-inline void PrintTo(const free_tensor& arg, std::ostream* os)
+inline void PrintTo(const FreeTensor& arg, std::ostream* os)
 { arg.print(*os); }
 
 }

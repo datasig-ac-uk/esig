@@ -10,11 +10,11 @@
 using namespace esig;
 using namespace esig::algebra;
 
-class MockFreeTensor : public free_tensor_interface
+class MockFreeTensor : public FreeTensorInterface
 {
 public:
-    using interface_t = free_tensor_interface;
-    using algebra_interface_t = AlgebraInterface<free_tensor>;
+    using interface_t = FreeTensorInterface;
+    using algebra_interface_t = AlgebraInterface<FreeTensor>;
 
 //    MOCK_METHOD(algebra_iterator, begin, (), (const, override));
 //    MOCK_METHOD(algebra_iterator, end, (), (const, override));
@@ -33,12 +33,12 @@ public:
     MOCK_METHOD(algebra_iterator, begin, (), (const, override));
     MOCK_METHOD(algebra_iterator, end, (), (const, override));
 
-    MOCK_METHOD(free_tensor, uminus, (), (const, override));
-    MOCK_METHOD(free_tensor, add, (const algebra_interface_t &), (const, override));
-    MOCK_METHOD(free_tensor, sub, (const algebra_interface_t &), (const, override));
-    MOCK_METHOD(free_tensor, smul, (const scalars::Scalar&), (const, override));
-    MOCK_METHOD(free_tensor, sdiv, (const scalars::Scalar&), (const, override));
-    MOCK_METHOD(free_tensor, mul, (const algebra_interface_t &), (const, override));
+    MOCK_METHOD(FreeTensor, uminus, (), (const, override));
+    MOCK_METHOD(FreeTensor, add, (const algebra_interface_t &), (const, override));
+    MOCK_METHOD(FreeTensor, sub, (const algebra_interface_t &), (const, override));
+    MOCK_METHOD(FreeTensor, smul, (const scalars::Scalar&), (const, override));
+    MOCK_METHOD(FreeTensor, sdiv, (const scalars::Scalar&), (const, override));
+    MOCK_METHOD(FreeTensor, mul, (const algebra_interface_t &), (const, override));
 
     MOCK_METHOD(void, add_inplace, (const algebra_interface_t &), (override));
     MOCK_METHOD(void, sub_inplace, (const algebra_interface_t &), (override));
@@ -55,10 +55,11 @@ public:
     MOCK_METHOD(void, mul_smul, (const algebra_interface_t &, const scalars::Scalar&), (override));
     MOCK_METHOD(void, mul_sdiv, (const algebra_interface_t &, const scalars::Scalar&), (override));
 
-    MOCK_METHOD(free_tensor, exp, (), (const, override));
-    MOCK_METHOD(free_tensor, log, (), (const, override));
-    MOCK_METHOD(free_tensor, inverse, (), (const, override));
-    MOCK_METHOD(free_tensor_interface&, fmexp, (const free_tensor_interface&), (override));
+    MOCK_METHOD(FreeTensor, exp, (), (const, override));
+    MOCK_METHOD(FreeTensor, log, (), (const, override));
+    MOCK_METHOD(FreeTensor, inverse, (), (const, override));
+    MOCK_METHOD(FreeTensor, antipode, (), (const, override));
+    MOCK_METHOD(void, fmexp, (const FreeTensor&), (override));
 
     MOCK_METHOD(std::ostream &, print, (std::ostream &), (const, override));
 
@@ -72,18 +73,18 @@ using ::testing::_;
 class FreeTensorWrapperFixture : public ::testing::Test
 {
 protected:
-    free_tensor tensorobj;
-    free_tensor othertensor;
+    FreeTensor tensorobj;
+    FreeTensor othertensor;
 
 
-    static MockFreeTensor &mocked(free_tensor &arg) noexcept
+    static MockFreeTensor &mocked(FreeTensor &arg) noexcept
     {
-        return dynamic_cast<MockFreeTensor&>(*algebra_access<free_tensor_interface>::get(arg));
+        return static_cast<MockFreeTensor&>(*arg);
     }
 
-    static free_tensor setup_mock_tensor()
+    static FreeTensor  setup_mock_tensor()
     {
-        free_tensor result = free_tensor::from_args<MockFreeTensor>();
+        FreeTensor result = FreeTensor::from_args<MockFreeTensor>();
         auto &mtensor = mocked(result);
 
         ON_CALL(mtensor, size()).WillByDefault(Return(0));
@@ -92,12 +93,12 @@ protected:
         ON_CALL(mtensor, depth()).WillByDefault(Return(2));
         ON_CALL(mtensor, storage_type()).WillByDefault(Return(VectorType::dense));
         ON_CALL(mtensor, coeff_type()).WillByDefault(Return(scalars::dtl::scalar_type_trait<double>::get_type()));
-        ON_CALL(mtensor, uminus()).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, add(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, sub(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, smul(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, sdiv(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, mul(_)).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, uminus()).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, add(_)).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, sub(_)).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, smul(_)).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, sdiv(_)).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, mul(_)).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
 //        ON_CALL(mtensor, add_inplace(_)).WillByDefault(ReturnRef(mtensor));
 //        ON_CALL(mtensor, sub_inplace(_)).WillByDefault(ReturnRef(mtensor));
 //        ON_CALL(mtensor, smul_inplace(_)).WillByDefault(ReturnRef(mtensor));
@@ -113,10 +114,10 @@ protected:
 //        ON_CALL(mtensor, mul_sdiv(_, _)).WillByDefault(ReturnRef(mtensor));
         ON_CALL(mtensor, print).WillByDefault(testing::ReturnArg<0>());
         ON_CALL(mtensor, equals(_)).WillByDefault(Return(false));
-        ON_CALL(mtensor, exp()).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, log()).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, inverse()).WillByDefault(Return(free_tensor::from_args<MockFreeTensor>()));
-        ON_CALL(mtensor, fmexp(_)).WillByDefault(ReturnRef(mtensor));
+        ON_CALL(mtensor, exp()).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, log()).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, inverse()).WillByDefault(Return(FreeTensor::from_args<MockFreeTensor>()));
+        ON_CALL(mtensor, fmexp(_)).WillByDefault(Return());
         return result;
     }
 

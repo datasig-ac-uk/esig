@@ -5,8 +5,8 @@
 #ifndef ESIG_ALGEBRA_ITERATION_H_
 #define ESIG_ALGEBRA_ITERATION_H_
 
+#include "algebra_fwd.h"
 #include <esig/implementation_types.h>
-#include <esig/algebra/esig_algebra_export.h>
 #include <esig/algebra/algebra_traits.h>
 #include <esig/scalars.h>
 

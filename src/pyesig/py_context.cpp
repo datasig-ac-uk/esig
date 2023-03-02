@@ -26,7 +26,7 @@ using namespace py::literals;
 
 
 #ifndef ESIG_NO_NUMPY
-static free_tensor context_compute_signature_numpy_darray(const py_context &ctx, const py::array_t<double, py::array::forcecast> &array) {
+static FreeTensor context_compute_signature_numpy_darray(const py_context &ctx, const py::array_t<double, py::array::forcecast> &array) {
     assert(array.ndim() == 2);
     auto shape = array.shape();
 
@@ -68,7 +68,7 @@ void esig::python::init_context(py::module_& m) {
     klass.def_property_readonly("ctype", [](const py_context& ctx) { return to_ctype_type(ctx->ctype()); });
     klass.def("lie_size", [](const py_context& ctx, deg_t degree) { return ctx->lie_size(degree); }, "degree"_a);
     klass.def("tensor_size", [](const py_context& ctx, deg_t degree) { return ctx->tensor_size(degree); }, "degree"_a);
-    klass.def("cbh", [](const py_context& ctx, std::vector<lie> lies, algebra::VectorType vtype) {
+    klass.def("cbh", [](const py_context& ctx, std::vector<Lie> lies, algebra::VectorType vtype) {
         return ctx->cbh(lies, vtype);
     }, "lies"_a, "vec_type"_a);
 
@@ -76,7 +76,7 @@ void esig::python::init_context(py::module_& m) {
     klass.def("compute_signature", context_compute_signature_numpy_darray, "data"_a);
 #endif
     klass.def(
-        "to_logsignature", [](const py_context &ctx, const free_tensor &sig) {
+        "to_logsignature", [](const py_context &ctx, const FreeTensor &sig) {
             return ctx->tensor_to_lie(sig.log());
         },
         "signature"_a);

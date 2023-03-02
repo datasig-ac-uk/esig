@@ -14,7 +14,7 @@ struct LieFixture : public esig::testing::fixture_base
 
 private:
     template <typename I>
-    esig::algebra::lie make_lie_impl(const I* start, const I* end)
+    esig::algebra::Lie make_lie_impl(const I* start, const I* end)
     {
         esig::algebra::vector_construction_data data(
                 start, end, std::get<3>(GetParam())
@@ -24,14 +24,14 @@ private:
 
 public:
 
-    algebra::lie make_sparse_lie(idimn_t size=-1)
+    algebra::Lie make_sparse_lie(idimn_t size=-1)
     {
         dimn_t make_size = (size == -1) ? ctx->lie_size(std::get<1>(GetParam())) : dimn_t(size);
         return ctx->construct_lie(get_construction_data(make_size, algebra::VectorType::sparse));
     }
 
 
-    algebra::lie make_dense_lie(idimn_t size=-1)
+    algebra::Lie make_dense_lie(idimn_t size=-1)
     {
         dimn_t make_size = (size == -1) ? ctx->lie_size(std::get<1>(GetParam())) : dimn_t(size);
         return ctx->construct_lie(get_construction_data(make_size, algebra::VectorType::dense));

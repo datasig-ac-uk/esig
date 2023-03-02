@@ -1,15 +1,15 @@
 //
 // Created by user on 24/08/22.
 //
-#include <esig/algebra/tensor_interface.h>
-#include <iostream>
+#include "esig/algebra/shuffle_tensor.h"
+#include <ostream>
 
-template class esig::algebra::AlgebraInterface<esig::algebra::shuffle_tensor>;
-template class esig::algebra::AlgebraBase<esig::algebra::shuffle_tensor_interface>;
+template class esig::algebra::AlgebraInterface<esig::algebra::ShuffleTensor>;
+template class esig::algebra::AlgebraBase<esig::algebra::ShuffleTensorInterface>;
 
 
 
-std::ostream& operator<<(std::ostream& os, const esig::algebra::shuffle_tensor& arg)
+std::ostream& operator<<(std::ostream& os, const esig::algebra::ShuffleTensor& arg)
 {
     return arg.print(os);
 }

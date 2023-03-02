@@ -27,6 +27,12 @@
 
 
 #include "esig/algebra/algebra_traits.h"
+#include "esig/algebra/lie.h"
+#include "esig/algebra/free_tensor.h"
+#include "esig/algebra/shuffle_tensor.h"
+#include "esig/algebra/algebra_impl.h"
+#include "esig/algebra/free_tensor_impl.h"
+#include "esig/algebra/iteration.h"
 
 namespace esig {
 namespace algebra {
@@ -106,13 +112,13 @@ class lite_context : public context {
                           const std::shared_ptr<const typename OutType::multiplication_type>& mul) const;
 
     template <VectorType VType>
-    free_tensor_t<VType> lie_to_tensor_impl(const lie& arg) const;
+    free_tensor_t<VType> lie_to_tensor_impl(const Lie& arg) const;
 
     template <VectorType VType>
-    lie_t<VType> tensor_to_lie_impl(const free_tensor& arg) const;
+    lie_t<VType> tensor_to_lie_impl(const FreeTensor& arg) const;
 
     template <VectorType VType>
-    lie cbhImpl(const std::vector<lie>& lies) const;
+    Lie cbhImpl(const std::vector<Lie>& lies) const;
 
     template <VectorType VType>
     free_tensor_t<VType> compute_signature(const signature_data& data) const;
@@ -129,6 +135,7 @@ class lite_context : public context {
     template <VectorType VType>
     free_tensor_t<VType> sig_derivative_impl(const std::vector<derivative_compute_info>& info) const;
 
+
 public:
 
     lite_context(deg_t width, deg_t depth);
@@ -142,18 +149,18 @@ public:
     dimn_t lie_size(deg_t d) const noexcept override;
     dimn_t tensor_size(deg_t d) const noexcept override;
     bool check_compatible(const context &other) const noexcept override;
-    free_tensor convert(const free_tensor &arg, VectorType new_vec_type) const override;
-    lie convert(const lie &arg, VectorType new_vec_type) const override;
+    FreeTensor convert(const FreeTensor &arg, VectorType new_vec_type) const override;
+    Lie convert(const Lie &arg, VectorType new_vec_type) const override;
     Basis get_tensor_basis() const override;
     Basis get_lie_basis() const override;
-    free_tensor construct_tensor(const vector_construction_data &data) const override;
-    lie construct_lie(const vector_construction_data &data) const override;
-    free_tensor lie_to_tensor(const lie &arg) const override;
-    lie tensor_to_lie(const free_tensor &arg) const override;
-    lie cbh(const std::vector<lie> &lies, VectorType vtype) const override;
-    free_tensor signature(const signature_data &data) const override;
-    lie log_signature(const signature_data &data) const override;
-    free_tensor sig_derivative(const std::vector<derivative_compute_info> &info, VectorType vtype, VectorType type) const override;
+    FreeTensor construct_tensor(const vector_construction_data &data) const override;
+    Lie construct_lie(const vector_construction_data &data) const override;
+    FreeTensor lie_to_tensor(const Lie &arg) const override;
+    Lie tensor_to_lie(const FreeTensor &arg) const override;
+    Lie cbh(const std::vector<Lie> &lies, VectorType vtype) const override;
+    FreeTensor signature(const signature_data &data) const override;
+    Lie log_signature(const signature_data &data) const override;
+    FreeTensor sig_derivative(const std::vector<derivative_compute_info> &info, VectorType vtype, VectorType type) const override;
 };
 
 
@@ -228,14 +235,14 @@ OutType lite_context<Coefficients>::convertImpl(const InType &arg,
     return result;
 }
 template<typename Coefficients>
-free_tensor lite_context<Coefficients>::convert(const free_tensor &arg, VectorType new_vec_type) const {
-#define ESIG_SWITCH_FN(VTYPE) free_tensor(convertImpl<free_tensor_t<(VTYPE)>>(arg, p_tensor_basis, p_ftmul), this)
+FreeTensor lite_context<Coefficients>::convert(const FreeTensor &arg, VectorType new_vec_type) const {
+#define ESIG_SWITCH_FN(VTYPE) FreeTensor(convertImpl<free_tensor_t<(VTYPE)>>(arg, p_tensor_basis, p_ftmul), this)
     ESIG_MAKE_VTYPE_SWITCH(new_vec_type)
 #undef ESIG_SWITCH_FN
 }
 template<typename Coefficients>
-lie lite_context<Coefficients>::convert(const lie &arg, VectorType new_vec_type) const {
-#define ESIG_SWITCH_FN(VTYPE) lie(convertImpl<lie_t<(VTYPE)>>(arg, p_lie_basis, p_liemul), this)
+Lie lite_context<Coefficients>::convert(const Lie &arg, VectorType new_vec_type) const {
+#define ESIG_SWITCH_FN(VTYPE) Lie(convertImpl<lie_t<(VTYPE)>>(arg, p_lie_basis, p_liemul), this)
     ESIG_MAKE_VTYPE_SWITCH(new_vec_type)
 #undef ESIG_SWITCH_FN
 }
@@ -293,14 +300,14 @@ OutType lite_context<Coefficients>::constructImpl(const vector_construction_data
 }
 
 template<typename Coefficients>
-free_tensor lite_context<Coefficients>::construct_tensor(const vector_construction_data &data) const {
-#define ESIG_SWITCH_FN(VTYPE) free_tensor(constructImpl<free_tensor_t<(VTYPE)>>(data, p_tensor_basis, p_ftmul), this)
+FreeTensor lite_context<Coefficients>::construct_tensor(const vector_construction_data &data) const {
+#define ESIG_SWITCH_FN(VTYPE) FreeTensor(constructImpl<free_tensor_t<(VTYPE)>>(data, p_tensor_basis, p_ftmul), this)
     ESIG_MAKE_VTYPE_SWITCH(data.vect_type)
 #undef ESIG_SWITCH_FN
 }
 template<typename Coefficients>
-lie lite_context<Coefficients>::construct_lie(const vector_construction_data &data) const {
-#define ESIG_SWITCH_FN(VTYPE) lie(constructImpl<lie_t<(VTYPE)>>(data, p_lie_basis, p_liemul), this)
+Lie lite_context<Coefficients>::construct_lie(const vector_construction_data &data) const {
+#define ESIG_SWITCH_FN(VTYPE) Lie(constructImpl<lie_t<(VTYPE)>>(data, p_lie_basis, p_liemul), this)
     ESIG_MAKE_VTYPE_SWITCH(data.vect_type)
 #undef ESIG_SWITCH_FN
 }
@@ -308,22 +315,22 @@ lie lite_context<Coefficients>::construct_lie(const vector_construction_data &da
 template<typename Coefficients>
 template<VectorType VType>
 typename lite_context<Coefficients>::template free_tensor_t<VType>
-lite_context<Coefficients>::lie_to_tensor_impl(const lie &arg) const {
-    const auto* interface = algebra_access<lie_interface>::get(arg);
+lite_context<Coefficients>::lie_to_tensor_impl(const Lie &arg) const {
+    const auto& interface = *arg;
 
-    if (interface->id() == reinterpret_cast<std::uintptr_t>(this)) {
-        return m_maps.template lie_to_tensor(algebra_access<lie_interface>::template get<lie_t<VType>>(arg));
+    if (interface.id() == reinterpret_cast<std::uintptr_t>(this)) {
+        return m_maps.template lie_to_tensor(cast_algebra<lie_t<VType>>(*arg));
     }
 
-    free_tensor tmp_tensor(free_tensor_t<VType>(p_tensor_basis, p_ftmul), this);
+    FreeTensor tmp_tensor(free_tensor_t<VType>(p_tensor_basis, p_ftmul), this);
     context::lie_to_tensor_fallback(tmp_tensor, arg);
-    return algebra_access<free_tensor_interface>::template get<free_tensor_t<VType>>(tmp_tensor);
+    return cast_algebra<free_tensor_t<VType>>(*tmp_tensor);
 }
 
 
 template<typename Coefficients>
-free_tensor lite_context<Coefficients>::lie_to_tensor(const lie &arg) const {
-#define ESIG_SWITCH_FN(VTYPE) free_tensor(lie_to_tensor_impl<(VTYPE)>(arg), this);
+FreeTensor lite_context<Coefficients>::lie_to_tensor(const Lie &arg) const {
+#define ESIG_SWITCH_FN(VTYPE) FreeTensor(lie_to_tensor_impl<(VTYPE)>(arg), this);
     ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
 #undef ESIG_SWITCH_FN
 }
@@ -331,35 +338,35 @@ free_tensor lite_context<Coefficients>::lie_to_tensor(const lie &arg) const {
 template<typename Coefficients>
 template<VectorType VType>
 typename lite_context<Coefficients>::template lie_t<VType>
-lite_context<Coefficients>::tensor_to_lie_impl(const free_tensor &arg) const {
-    const auto* interface = algebra_access<free_tensor_interface>::get(arg);
+lite_context<Coefficients>::tensor_to_lie_impl(const FreeTensor &arg) const {
+    const auto& interface = *arg;
 
-    if (interface->id() == reinterpret_cast<std::uintptr_t>(this)) {
-        return m_maps.template tensor_to_lie(algebra_access<free_tensor_interface>::template get<free_tensor_t<VType>>(arg));
+    if (interface.id() == reinterpret_cast<std::uintptr_t>(this)) {
+        return m_maps.template tensor_to_lie(cast_algebra<const free_tensor_t<VType>>(*arg));
     }
 
-    lie tmp(lie_t<VType>(p_lie_basis, p_liemul), this);
+    Lie tmp(lie_t<VType>(p_lie_basis, p_liemul), this);
     context::tensor_to_lie_fallback(tmp, arg);
-    return algebra_access<lie_interface>::template get<lie_t<VType>>(tmp);
+    return cast_algebra<lie_t<VType>>(*tmp);
 }
 
 template<typename Coefficients>
-lie lite_context<Coefficients>::tensor_to_lie(const free_tensor &arg) const {
-#define ESIG_SWITCH_FN(VTYPE) lie(tensor_to_lie_impl<VTYPE>(arg), this)
+Lie lite_context<Coefficients>::tensor_to_lie(const FreeTensor &arg) const {
+#define ESIG_SWITCH_FN(VTYPE) Lie(tensor_to_lie_impl<VTYPE>(arg), this)
     ESIG_MAKE_VTYPE_SWITCH(arg.storage_type())
 #undef ESIG_SWITCH_FN
 }
 
 template<typename Coefficients>
 template<VectorType VType>
-lie lite_context<Coefficients>::cbhImpl(const std::vector<lie> &lies) const {
-    free_tensor tmp(free_tensor_t<VType>(p_tensor_basis, p_ftmul, scalar_type(1)), this);
+Lie lite_context<Coefficients>::cbhImpl(const std::vector<Lie> &lies) const {
+    FreeTensor tmp(free_tensor_t<VType>(p_tensor_basis, p_ftmul, scalar_type(1)), this);
     context::cbh_fallback(tmp, lies);
     return tensor_to_lie(tmp.log());
 }
 
 template<typename Coefficients>
-lie lite_context<Coefficients>::cbh(const std::vector<lie> &lies, VectorType vtype) const {
+Lie lite_context<Coefficients>::cbh(const std::vector<Lie> &lies, VectorType vtype) const {
 #define ESIG_SWITCH_FN(VTYPE) cbhImpl<(VTYPE)>(lies)
     ESIG_MAKE_VTYPE_SWITCH(vtype)
 #undef ESIG_SWITCH_FN
@@ -390,13 +397,13 @@ lite_context<Coefficients>::compute_signature(const signature_data &data) const 
 }
 
 template<typename Coefficients>
-free_tensor lite_context<Coefficients>::signature(const signature_data &data) const {
-#define ESIG_SWITCH_FN(VTYPE) free_tensor(compute_signature<VTYPE>(data), this)
+FreeTensor lite_context<Coefficients>::signature(const signature_data &data) const {
+#define ESIG_SWITCH_FN(VTYPE) FreeTensor(compute_signature<VTYPE>(data), this)
     ESIG_MAKE_VTYPE_SWITCH(data.vect_type)
 #undef ESIG_SWITCH_FN
 }
 template<typename Coefficients>
-lie lite_context<Coefficients>::log_signature(const signature_data &data) const {
+Lie lite_context<Coefficients>::log_signature(const signature_data &data) const {
     return tensor_to_lie(signature(data).log());
 }
 
@@ -448,7 +455,7 @@ lite_context<Coefficients>::sig_derivative_impl(const std::vector<derivative_com
         return tensor_type(p_tensor_basis, p_ftmul);
     }
 
-    using access = algebra_access<lie_interface>;
+    using access = algebra_access<LieInterface>;
 
     tensor_type result(p_tensor_basis, p_ftmul);
 
@@ -465,8 +472,8 @@ lite_context<Coefficients>::sig_derivative_impl(const std::vector<derivative_com
 }
 
 template<typename Coefficients>
-free_tensor lite_context<Coefficients>::sig_derivative(const std::vector<derivative_compute_info> &info, VectorType vtype, VectorType type) const {
-#define ESIG_SWITCH_FN(VTYPE) free_tensor(sig_derivative_impl<(VTYPE)>(info), this)
+FreeTensor lite_context<Coefficients>::sig_derivative(const std::vector<derivative_compute_info> &info, VectorType vtype, VectorType type) const {
+#define ESIG_SWITCH_FN(VTYPE) FreeTensor(sig_derivative_impl<(VTYPE)>(info), this)
     ESIG_MAKE_VTYPE_SWITCH(vtype)
 #undef ESIG_SWITCH_FN
 }
@@ -827,7 +834,6 @@ struct algebra_info<lal::lie<Coeffs, lal::dense_vector, lal::dtl::standard_stora
 
 
 
-namespace dtl {
 
 template <>
 inline typename lal::tensor_basis::key_type
@@ -888,52 +894,42 @@ basis_info<lal::hall_basis>::degree(const lal::hall_basis &basis, esig::key_type
     return native_degree(basis, convert_key(basis, key));
 }
 
-
-template <typename MapType, typename Iterator>
-struct iterator_traits<lal::dtl::sparse_iterator<MapType, Iterator>>
-{
+namespace dtl {
+template<typename MapType, typename Iterator>
+struct iterator_traits<lal::dtl::sparse_iterator<MapType, Iterator>> {
     using iterator = lal::dtl::sparse_iterator<MapType, Iterator>;
 
-    static auto key(iterator it) noexcept -> decltype(it->key())
-    {
+    static auto key(iterator it) noexcept -> decltype(it->key()) {
         return it->key();
     }
-    static auto value(iterator it) noexcept -> decltype(it->value())
-    {
+    static auto value(iterator it) noexcept -> decltype(it->value()) {
         return it->value();
     }
 };
 
-template <typename Basis, typename Coefficients, typename Iterator>
-struct iterator_traits<lal::dtl::dense_vector_iterator<Basis, Coefficients, Iterator>>
-{
+template<typename Basis, typename Coefficients, typename Iterator>
+struct iterator_traits<lal::dtl::dense_vector_iterator<Basis, Coefficients, Iterator>> {
     using iterator = lal::dtl::dense_vector_iterator<Basis, Coefficients, Iterator>;
-    static auto key(iterator it) noexcept -> decltype(it->key())
-    {
+    static auto key(iterator it) noexcept -> decltype(it->key()) {
         return it->key();
     }
-    static auto value(iterator it) noexcept -> decltype(it->value())
-    {
+    static auto value(iterator it) noexcept -> decltype(it->value()) {
         return it->value();
     }
 };
-template <typename Basis, typename Coefficients, typename Iterator>
-struct iterator_traits<lal::dtl::dense_vector_const_iterator<Basis, Coefficients, Iterator>>
-{
+template<typename Basis, typename Coefficients, typename Iterator>
+struct iterator_traits<lal::dtl::dense_vector_const_iterator<Basis, Coefficients, Iterator>> {
     using iterator = lal::dtl::dense_vector_const_iterator<Basis, Coefficients, Iterator>;
-    static auto key(iterator it) noexcept -> decltype(it->key())
-    {
+    static auto key(iterator it) noexcept -> decltype(it->key()) {
         return it->key();
     }
-    static auto value(iterator it) noexcept -> decltype(it->value())
-    {
+    static auto value(iterator it) noexcept -> decltype(it->value()) {
         return it->value();
     }
 };
+} // namespace dtl
 
 
-
-}
 
 
 } // namespace algebra

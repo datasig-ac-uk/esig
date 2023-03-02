@@ -21,7 +21,7 @@ esig::paths::dyadic_caching_layer &esig::paths::dyadic_caching_layer::operator=(
     return *this;
 }
 
-esig::algebra::lie
+esig::algebra::Lie
 esig::paths::dyadic_caching_layer::log_signature(
         const esig::dyadic_interval &domain,
         typename esig::paths::path_interface::compute_depth_t resolution,
@@ -58,7 +58,7 @@ esig::paths::dyadic_caching_layer::log_signature(
     return ctx.cbh({lhs, rhs}, metadata().result_vec_type);
 }
 
-esig::algebra::lie
+esig::algebra::Lie
 esig::paths::dyadic_caching_layer::log_signature(
     const esig::interval &domain,
     esig::paths::path_interface::compute_depth_t resolution,
@@ -74,7 +74,7 @@ esig::paths::dyadic_caching_layer::log_signature(
 
     auto dyadic_dissection = esig::to_dyadic_intervals(domain.inf(), domain.sup(), resolution);
 
-    std::vector<algebra::lie> lies;
+    std::vector<algebra::Lie> lies;
     lies.reserve(dyadic_dissection.size());
     for (const auto& itvl : dyadic_dissection) {
         auto lsig = log_signature(itvl, resolution, ctx);

@@ -6,12 +6,8 @@
 #define ESIG_SRC_ALGEBRA_INCLUDE_ESIG_ALGEBRA_CONTEXT_FWD_H_
 
 #include <esig/implementation_types.h>
-#include "algebra_traits.h"
-#include <esig/algebra/esig_algebra_export.h>
-#include "lie_interface.h"
-#include "tensor_interface.h"
+#include "esig_algebra_export.h"
 
-#include "basis.h"
 
 #include <stdexcept>
 #include <vector>

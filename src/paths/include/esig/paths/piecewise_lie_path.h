@@ -18,12 +18,12 @@ namespace paths {
 class piecewise_lie_path : public path_interface
 {
 public:
-    using lie_piece = std::pair<real_interval, algebra::lie>;
+    using lie_piece = std::pair<real_interval, algebra::Lie>;
 
 private:
     std::vector<lie_piece> m_data;
 
-    static algebra::lie compute_lie_piece(const lie_piece& arg, const interval& domain);
+    static algebra::Lie compute_lie_piece(const lie_piece& arg, const interval& domain);
 
 public:
 
@@ -31,7 +31,7 @@ public:
 
     using path_interface::log_signature;
     bool empty(const interval& domain) const override;
-    algebra::lie log_signature(const interval &domain, const algebra::context &ctx) const override;
+    algebra::Lie log_signature(const interval &domain, const algebra::context &ctx) const override;
 };
 
 }// namespace paths

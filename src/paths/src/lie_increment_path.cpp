@@ -21,7 +21,7 @@ lie_increment_path::lie_increment_path(
 }
 
 
-algebra::lie lie_increment_path::log_signature(const esig::interval &domain, const esig::algebra::context &ctx) const
+algebra::Lie lie_increment_path::log_signature(const esig::interval &domain, const esig::algebra::context &ctx) const
 {
     const auto& md = metadata();
     if (empty(domain)) {

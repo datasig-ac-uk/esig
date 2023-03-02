@@ -22,19 +22,19 @@ using namespace pybind11::literals;
 using algebra::context;
 using stream = paths::path;
 
-using ivl_lsig_fn = algebra::lie (stream::*)(const interval &, accuracy_t) const;
-using ivl_ctx_lsig_fn = algebra::lie (stream::*)(const interval &, accuracy_t, const context &) const;
-using lsig_fn = algebra::lie (stream::*)(accuracy_t) const;
-using ctx_lsig_fn = algebra::lie (stream::*)(accuracy_t, const context &) const;
+using ivl_lsig_fn = algebra::Lie (stream::*)(const interval &, accuracy_t) const;
+using ivl_ctx_lsig_fn = algebra::Lie (stream::*)(const interval &, accuracy_t, const context &) const;
+using lsig_fn = algebra::Lie (stream::*)(accuracy_t) const;
+using ctx_lsig_fn = algebra::Lie (stream::*)(accuracy_t, const context &) const;
 
-using ivl_sig_fn = algebra::free_tensor (stream::*)(const interval &, accuracy_t) const;
-using ivl_ctx_sig_fn = algebra::free_tensor (stream::*)(const interval &, accuracy_t, const context &) const;
-using sig_fn = algebra::free_tensor (stream::*)(accuracy_t) const;
-using ctx_sig_fn = algebra::free_tensor (stream::*)(accuracy_t, const context &) const;
+using ivl_sig_fn = algebra::FreeTensor (stream::*)(const interval &, accuracy_t) const;
+using ivl_ctx_sig_fn = algebra::FreeTensor (stream::*)(const interval &, accuracy_t, const context &) const;
+using sig_fn = algebra::FreeTensor (stream::*)(accuracy_t) const;
+using ctx_sig_fn = algebra::FreeTensor (stream::*)(accuracy_t, const context &) const;
 
-using ivl_sigder_fn = algebra::free_tensor (stream::*)(const interval &ivl, const algebra::lie &, accuracy_t) const;
-using sigder_fn = algebra::free_tensor (stream::*)(const typename paths::path::perturbation_list_t &, accuracy_t) const;
-using ctx_sigder_fn = algebra::free_tensor (stream::*)(const typename paths::path::perturbation_list_t &, accuracy_t, const context &) const;
+using ivl_sigder_fn = algebra::FreeTensor (stream::*)(const interval &ivl, const algebra::Lie &, accuracy_t) const;
+using sigder_fn = algebra::FreeTensor (stream::*)(const typename paths::path::perturbation_list_t &, accuracy_t) const;
+using ctx_sigder_fn = algebra::FreeTensor (stream::*)(const typename paths::path::perturbation_list_t &, accuracy_t, const context &) const;
 
 void esig::python::buffer_to_indices(std::vector<param_t> &indices, const py::buffer_info &info) {
     auto count = info.size;
@@ -178,7 +178,7 @@ void esig::python::init_paths(py::module_ &m) {
     klass.def("signature_derivative", static_cast<sigder_fn>(&stream::signature_derivative), "perturbations"_a, "accuracy"_a);
     klass.def("signature_derivative", static_cast<ctx_sigder_fn>(&stream::signature_derivative), "perturbations"_a, "accuracy"_a, "context"_a);
     klass.def(
-        "signature_derivative", [](const stream &self, const interval &domain, const algebra::lie &perturbation, accuracy_t accuracy, deg_t depth) {
+        "signature_derivative", [](const stream &self, const interval &domain, const algebra::Lie &perturbation, accuracy_t accuracy, deg_t depth) {
             auto ctx = self.metadata().ctx->get_alike(depth);
             return self.signature_derivative(domain, perturbation, accuracy, *ctx);
         },

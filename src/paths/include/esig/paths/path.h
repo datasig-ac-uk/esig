@@ -93,16 +93,16 @@ public:
     virtual compute_depth_t compute_depth(accuracy_t accuracy) const noexcept;
     virtual bool empty(const interval &domain) const;
 
-    virtual algebra::lie
+    virtual algebra::Lie
     log_signature(const interval &domain, const algebra::context &ctx) const = 0;
 
-    virtual algebra::lie
+    virtual algebra::Lie
     log_signature(const dyadic_interval &domain, compute_depth_t resolution, const algebra::context &ctx) const;
 
-    virtual algebra::lie
+    virtual algebra::Lie
     log_signature(const interval &domain, compute_depth_t resolution, const algebra::context &ctx) const;
 
-    virtual algebra::free_tensor
+    virtual algebra::FreeTensor
     signature(const interval &domain, compute_depth_t resolution, const algebra::context &ctx) const;
 };
 
@@ -113,7 +113,7 @@ class ESIG_PATHS_EXPORT solution_path_interface : public path_interface
 {
 public:
     using path_interface::path_interface;
-    virtual algebra::lie
+    virtual algebra::Lie
     base_point() const = 0;
 };
 
@@ -132,7 +132,7 @@ public:
  */
 class ESIG_PATHS_EXPORT dyadic_caching_layer : public path_interface
 {
-    mutable boost::container::map<dyadic_interval, algebra::lie> m_cache;
+    mutable boost::container::map<dyadic_interval, algebra::Lie> m_cache;
     mutable std::recursive_mutex m_compute_lock;
 
 public:
@@ -146,10 +146,10 @@ public:
     dyadic_caching_layer& operator=(dyadic_caching_layer&&) noexcept;
 
 
-    algebra::lie
+    algebra::Lie
     log_signature(const dyadic_interval &domain, compute_depth_t resolution, const algebra::context &ctx) const override;
 
-    algebra::lie
+    algebra::Lie
     log_signature(const interval& domain, compute_depth_t resolution, const algebra::context& ctx) const override;
 };
 
@@ -177,7 +177,7 @@ struct ESIG_PATHS_EXPORT dynamically_constructed_path : dyadic_caching_layer
     bool empty(const interval &domain) const override;
 
     using dyadic_caching_layer::log_signature;
-    algebra::lie log_signature(const interval &domain, const algebra::context &ctx) const override;
+    algebra::Lie log_signature(const interval &domain, const algebra::context &ctx) const override;
 };
 
 /**
@@ -194,7 +194,7 @@ class ESIG_PATHS_EXPORT path
 
 public:
     using accuracy_t = path_interface::accuracy_t;
-    using perturbation_t = std::pair<real_interval, algebra::lie>;
+    using perturbation_t = std::pair<real_interval, algebra::Lie>;
     using perturbation_list_t = std::vector<perturbation_t>;
 
     path() = default;
@@ -206,42 +206,42 @@ public:
 
     const path_metadata& metadata() const noexcept;
 
-    algebra::lie log_signature(
+    algebra::Lie log_signature(
             const interval &domain,
             accuracy_t accuracy) const;
 
-    algebra::lie log_signature(
+    algebra::Lie log_signature(
             const interval &domain,
             accuracy_t accuracy,
             const algebra::context &ctx) const;
 
-    algebra::lie log_signature(accuracy_t accuracy) const;
-    algebra::lie log_signature(accuracy_t accuracy, const algebra::context& ctx) const;
+    algebra::Lie log_signature(accuracy_t accuracy) const;
+    algebra::Lie log_signature(accuracy_t accuracy, const algebra::context& ctx) const;
 
-    algebra::free_tensor signature(
+    algebra::FreeTensor signature(
             const interval &domain,
             accuracy_t accuracy) const;
-    algebra::free_tensor signature(
+    algebra::FreeTensor signature(
             const interval &domain,
             accuracy_t accuracy,
             const algebra::context &ctx) const;
 
-    algebra::free_tensor signature(accuracy_t accuracy) const;
-    algebra::free_tensor signature(accuracy_t accuracy, const algebra::context& ctx) const;
+    algebra::FreeTensor signature(accuracy_t accuracy) const;
+    algebra::FreeTensor signature(accuracy_t accuracy, const algebra::context& ctx) const;
 
-    algebra::free_tensor
+    algebra::FreeTensor
     signature_derivative(const interval &domain,
-                         const algebra::lie &perturbation,
+                         const algebra::Lie &perturbation,
                          accuracy_t accuracy) const;
-    algebra::free_tensor
+    algebra::FreeTensor
     signature_derivative(const interval &domain,
-                         const algebra::lie &perturbation,
+                         const algebra::Lie &perturbation,
                          accuracy_t accuracy,
                          const algebra::context &ctx) const;
-    algebra::free_tensor
+    algebra::FreeTensor
     signature_derivative(const perturbation_list_t &perturbations,
                          accuracy_t accuracy) const;
-    algebra::free_tensor
+    algebra::FreeTensor
     signature_derivative(const perturbation_list_t &perturbations,
                          accuracy_t accuracy,
                          const algebra::context &ctx) const;

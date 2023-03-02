@@ -31,7 +31,7 @@ public:
 
     using dyadic_caching_layer::log_signature;
     bool empty(const interval &domain) const override;
-    algebra::lie log_signature(const interval &domain, const algebra::context &ctx) const override;
+    algebra::Lie log_signature(const interval &domain, const algebra::context &ctx) const override;
 };
 
 }// namespace paths

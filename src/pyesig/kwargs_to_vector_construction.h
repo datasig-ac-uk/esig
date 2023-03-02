@@ -9,6 +9,7 @@
 
 #include <esig/scalars.h>
 #include <esig/algebra/context_fwd.h>
+#include <esig/algebra/algebra_fwd.h>
 
 namespace esig { namespace python {
 

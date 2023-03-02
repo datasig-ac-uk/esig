@@ -5,8 +5,10 @@
 #ifndef ESIG_ALGEBRA_FREE_TENSOR_INTERFACE_H_
 #define ESIG_ALGEBRA_FREE_TENSOR_INTERFACE_H_
 
+#include "free_tensor.h"
+#include "shuffle_tensor.h"
 
-#include <esig/implementation_types.h>
+/*#include <esig/implementation_types.h>
 #include <esig/algebra/esig_algebra_export.h>
 #include <esig/algebra/algebra_traits.h>
 #include <esig/algebra/iteration.h>
@@ -14,11 +16,12 @@
 
 #include <memory>
 #include <type_traits>
-#include <ostream>
+#include <ostream>*/
 
 namespace esig {
 namespace algebra {
 
+/*
 class free_tensor;
 class shuffle_tensor;
 
@@ -27,12 +30,7 @@ extern template class ESIG_ALGEBRA_EXPORT AlgebraInterface<free_tensor>;
 
 class ESIG_ALGEBRA_EXPORT free_tensor_interface : public AlgebraInterface<free_tensor>
 {
-public:
-    // Special functions
-    virtual free_tensor exp() const = 0;
-    virtual free_tensor log() const = 0;
-    virtual free_tensor inverse() const = 0;
-    virtual free_tensor_interface& fmexp(const free_tensor_interface& other) = 0;
+
 };
 
 
@@ -46,11 +44,13 @@ using shuffle_tensor_interface = AlgebraInterface<shuffle_tensor>;
 
 
 namespace dtl {
+*/
 /*
  * Typically, the interface will be implemented via the following template wrapper
  * which takes the standard arithmetic operations to implement the arithmetic, and
  * uses traits to identify the properties.
- */
+ *//*
+
 
 template <typename Impl>
 class free_tensor_implementation : public algebra_implementation<free_tensor_interface, Impl>
@@ -110,9 +110,11 @@ using shuffle_tensor_implementation = algebra_implementation<shuffle_tensor_inte
 
 extern template class ESIG_ALGEBRA_EXPORT AlgebraBase<free_tensor_interface>;
 
+*/
 /**
  * @brief Wrapper class for free tensor objects.
- */
+ *//*
+
 class ESIG_ALGEBRA_EXPORT free_tensor : public AlgebraBase<free_tensor_interface>
 {
     friend class algebra_base_access;
@@ -141,6 +143,7 @@ class shuffle_tensor : public AlgebraBase<shuffle_tensor_interface>
 public:
     using base::base;
 };
+*/
 
 
 //// We have to define the template constructor here too.
@@ -163,67 +166,11 @@ public:
 // The rest of this file are implementations of the template wrapper methods.
 
 
-namespace dtl {
-
-template <typename Tensor>
-Tensor exp_wrapper(const Tensor& arg)
-{
-    return exp(arg);
-}
-
-template <typename Tensor>
-Tensor log_wrapper(const Tensor& arg)
-{
-    return log(arg);
-}
-
-template <typename Tensor>
-Tensor inverse_wrapper(const Tensor& arg)
-{
-    return inverse(arg);
-}
 
 
-template<typename Impl>
-free_tensor free_tensor_implementation<Impl>::exp() const
-{
-    return free_tensor(exp_wrapper(free_tensor_implementation::m_data), free_tensor_implementation::p_ctx);
-}
-template<typename Impl>
-free_tensor free_tensor_implementation<Impl>::log() const
-{
-    return free_tensor(log_wrapper(free_tensor_implementation::m_data), free_tensor_implementation::p_ctx);
-}
-template<typename Impl>
-free_tensor free_tensor_implementation<Impl>::inverse() const
-{
-    return free_tensor(inverse_wrapper(free_tensor_implementation::m_data), free_tensor_implementation::p_ctx);
-}
-template<typename Impl>
-free_tensor_interface &free_tensor_implementation<Impl>::fmexp(const free_tensor_interface &other)
-{
-    free_tensor_implementation::m_data.fmexp_inplace(dynamic_cast<const free_tensor_implementation&>(other).m_data);
-    return *this;
-}
-template<typename Impl>
-free_tensor borrowed_free_tensor_implementation<Impl>::exp() const {
-    return free_tensor(exp_wrapper(*borrowed_free_tensor_implementation::p_impl), borrowed_free_tensor_implementation::p_ctx);
-}
-template<typename Impl>
-free_tensor borrowed_free_tensor_implementation<Impl>::log() const {
-    return free_tensor(log_wrapper(*borrowed_free_tensor_implementation::p_impl), borrowed_free_tensor_implementation::p_ctx);
-}
-template<typename Impl>
-free_tensor borrowed_free_tensor_implementation<Impl>::inverse() const {
-    return free_tensor(inverse_wrapper(*borrowed_free_tensor_implementation::p_impl), borrowed_free_tensor_implementation::p_ctx);
-}
-template<typename Impl>
-free_tensor_interface &borrowed_free_tensor_implementation<Impl>::fmexp(const free_tensor_interface &other) {
-    base::p_impl->fmexp(base::cast(other));
-    return *this;
-}
-
-} // namespace dtl
+//
+//
+//} // namespace dtl
 
 
 

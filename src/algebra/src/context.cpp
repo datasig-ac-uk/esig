@@ -14,32 +14,32 @@
 namespace esig {
 namespace algebra {
 
-void context::lie_to_tensor_fallback(free_tensor &result, const lie &arg) const {
+void context::lie_to_tensor_fallback(FreeTensor &result, const Lie &arg) const {
 
 
 
 }
-void context::tensor_to_lie_fallback(lie &result, const free_tensor &arg) const {
+void context::tensor_to_lie_fallback(Lie &result, const FreeTensor &arg) const {
 }
 
 
-void context::cbh_fallback(free_tensor &collector, const std::vector<lie> &lies) const {
+void context::cbh_fallback(FreeTensor &collector, const std::vector<Lie> &lies) const {
     for (const auto& alie : lies)  {
         collector.fmexp(this->lie_to_tensor(alie));
     }
 }
-free_tensor context::to_signature(const lie &log_sig) const {
+FreeTensor context::to_signature(const Lie &log_sig) const {
     return this->lie_to_tensor(log_sig).exp();
 }
 bool context::check_compatible(const context &other) const noexcept {
     return other.width() == width();
 }
 
-free_tensor context::zero_tensor(VectorType vtype) const
+FreeTensor context::zero_tensor(VectorType vtype) const
 {
     return construct_tensor({ .vect_type=vtype });
 }
-lie context::zero_lie(VectorType vtype) const
+Lie context::zero_lie(VectorType vtype) const
 {
     return construct_lie({ scalars::KeyScalarArray(), vtype });
 }

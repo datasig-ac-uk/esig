@@ -29,16 +29,16 @@ bool path_interface::empty(const interval &domain) const
 {
     return domain.inf() == domain.sup();
 }
-algebra::free_tensor
+algebra::FreeTensor
 path_interface::signature(const interval &domain, path_interface::compute_depth_t resolution, const algebra::context &ctx) const
 {
     return ctx.to_signature(log_signature(domain, resolution, ctx));
 }
-algebra::lie path_interface::log_signature(const dyadic_interval &domain, path_interface::compute_depth_t resolution, const algebra::context &ctx) const
+algebra::Lie path_interface::log_signature(const dyadic_interval &domain, path_interface::compute_depth_t resolution, const algebra::context &ctx) const
 {
     return log_signature(domain, ctx);
 }
-algebra::lie path_interface::log_signature(const interval &domain, path_interface::compute_depth_t resolution, const algebra::context &ctx) const
+algebra::Lie path_interface::log_signature(const interval &domain, path_interface::compute_depth_t resolution, const algebra::context &ctx) const
 {
 
     // TODO: Replace with proper invocations
@@ -49,48 +49,48 @@ std::shared_ptr<const algebra::context> path::get_default_context() const
 {
     return p_impl->metadata().ctx;
 }
-algebra::lie path::log_signature(const interval &domain, path::accuracy_t accuracy) const
+algebra::Lie path::log_signature(const interval &domain, path::accuracy_t accuracy) const
 {
     auto ctx = get_default_context();
     auto resolution = p_impl->compute_depth(accuracy);
     return p_impl->log_signature(domain, resolution, *ctx);
 }
-algebra::lie path::log_signature(const interval &domain, path::accuracy_t accuracy, const algebra::context &ctx) const
+algebra::Lie path::log_signature(const interval &domain, path::accuracy_t accuracy, const algebra::context &ctx) const
 {
     auto resolution = p_impl->compute_depth(accuracy);
     return p_impl->log_signature(domain, resolution, ctx);
 }
 
-algebra::lie path::log_signature(accuracy_t accuracy) const {
+algebra::Lie path::log_signature(accuracy_t accuracy) const {
     return path::log_signature(accuracy, *get_default_context());
 }
-algebra::lie path::log_signature(accuracy_t accuracy, const algebra::context &ctx) const {
+algebra::Lie path::log_signature(accuracy_t accuracy, const algebra::context &ctx) const {
     auto resolution = p_impl->compute_depth(accuracy);
     auto domain = p_impl->metadata().effective_domain;
     return p_impl->log_signature(domain, resolution, ctx);
 }
 
-algebra::free_tensor path::signature(const interval &domain, path::accuracy_t accuracy) const
+algebra::FreeTensor path::signature(const interval &domain, path::accuracy_t accuracy) const
 {
     auto ctx = get_default_context();
     auto resolution = p_impl->compute_depth(accuracy);
     return p_impl->signature(domain, resolution, *ctx);
 }
-algebra::free_tensor path::signature(const interval &domain, path::accuracy_t accuracy, const algebra::context &ctx) const
+algebra::FreeTensor path::signature(const interval &domain, path::accuracy_t accuracy, const algebra::context &ctx) const
 {
     auto resolution = p_impl->compute_depth(accuracy);
     return p_impl->signature(domain, resolution, ctx);
 }
-algebra::free_tensor path::signature(accuracy_t accuracy) const {
+algebra::FreeTensor path::signature(accuracy_t accuracy) const {
     return path::signature(accuracy, *get_default_context());
 }
-algebra::free_tensor path::signature(accuracy_t accuracy, const algebra::context &ctx) const {
+algebra::FreeTensor path::signature(accuracy_t accuracy, const algebra::context &ctx) const {
     auto resolution = p_impl->compute_depth(accuracy);
     auto domain = p_impl->metadata().effective_domain;
     return p_impl->signature(domain, resolution, ctx);
 }
 
-algebra::free_tensor path::signature_derivative(const interval &domain, const algebra::lie &perturbation, path::accuracy_t accuracy) const
+algebra::FreeTensor path::signature_derivative(const interval &domain, const algebra::Lie &perturbation, path::accuracy_t accuracy) const
 {
     auto ctx = get_default_context();
     auto metadata = p_impl->metadata();
@@ -103,7 +103,7 @@ algebra::free_tensor path::signature_derivative(const interval &domain, const al
                                metadata.result_vec_type
                                );
 }
-algebra::free_tensor path::signature_derivative(const interval &domain, const algebra::lie &perturbation, path::accuracy_t accuracy, const algebra::context &ctx) const
+algebra::FreeTensor path::signature_derivative(const interval &domain, const algebra::Lie &perturbation, path::accuracy_t accuracy, const algebra::context &ctx) const
 {
     auto metadata = p_impl->metadata();
     algebra::derivative_compute_info info {
@@ -115,12 +115,12 @@ algebra::free_tensor path::signature_derivative(const interval &domain, const al
                               metadata.result_vec_type
                               );
 }
-algebra::free_tensor path::signature_derivative(const path::perturbation_list_t &perturbations, path::accuracy_t accuracy) const
+algebra::FreeTensor path::signature_derivative(const path::perturbation_list_t &perturbations, path::accuracy_t accuracy) const
 {
     auto ctx = get_default_context();
     return signature_derivative(perturbations, accuracy, *ctx);
 }
-algebra::free_tensor path::signature_derivative(const path::perturbation_list_t &perturbations, path::accuracy_t accuracy, const algebra::context &ctx) const
+algebra::FreeTensor path::signature_derivative(const path::perturbation_list_t &perturbations, path::accuracy_t accuracy, const algebra::context &ctx) const
 {
     auto metadata = p_impl->metadata();
     auto resolution = p_impl->compute_depth(accuracy);

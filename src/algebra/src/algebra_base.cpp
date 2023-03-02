@@ -2,12 +2,13 @@
 // Created by user on 30/08/22.
 //
 
-#include <esig/algebra/base.h>
+#include "esig/algebra/fallback_operations.h"
 
 
-namespace esig {
-namespace algebra {
-bool dtl::fallback_equals(const algebra_iterator &lbegin,
+using namespace esig;
+using namespace esig::algebra;
+
+bool esig::algebra::dtl::fallback_equals(const algebra_iterator &lbegin,
                           const algebra_iterator &lend,
                           const algebra_iterator &rbegin,
                           const algebra_iterator &rend) noexcept
@@ -73,5 +74,3 @@ bool dtl::fallback_equals(const algebra_iterator &lbegin,
     }
     return true;
 }
-} // namespace algebra
-} // namespace esig

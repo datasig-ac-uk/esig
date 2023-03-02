@@ -14,7 +14,7 @@ struct TensorFixture : public esig::testing::fixture_base
 
 private:
     template <typename I>
-    esig::algebra::free_tensor make_tensor_impl(const I* start, const I* end)
+    esig::algebra::FreeTensor make_tensor_impl(const I* start, const I* end)
     {
         esig::algebra::vector_construction_data data(
                 start, end, std::get<3>(GetParam())
@@ -24,13 +24,13 @@ private:
 
 public:
 
-    algebra::free_tensor make_sparse_free_tensor(idimn_t size=-1)
+    algebra::FreeTensor make_sparse_free_tensor(idimn_t size=-1)
     {
         auto make_size = (size == -1) ? ctx->tensor_size(std::get<1>(GetParam())) : dimn_t(size);
         return ctx->construct_tensor(get_construction_data(make_size, algebra::VectorType::sparse));
     }
 
-    algebra::free_tensor make_dense_free_tensor(idimn_t size=-1)
+    algebra::FreeTensor make_dense_free_tensor(idimn_t size=-1)
     {
         auto make_size = (size == -1) ? ctx->tensor_size(std::get<1>(GetParam())) : dimn_t(size);
         auto cons_data = get_construction_data(make_size, algebra::VectorType::dense);

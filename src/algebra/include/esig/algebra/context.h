@@ -9,6 +9,12 @@
 
 #include <esig/scalars.h>
 
+#include "algebra_fwd.h"
+#include "algebra_base.h"
+#include "basis.h"
+#include "lie.h"
+#include "free_tensor.h"
+#include "shuffle_tensor.h"
 
 namespace esig {
 namespace algebra {
@@ -24,8 +30,8 @@ struct signature_data
 
 
 struct derivative_compute_info {
-    lie logsig_of_interval;
-    lie perturbation;
+    Lie logsig_of_interval;
+    Lie perturbation;
 };
 
 
@@ -51,11 +57,11 @@ protected:
     {}
 
 public:
-    using tensor_r = free_tensor_interface;
-    using lie_r = lie_interface;
+    using tensor_r = FreeTensorInterface;
+    using lie_r = LieInterface;
 
-    using tensor_basis_r = algebra_basis;
-    using lie_basis_r = algebra_basis;
+    using tensor_basis_r = Basis;
+    using lie_basis_r = Basis;
 
     virtual ~context() = default;
 
@@ -70,20 +76,20 @@ public:
     virtual std::shared_ptr<const context> get_alike(deg_t new_depth, const scalars::ScalarType * new_coeff) const = 0;
     virtual std::shared_ptr<const context> get_alike(deg_t new_width, deg_t new_depth, const scalars::ScalarType * new_coeff) const = 0;
 
-    // Get information about the tensor and lie types
+    // Get information about the tensor and Lie types
     virtual dimn_t lie_size(deg_t d) const noexcept = 0;
     virtual dimn_t tensor_size(deg_t d) const noexcept = 0;
 
     virtual bool check_compatible(const context& other) const noexcept;
 
-    virtual free_tensor convert(const free_tensor& arg, VectorType new_vec_type) const = 0;
-    virtual lie convert(const lie& arg, VectorType new_vec_type) const = 0;
+    virtual FreeTensor convert(const FreeTensor& arg, VectorType new_vec_type) const = 0;
+    virtual Lie convert(const Lie& arg, VectorType new_vec_type) const = 0;
 
     //TODO: needs more thought
 
-    // Access the basis interface for lie and tensors
+    // Access the basis interface for Lie and tensors
     //virtual std::shared_ptr<algebra_basis> get_tensor_basis() const noexcept = 0;
-    //virtual std::shared_ptr<algebra_basis> get_lie_basis() const noexcept = 0;
+    //virtual std::shared_ptr<algebra_basis> get_Lie_basis() const noexcept = 0;
 //    virtual const algebra_basis &borrow_tbasis() const noexcept = 0;
 //    virtual const algebra_basis &borrow_lbasis() const noexcept = 0;
 
@@ -91,36 +97,36 @@ public:
     virtual Basis get_lie_basis() const = 0;
 
 
-    // Construct new instances of tensors and lies
-    virtual free_tensor construct_tensor(const vector_construction_data &) const = 0;
-    virtual lie construct_lie(const vector_construction_data &) const = 0;
-    virtual free_tensor zero_tensor(VectorType vtype) const;
-    virtual lie zero_lie(VectorType vtype) const;
+    // Construct new instances of tensors and Lies
+    virtual FreeTensor construct_tensor(const vector_construction_data &) const = 0;
+    virtual Lie construct_lie(const vector_construction_data &) const = 0;
+    virtual FreeTensor zero_tensor(VectorType vtype) const;
+    virtual Lie zero_lie(VectorType vtype) const;
 
     // Conversions between Lie and Tensors
 protected:
-    void lie_to_tensor_fallback(free_tensor& result, const lie& arg) const;
-    void tensor_to_lie_fallback(lie& result, const free_tensor& arg) const;
+    void lie_to_tensor_fallback(FreeTensor& result, const Lie& arg) const;
+    void tensor_to_lie_fallback(Lie& result, const FreeTensor& arg) const;
 
 public:
-    virtual free_tensor lie_to_tensor(const lie &arg) const = 0;
-    virtual lie tensor_to_lie(const free_tensor &arg) const = 0;
+    virtual FreeTensor lie_to_tensor(const Lie &arg) const = 0;
+    virtual Lie tensor_to_lie(const FreeTensor &arg) const = 0;
 
     // Campbell-Baker-Hausdorff formula
 protected:
-    void cbh_fallback(free_tensor& collector, const std::vector<lie>& lies) const;
+    void cbh_fallback(FreeTensor& collector, const std::vector<Lie>& Lies) const;
 
 public:
-    virtual lie cbh(const std::vector<lie> &lies, VectorType vtype) const = 0;
+    virtual Lie cbh(const std::vector<Lie> &Lies, VectorType vtype) const = 0;
 
 
     // Methods for computing signatures
-    virtual free_tensor to_signature(const lie &log_sig) const;
-    virtual free_tensor signature(const signature_data& data) const = 0;
-    virtual lie log_signature(const signature_data& data) const = 0;
+    virtual FreeTensor to_signature(const Lie &log_sig) const;
+    virtual FreeTensor signature(const signature_data& data) const = 0;
+    virtual Lie log_signature(const signature_data& data) const = 0;
 
     // Method for computing the derivative of a signature
-    virtual free_tensor sig_derivative(
+    virtual FreeTensor sig_derivative(
             const std::vector<derivative_compute_info> &info,
         VectorType vtype,
         VectorType) const = 0;

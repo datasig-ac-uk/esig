@@ -26,7 +26,7 @@ Element of the free Lie algebra.
 )edoc";
 
 
-static lie construct_lie(py::object data, py::kwargs kwargs) {
+static Lie construct_lie(py::object data, py::kwargs kwargs) {
     auto helper = esig::python::kwargs_to_construction_data(kwargs);
 
     py_to_buffer_options options;
@@ -72,100 +72,101 @@ void esig::python::init_lie(py::module_ &m) {
     py::options options;
     options.disable_function_signatures();
 
-    pybind11::class_<lie> klass(m, "Lie", LIE_DOC);
+    pybind11::class_<Lie> klass(m, "Lie", LIE_DOC);
     klass.def(py::init(&construct_lie), "data"_a);
 
-    klass.def_property_readonly("width", &lie::width);
-    klass.def_property_readonly("max_degree", &lie::depth);
-    klass.def_property_readonly("dtype", &lie::coeff_type);
-    klass.def_property_readonly("storage_type", &lie::storage_type);
+    klass.def_property_readonly("width", &Lie::width);
+    klass.def_property_readonly("max_degree", &Lie::depth);
+    klass.def_property_readonly("dtype", &Lie::coeff_type);
+    klass.def_property_readonly("storage_type", &Lie::storage_type);
 
-    klass.def("size", &lie::size);
-    klass.def("degree", &lie::degree);
+    klass.def("size", &Lie::size);
+    klass.def("degree", &Lie::degree);
 
-    klass.def("__getitem__", [](const lie& self, key_type key) {
+    klass.def("__getitem__", [](const Lie& self, key_type key) {
         return self[key];
     });
-    klass.def("__iter__", [](const lie& self) {
+    klass.def("__iter__", [](const Lie& self) {
              return py::make_iterator(self.begin(), self.end());
          });
 
-    klass.def("__neg__", &lie::uminus, py::is_operator());
+    klass.def("__neg__", &Lie::uminus, py::is_operator());
 
-    klass.def("__add__", &lie::add, py::is_operator());
-    klass.def("__sub__", &lie::sub, py::is_operator());
-    klass.def("__mul__", &lie::smul, py::is_operator());
-    klass.def("__truediv__", &lie::smul, py::is_operator());
-    klass.def("__mul__", &lie::mul, py::is_operator());
-    klass.def("__rmul__", [](const lie& self, const scalars::Scalar & other) { return self.smul(other); },
+    klass.def("__add__", &Lie::add, py::is_operator());
+    klass.def("__sub__", &Lie::sub, py::is_operator());
+    klass.def("__mul__", &Lie::smul, py::is_operator());
+    klass.def("__truediv__", &Lie::smul, py::is_operator());
+    klass.def("__mul__", &Lie::mul, py::is_operator());
+    klass.def("__rmul__", [](const Lie& self, const scalars::Scalar & other) { return self.smul(other); },
             py::is_operator());
 
-    klass.def("__mul__", [](const lie& self, scalar_t arg) {
+    klass.def("__mul__", [](const Lie& self, scalar_t arg) {
         return self.smul(scalars::Scalar(arg));
     }, py::is_operator());
-    klass.def("__mul__", [](const lie& self, long long arg) {
+    klass.def("__mul__", [](const Lie& self, long long arg) {
         return self.smul(scalars::Scalar(arg, 1LL, self.coeff_type()));
     }, py::is_operator());
-    klass.def("__rmul__", [](const lie& self, scalar_t arg) {
+    klass.def("__rmul__", [](const Lie& self, scalar_t arg) {
          return self.smul(scalars::Scalar(arg));
     }, py::is_operator());
-    klass.def("__rmul__", [](const lie& self, long long arg) {
+    klass.def("__rmul__", [](const Lie& self, long long arg) {
       return self.smul(scalars::Scalar(arg, 1LL, self.coeff_type()));
     }, py::is_operator());
-    klass.def("__truediv__", [](const lie& self, scalar_t arg) {
+    klass.def("__truediv__", [](const Lie& self, scalar_t arg) {
              return self.sdiv(scalars::Scalar(arg));
          }, py::is_operator());
-    klass.def("__truediv__", [](const lie& self, scalar_t arg) {
+    klass.def("__truediv__", [](const Lie& self, scalar_t arg) {
              return self.sdiv(scalars::Scalar(arg, self.coeff_type()));
          }, py::is_operator());
 
-    klass.def("__iadd__", &lie::add_inplace, py::is_operator());
-    klass.def("__isub__", &lie::sub_inplace, py::is_operator());
-    klass.def("__imul__", &lie::smul_inplace, py::is_operator());
-    klass.def("__itruediv__", &lie::sdiv_inplace, py::is_operator());
-    klass.def("__imul__", &lie::mul_inplace, py::is_operator());
+    klass.def("__iadd__", &Lie::add_inplace, py::is_operator());
+    klass.def("__isub__", &Lie::sub_inplace, py::is_operator());
+    klass.def("__imul__", &Lie::smul_inplace, py::is_operator());
+    klass.def("__itruediv__", &Lie::sdiv_inplace, py::is_operator());
+    klass.def("__imul__", &Lie::mul_inplace, py::is_operator());
 
-    klass.def("__imul__", [](lie& self, scalar_t arg) {
+    klass.def("__imul__", [](Lie& self, scalar_t arg) {
              return self.smul_inplace(scalars::Scalar(arg));
          }, py::is_operator());
-    klass.def("__imul__", [](lie& self, long long arg) {
+    klass.def("__imul__", [](Lie& self, long long arg) {
              return self.smul_inplace(scalars::Scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
-    klass.def("__itruediv__", [](lie& self, scalar_t arg) {
+    klass.def("__itruediv__", [](Lie& self, scalar_t arg) {
              return self.sdiv_inplace(scalars::Scalar(arg));
          }, py::is_operator());
-    klass.def("__itruediv__", [](lie& self, long long arg) {
+    klass.def("__itruediv__", [](Lie& self, long long arg) {
              return self.sdiv_inplace(scalars::Scalar(arg, 1LL, self.coeff_type()));
          }, py::is_operator());
 
-    klass.def("add_scal_mul", &lie::add_scal_mul, "other"_a, "scalar"_a);
-    klass.def("sub_scal_mul", &lie::sub_scal_mul, "other"_a, "scalar"_a);
-    klass.def("add_scal_div", &lie::add_scal_div, "other"_a, "scalar"_a);
-    klass.def("sub_scal_div", &lie::sub_scal_div, "other"_a, "scalar"_a);
+    klass.def("add_scal_mul", &Lie::add_scal_mul, "other"_a, "scalar"_a);
+    klass.def("sub_scal_mul", &Lie::sub_scal_mul, "other"_a, "scalar"_a);
+    klass.def("add_scal_div", &Lie::add_scal_div, "other"_a, "scalar"_a);
+    klass.def("sub_scal_div", &Lie::sub_scal_div, "other"_a, "scalar"_a);
 
-    klass.def("add_mul", &lie::add_mul, "lhs"_a, "rhs"_a);
-    klass.def("sub_mul", &lie::sub_mul, "lhs"_a, "rhs"_a);
-    klass.def("mul_smul", &lie::mul_smul, "other"_a, "scalar"_a);
-    klass.def("mul_sdiv", &lie::mul_sdiv, "other"_a, "scalar"_a);
+    klass.def("add_mul", &Lie::add_mul, "lhs"_a, "rhs"_a);
+    klass.def("sub_mul", &Lie::sub_mul, "lhs"_a, "rhs"_a);
+    klass.def("mul_smul", &Lie::mul_smul, "other"_a, "scalar"_a);
+    klass.def("mul_sdiv", &Lie::mul_sdiv, "other"_a, "scalar"_a);
 
-    klass.def("__str__", [](const lie& self) {
+
+    klass.def("__str__", [](const Lie& self) {
         std::stringstream ss;
         self.print(ss);
         return ss.str();
     });
 
-    klass.def("__repr__", [](const lie& self) {
+    klass.def("__repr__", [](const Lie& self) {
                 std::stringstream ss;
                 ss << "Lie(width=" << self.width() << ", depth=" << self.depth();
                 ss << ", ctype=" << self.coeff_type()->info().name << ')';
                 return ss.str();
             });
 
-    klass.def("__eq__", [](const lie& lhs, const lie& rhs) { return lhs == rhs; });
-    klass.def("__neq__", [](const lie& lhs, const lie& rhs) { return lhs != rhs; });
+    klass.def("__eq__", [](const Lie& lhs, const Lie& rhs) { return lhs == rhs; });
+    klass.def("__neq__", [](const Lie& lhs, const Lie& rhs) { return lhs != rhs; });
 
 #ifndef ESIG_NO_NUMPY
-    klass.def("__array__", [](const lie& arg) {
+    klass.def("__array__", [](const Lie& arg) {
         py::dtype dtype = esig::python::ctype_to_npy_dtype(arg.coeff_type());
 
         if (arg.storage_type() == VectorType::dense) {

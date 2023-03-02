@@ -2,35 +2,24 @@
 // Created by user on 04/04/2022.
 //
 
-#include <esig/algebra/lie_interface.h>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
 #include <utility>
 #include <sstream>
+
+#include "esig/algebra/lie.h"
 
 using namespace esig;
 using namespace esig::algebra;
 
 class MockLie;
 
-namespace esig {
-namespace algebra {
-namespace dtl {
 
-template <>
-struct implementation_wrapper_selection<lie_interface, MockLie>
-{
-    using type = MockLie;
-};
-}
-}
-}
-
-class MockLie : public esig::algebra::lie_interface
+class MockLie : public esig::algebra::LieInterface
 {
 public:
     using scalar_type = double;
-    using interface_t = esig::algebra::lie_interface;
+    using interface_t = esig::algebra::LieInterface;
 
     MOCK_METHOD(algebra_iterator, begin, (), (const, override));
     MOCK_METHOD(algebra_iterator, end, (), (const, override));
@@ -45,31 +34,31 @@ public:
     MOCK_METHOD(scalars::Scalar, get, (key_type), (const, override));
     MOCK_METHOD(scalars::Scalar, get_mut, (key_type), (override));
 
-    MOCK_METHOD(lie, uminus, (), (const, override));
-    MOCK_METHOD(lie, add, (const lie_interface&), (const, override));
-    MOCK_METHOD(lie, sub, (const lie_interface&), (const, override));
-    MOCK_METHOD(lie, smul, (const scalars::Scalar&), (const, override));
-    MOCK_METHOD(lie, sdiv, (const scalars::Scalar&), (const, override));
-    MOCK_METHOD(lie, mul, (const lie_interface&), (const, override));
+    MOCK_METHOD(Lie, uminus, (), (const, override));
+    MOCK_METHOD(Lie, add, (const LieInterface&), (const, override));
+    MOCK_METHOD(Lie, sub, (const LieInterface&), (const, override));
+    MOCK_METHOD(Lie, smul, (const scalars::Scalar&), (const, override));
+    MOCK_METHOD(Lie, sdiv, (const scalars::Scalar&), (const, override));
+    MOCK_METHOD(Lie, mul, (const LieInterface&), (const, override));
 
-    MOCK_METHOD(void, add_inplace, (const lie_interface&), (override));
-    MOCK_METHOD(void, sub_inplace, (const lie_interface&), (override));
+    MOCK_METHOD(void, add_inplace, (const LieInterface&), (override));
+    MOCK_METHOD(void, sub_inplace, (const LieInterface&), (override));
     MOCK_METHOD(void, smul_inplace, (const scalars::Scalar&), (override));
     MOCK_METHOD(void, sdiv_inplace, (const scalars::Scalar&), (override));
-    MOCK_METHOD(void, mul_inplace, (const lie_interface&), (override));
+    MOCK_METHOD(void, mul_inplace, (const LieInterface&), (override));
 
-    MOCK_METHOD(void, add_scal_mul, (const lie_interface&, const scalars::Scalar&), (override));
-    MOCK_METHOD(void, sub_scal_mul, (const lie_interface&, const scalars::Scalar&), (override));
-    MOCK_METHOD(void, add_scal_div, (const lie_interface&, const scalars::Scalar&), (override));
-    MOCK_METHOD(void, sub_scal_div, (const lie_interface&, const scalars::Scalar&), (override));
-    MOCK_METHOD(void, add_mul, (const lie_interface&, const lie_interface&), (override));
-    MOCK_METHOD(void, sub_mul, (const lie_interface&, const lie_interface&), (override));
-    MOCK_METHOD(void, mul_smul, (const lie_interface&, const scalars::Scalar&), (override));
-    MOCK_METHOD(void, mul_sdiv, (const lie_interface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, add_scal_mul, (const LieInterface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, sub_scal_mul, (const LieInterface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, add_scal_div, (const LieInterface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, sub_scal_div, (const LieInterface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, add_mul, (const LieInterface&, const LieInterface&), (override));
+    MOCK_METHOD(void, sub_mul, (const LieInterface&, const LieInterface&), (override));
+    MOCK_METHOD(void, mul_smul, (const LieInterface&, const scalars::Scalar&), (override));
+    MOCK_METHOD(void, mul_sdiv, (const LieInterface&, const scalars::Scalar&), (override));
 
     MOCK_METHOD(std::ostream&, print, (std::ostream&), (const, override));
 
-    MOCK_METHOD(bool, equals, (const lie_interface&), (const, override));
+    MOCK_METHOD(bool, equals, (const LieInterface&), (const, override));
 };
 
 using ::testing::Return;
@@ -79,18 +68,18 @@ using ::testing::_;
 class LieWrapperFixture : public ::testing::Test
 {
 protected:
-    lie lieobj;
-    lie otherlie;
+    Lie lieobj;
+    Lie otherlie;
 
 
-    static MockLie &mocked(lie &arg) noexcept
+    static MockLie &mocked(Lie &arg) noexcept
     {
-        return dynamic_cast<MockLie&>(*algebra_access<lie_interface>::get(arg));
+        return static_cast<MockLie&>(*arg);
     }
 
-    static lie setup_mock_lie()
+    static Lie setup_mock_lie()
     {
-        lie result = lie::from_args<MockLie>();
+        Lie result = Lie::from_args<MockLie>();
         auto& mlie = mocked(result);
 
         ON_CALL(mlie, size()).WillByDefault(Return(0));
@@ -99,12 +88,12 @@ protected:
         ON_CALL(mlie, depth()).WillByDefault(Return(2));
         ON_CALL(mlie, storage_type()).WillByDefault(Return(VectorType::dense));
         ON_CALL(mlie, coeff_type()).WillByDefault(Return(scalars::dtl::scalar_type_trait<double>::get_type()));
-        ON_CALL(mlie, uminus()).WillByDefault(Return(lie::from_args<MockLie>()));
-        ON_CALL(mlie, add(_)).WillByDefault(Return(lie::from_args<MockLie>()));
-        ON_CALL(mlie, sub(_)).WillByDefault(Return(lie::from_args<MockLie>()));
-        ON_CALL(mlie, smul(_)).WillByDefault(Return(lie::from_args<MockLie>()));
-        ON_CALL(mlie, sdiv(_)).WillByDefault(Return(lie::from_args<MockLie>()));
-        ON_CALL(mlie, mul(_)).WillByDefault(Return(lie::from_args<MockLie>()));
+        ON_CALL(mlie, uminus()).WillByDefault(Return(Lie::from_args<MockLie>()));
+        ON_CALL(mlie, add(_)).WillByDefault(Return(Lie::from_args<MockLie>()));
+        ON_CALL(mlie, sub(_)).WillByDefault(Return(Lie::from_args<MockLie>()));
+        ON_CALL(mlie, smul(_)).WillByDefault(Return(Lie::from_args<MockLie>()));
+        ON_CALL(mlie, sdiv(_)).WillByDefault(Return(Lie::from_args<MockLie>()));
+        ON_CALL(mlie, mul(_)).WillByDefault(Return(Lie::from_args<MockLie>()));
 //        ON_CALL(mlie, add_inplace(_)).WillByDefault(ReturnRef(mlie));
 //        ON_CALL(mlie, sub_inplace(_)).WillByDefault(ReturnRef(mlie));
 //        ON_CALL(mlie, smul_inplace(_)).WillByDefault(ReturnRef(mlie));

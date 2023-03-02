@@ -6,9 +6,9 @@
 
 namespace esig {
 namespace paths {
-algebra::lie concatenation_path::log_signature(const interval &domain, const algebra::context &ctx) const {
+algebra::Lie concatenation_path::log_signature(const interval &domain, const algebra::context &ctx) const {
 
-    std::vector<algebra::lie> lies;
+    std::vector<algebra::Lie> lies;
     lies.reserve(m_paths.size());
 
     for (const auto& p : m_paths) {

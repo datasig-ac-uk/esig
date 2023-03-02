@@ -15,7 +15,7 @@ bool dynamically_constructed_path::empty(const interval &domain) const
 {
     return false;
 }
-algebra::lie dynamically_constructed_path::log_signature(const interval &domain, const algebra::context &ctx) const
+algebra::Lie dynamically_constructed_path::log_signature(const interval &domain, const algebra::context &ctx) const
 {
 //    std::cout << domain << '\n';
 //    const auto& md = metadata();

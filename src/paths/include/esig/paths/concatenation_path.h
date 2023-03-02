@@ -16,7 +16,7 @@ class concatenation_path : public path_interface
     std::vector<std::unique_ptr<const path_interface>> m_paths;
 
 public:
-    algebra::lie log_signature(const interval &domain, const algebra::context &ctx) const override;
+    algebra::Lie log_signature(const interval &domain, const algebra::context &ctx) const override;
 
     bool empty(const interval &domain) const override;
 };
