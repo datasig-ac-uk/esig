@@ -122,7 +122,7 @@ class AlgebraImplementation;
 namespace dtl {
 
 template<typename Impl,
-         template<typename, template<typename> class> class Wrapper = AlgebraImplementation>
+         template<typename, template<typename> class> class Wrapper>
 using select_owned_borrowed_t = std::conditional_t<std::is_pointer<std::remove_reference_t<Impl>>::value,
                                                    Wrapper<std::remove_cv_t<std::remove_pointer_t<Impl>>, BorrowedStorageModel>,
                                                    Wrapper<std::remove_cv_t<std::remove_reference_t<Impl>>, OwnedStorageModel>>;
