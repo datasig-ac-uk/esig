@@ -6,7 +6,7 @@ echo $arch
 yum install -y curl zip unzip tar
 bash ./build/vcpkg/bootstrap-vcpkg.sh
 
-build/vcpkg/vcpkg install boost-system boost-thread boost-container
+build/vcpkg/vcpkg install boost-system boost-thread boost-container boost-multiprecision
 
 #yum install -y boost-devel
 
