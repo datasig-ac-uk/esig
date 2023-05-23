@@ -3,7 +3,7 @@
 
 arch=$(uname -m)
 echo $arch
-
+yum install -y curl zip unzip tar
 bash ./build/vcpkg/bootstrap-vcpkg.sh
 
 build/vcpkg/vcpkg install boost-system boost-thread boost-container
