@@ -132,17 +132,17 @@ with io.open(os.path.join(PATH, "CHANGELOG"), "rt") as fp:
 CMAKE_SETTINGS = [
     "-DLIBALGEBRA_NO_SERIALIZATION:BOOL=ON",
 ]
-if platform.system() == "Windows":
-    vcpkg = Path("build", "vcpkg")
+# if platform.system() == "Windows":
+vcpkg = Path("build", "vcpkg")
+if vcpkg.exists():
+    CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
+elif "VCPKG_INSTALLATION_ROOT" in os.environ:
+    vcpkg = Path(os.environ["VCPKG_INSTALLATION_ROOT"])
     if vcpkg.exists():
         CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
-    elif "VCPKG_INSTALLATION_ROOT" in os.environ:
-        vcpkg = Path(os.environ["VCPKG_INSTALLATION_ROOT"])
-        if vcpkg.exists():
-            CMAKE_SETTINGS.append("-DCMAKE_TOOLCHAIN_FILE=%s" % (vcpkg.resolve() / "scripts" / "buildsystems" / "vcpkg.cmake"))
 
-    if platform.system() == 'Windows':
-        CMAKE_SETTINGS.append("-DRECOMBINE_INSTALL_DEPENDENTS:BOOL=ON")
+if platform.system() == 'Windows':
+    CMAKE_SETTINGS.append("-DRECOMBINE_INSTALL_DEPENDENTS:BOOL=ON")
 
 
 def filter_cmake_manifests(cmake_manifest):
