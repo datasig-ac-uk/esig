@@ -6,6 +6,8 @@ echo $arch
 
 bash ./build/vcpkg/bootstrap-vcpkg.sh
 
+build/vcpkg install boost-system boost-thread boost-container
+
 #yum install -y boost-devel
 
 
