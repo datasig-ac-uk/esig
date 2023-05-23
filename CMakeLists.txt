@@ -121,7 +121,7 @@ else ()
 endif ()
 
 Python_add_library(tosig MODULE WITH_SOABI)
-target_link_libraries(tosig PRIVATE Python::NumPy)
+target_link_libraries(tosig PRIVATE Python::NumPy Boost::boost)
 
 
 target_sources(tosig PRIVATE
