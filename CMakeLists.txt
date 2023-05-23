@@ -31,7 +31,7 @@ endif()
 
 
 
-find_package(Boost 1.48 COMPONENTS system thread container REQUIRED)
+find_package(Boost 1.48 COMPONENTS system thread REQUIRED)
 
 message(STATUS "Boost thread library: ${Boost_THREAD_LIBRARY_RELEASE}")
 message(STATUS "Boost system library: ${Boost_SYSTEM_LIBRARY_RELEASE}")
