@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.21)
-project(src/esig)
+project(esig)
 
 set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -31,7 +31,7 @@ endif()
 
 
 
-find_package(Boost 1.48 COMPONENTS system thread headers REQUIRED)
+find_package(Boost 1.48 COMPONENTS system thread container REQUIRED)
 
 message(STATUS "Boost thread library: ${Boost_THREAD_LIBRARY_RELEASE}")
 message(STATUS "Boost system library: ${Boost_SYSTEM_LIBRARY_RELEASE}")
