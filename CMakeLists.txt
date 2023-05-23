@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 project(src/esig)
 
-set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_VISIBILITY_INLINES_HIDDEN TRUE)
@@ -31,7 +31,7 @@ endif()
 
 
 
-find_package(Boost COMPONENTS system thread REQUIRED)
+find_package(Boost 1.48 COMPONENTS system thread headers REQUIRED)
 
 message(STATUS "Boost thread library: ${Boost_THREAD_LIBRARY_RELEASE}")
 message(STATUS "Boost system library: ${Boost_SYSTEM_LIBRARY_RELEASE}")
@@ -139,7 +139,11 @@ elseif(APPLE)
 #    set_target_properties(tosig PROPERTIES INSTALL_RPATH @loader_path)
 endif()
 
-target_link_libraries(tosig PRIVATE Boost::system Boost::boost Boost::thread Boost::dynamic_linking)
+target_link_libraries(tosig PRIVATE
+        Boost::system
+        Boost::boost
+        Boost::thread
+        Boost::dynamic_linking)
 if (TARGET recombine)
     target_link_libraries(tosig PRIVATE recombine)
     target_include_directories(tosig PRIVATE ${CMAKE_SOURCE_DIR}/recombine)

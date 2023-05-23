@@ -9,7 +9,7 @@
 #include <algorithm>
 #include <string>
 #include <libalgebra/libalgebra.h>
-#include <libalgebra/coefficients/coefficients.h>
+#include <libalgebra/coefficients.h>
 #include "libalgebra/lie_basis.h"
 
 //#include <lie_basis.h>
@@ -32,11 +32,11 @@ namespace {
     template <unsigned Width, unsigned Depth>
     using maps_type = alg::maps<field_t, Width, Depth, tensor_type<Width, Depth>, lie_type<Width, Depth>>;
 
-    template <unsigned Width, unsigned Depth>
-    using lie_data_access = alg::vectors::dtl::data_access < alg::vectors::dense_vector < alg::lie_basis<Width, Depth>, field_t>>;
-
-    template <unsigned Width, unsigned Depth>
-    using tensor_data_access = alg::vectors::dtl::data_access<alg::vectors::dense_vector<alg::free_tensor_basis<Width, Depth>, field_t>>;
+//    template <unsigned Width, unsigned Depth>
+//    using lie_data_access = alg::vectors::dtl::data_access < alg::vectors::dense_vector < alg::lie_basis<Width, Depth>, field_t>>;
+//
+//    template <unsigned Width, unsigned Depth>
+//    using tensor_data_access = alg::vectors::dtl::data_access<alg::vectors::dense_vector<alg::free_tensor_basis<Width, Depth>, field_t>>;
 
 
   /**
@@ -188,9 +188,11 @@ namespace {
 	template <unsigned Width, unsigned Depth>
 	void unpack_tensor_to_SNK(const tensor_type<Width, Depth>& arg, PyArrayObject *snk)
 	{
-        const auto& base = alg::vectors::dtl::vector_base_access::convert(arg);
-        auto* range_begin = tensor_data_access<Width, Depth>::range_begin(base);
-        auto* range_end = tensor_data_access<Width, Depth>::range_end(base);
+//        const auto& base = alg::vectors::dtl::vector_base_access::convert(arg);
+//        auto* range_begin = tensor_data_access<Width, Depth>::range_begin(base);
+//        auto* range_end = tensor_data_access<Width, Depth>::range_end(base);
+        const auto* range_begin = arg.base_vector().as_ptr();
+        const auto* range_end = range_begin + arg.base_vector().dimension();
 
         std::copy(range_begin, range_end, reinterpret_cast<double*>(PyArray_DATA(snk)));
 	}
@@ -220,9 +222,11 @@ namespace {
 	template <unsigned Width, unsigned Depth>
 	void unpack_lie_to_SNK(const lie_type<Width, Depth>& arg, PyArrayObject *snk)
 	{
-        const auto& base = alg::vectors::dtl::vector_base_access::convert(arg);
-        auto* range_begin = lie_data_access<Width, Depth>::range_begin(base);
-        auto* range_end = lie_data_access<Width, Depth>::range_end(base);
+//        const auto& base = alg::vectors::dtl::vector_base_access::convert(arg);
+//        auto* range_begin = lie_data_access<Width, Depth>::range_begin(base);
+//        auto* range_end = lie_data_access<Width, Depth>::range_end(base);
+        const auto* range_begin = arg.base_vector().as_ptr();
+        const auto* range_end = range_begin + arg.base_vector().dimension();
 
         std::copy(range_begin, range_end, reinterpret_cast<double*>(PyArray_DATA(snk)));
 	}
