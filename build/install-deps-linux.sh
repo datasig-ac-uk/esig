@@ -4,7 +4,7 @@
 arch=$(uname -m)
 echo $arch
 
-bash build/vxpkg/bootstrap-vcpkg.sh
+bash ./build/vcpkg/bootstrap-vcpkg.sh
 
 #yum install -y boost-devel
 
