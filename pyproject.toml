@@ -29,3 +29,4 @@ before-all = "source $ONEAPI_SCRIPT"
 
 [tool.cibuildwheel.linux]
 before-all = "bash build/install-deps-linux.sh"
+environment = { CMAKE_TOOLCHAIN_FILE="/project/build/vcpkg/scripts/buildsystems/vcpkg.cmake" }

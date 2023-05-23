@@ -4,8 +4,9 @@
 arch=$(uname -m)
 echo $arch
 
+build/vxpkg/bootstrap-vcpkg.sh
 
-yum install -y boost-devel
+#yum install -y boost-devel
 
 
 # We can expand this later to get the right libraries on other architectures if necessary
