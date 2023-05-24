@@ -162,8 +162,7 @@ jobs:
       - name: Get Boost macos
         id: boost-macos
         run: |
-          brew install boost
-          brew install libomp clang-omp
+          brew install boost 
           brew install ninja
           echo "prefix_path=/opt/homebrew:/opt/homebrew/opt/libomp" >> $GITHUB_ENV
         if: runner.os == 'macOS'
