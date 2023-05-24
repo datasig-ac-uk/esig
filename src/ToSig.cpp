@@ -3,6 +3,7 @@
 #include "ToSig.h" //Python.h must come first
 #include "stdafx.h"
 
+#include <boost/type_traits.hpp>
 #include <utility>
 #include <iostream>
 #include <vector>
@@ -24,7 +25,7 @@ namespace {
     using lie_type = alg::lie<field_t, Width, Depth, alg::vectors::dense_vector>;
 
     template <unsigned Width, unsigned Depth>
-    using tensor_type = alg::free_tensor<field_t, Width, Depth, alg::vectors::dense_vector>;
+    using tensor_type = alg::free_tensor<field_t, Width, Depth, alg::vectors::dense_vector, alg::free_tensor_multiplication>;
 
     template <unsigned Width, unsigned Depth>
     using cbh_type = alg::cbh<field_t, Width, Depth, tensor_type<Width, Depth>, lie_type<Width, Depth>>;
