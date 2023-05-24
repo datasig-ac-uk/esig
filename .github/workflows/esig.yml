@@ -162,7 +162,7 @@ jobs:
       - name: Get Boost macos
         id: boost-macos
         run: |
-          find /usr -name omp
+          find /usr/lib -name omp
           brew install boost 
           brew install ninja
         if: runner.os == 'macOS'
