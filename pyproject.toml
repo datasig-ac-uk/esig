@@ -11,7 +11,7 @@ build-backend = "setuptools.build_meta"
 
 
 [tool.cibuildwheel]
-skip = ["*-musl*", "pp*", "cp3{8,9,10}-*linux_i686"]
+skip = ["*-musl*", "pp*", "*linux_i686"]
 build-verbosity = 1
 
 test-requires = ["pytest", "numpy"]
