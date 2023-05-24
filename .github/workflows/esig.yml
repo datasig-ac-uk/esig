@@ -163,8 +163,9 @@ jobs:
         id: boost-macos
         run: |
           brew install boost
-          brew install libomp llvm
+          brew install libomp
           brew install ninja
+          echo "prefix_path=/opt/homebrew:/opt/homebrew/opt/libomp" >> $GITHUB_ENV
         if: runner.os == 'macOS'
 
 #      - name: Build Recombine
@@ -185,6 +186,7 @@ jobs:
         env:
           VERBOSE: 1
           BOOST_ROOT: ${{ env.boost_root }}
+          CMAKE_PREFIX_PATH: ${{ env.prefix_path }}
 
       - name: Cache outputs
         uses: actions/upload-artifact@v2
