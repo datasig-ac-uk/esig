@@ -50,7 +50,7 @@ jobs:
     if: github.ref == 'refs/heads/release'
     steps:
     - uses: actions/checkout@v2
-    - uses: actions/download-artifact@v2
+    - uses: actions/download-artifact@v4.1.7
       with:
         name: output
         path: build/dist
