@@ -1,1 +1,1 @@
-[[ -z "$ONEAPI_SCRIPT" && -e "$ONEAPI_SCRIPT" ]] && source $ONEAPI_SCRIPT
+[ ! -z "$ONEAPI_SCRIPT" ] && source $ONEAPI_SCRIPT
