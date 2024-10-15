@@ -16,7 +16,7 @@ on:
 
 
 env:
-  VCPKG_BINARY_SOURCES: 'clear;nuget,GitHub,readwrite'
+  VCPKG_BINARY_SOURCES: 'clear;x-gha,readwrite'
 
 
 jobs:
@@ -30,31 +30,31 @@ jobs:
       matrix:
         os: [
           windows-2019,
-          macos-11,
-          ubuntu-20.04
+          macos-13,
+          macos-14,
+          ubuntu-latest
         ]
-        include:
-          - os: 'windows-2019'
-            mono: ''
-          - os: 'macos-11'
-            mono: 'mono'
-          - os: 'ubuntu-20.04'
-            mono: 'mono'
 
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           submodules: true
 
       - name: Checkout recombine
         id: clone_recombine
-        uses: actions/checkout@v3
+        if: runner.os != 'macOs'
+        uses: actions/checkout@v4
         with:
-          repository: terrylyons/recombine
-          ref: develop
-          token: ${{ secrets.recombine_login }}
+          repository: datasig-ac-uk/recombine
           path: build/recombine
+      
+      - name: Setup gha caching for vcpkg
+        uses: actions/github-script@v7
+        with:
+          script: |
+            core.exportVariable('ACTIONS_CACHE_URL', process.env.ACTIONS_CACHE_URL || '');
+            core.exportVariable('ACTIONS_RUNTIME_TOKEN', process.env.ACTIONS_RUNTIME_TOKEN || '');
 
 # https://github.com/microsoft/vcpkg/blob/master/docs/users/binarycaching.md
       - name: Setup submodule vcpkg
@@ -63,13 +63,6 @@ jobs:
         run: |
           rm -rf "$VCPKG_INSTALLATION_ROOT"
           ./build/vcpkg/bootstrap-vcpkg.sh
-          ${{ matrix.mono }} `build/vcpkg/vcpkg fetch nuget | tail -n 1` \
-            sources add \
-            -source "https://nuget.pkg.github.com/datasig-ac-uk/index.json" \
-            -storepasswordincleartext \
-            -name "GitHub" \
-            -username "datasig-ac-uk" \
-            -password "${{ secrets.GITHUB_TOKEN }}"
           
 
       # In the future, this can be replaced by a download of the binary
@@ -92,8 +85,6 @@ jobs:
 #            !C:/Program Files (x86)/Intel/oneAPI/Installer/**
 #            C:/Program Files (x86)/Intel/oneAPI
 #            !C:/Program Files (x86)/Intel/oneAPI/conda_channel/**
-
-        
 
       - name: Get MKL
         id: get-mkl-windows
@@ -123,22 +114,6 @@ jobs:
           echo "CMAKE_PREFIX_PATH=C:/Program Files (x86)/Intel/oneAPI/mkl/2022.0.3" >> $GITHUB_ENV
           echo "ONEAPI_SCRIPT=C:/Progam Files (x86)/Intel/oneAPI/setvars.bat" >> $GITHUB_ENV
 
-      - name: Get MKL Mac
-        id: get-mkl-Mac
-        if: runner.os == 'macOS' && steps.clone_recombine.outcome == 'success'
-        run: |
-          curl -v -o OAPI_installer.dmg "$URL"
-          sudo hdiutil attach OAPI_installer.dmg -quiet
-          pushd /Volumes/"$(basename "$URL" .dmg)"/bootstrapper.app/Contents/MacOs
-          sudo ./install.sh --silent --eula accept --components intel.oneapi.mac.mkl.devel
-          popd
-          sudo hdiutil detach /Volumes/"$(basename "$URL" .dmg)" -quiet
-          echo "oneapi_root=/opt/intel/oneapi" >> $GITHUB_ENV
-          echo "ONEAPI_SCRIPT=/opt/intel/oneapi/setvars.sh" >> $GITHUB_ENV
-          echo "MKLROOT=/opt/intel/oneapi/mkl/latest" >> $GITHUB_ENV
-        env:
-          URL: https://registrationcenter-download.intel.com/akdlm/irc_nas/18342/m_BaseKit_p_2022.1.0.92.dmg
-
 
 
 #      - name: cache-boost-windows
@@ -155,9 +130,10 @@ jobs:
         run: |
           build/vcpkg/vcpkg install boost-system boost-thread boost-container boost-multiprecision --triplet x86-windows
           build/vcpkg/vcpkg install boost-system boost-thread boost-container boost-multiprecision --triplet x64-windows
-        if: runner.os == 'Windows' && steps.cache-boost-windows.outputs.cache-hit != 'true'
+        if: runner.os == 'Windows' 
         env:
           VCPKG_KEEP_ENV_VARS: "MKLROOT"
+
 
       - name: Get Boost macos
         id: boost-macos
@@ -192,20 +168,21 @@ jobs:
           name: wheels
           path: ./wheelhouse/*.whl
 
-
   build_sdist:
     runs-on: ubuntu-latest
     steps:
+
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           submodules: true
+
       - name: Setup python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: '>=3.8'
+          python-version: '3.13'
       - name: Install Build deps
-        run: python -m pip install setuptools build
+        run: python -m pip install wheel setuptools build
 #      - name: Check version updated
 
 #      - name: Copy manifest into main dir
@@ -230,18 +207,21 @@ jobs:
     if: github.ref == 'refs/heads/release'
     steps:
       - name: Setup python
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
-          python-version: '>=3.8'
+          python-version: '3.13'
+
       - name: Install Build deps
-        run: python -m pip install setuptools build twine
+        run: python -m pip install setuptools wheel build twine
+
       - name: Retrieve sdist
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: sdist
           path: dist
+
       - name: Retrieve wheels
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: wheels
           path: dist
