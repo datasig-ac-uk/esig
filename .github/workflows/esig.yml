@@ -157,13 +157,13 @@ jobs:
 #          MKLROOT: ${{ env.MKLROOT }}
 
       - name: Build wheels
-        uses: pypa/cibuildwheel@v2.3.1
+        uses: pypa/cibuildwheel@v2.21.3
         env:
           VERBOSE: 1
           BOOST_ROOT: ${{ env.boost_root }}
 
       - name: Cache outputs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: wheels
           path: ./wheelhouse/*.whl
