@@ -7,28 +7,19 @@
 
 import functools
 import os
+import warnings
 
 import numpy
 
 
 ESIG_PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# Python 3.8+ doesn't use PATH to locate DLLs; need to use add_dll_directory instead.
-# Not sure if this is the right place to do this, though; 3.8 Porting Guide says to do
-# this "while loading your library" (https://docs.python.org/3/whatsnew/3.8.html#bpo-36085-whatsnew).
-# Note that add_dll_directory doesn't exist on non-Windows platforms or before Python 3.8.
-import sys
-try:
-    from os.path import expanduser
-    recombine_dll_dir = ESIG_PACKAGE_ROOT
-    os.add_dll_directory(recombine_dll_dir)
-except AttributeError:
-    pass
+from .backends import get_backend, set_backend, list_backends
 
-from esig.backends import get_backend, set_backend, list_backends
-from esig.tosig import recombine, NO_RECOMBINE
+# noinspection PyUnresolvedReferences
+from pyrecombine import recombine
 
-
+# noinspection PyUnresolvedReferences
 __all__ = [
     "get_version",
     "is_library_loaded",
@@ -43,9 +34,13 @@ __all__ = [
     "get_backend",
     "set_backend",
     "list_backends",
-    "backends"
+    "backends",
+    "__version__"
 ]
 
+
+with open(ESIG_PACKAGE_ROOT, "VERSION") as f:
+    __version__ = f.read().strip()
 
 def get_version():
     """
@@ -58,12 +53,8 @@ def get_version():
     Returns:
         string: The package version number. In format 'major.minor.release'.
     """
-    version_filename = os.path.join(ESIG_PACKAGE_ROOT, 'VERSION')
-    f = open(version_filename, 'r')
-    version_string = f.read().strip().split(' ')
-    f.close()
-
-    return '.'.join(version_string)
+    warnings.warn("get_version is deprecated.", DeprecationWarning)
+    return __version__
 
 def is_library_loaded():
     """
@@ -75,10 +66,7 @@ def is_library_loaded():
     Returns:
         boolean: True iif the library can be loaded successfully; False otherwise.
     """
-    try:
-        from esig import tosig
-    except ImportError:
-        return False
+    warnings.warn("is_library_loaded is deprecated.", DeprecationWarning)
 
     return True
 
@@ -94,11 +82,8 @@ def get_library_load_error():
         string: The message associated with the exception when attempting to import.
         None: If no exception is raised when importing, None is returned.
     """
-    try:
-        from esig import tosig
-        return None
-    except ImportError as e:
-        return e.msg
+    warnings.warn("get_library_load_error is deprecated.", DeprecationWarning)
+    return None
 
 
 def _verify_stream_arg(*types):
@@ -166,7 +151,7 @@ def logsigdim(dimension, depth):
     if dimension == 0:
         raise ValueError("Dimension 0 is invalid")
     if depth == 1:
-        return dimension
+        return depth
     return get_backend().log_sig_dim(dimension, depth)
 
 

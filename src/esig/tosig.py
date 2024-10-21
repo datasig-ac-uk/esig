@@ -1,17 +1,6 @@
 import warnings
 
-from ._tosig import *
 
-try:
-    from esig.tosig import recombine
+warnings.warn("The module esig.tosig has been moved to esig.tosig. Please update your imports.", DeprecationWarning)
 
-    NO_RECOMBINE = False
-except ImportError:
-    NO_RECOMBINE = True
-
-    def recombine(*args, **kwargs):
-        raise NotImplementedError
-
-warnings.warn("Importing functions from \"esig.tosig\" is deprecated and will be"
-              " removed in version 1.0. Import the functions from the main \"esig\" "
-              "package instead.", DeprecationWarning)
+from esig import *

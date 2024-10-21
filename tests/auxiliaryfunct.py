@@ -1,5 +1,7 @@
 import numpy as np
-from esig import tosig as ts
+
+import esig as ts
+
 import math
 import random
 import itertools

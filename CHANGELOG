@@ -1,3 +1,7 @@
+1.0.0 Remove compiled components
+    - Recombine moved to its own package PyRecombine
+    - Computation backend removed, default engine is now RoughPy
+
 0.9.8.3 Hotfix 2
     - Fixed the range of configurations available.
     - Fixed MANIFEST.in, now reflects the updated project structure.

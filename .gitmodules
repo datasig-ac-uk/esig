@@ -1,7 +1,0 @@
-[submodule "libalgebra"]
-	path = libalgebra
-	url = git@github.com:terrylyons/libalgebra.git
-	branch = develop
-[submodule "build/vcpkg"]
-	path = build/vcpkg
-	url = https://github.com/Microsoft/vcpkg
