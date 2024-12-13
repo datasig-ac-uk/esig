@@ -21,7 +21,7 @@ from pyrecombine import recombine
 
 # noinspection PyUnresolvedReferences
 __all__ = [
-    # "get_version",
+    "get_version",
     "is_library_loaded",
     "get_library_load_error",
     "stream2sig",
@@ -35,11 +35,11 @@ __all__ = [
     "set_backend",
     "list_backends",
     "backends",
-    # "__version__"
+    "__version__"
 ]
 
 
-with open(ESIG_PACKAGE_ROOT, "VERSION") as f:
+with open("VERSION") as f:
     __version__ = f.read().strip()
 
 def get_version():
