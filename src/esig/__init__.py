@@ -21,7 +21,7 @@ from pyrecombine import recombine
 
 # noinspection PyUnresolvedReferences
 __all__ = [
-    "get_version",
+    # "get_version",
     "is_library_loaded",
     "get_library_load_error",
     "stream2sig",
