@@ -155,7 +155,9 @@ class RoughPyBackend(BackendBase):
 BACKENDS["roughpy"] = RoughPyBackend
 
 # For backwards compatibility
+LibalgebraBackend = RoughPyBackend
 BACKENDS["libalgebra"] = RoughPyBackend
+
 
 
 if iisignature:
