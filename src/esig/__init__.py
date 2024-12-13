@@ -35,7 +35,7 @@ __all__ = [
     "set_backend",
     "list_backends",
     "backends",
-    "__version__"
+    # "__version__"
 ]
 
 
