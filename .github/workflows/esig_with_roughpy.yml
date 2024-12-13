@@ -29,7 +29,7 @@ jobs:
       - name: Build esig with hatch
         run: hatch build
 
-  build and run tests:
+  build-and-run-tests:
 
     runs-on: ubuntu-latest
 
