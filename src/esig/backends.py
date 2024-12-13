@@ -1,18 +1,16 @@
 # Mechanism for switching backends for computing signatures
 
 
-
 import abc
 import threading
 
+import numpy as np
+import roughpy as rp
 
 # try:
 # except ImportError:
 #    # Error occurs during build sequence, since tosig does not exist
-    # tosig = None
-
-import roughpy as rp
-import numpy as np
+# tosig = None
 
 
 try:
@@ -120,7 +118,6 @@ class BackendBase(abc.ABC):
         """
 
 
-
 class RoughPyBackend(BackendBase):
 
     def __repr__(self):
@@ -132,7 +129,7 @@ class RoughPyBackend(BackendBase):
         context = rp.get_context(width, depth, rp.DPReal)
         stream = rp.LieIncrementStream.from_increments(increments, ctx=context)
 
-        return stream.signature()
+        return np.array(stream.signature(resolution=-1), copy=True)
 
     def compute_log_signature(self, stream, depth):
         no_samples, width = stream.shape
@@ -141,7 +138,7 @@ class RoughPyBackend(BackendBase):
         context = rp.get_context(width, depth, rp.DPReal)
         stream = rp.LieIncrementStream.from_increments(increments, ctx=context)
 
-        return stream.log_signature()
+        return np.array(stream.log_signature(resolution=-1), copy=True)
 
     def log_sig_keys(self, dimension, depth):
         context = rp.get_context(dimension, depth, rp.DPReal)
@@ -159,21 +156,20 @@ LibalgebraBackend = RoughPyBackend
 BACKENDS["libalgebra"] = RoughPyBackend
 
 
-
 if iisignature:
 
     class IISignatureBackend(BackendBase):
 
         def __init__(self):
             self._log_sig_prepare_cache = {}
-        
+
         def __repr__(self):
             return "IISignatureBackend"
 
         def prepare(self, dimension, depth):
             if (dimension, depth) in self._log_sig_prepare_cache:
                 return self._log_sig_prepare_cache[(dimension, depth)]
-            
+
             s = iisignature.prepare(dimension, depth)
             self._log_sig_prepare_cache[(dimension, depth)] = s
             return s
@@ -189,9 +185,6 @@ if iisignature:
         def log_sig_keys(self, dimension, depth):
             s = self.prepare(dimension, depth)
             return iisignature.basis(dimension, depth)
-        
-
-
 
     BACKENDS["iisignature"] = IISignatureBackend
 
