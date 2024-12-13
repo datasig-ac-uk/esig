@@ -56,6 +56,6 @@ jobs:
         run: hatch build
 
       - name: Run tests with hatch
-        run: hatch run test:test
+        run: hatch test
 
 
