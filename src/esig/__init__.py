@@ -38,6 +38,9 @@ __all__ = [
     "__version__"
 ]
 
+# with open(ESIG_PACKAGE_ROOT, "VERSION") as f:
+#     __version__ = f.read().strip()
+
 def get_version():
     """
     Returns the version number of the ESig package.
