@@ -1,14 +1,15 @@
 import unittest
-import numpy as np
 from unittest import TestCase
-from . import auxiliaryfunct as ax
-from . import esigtests as rado
-from . import recombinetests as recombine
+
+import numpy as np
+from numpy.testing import assert_array_almost_equal, assert_array_equal
 
 import esig
 import esig as ts
 
-from numpy.testing import assert_array_equal, assert_array_almost_equal
+from . import auxiliaryfunct as ax
+from . import esigtests as rado
+from . import recombinetests as recombine
 
 # # Tree-like equivalence of paths and equivalence class signature invariance. Non-generic paths used since pruning is generically unnecessary.
 #
@@ -127,12 +128,35 @@ from numpy.testing import assert_array_equal, assert_array_almost_equal
 # term='1x2x(2x1-1x2)x3'
 # print(ax.distribute(term))
 
+
 class TestESIG(TestCase):
 
-
     def test_equivalence(self):
-        a = [[0.0, 0], [1, 0], [1, 1], [1, 0], [2, 0], [3, 1], [2, 2], [1, 1], [2, 2], [1, 3], [2, 2], [3, 3], [2, 2], [3, 1],
-             [4, 1], [3, 1], [2, 0], [2, -1], [2, 0], [1, 0], [1, -1], [1, 0], [0, 0]]
+        a = [
+            [0.0, 0],
+            [1, 0],
+            [1, 1],
+            [1, 0],
+            [2, 0],
+            [3, 1],
+            [2, 2],
+            [1, 1],
+            [2, 2],
+            [1, 3],
+            [2, 2],
+            [3, 3],
+            [2, 2],
+            [3, 1],
+            [4, 1],
+            [3, 1],
+            [2, 0],
+            [2, -1],
+            [2, 0],
+            [1, 0],
+            [1, -1],
+            [1, 0],
+            [0, 0],
+        ]
 
         b = [[0.0, 0], [1, 3], [0, 0], [1, 5], [2, 5], [1, 5], [0, 6], [1, 5], [0, 0]]
 
@@ -145,8 +169,7 @@ class TestESIG(TestCase):
         b = np.array(b)
         c = np.array(c)
 
-
-        sigdiffa = ts.stream2sig(a, 3) - ts.stream2sig(3)
+        sigdiffa = ts.stream2sig(a, 3) - ts.stream2sig(aa, 3)
         sigdiffb = ts.stream2sig(b, 3) - ts.stream2sig(bb, 3)
         sigdiffc = ts.stream2sig(c, 3) - ts.stream2sig(cc, 3)
 
@@ -167,7 +190,9 @@ class TestESIG(TestCase):
 
     def test_logsig(self):
         path1 = ax.random_path(5, range(-10, 11), 3)
-        logsig = ax.exponentiatetensor(ax.tensoraslevels(ax.logsigastensor(np.array(path1), 3), 3, 3))
+        logsig = ax.exponentiateTensor(
+            ax.tensoraslevels(ax.logsigAsTensor(np.array(path1), 3), 3, 3)
+        )
 
         # self.assertEqual(all(ts.stream2sig(np.array(path1),3)[1:]- logsig),0)
         assert_array_almost_equal(ts.stream2sig(np.array(path1), 3)[1:], logsig)
@@ -179,7 +204,9 @@ class TestESIG(TestCase):
         sig1 = ax.tensoraslevels(ts.stream2sig(np.array(path1), 2), 3, 2)
         sig2 = ax.tensoraslevels(ts.stream2sig(np.array(path2), 2), 3, 2)
 
-        sig_concat = ax.tensoraslevels(ts.stream2sig(ax.concatenate(path1, path2), 2), 3, 2)
+        sig_concat = ax.tensoraslevels(
+            ts.stream2sig(ax.concatenate(path1, path2), 2), 3, 2
+        )
         chen = ax.chen(sig1, sig2)
         # self.assertEqual(all(np.concatenate((np.array(chen)-np.array(sig_concat)).flatten())),0)
         for chen_sig, concat_sig in zip(chen, sig_concat):
