@@ -126,7 +126,7 @@ class RoughPyBackend(BackendBase):
     def prepare_stream(self, stream_data, depth):
         no_samples, width = stream_data.shape
         increments = np.diff(stream_data, axis=0)
-        indices = np.arange(0.0, 1.0, 1.0 / no_samples)
+        indices = np.arange(0.0, 1.0, 1.0 / (no_samples - 1))
 
         context = rp.get_context(width, depth, rp.DPReal)
         stream = rp.LieIncrementStream.from_increments(increments, indices=indices, ctx=context)
@@ -135,12 +135,12 @@ class RoughPyBackend(BackendBase):
 
 
     def empty_signature(self, width, depth):
-        array = np.zeros(self.log_sig_dim(width, depth), dtype=np.float64)
+        array = np.zeros(self.sig_dim(width, depth), dtype=np.float64)
         array[0] = 1.
         return array
 
     def empty_log_signature(self, width, depth):
-        array = np.zeros(self.sig_dim(width, depth), dtype=np.float64)
+        array = np.zeros(self.log_sig_dim(width, depth), dtype=np.float64)
         return array
 
     def compute_signature(self, stream, depth):
