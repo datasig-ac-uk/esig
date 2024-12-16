@@ -123,22 +123,42 @@ class RoughPyBackend(BackendBase):
     def __repr__(self):
         return "RoughPyBackend"
 
+    def prepare_stream(self, stream_data, depth):
+        no_samples, width = stream_data.shape
+        increments = np.diff(stream_data, axis=0)
+        indices = np.arange(0.0, 1.0, 1.0 / no_samples)
+
+        context = rp.get_context(width, depth, rp.DPReal)
+        stream = rp.LieIncrementStream.from_increments(increments, indices=indices, ctx=context)
+
+        return stream
+
+
+    def empty_signature(self, width, depth):
+        array = np.zeros(self.log_sig_dim(width, depth), dtype=np.float64)
+        array[0] = 1.
+        return array
+
+    def empty_log_signature(self, width, depth):
+        array = np.zeros(self.sig_dim(width, depth), dtype=np.float64)
+        return array
+
     def compute_signature(self, stream, depth):
         no_samples, width = stream.shape
-        increments = np.diff(stream, axis=0)
-        context = rp.get_context(width, depth, rp.DPReal)
-        stream = rp.LieIncrementStream.from_increments(increments, ctx=context)
+        if no_samples == 1:
+            return self.empty_signature(width, depth)
 
-        return np.array(stream.signature(resolution=-1), copy=True)
+        rpy_stream = self.prepare_stream(stream, depth)
+        return np.array(rpy_stream.signature(rp.RealInterval(0.0, 1.0), resolution=0), copy=True)
 
     def compute_log_signature(self, stream, depth):
         no_samples, width = stream.shape
-        increments = np.diff(stream, axis=0)
 
-        context = rp.get_context(width, depth, rp.DPReal)
-        stream = rp.LieIncrementStream.from_increments(increments, ctx=context)
+        if no_samples == 1:
+            return self.empty_log_signature(width, depth)
 
-        return np.array(stream.log_signature(resolution=-1), copy=True)
+        rpy_stream = self.prepare_stream(stream, depth)
+        return np.array(rpy_stream.log_signature(rp.RealInterval(0.0, 1.0), resolution=0), copy=True)
 
     def log_sig_keys(self, dimension, depth):
         context = rp.get_context(dimension, depth, rp.DPReal)
