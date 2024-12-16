@@ -191,7 +191,7 @@ class TestESIG(TestCase):
     def test_logsig(self):
         path1 = ax.random_path(5, range(-10, 11), 3)
         logsig = ax.exponentiateTensor(
-            ax.tensoraslevels(ax.logsigAsTensor(np.array(path1), 3), 3, 3)
+            ax.tensoraslevels(ax.Logsigastensor(np.array(path1), 3), 3, 3)
         )
 
         # self.assertEqual(all(ts.stream2sig(np.array(path1),3)[1:]- logsig),0)
