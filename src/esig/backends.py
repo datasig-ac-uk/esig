@@ -158,15 +158,15 @@ class RoughPyBackend(BackendBase):
             return self.empty_log_signature(width, depth)
 
         rpy_stream = self.prepare_stream(stream, depth)
-        return np.array(rpy_stream.log_signature(rp.RealInterval(0.0, 1.0), resolution=0), copy=True)
+        return np.array(rpy_stream.log_signature(rp.RealInterval(0.0, 1.0)), copy=True)
 
     def log_sig_keys(self, dimension, depth):
         context = rp.get_context(dimension, depth, rp.DPReal)
-        return " ".join(map(str, iter(context.lie_basis)))
+        return " " + " ".join(map(str, iter(context.lie_basis)))
 
     def sig_keys(self, dimension, depth):
         context = rp.get_context(dimension, depth, rp.DPReal)
-        return " ".join(map(str, iter(context.tensor_basis)))
+        return  " " + " ".join(map(str, iter(context.tensor_basis)))
 
 
 BACKENDS["roughpy"] = RoughPyBackend
