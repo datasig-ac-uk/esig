@@ -8,6 +8,7 @@
 import functools
 import os
 import warnings
+import math
 
 import numpy
 
@@ -107,12 +108,21 @@ def _verify_stream_arg(*types):
                 str_types = tuple(map(str, types))
                 raise TypeError("Values must be of one of the following types {}".format(str_types))
 
+            if not as_array.ndim == 2:
+                raise ValueError("stream must be a 2-dimensional array")
+
             return func(as_array, *args, **kwargs)
         return wrapper
 
     if fn:
         return decorator(fn)
     return decorator
+
+
+def _verify_valid_depth(width, depth):
+    size = width ** (depth + 1) - 1
+    if size > 2 ** 63 - 1:
+        raise RuntimeError("depth is too large for this platform")
 
 
 @_verify_stream_arg
@@ -124,6 +134,8 @@ def stream2sig(stream, depth):
         raise ValueError("Depth must be at least 1")
     elif depth == 1:
         return numpy.concatenate([[1.0], numpy.sum(numpy.diff(stream, axis=0), axis=0)])
+
+    _verify_valid_depth(stream.shape[1], depth)
 
     backend = get_backend()
     return backend.compute_signature(stream, depth)
@@ -138,6 +150,8 @@ def stream2logsig(stream, depth):
         raise ValueError("Depth must be at least 1")
     elif depth == 1:
         return numpy.sum(numpy.diff(stream, axis=0), axis=0)
+
+    _verify_valid_depth(stream.shape[1], depth)
 
     backend = get_backend()
     return backend.compute_log_signature(stream, depth)
