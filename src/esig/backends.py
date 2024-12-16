@@ -149,7 +149,7 @@ class RoughPyBackend(BackendBase):
             return self.empty_signature(width, depth)
 
         rpy_stream = self.prepare_stream(stream, depth)
-        return np.array(rpy_stream.signature(rp.RealInterval(0.0, 1.0), resolution=0), copy=True)
+        return np.array(rpy_stream.signature(rp.RealInterval(0.0, 1.0)), copy=True)
 
     def compute_log_signature(self, stream, depth):
         no_samples, width = stream.shape
