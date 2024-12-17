@@ -1,17 +1,16 @@
 # Mechanism for switching backends for computing signatures
 
 
-
 import abc
 import threading
 
-import numpy
+import numpy as np
+import roughpy as rp
 
 # try:
-from . import _tosig as tosig
 # except ImportError:
 #    # Error occurs during build sequence, since tosig does not exist
-    # tosig = None
+# tosig = None
 
 
 try:
@@ -96,13 +95,15 @@ class BackendBase(abc.ABC):
         """
         Get the number of elements in the log signature
         """
-        return tosig.logsigdim(dimension, depth)
+        context = rp.get_context(dimension, depth, rp.DPReal)
+        return context.lie_size(depth)
 
     def sig_dim(self, dimension, depth):
         """
         Get the number of elements in the signature
         """
-        return tosig.sigdim(dimension, depth)
+        context = rp.get_context(dimension, depth, rp.DPReal)
+        return context.tensor_size(depth)
 
     @abc.abstractmethod
     def log_sig_keys(self, dimension, depth):
@@ -117,29 +118,62 @@ class BackendBase(abc.ABC):
         """
 
 
-class LibalgebraBackend(BackendBase):
-    """
-    Use libalgebra as a backend for computing signatures and log signatures
-    of paths. This is the default option.
-    """
+class RoughPyBackend(BackendBase):
 
     def __repr__(self):
-        return "LibalgebraBackend"
+        return "RoughPyBackend"
+
+    def prepare_stream(self, stream_data, depth):
+        no_samples, width = stream_data.shape
+        increments = np.diff(stream_data, axis=0)
+        indices = np.arange(0.0, 1.0, 1.0 / (no_samples - 1))
+
+        context = rp.get_context(width, depth, rp.DPReal)
+        stream = rp.LieIncrementStream.from_increments(increments, indices=indices, ctx=context)
+
+        return stream
+
+
+    def empty_signature(self, width, depth):
+        array = np.zeros(self.sig_dim(width, depth), dtype=np.float64)
+        array[0] = 1.
+        return array
+
+    def empty_log_signature(self, width, depth):
+        array = np.zeros(self.log_sig_dim(width, depth), dtype=np.float64)
+        return array
 
     def compute_signature(self, stream, depth):
-        return tosig.stream2sig(stream, depth)
+        no_samples, width = stream.shape
+        if no_samples == 1:
+            return self.empty_signature(width, depth)
+
+        rpy_stream = self.prepare_stream(stream, depth)
+        return np.array(rpy_stream.signature(rp.RealInterval(0.0, 1.0)), copy=True)
 
     def compute_log_signature(self, stream, depth):
-        return tosig.stream2logsig(stream, depth)
+        no_samples, width = stream.shape
+
+        if no_samples == 1:
+            return self.empty_log_signature(width, depth)
+
+        rpy_stream = self.prepare_stream(stream, depth)
+        return np.array(rpy_stream.log_signature(rp.RealInterval(0.0, 1.0)), copy=True)
 
     def log_sig_keys(self, dimension, depth):
-        return tosig.logsigkeys(dimension, depth)
-    
+        context = rp.get_context(dimension, depth, rp.DPReal)
+        return " " + " ".join(map(str, iter(context.lie_basis)))
+
     def sig_keys(self, dimension, depth):
-        return tosig.sigkeys(dimension, depth)
+        context = rp.get_context(dimension, depth, rp.DPReal)
+        return  " " + " ".join(map(str, iter(context.tensor_basis)))
 
 
-BACKENDS["libalgebra"] = LibalgebraBackend
+BACKENDS["roughpy"] = RoughPyBackend
+
+# For backwards compatibility
+LibalgebraBackend = RoughPyBackend
+BACKENDS["libalgebra"] = RoughPyBackend
 
 
 if iisignature:
@@ -148,20 +182,20 @@ if iisignature:
 
         def __init__(self):
             self._log_sig_prepare_cache = {}
-        
+
         def __repr__(self):
             return "IISignatureBackend"
 
         def prepare(self, dimension, depth):
             if (dimension, depth) in self._log_sig_prepare_cache:
                 return self._log_sig_prepare_cache[(dimension, depth)]
-            
+
             s = iisignature.prepare(dimension, depth)
             self._log_sig_prepare_cache[(dimension, depth)] = s
             return s
 
         def compute_signature(self, stream, depth):
-            return numpy.concatenate([[1.0], iisignature.sig(stream, depth)], axis=0)
+            return np.concatenate([[1.0], iisignature.sig(stream, depth)], axis=0)
 
         def compute_log_signature(self, stream, depth):
             _, dim = stream.shape
@@ -171,15 +205,9 @@ if iisignature:
         def log_sig_keys(self, dimension, depth):
             s = self.prepare(dimension, depth)
             return iisignature.basis(dimension, depth)
-        
-        def sig_keys(self, dimension, depth):
-            return tosig.sigkeys(dimension, depth)
-
-
-
 
     BACKENDS["iisignature"] = IISignatureBackend
 
 
 # set the default backend
-_BACKEND_DEFAULT = LibalgebraBackend
+_BACKEND_DEFAULT = RoughPyBackend

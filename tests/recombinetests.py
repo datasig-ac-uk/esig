@@ -2,8 +2,9 @@ import sys
 import numpy as np
 from numpy.linalg import norm
 import time
-import esig.tosig as ts
+
 import esig
+import esig as ts
 
 
 def test ():

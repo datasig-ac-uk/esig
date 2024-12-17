@@ -7,28 +7,20 @@
 
 import functools
 import os
+import warnings
+import math
 
 import numpy
 
 
 ESIG_PACKAGE_ROOT = os.path.dirname(os.path.abspath(__file__))
 
-# Python 3.8+ doesn't use PATH to locate DLLs; need to use add_dll_directory instead.
-# Not sure if this is the right place to do this, though; 3.8 Porting Guide says to do
-# this "while loading your library" (https://docs.python.org/3/whatsnew/3.8.html#bpo-36085-whatsnew).
-# Note that add_dll_directory doesn't exist on non-Windows platforms or before Python 3.8.
-import sys
-try:
-    from os.path import expanduser
-    recombine_dll_dir = ESIG_PACKAGE_ROOT
-    os.add_dll_directory(recombine_dll_dir)
-except AttributeError:
-    pass
+from .backends import get_backend, set_backend, list_backends
 
-from esig.backends import get_backend, set_backend, list_backends
-from esig.tosig import recombine, NO_RECOMBINE
+# noinspection PyUnresolvedReferences
+from pyrecombine import recombine
 
-
+# noinspection PyUnresolvedReferences
 __all__ = [
     "get_version",
     "is_library_loaded",
@@ -43,9 +35,12 @@ __all__ = [
     "get_backend",
     "set_backend",
     "list_backends",
-    "backends"
+    "backends",
+    "__version__"
 ]
 
+# with open(ESIG_PACKAGE_ROOT, "VERSION") as f:
+#     __version__ = f.read().strip()
 
 def get_version():
     """
@@ -58,12 +53,8 @@ def get_version():
     Returns:
         string: The package version number. In format 'major.minor.release'.
     """
-    version_filename = os.path.join(ESIG_PACKAGE_ROOT, 'VERSION')
-    f = open(version_filename, 'r')
-    version_string = f.read().strip().split(' ')
-    f.close()
-
-    return '.'.join(version_string)
+    warnings.warn("get_version is deprecated.", DeprecationWarning)
+    return __version__
 
 def is_library_loaded():
     """
@@ -75,10 +66,7 @@ def is_library_loaded():
     Returns:
         boolean: True iif the library can be loaded successfully; False otherwise.
     """
-    try:
-        from esig import tosig
-    except ImportError:
-        return False
+    warnings.warn("is_library_loaded is deprecated.", DeprecationWarning)
 
     return True
 
@@ -94,11 +82,8 @@ def get_library_load_error():
         string: The message associated with the exception when attempting to import.
         None: If no exception is raised when importing, None is returned.
     """
-    try:
-        from esig import tosig
-        return None
-    except ImportError as e:
-        return e.msg
+    warnings.warn("get_library_load_error is deprecated.", DeprecationWarning)
+    return None
 
 
 def _verify_stream_arg(*types):
@@ -123,12 +108,21 @@ def _verify_stream_arg(*types):
                 str_types = tuple(map(str, types))
                 raise TypeError("Values must be of one of the following types {}".format(str_types))
 
+            if not as_array.ndim == 2:
+                raise ValueError("stream must be a 2-dimensional array")
+
             return func(as_array, *args, **kwargs)
         return wrapper
 
     if fn:
         return decorator(fn)
     return decorator
+
+
+def _verify_valid_depth(width, depth):
+    size = width ** (depth + 1) - 1
+    if size > 2 ** 63 - 1:
+        raise RuntimeError("depth is too large for this platform")
 
 
 @_verify_stream_arg
@@ -140,6 +134,8 @@ def stream2sig(stream, depth):
         raise ValueError("Depth must be at least 1")
     elif depth == 1:
         return numpy.concatenate([[1.0], numpy.sum(numpy.diff(stream, axis=0), axis=0)])
+
+    _verify_valid_depth(stream.shape[1], depth)
 
     backend = get_backend()
     return backend.compute_signature(stream, depth)
@@ -155,6 +151,8 @@ def stream2logsig(stream, depth):
     elif depth == 1:
         return numpy.sum(numpy.diff(stream, axis=0), axis=0)
 
+    _verify_valid_depth(stream.shape[1], depth)
+
     backend = get_backend()
     return backend.compute_log_signature(stream, depth)
 
@@ -166,7 +164,7 @@ def logsigdim(dimension, depth):
     if dimension == 0:
         raise ValueError("Dimension 0 is invalid")
     if depth == 1:
-        return dimension
+        return depth
     return get_backend().log_sig_dim(dimension, depth)
 
 
