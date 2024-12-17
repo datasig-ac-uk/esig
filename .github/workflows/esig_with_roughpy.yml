@@ -29,7 +29,7 @@ jobs:
       - name: Build esig with hatch
         run: hatch build
 
-  build-and-run-tests:
+  build-tests-publish:
 
     runs-on: ubuntu-latest
 
@@ -57,5 +57,13 @@ jobs:
 
       - name: Run tests with hatch
         run: hatch test
+
+      - name: upload package
+        if: github.ref == 'refs/heads/release'
+        run: hatch publish
+        env:
+          HATCH_INDEX_USER: __token__
+          HATCH_INDEX_AUTH: ${{ secrets.PYPI_TOKEN }}
+          
 
 
